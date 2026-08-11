@@ -30,6 +30,34 @@ Configure these repository secrets before running the deploy workflow:
 - `VPS_SSH_KEY`
 - `AIDLE_DEPLOY_PATH`
 - `AIDLE_DAILY_SELECTION_SECRET`
+- `AIDLE_E2E_BYPASS_TOKEN` when Cloudflare Super Bot Fight Mode is enabled
+
+Every push to `main` creates the next SemVer release tag, runs the unit and Docker-image checks in parallel, publishes the checked deployment archive to GitHub Releases, waits for approval through the `production` GitHub Environment, deploys that tagged archive to the VPS, and runs Playwright against `https://aaidle.com`.
+Configure the `production` GitHub Environment with a required reviewer to make the approval step effective.
+The first release uses the existing `package.json` version, currently `v0.1.0`.
+Future `main` pushes make patch releases by default.
+Use **Run workflow** to choose a `minor` or `major` SemVer bump.
+The VPS retains only the currently deployed source at `/srv/aaidle/app`.
+Versioned deployment archives and release notes live in GitHub Releases.
+Production E2E tests run Chrome and mobile Chrome across two GitHub runners.
+Raw Playwright blob reports retain retry traces, failure screenshots, and failure videos.
+The final Allure report is deployed to GitHub Pages.
+Set **Settings > Pages > Build and deployment > Source** to **GitHub Actions** before the first release.
+
+## Pull request checks
+
+Every pull request to `main` runs `pnpm check`.
+When the only failure is formatting-related lint, the workflow formats and commits the fix as `github-actions[bot]` to the PR source branch, then reruns the check.
+It never writes to `main` and cannot write to forked pull requests.
+
+## Cloudflare bot protection
+
+Do not enable Free-plan Bot Fight Mode for this domain if you need unattended production E2E tests.
+It cannot be exempted by a WAF rule.
+Use Super Bot Fight Mode instead, then create a zone-level WAF custom rule before enabling it.
+Match `any(http.request.headers["x-aidle-e2e-token"][*] eq "<AIDLE_E2E_BYPASS_TOKEN>")`, select the **Skip** action, and skip only **Super Bot Fight Mode**.
+Store the same random value as the `AIDLE_E2E_BYPASS_TOKEN` GitHub secret.
+The secret header is sent only by the production E2E job.
 
 Point both `aaidle.com` and `www.aaidle.com` at the VPS, then add the Aidle Caddy route from the shared edge configuration.
 

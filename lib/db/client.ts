@@ -29,17 +29,25 @@ class SqlitePreparedStatement implements PreparedStatement {
   }
 
   async first<T>() {
-    return (sqliteConnection().prepare(this.query).get(...(this.values as never[])) as T | undefined) ?? null;
+    return (
+      (sqliteConnection()
+        .prepare(this.query)
+        .get(...(this.values as never[])) as T | undefined) ?? null
+    );
   }
 
   async all<T>(): Promise<QueryResult<T>> {
     return {
-      results: sqliteConnection().prepare(this.query).all(...(this.values as never[])) as T[],
+      results: sqliteConnection()
+        .prepare(this.query)
+        .all(...(this.values as never[])) as T[],
     };
   }
 
   async run() {
-    sqliteConnection().prepare(this.query).run(...(this.values as never[]));
+    sqliteConnection()
+      .prepare(this.query)
+      .run(...(this.values as never[]));
   }
 }
 

@@ -21,7 +21,10 @@ try {
   for (const file of migrationFiles) {
     if (isApplied.get(file)) continue;
 
-    const migration = readFileSync(new URL(`../database/migrations/${file}`, import.meta.url), "utf8");
+    const migration = readFileSync(
+      new URL(`../database/migrations/${file}`, import.meta.url),
+      "utf8",
+    );
     database.exec("BEGIN IMMEDIATE");
     try {
       database.exec(migration);

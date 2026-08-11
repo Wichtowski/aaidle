@@ -83,7 +83,14 @@ const seed = database.transaction(() => {
     const familyId = `${providerId}-${slug(model.family)}`;
     const releaseYear = Number(model.releaseDate.slice(0, 4));
 
-    upsertProvider.run(providerId, model.provider, providerId, countryCode[model.country] ?? "UN", now, now);
+    upsertProvider.run(
+      providerId,
+      model.provider,
+      providerId,
+      countryCode[model.country] ?? "UN",
+      now,
+      now,
+    );
     insertFamily.run(familyId, providerId, model.family, slug(model.family), now, now);
     upsertModel.run(
       model.id,
