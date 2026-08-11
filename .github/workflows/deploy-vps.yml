@@ -18,6 +18,9 @@ on:
       AAIDLE_DAILY_SELECTION_SECRET:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Deploy to VPS
@@ -29,12 +32,15 @@ jobs:
       DEPLOY_PATH: ${{ secrets.AAIDLE_DEPLOY_PATH }}
       RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: aaidle-${{ inputs.release_tag }}
-          path: artifact
-      - name: Prepare release upload
-        run: mv "artifact/aaidle-$RELEASE_TAG.tar.gz" "aaidle-$RELEASE_TAG.tar.gz"
+      - name: Download release from GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "aaidle-$RELEASE_TAG.tar.gz" \
+            --dir .
       - name: Create production environment file
         env:
           AAIDLE_DAILY_SELECTION_SECRET: ${{ secrets.AAIDLE_DAILY_SELECTION_SECRET }}

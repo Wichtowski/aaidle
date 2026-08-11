@@ -27,6 +27,7 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
+          archive_path="$RUNNER_TEMP/aaidle-$RELEASE_TAG.tar.gz"
           tar \
             --exclude=.git \
             --exclude=.github \
@@ -37,22 +38,19 @@ jobs:
             --exclude=.next \
             --exclude=.vinext \
             --exclude=.wrangler \
-            -czf "aaidle-$RELEASE_TAG.tar.gz" .
+            -czf "$archive_path" \
+            -C "$GITHUB_WORKSPACE" .
       - name: Publish release asset
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
+          archive_path="$RUNNER_TEMP/aaidle-$RELEASE_TAG.tar.gz"
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --clobber
+            gh release upload "$RELEASE_TAG" "$archive_path" --clobber
           else
-            gh release create "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --title "aAidle $RELEASE_TAG" --generate-notes
+            gh release create "$RELEASE_TAG" "$archive_path" --title "aAidle $RELEASE_TAG" --generate-notes
           fi
-      - uses: actions/upload-artifact@v4
-        with:
-          name: aaidle-${{ inputs.release_tag }}
-          path: aaidle-${{ inputs.release_tag }}.tar.gz
-          if-no-files-found: error
       - name: Write summary
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}

@@ -27,7 +27,8 @@ Pull requests to `main` run `pnpm check`.
 Formatting-only lint failures are fixed and committed by `github-actions[bot]` to the PR branch.
 Automation never commits to `main`.
 
-After merge, the release workflow creates a SemVer tag, verifies the application and Docker image, publishes a GitHub Release, then waits for `production` approval before deploying.
+After merge, the release workflow creates a SemVer tag, verifies the application and Docker image, then publishes the deployment archive as a GitHub Release asset.
+After `production` approval, the deploy workflow downloads that versioned release asset from GitHub, uploads it temporarily to the VPS, and removes the uploaded archive after deployment.
 The release tag is exposed as `html[version]` in the deployed page.
 Production browser tests run in two shards and publish an Allure report to GitHub Pages.
 
