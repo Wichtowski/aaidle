@@ -1,0 +1,81 @@
+name: Deploy Aidle to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-aidle-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_PATH: ${{ secrets.AIDLE_DEPLOY_PATH }}
+      RELEASE_ID: ${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Create deployment archive
+        run: |
+          tar \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=.env \
+            --exclude=.env.* \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=.next \
+            --exclude=.vinext \
+            --exclude=.wrangler \
+            -czf "${RUNNER_TEMP}/aidle-${RELEASE_ID}.tar.gz" .
+          cp "${RUNNER_TEMP}/aidle-${RELEASE_ID}.tar.gz" "aidle-${RELEASE_ID}.tar.gz"
+
+      - name: Create production environment file
+        env:
+          DAILY_SELECTION_SECRET: ${{ secrets.AIDLE_DAILY_SELECTION_SECRET }}
+        run: |
+          umask 077
+          {
+            printf 'DAILY_SELECTION_SECRET=%s\n' "$DAILY_SELECTION_SECRET"
+          } > aidle.env
+
+      - name: Copy release to VPS
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "aidle-${{ github.sha }}.tar.gz,aidle.env"
+          target: /tmp
+
+      - name: Deploy release
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 20m
+          envs: DEPLOY_PATH,RELEASE_ID
+          script: |
+            set -euo pipefail
+
+            release_dir="${DEPLOY_PATH}/releases/${RELEASE_ID}"
+            mkdir -p "${release_dir}"
+            tar -xzf "/tmp/aidle-${RELEASE_ID}.tar.gz" -C "${release_dir}"
+            mv /tmp/aidle.env "${release_dir}/.env"
+            chmod 600 "${release_dir}/.env"
+
+            cd "${release_dir}"
+            docker compose --env-file .env -f compose.prod.yml up -d --build --remove-orphans
+            docker compose --env-file .env -f compose.prod.yml ps
+
+            ln -sfn "${release_dir}" "${DEPLOY_PATH}/current"
+            rm -f "/tmp/aidle-${RELEASE_ID}.tar.gz"

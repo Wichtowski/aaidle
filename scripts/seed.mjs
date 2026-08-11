@@ -1,8 +1,6 @@
-import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 import "./validate-model-data.mjs";
+import { sqliteConnection } from "./sqlite-connection.mjs";
 
 const models = JSON.parse(readFileSync(new URL("../data/models.seed.json", import.meta.url)));
 const countryCode = {
@@ -12,51 +10,118 @@ const countryCode = {
   France: "FR",
   Poland: "PL",
 };
-const esc = (value) => `'${String(value).replaceAll("'", "''")}'`;
 const slug = (value) =>
   value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 const now = Date.now();
-let sql = "PRAGMA foreign_keys=ON;\n";
-for (const model of models) {
-  const providerId = slug(model.provider),
-    familyId = `${providerId}-${slug(model.family)}`,
-    date = model.releaseDate,
-    releaseYear = Number(date.slice(0, 4));
-  sql += `INSERT INTO providers (id,name,slug,country_code,is_active,created_at,updated_at) VALUES (${esc(providerId)},${esc(model.provider)},${esc(providerId)},${esc(countryCode[model.country] ?? "UN")},1,${now},${now}) ON CONFLICT(id) DO UPDATE SET name=excluded.name,country_code=excluded.country_code,updated_at=excluded.updated_at;\n`;
-  sql += `INSERT INTO model_families (id,provider_id,name,slug,created_at,updated_at) VALUES (${esc(familyId)},${esc(providerId)},${esc(model.family)},${esc(slug(model.family))},${now},${now}) ON CONFLICT(id) DO NOTHING;\n`;
-  sql += `INSERT INTO models (id,provider_id,family_id,name,slug,release_date,release_year,context_window_tokens,open_weights,local_execution,reasoning_support,status,is_guessable,verified_at,source_label,created_at,updated_at) VALUES (${esc(model.id)},${esc(providerId)},${esc(familyId)},${esc(model.name)},${esc(model.id)},${esc(date)},${releaseYear},${model.contextWindowTokens},${model.openWeights ? 1 : 0},${esc(model.localExecution)},${esc(model.reasoningSupport)},'active',1,'2026-08-11','Official model documentation',${now},${now}) ON CONFLICT(id) DO UPDATE SET release_date=excluded.release_date,release_year=excluded.release_year,context_window_tokens=excluded.context_window_tokens,open_weights=excluded.open_weights,local_execution=excluded.local_execution,reasoning_support=excluded.reasoning_support,updated_at=excluded.updated_at;\n`;
-  for (const alias of model.aliases)
-    sql += `INSERT INTO model_aliases (id,model_id,alias,normalized_alias) VALUES (${esc(`${model.id}-${slug(alias)}`)},${esc(model.id)},${esc(alias)},${esc(slug(alias))}) ON CONFLICT(model_id,normalized_alias) DO NOTHING;\n`;
-  for (const [table, values, link, column] of [
-    ["categories", model.categories, "model_categories", "category_id"],
-    ["modalities", model.inputModalities, "model_input_modalities", "modality_id"],
-    ["modalities", model.outputModalities, "model_output_modalities", "modality_id"],
-    ["use_cases", model.useCases, "model_use_cases", "use_case_id"],
-  ])
-    for (const value of values) {
-      const id = slug(value);
-      sql += `INSERT INTO ${table} (id,name,slug) VALUES (${esc(id)},${esc(value.replaceAll("-", " "))},${esc(id)}) ON CONFLICT(id) DO NOTHING;\nINSERT INTO ${link} (model_id,${column}) VALUES (${esc(model.id)},${esc(id)}) ON CONFLICT DO NOTHING;\n`;
+const database = sqliteConnection();
+
+const upsertProvider = database.prepare(`
+  INSERT INTO providers (id, name, slug, country_code, is_active, created_at, updated_at)
+  VALUES (?, ?, ?, ?, 1, ?, ?)
+  ON CONFLICT(id) DO UPDATE SET
+    name = excluded.name,
+    country_code = excluded.country_code,
+    updated_at = excluded.updated_at
+`);
+const insertFamily = database.prepare(`
+  INSERT INTO model_families (id, provider_id, name, slug, created_at, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?)
+  ON CONFLICT(id) DO NOTHING
+`);
+const upsertModel = database.prepare(`
+  INSERT INTO models (
+    id, provider_id, family_id, name, slug, release_date, release_year, context_window_tokens,
+    open_weights, local_execution, reasoning_support, status, is_guessable, verified_at,
+    source_label, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 1, '2026-08-11', 'Official model documentation', ?, ?)
+  ON CONFLICT(id) DO UPDATE SET
+    release_date = excluded.release_date,
+    release_year = excluded.release_year,
+    context_window_tokens = excluded.context_window_tokens,
+    open_weights = excluded.open_weights,
+    local_execution = excluded.local_execution,
+    reasoning_support = excluded.reasoning_support,
+    updated_at = excluded.updated_at
+`);
+const insertAlias = database.prepare(`
+  INSERT INTO model_aliases (id, model_id, alias, normalized_alias)
+  VALUES (?, ?, ?, ?)
+  ON CONFLICT(model_id, normalized_alias) DO NOTHING
+`);
+const insertDictionary = {
+  categories: database.prepare(
+    "INSERT INTO categories (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+  ),
+  modalities: database.prepare(
+    "INSERT INTO modalities (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+  ),
+  use_cases: database.prepare(
+    "INSERT INTO use_cases (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+  ),
+};
+const insertLink = {
+  model_categories: database.prepare(
+    "INSERT INTO model_categories (model_id, category_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+  ),
+  model_input_modalities: database.prepare(
+    "INSERT INTO model_input_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+  ),
+  model_output_modalities: database.prepare(
+    "INSERT INTO model_output_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+  ),
+  model_use_cases: database.prepare(
+    "INSERT INTO model_use_cases (model_id, use_case_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+  ),
+};
+
+const seed = database.transaction(() => {
+  for (const model of models) {
+    const providerId = slug(model.provider);
+    const familyId = `${providerId}-${slug(model.family)}`;
+    const releaseYear = Number(model.releaseDate.slice(0, 4));
+
+    upsertProvider.run(providerId, model.provider, providerId, countryCode[model.country] ?? "UN", now, now);
+    insertFamily.run(familyId, providerId, model.family, slug(model.family), now, now);
+    upsertModel.run(
+      model.id,
+      providerId,
+      familyId,
+      model.name,
+      model.id,
+      model.releaseDate,
+      releaseYear,
+      model.contextWindowTokens,
+      model.openWeights ? 1 : 0,
+      model.localExecution,
+      model.reasoningSupport,
+      now,
+      now,
+    );
+
+    for (const alias of model.aliases)
+      insertAlias.run(`${model.id}-${slug(alias)}`, model.id, alias, slug(alias));
+
+    for (const [table, values, link] of [
+      ["categories", model.categories, "model_categories"],
+      ["modalities", model.inputModalities, "model_input_modalities"],
+      ["modalities", model.outputModalities, "model_output_modalities"],
+      ["use_cases", model.useCases, "model_use_cases"],
+    ]) {
+      for (const value of values) {
+        const id = slug(value);
+        insertDictionary[table].run(id, value.replaceAll("-", " "), id);
+        insertLink[link].run(model.id, id);
+      }
     }
-}
-const file = join(tmpdir(), "aidle-seed.sql");
-writeFileSync(file, sql);
+  }
+});
+
 try {
-  execFileSync(
-    "pnpm",
-    [
-      "wrangler",
-      "d1",
-      "execute",
-      "aidle-db",
-      ...(process.argv.includes("--remote") ? ["--remote"] : ["--local"]),
-      "--file",
-      file,
-    ],
-    { stdio: "inherit" },
-  );
+  seed();
+  console.log(`Seeded ${models.length} models.`);
 } finally {
-  rmSync(file, { force: true });
+  database.close();
 }

@@ -1,0 +1,14 @@
+.git
+.github
+.agents
+.codex
+.env
+.env.*
+.next
+.vinext
+.wrangler
+dist
+node_modules
+playwright-report
+test-results
+worker-configuration.d.ts

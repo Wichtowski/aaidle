@@ -1,0 +1,33 @@
+name: aidle
+
+services:
+  app:
+    build:
+      context: .
+    container_name: aidle-app
+    restart: unless-stopped
+    environment:
+      DATABASE_PATH: /data/aidle.db
+      DAILY_SELECTION_SECRET: ${DAILY_SELECTION_SECRET}
+      NODE_ENV: production
+    volumes:
+      - sqlite_data:/data
+    networks:
+      - edge
+    mem_limit: 256m
+    cpus: "0.5"
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  edge:
+    name: echotrade_app_net
+    external: true
+
+volumes:
+  sqlite_data:
+    name: aidle_sqlite_data

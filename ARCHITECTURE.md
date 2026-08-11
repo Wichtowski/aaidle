@@ -4,10 +4,10 @@
 Browser
   | GET /api/challenges/today
   v
-Vinext route handler on Cloudflare Workers
+Vinext route handler on Node.js
   | ensureDailyChallenge() -- deterministic secret-derived selection
   v
-Cloudflare D1
+SQLite
   | public DTO: id/date/mode/expiresAt/columns (never answer_model_id)
   v
 Browser localStorage: aidle:progress:v1
@@ -15,7 +15,7 @@ Browser localStorage: aidle:progress:v1
 Browser POST /api/challenges/:id/guess + requestId
   v
 Guess service
-  |- loads hidden answer in D1
+  |- loads hidden answer in server memory
   |- performs pure comparison
   |- stores idempotent guess_event
   |- UPSERTs challenge_guess_stats
@@ -26,7 +26,8 @@ Public guessed model + comparison response
 
 ## Boundaries
 
-- Route handlers access `env.DB` through server-only `lib/db/client.ts`. Client components never import Cloudflare bindings.
+- Route handlers access SQLite through server-only `lib/db/client.ts`. Client components never import database code.
+- The full catalog is loaded once into server memory from `data/models.seed.json`; only an intentionally public autocomplete projection is sent to browsers.
 - `daily_challenges.answer_model_id` is not selected into the public challenge DTO, model autocomplete response, RSC props, or local storage.
 - The client owns UI progress in the versioned, Zod-validated external localStorage store. It is SSR-safe and synchronizes `storage` events between tabs.
 - `guess_events.request_id` provides retry idempotency; `(challenge_id, player_id, guessed_model_id)` prevents duplicate models and aggregate double-counting.

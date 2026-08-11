@@ -1,34 +1,39 @@
 # AIdle
 
-AIdle is a daily, LoLdle-style guessing game for AI models. The hidden daily answer remains exclusively in Cloudflare D1; the browser receives a public challenge DTO and server-computed comparison results only.
+AIdle is a daily, LoLdle-style guessing game for AI models. The hidden daily answer remains exclusively in SQLite; the browser receives a public challenge DTO and server-computed comparison results only.
 
 ## Stack
 
-Vinext App Router, React, strict TypeScript, Tailwind CSS, Cloudflare Workers/D1, Drizzle schema and SQLite migrations, Zod, Vitest, React Testing Library, Playwright, and pnpm. There is no Python backend.
+Vinext App Router, React, strict TypeScript, Tailwind CSS, Node.js, SQLite, Zod, Vitest, React Testing Library, Playwright, and pnpm. There is no Python backend.
 
 ## Local setup
 
 ```bash
 pnpm install
-cp .dev.vars.example .dev.vars
+cp .env.example .env
 pnpm db:validate-seed
-pnpm db:migrate:local
+pnpm db:migrate
 pnpm db:seed
 pnpm dev
 ```
 
-Use `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:e2e` for verification. Local D1 is created by Wrangler under `.wrangler/`; remove only that directory when you intentionally want a completely fresh local database, then rerun migrations and seed.
+Use `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:e2e` for verification. SQLite is created at `data/aidle.db` by the migration command. Set `DATABASE_PATH` to use another location.
 
-## D1 and deployment
+## VPS deployment
 
-1. Create a D1 database: `pnpm wrangler d1 create aidle-db`.
-2. Put its ID into `wrangler.jsonc` in place of `<D1_DATABASE_ID>`.
-3. Apply migrations: `pnpm db:migrate:remote`.
-4. Seed: `pnpm db:seed -- --remote`.
-5. Set the selection secret interactively: `pnpm wrangler secret put DAILY_SELECTION_SECRET`.
-6. Deploy: `pnpm deploy`.
+The VPS deployment uses Docker Compose, a persistent SQLite volume, and the shared `echotrade_app_net` network so Caddy can proxy `aidle-app:3000`.
 
-The challenge rolls over at `00:00 UTC`. The first same-origin request to `/api/challenges/today?mode=classic` lazily, idempotently creates that day’s record using a SHA-256 derived selection. Production requires `DAILY_SELECTION_SECRET`; `.dev.vars` provides only the explicit local fallback.
+Configure these repository secrets before running the deploy workflow:
+
+- `VPS_HOST`
+- `VPS_USER`
+- `VPS_SSH_KEY`
+- `AIDLE_DEPLOY_PATH`
+- `AIDLE_DAILY_SELECTION_SECRET`
+
+Point both `aaidle.com` and `www.aaidle.com` at the VPS, then add the Aidle Caddy route from the shared edge configuration.
+
+The challenge rolls over at `00:00 UTC`. The first same-origin request to `/api/challenges/today?mode=classic` lazily, idempotently creates that day’s record using a SHA-256 derived selection. Production requires `DAILY_SELECTION_SECRET`.
 
 ## Content and modes
 
