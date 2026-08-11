@@ -1,4 +1,4 @@
-name: Create Aidle Release Tag
+name: Create aAidle Release Tag
 
 on:
   workflow_call:

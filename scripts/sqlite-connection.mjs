@@ -3,7 +3,7 @@ import { dirname } from "node:path";
 import Sqlite from "better-sqlite3";
 
 export function sqliteConnection() {
-  const databasePath = process.env.DATABASE_PATH ?? "./data/aidle.db";
+  const databasePath = process.env.DATABASE_PATH ?? "./data/aaidle.db";
   mkdirSync(dirname(databasePath), { recursive: true });
 
   const database = new Sqlite(databasePath);

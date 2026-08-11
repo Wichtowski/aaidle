@@ -20,8 +20,8 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
-          docker build --tag "aidle:$RELEASE_TAG" .
-          docker run --rm --entrypoint sh "aidle:$RELEASE_TAG" -ec '
-            DATABASE_PATH=/tmp/aidle.db node scripts/migrate.mjs
-            DATABASE_PATH=/tmp/aidle.db node scripts/seed.mjs
+          docker build --build-arg "AAIDLE_VERSION=$RELEASE_TAG" --tag "aaidle:$RELEASE_TAG" .
+          docker run --rm --entrypoint sh "aaidle:$RELEASE_TAG" -ec '
+            DATABASE_PATH=/tmp/aaidle.db node scripts/migrate.mjs
+            DATABASE_PATH=/tmp/aaidle.db node scripts/seed.mjs
           '

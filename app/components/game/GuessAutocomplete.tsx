@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { normalizeModelSearch } from "../../lib/domain/models/model-normalizer";
-import type { PublicModelIndex } from "../../lib/domain/models/model-types";
+import { normalizeModelSearch } from "../../../lib/domain/models/model-normalizer";
+import type { PublicModelIndex } from "../../../lib/domain/models/model-types";
 
 export function GuessAutocomplete({
   models,
   excluded,
   onPick,
+  disabled = false,
 }: {
   models: PublicModelIndex[];
   excluded: Set<string>;
   onPick: (model: PublicModelIndex) => void;
+  disabled?: boolean;
 }) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLFormElement>(null);
   const optionRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -55,6 +57,7 @@ export function GuessAutocomplete({
   }, [activeIndex]);
 
   const choose = (model: PublicModelIndex) => {
+    if (disabled || excluded.has(model.id)) return;
     onPick(model);
     setQuery("");
     setOpen(false);
@@ -62,6 +65,13 @@ export function GuessAutocomplete({
   };
 
   const firstAvailableIndex = () => results.findIndex((model) => !excluded.has(model.id));
+
+  const selected = results[activeIndex] ?? results[firstAvailableIndex()];
+  const canConfirm = Boolean(selected && !excluded.has(selected.id) && !disabled);
+
+  const confirm = () => {
+    if (selected) choose(selected);
+  };
 
   const moveActiveOption = (direction: 1 | -1) => {
     if (!results.length) return;
@@ -86,46 +96,50 @@ export function GuessAutocomplete({
   };
 
   return (
-    <div className="autocomplete" ref={rootRef}>
+    <form
+      className="autocomplete"
+      onSubmit={(event) => {
+        event.preventDefault();
+        confirm();
+      }}
+      ref={rootRef}
+    >
       <label htmlFor="model-search">Choose a model</label>
-      <input
-        aria-activedescendant={activeIndex >= 0 ? `model-option-${activeIndex}` : undefined}
-        aria-autocomplete="list"
-        aria-controls="model-options"
-        aria-expanded={open}
-        autoComplete="off"
-        id="model-search"
-        onChange={(event) => {
-          const value = event.target.value;
-          setQuery(value);
-          setOpen(value.trim().length > 0);
-          setActiveIndex(-1);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-            event.preventDefault();
-            if (!open && query.trim()) setOpen(true);
-            moveActiveOption(event.key === "ArrowDown" ? 1 : -1);
-          }
-
-          if (event.key === "Escape") {
-            setOpen(false);
+      <div className="autocomplete__field">
+        <input
+          aria-activedescendant={activeIndex >= 0 ? `model-option-${activeIndex}` : undefined}
+          aria-autocomplete="list"
+          aria-controls="model-options"
+          aria-expanded={open}
+          autoComplete="off"
+          disabled={disabled}
+          id="model-search"
+          onChange={(event) => {
+            const value = event.target.value;
+            setQuery(value);
+            setOpen(value.trim().length > 0);
             setActiveIndex(-1);
-          }
-
-          if (event.key === "Enter") {
-            const selected = results[activeIndex] ?? results[firstAvailableIndex()];
-
-            if (selected && !excluded.has(selected.id)) {
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
               event.preventDefault();
-              choose(selected);
+              if (!open && query.trim()) setOpen(true);
+              moveActiveOption(event.key === "ArrowDown" ? 1 : -1);
             }
-          }
-        }}
-        placeholder="Search GPT-4o, Claude, Gemini…"
-        role="combobox"
-        value={query}
-      />
+
+            if (event.key === "Escape") {
+              setOpen(false);
+              setActiveIndex(-1);
+            }
+          }}
+          placeholder="Search GPT-4o, Claude, Gemini…"
+          role="combobox"
+          value={query}
+        />
+        <button className="autocomplete__confirm" disabled={!canConfirm} type="submit">
+          Guess
+        </button>
+      </div>
       {open && results.length > 0 && (
         <ul id="model-options" role="listbox">
           {results.map((model, index) => {
@@ -134,7 +148,7 @@ export function GuessAutocomplete({
 
             return (
               <li
-                aria-disabled={isExcluded}
+                aria-disabled={isExcluded || disabled}
                 aria-selected={isActive}
                 id={`model-option-${index}`}
                 key={model.id}
@@ -145,12 +159,13 @@ export function GuessAutocomplete({
               >
                 <button
                   className={isActive ? "is-active" : undefined}
-                  disabled={isExcluded}
+                  disabled={isExcluded || disabled}
                   onClick={() => choose(model)}
                   onMouseDown={(event) => event.preventDefault()}
                   onMouseEnter={() => {
                     if (!isExcluded) setActiveIndex(index);
                   }}
+                  type="button"
                 >
                   <strong>{model.name}</strong>
                   <small>
@@ -163,6 +178,6 @@ export function GuessAutocomplete({
           })}
         </ul>
       )}
-    </div>
+    </form>
   );
 }

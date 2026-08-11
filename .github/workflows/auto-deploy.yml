@@ -1,4 +1,4 @@
-name: Release and Deploy Aidle
+name: Release and Deploy aAidle
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
         options: [auto, initial, patch, minor, major]
 
 concurrency:
-  group: aidle-production-release
+  group: aaidle-production-release
   cancel-in-progress: false
 
 permissions:

@@ -1,18 +1,18 @@
-# AIdle architecture
+# aAIdle architecture
 
 ```text
 Browser
-  | GET /api/challenges/today
+  | GET /api/games/classic/today
   v
 Vinext route handler on Node.js
-  | ensureDailyChallenge() -- deterministic secret-derived selection
+  | ensureDailyChallenge() - deterministic secret-derived selection
   v
 SQLite
   | public DTO: id/date/mode/expiresAt/columns (never answer_model_id)
   v
-Browser localStorage: aidle:progress:v1
+Browser localStorage: aaidle:progress:v1
 
-Browser POST /api/challenges/:id/guess + requestId
+Browser POST /api/games/classic/challenges/:id/guesses + requestId
   v
 Guess service
   |- loads hidden answer in server memory

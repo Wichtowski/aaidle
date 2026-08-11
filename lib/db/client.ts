@@ -8,7 +8,7 @@ let connection: Sqlite.Database | undefined;
 function sqliteConnection() {
   if (connection) return connection;
 
-  const databasePath = process.env.DATABASE_PATH ?? "./data/aidle.db";
+  const databasePath = process.env.DATABASE_PATH ?? "./data/aaidle.db";
   mkdirSync(dirname(databasePath), { recursive: true });
   connection = new Sqlite(databasePath);
   connection.pragma("journal_mode = WAL");

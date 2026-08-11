@@ -1,7 +1,7 @@
 node_modules
 .env*
 !.env.example
-aidle.env
+aaidle.env
 data/*.db
 data/*.db-shm
 data/*.db-wal
@@ -11,7 +11,6 @@ next-env.d.ts
 .vinext/
 .wrangler/
 
-test-results/
-playwright-report/
-allure-results/
+tests/results/
+tests/reports/
 tsconfig.tsbuildinfo

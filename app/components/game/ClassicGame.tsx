@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { GuessAutocomplete } from "./GuessAutocomplete";
 import { GuessBoard } from "./GuessBoard";
 import { DailyCountdown } from "./DailyCountdown";
 import { GameCompletedDialog } from "./GameCompletedDialog";
 import { HowToPlayDialog } from "./HowToPlayDialog";
-import { useLocalProgress } from "../../lib/storage/use-local-progress";
-import { updateProgress } from "../../lib/storage/local-progress-store";
-import { applySolvedStreak } from "../../lib/domain/players/streak-service";
-import type { PublicDailyChallengeDto } from "../../lib/domain/challenges/challenge-types";
-import type { PublicModelIndex, ComparableModel } from "../../lib/domain/models/model-types";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
+import { useLocalProgress } from "../../../lib/storage/use-local-progress";
+import { updateProgress } from "../../../lib/storage/local-progress-store";
+import { applySolvedStreak } from "../../../lib/domain/players/streak-service";
+import type { PublicDailyChallengeDto } from "../../../lib/domain/challenges/challenge-types";
+import type { PublicModelIndex, ComparableModel } from "../../../lib/domain/models/model-types";
+import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
 
 type SavedGuess = {
   requestId: string;
@@ -46,18 +46,60 @@ type GuessPayload = {
   error?: { message: string };
 };
 
+type PendingGuess = {
+  requestId: string;
+  model: PublicModelIndex;
+};
+
+const coveredComparison: ClassicComparison = {
+  provider: "unknown",
+  country: "unknown",
+  family: "unknown",
+  categories: "unknown",
+  inputModalities: "unknown",
+  outputModalities: "unknown",
+  useCases: "unknown",
+  reasoningSupport: "unknown",
+  openWeights: "unknown",
+  localExecution: "unknown",
+  releaseYear: "unknown",
+  contextWindowTokens: "unknown",
+};
+
+const coveredModel = (model: PublicModelIndex): ComparableModel => ({
+  id: model.id,
+  name: model.name,
+  provider: null,
+  country: null,
+  family: null,
+  categories: null,
+  inputModalities: null,
+  outputModalities: null,
+  useCases: null,
+  reasoningSupport: null,
+  openWeights: null,
+  localExecution: null,
+  releaseYear: null,
+  releaseDate: null,
+  contextWindowTokens: null,
+});
+
 export function ClassicGame() {
   const progress = useLocalProgress();
   const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(null);
   const [models, setModels] = useState<PublicModelIndex[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pendingGuess, setPendingGuess] = useState<PendingGuess | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [progressReady, setProgressReady] = useState(false);
+  const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
+  const animatedGameKey = useRef<string | null>(null);
 
   useEffect(() => {
     void Promise.all([
-      fetch("/api/challenges/today?mode=classic").then((r) => r.json() as Promise<DailyPayload>),
+      fetch("/api/games/classic/today").then((r) => r.json() as Promise<DailyPayload>),
       fetch("/api/models").then((r) => r.json() as Promise<ModelsPayload>),
     ])
       .then(([daily, index]) => {
@@ -70,7 +112,21 @@ export function ClassicGame() {
   const key = challenge ? `classic:${challenge.date}` : "";
   const game = key ? progress.games[key] : undefined;
   const guesses = (game?.guesses ?? []) as SavedGuess[];
-  const guessed = new Set(guesses.map((g) => g.modelId));
+  const guessed = new Set([
+    ...guesses.map((guess) => guess.modelId),
+    ...(pendingGuess ? [pendingGuess.model.id] : []),
+  ]);
+
+  useEffect(() => {
+    setProgressReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!progressReady || !key || animatedGameKey.current === key) return;
+
+    animatedGameKey.current = key;
+    setAnimatedGuessId(guesses.at(-1)?.requestId ?? null);
+  }, [guesses, key, progressReady]);
 
   useEffect(() => {
     if (challenge && !progress.preferences.hasSeenClassicPrivacy) setShowHowToPlay(true);
@@ -78,11 +134,12 @@ export function ClassicGame() {
 
   const closeHowToPlay = () => {
     setShowHowToPlay(false);
-    if (!progress.preferences.hasSeenClassicPrivacy)
+    if (!progress.preferences.hasSeenClassicPrivacy) {
       updateProgress((state) => ({
         ...state,
         preferences: { ...state.preferences, hasSeenClassicPrivacy: true },
       }));
+    }
   };
 
   useEffect(() => {
@@ -91,7 +148,7 @@ export function ClassicGame() {
       return;
     }
 
-    const revealDuration = 2_300;
+    const revealDuration = 2_900;
     const elapsed = Date.now() - new Date(game.completedAt).getTime();
     const timer = window.setTimeout(
       () => setShowCompletion(true),
@@ -108,9 +165,11 @@ export function ClassicGame() {
     setError(null);
     const requestId = crypto.randomUUID();
     const attemptNumber = guesses.length + 1;
+    setAnimatedGuessId(requestId);
+    setPendingGuess({ requestId, model });
 
     try {
-      const response = await fetch(`/api/challenges/${challenge.id}/guess`, {
+      const response = await fetch(`/api/games/classic/challenges/${challenge.id}/guesses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -183,7 +242,9 @@ export function ClassicGame() {
             : state.stats,
         };
       });
+      setPendingGuess(null);
     } catch (e) {
+      setPendingGuess(null);
       setError(e instanceof Error ? e.message : "Guess failed. You can retry safely.");
     } finally {
       setBusy(false);
@@ -196,7 +257,7 @@ export function ClassicGame() {
     <main className="page game-page">
       <header className="game-header">
         <a href="/" className="brand">
-          A<span>AI</span>dle
+          a<span>A</span>idle
         </a>
         {challenge && <DailyCountdown expiresAt={challenge.expiresAt} />}
       </header>
@@ -211,7 +272,7 @@ export function ClassicGame() {
 
         {challenge && game?.status !== "solved" && (
           <>
-            <GuessAutocomplete models={models} excluded={guessed} onPick={pick} />
+            <GuessAutocomplete disabled={busy} models={models} excluded={guessed} onPick={pick} />
           </>
         )}
 
@@ -229,13 +290,34 @@ export function ClassicGame() {
 
       {challenge && (
         <GuessBoard
-          guesses={guesses.map((guess) => ({
-            ...guess,
-            matchingCategories: guess.matchingCategories ?? [],
-            matchingInputModalities: guess.matchingInputModalities ?? [],
-            matchingOutputModalities: guess.matchingOutputModalities ?? [],
-            matchingUseCases: guess.matchingUseCases ?? [],
-          }))}
+          guesses={[
+            ...guesses.map((guess) => ({
+              ...guess,
+              animate: guess.requestId === animatedGuessId,
+              revealed: true,
+              showCards: true,
+              matchingCategories: guess.matchingCategories ?? [],
+              matchingInputModalities: guess.matchingInputModalities ?? [],
+              matchingOutputModalities: guess.matchingOutputModalities ?? [],
+              matchingUseCases: guess.matchingUseCases ?? [],
+            })),
+            ...(pendingGuess
+              ? [
+                  {
+                    requestId: pendingGuess.requestId,
+                    model: coveredModel(pendingGuess.model),
+                    comparison: coveredComparison,
+                    animate: false,
+                    revealed: false,
+                    showCards: false,
+                    matchingCategories: [],
+                    matchingInputModalities: [],
+                    matchingOutputModalities: [],
+                    matchingUseCases: [],
+                  },
+                ]
+              : []),
+          ]}
         />
       )}
 

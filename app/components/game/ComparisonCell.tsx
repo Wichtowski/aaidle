@@ -1,13 +1,17 @@
 import type { CSSProperties, ReactNode } from "react";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
+import { FaArrowDown, FaArrowUp, FaQuestion } from "react-icons/fa6";
 export function ComparisonCell({
   status,
   children,
   delay = 0,
+  revealed = true,
+  animate = false,
 }: {
   status: string;
   children: ReactNode;
   delay?: number;
+  revealed?: boolean;
+  animate?: boolean;
 }) {
   const label =
     status === "correct"
@@ -29,9 +33,17 @@ export function ComparisonCell({
       style={{ "--flip-delay": `${delay}ms` } as CSSProperties}
       aria-label={label}
     >
-      <div className="comparison-card__inner">
+      <div
+        className={`comparison-card__inner${
+          revealed
+            ? animate
+              ? " comparison-card__inner--animate"
+              : " comparison-card__inner--revealed"
+            : ""
+        }`}
+      >
         <div className="comparison-card__face comparison-card__face--cover">
-          {DirectionIcon && <DirectionIcon aria-hidden focusable="false" />}
+          <FaQuestion aria-hidden focusable="false" />
         </div>
         <div
           className={`comparison comparison--${status} comparison-card__face comparison-card__face--result`}

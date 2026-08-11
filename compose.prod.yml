@@ -1,21 +1,24 @@
-name: aidle
+name: aaidle
 
 services:
   app:
     build:
       context: .
-    container_name: aidle-app
+      args:
+        AAIDLE_VERSION: ${AAIDLE_VERSION:-dev}
+    container_name: aaidle-app
     restart: unless-stopped
     environment:
-      DATABASE_PATH: /data/aidle.db
+      DATABASE_PATH: /data/aaidle.db
       DAILY_SELECTION_SECRET: ${DAILY_SELECTION_SECRET}
+      AAIDLE_VERSION: ${AAIDLE_VERSION:-dev}
       NODE_ENV: production
     volumes:
       - sqlite_data:/data
     networks:
       - edge
     mem_limit: 256m
-    cpus: "0.5"
+    cpus: "1.0"
     pids_limit: 256
     logging:
       driver: json-file
@@ -30,4 +33,4 @@ networks:
 
 volumes:
   sqlite_data:
-    name: aidle_sqlite_data
+    name: aaidle_sqlite_data

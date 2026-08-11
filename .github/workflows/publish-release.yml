@@ -37,21 +37,21 @@ jobs:
             --exclude=.next \
             --exclude=.vinext \
             --exclude=.wrangler \
-            -czf "aidle-$RELEASE_TAG.tar.gz" .
+            -czf "aaidle-$RELEASE_TAG.tar.gz" .
       - name: Publish release asset
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" "aidle-$RELEASE_TAG.tar.gz" --clobber
+            gh release upload "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --clobber
           else
-            gh release create "$RELEASE_TAG" "aidle-$RELEASE_TAG.tar.gz" --title "Aidle $RELEASE_TAG" --generate-notes
+            gh release create "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --title "aAidle $RELEASE_TAG" --generate-notes
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: aidle-${{ inputs.release_tag }}
-          path: aidle-${{ inputs.release_tag }}.tar.gz
+          name: aaidle-${{ inputs.release_tag }}
+          path: aaidle-${{ inputs.release_tag }}.tar.gz
           if-no-files-found: error
       - name: Write summary
         env:

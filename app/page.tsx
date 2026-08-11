@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { FaArrowRight } from "react-icons/fa6";
+import { FaArrowRight, FaHourglassHalf } from "react-icons/fa6";
+import { emojiGame } from "../lib/domain/games/emoji/definition";
 export default function Home() {
   return (
     <main className="page home">
       <nav>
         <a className="brand" href="/">
-          A<span>AI</span>dle
+          a<span>A</span>idle
         </a>
         <div>
           <Link href="/stats">Stats</Link>
@@ -23,6 +24,30 @@ export default function Home() {
         <div className="hero__actions">
           <Link className="button button--primary" href="/classic">
             Play Classic <FaArrowRight aria-hidden focusable="false" />
+          </Link>
+        </div>
+      </section>
+      <section aria-labelledby="games-title" className="game-modes">
+        <div className="game-modes__heading">
+          <p className="eyebrow">Daily games</p>
+          <h2 id="games-title">Choose your challenge</h2>
+        </div>
+        <div className="game-modes__grid">
+          <Link className="game-mode-card" href="/classic">
+            <span>Available now</span>
+            <h3>Classic</h3>
+            <p>Use model metadata and comparison clues to find today’s answer.</p>
+            <strong>
+              Play Classic <FaArrowRight aria-hidden focusable="false" />
+            </strong>
+          </Link>
+          <Link className="game-mode-card game-mode-card--in-progress" href="/emoji">
+            <span>
+              <FaHourglassHalf aria-hidden focusable="false" /> In progress
+            </span>
+            <h3>{emojiGame.name}</h3>
+            <p>{emojiGame.summary}</p>
+            <strong>View game details</strong>
           </Link>
         </div>
       </section>

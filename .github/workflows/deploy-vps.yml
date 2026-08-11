@@ -7,15 +7,15 @@ on:
         required: true
         type: string
     secrets:
-      VPS_HOST:
+      AAIDLE_VPS_HOST:
         required: true
-      VPS_USER:
+      AAIDLE_VPS_USER:
         required: true
-      VPS_SSH_KEY:
+      AAIDLE_VPS_SSH_KEY:
         required: true
-      AIDLE_DEPLOY_PATH:
+      AAIDLE_DEPLOY_PATH:
         required: true
-      AIDLE_DAILY_SELECTION_SECRET:
+      AAIDLE_DAILY_SELECTION_SECRET:
         required: true
 
 jobs:
@@ -26,35 +26,38 @@ jobs:
       name: production
       url: https://aaidle.com
     env:
-      DEPLOY_PATH: ${{ secrets.AIDLE_DEPLOY_PATH }}
+      DEPLOY_PATH: ${{ secrets.AAIDLE_DEPLOY_PATH }}
       RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: aidle-${{ inputs.release_tag }}
+          name: aaidle-${{ inputs.release_tag }}
           path: artifact
       - name: Prepare release upload
-        run: mv "artifact/aidle-$RELEASE_TAG.tar.gz" "aidle-$RELEASE_TAG.tar.gz"
+        run: mv "artifact/aaidle-$RELEASE_TAG.tar.gz" "aaidle-$RELEASE_TAG.tar.gz"
       - name: Create production environment file
         env:
-          DAILY_SELECTION_SECRET: ${{ secrets.AIDLE_DAILY_SELECTION_SECRET }}
+          AAIDLE_DAILY_SELECTION_SECRET: ${{ secrets.AAIDLE_DAILY_SELECTION_SECRET }}
         run: |
           umask 077
-          printf 'DAILY_SELECTION_SECRET=%s\n' "$DAILY_SELECTION_SECRET" > aidle.env
+          {
+            printf 'DAILY_SELECTION_SECRET=%s\n' "$AAIDLE_DAILY_SELECTION_SECRET"
+            printf 'AAIDLE_VERSION=%s\n' "$RELEASE_TAG"
+          } > aaidle.env
       - name: Copy release to VPS
         uses: appleboy/scp-action@v1.0.0
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: aidle-${{ inputs.release_tag }}.tar.gz,aidle.env
+          host: ${{ secrets.AAIDLE_VPS_HOST }}
+          username: ${{ secrets.AAIDLE_VPS_USER }}
+          key: ${{ secrets.AAIDLE_VPS_SSH_KEY }}
+          source: aaidle-${{ inputs.release_tag }}.tar.gz,aaidle.env
           target: /tmp
       - name: Deploy approved release
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          host: ${{ secrets.AAIDLE_VPS_HOST }}
+          username: ${{ secrets.AAIDLE_VPS_USER }}
+          key: ${{ secrets.AAIDLE_VPS_SSH_KEY }}
           command_timeout: 20m
           envs: DEPLOY_PATH,RELEASE_TAG
           script: |
@@ -64,8 +67,8 @@ jobs:
             staging_dir=$(mktemp -d "${DEPLOY_PATH}/.deploy.XXXXXX")
             trap 'rm -rf "$staging_dir"' EXIT
 
-            tar -xzf "/tmp/aidle-${RELEASE_TAG}.tar.gz" -C "$staging_dir"
-            mv /tmp/aidle.env "$staging_dir/.env"
+            tar -xzf "/tmp/aaidle-${RELEASE_TAG}.tar.gz" -C "$staging_dir"
+            mv /tmp/aaidle.env "$staging_dir/.env"
             chmod 600 "$staging_dir/.env"
 
             cd "$staging_dir"
@@ -76,7 +79,7 @@ jobs:
             mv "$staging_dir" "$app_dir"
             trap - EXIT
             rm -rf "${DEPLOY_PATH}/releases" "${DEPLOY_PATH}/current"
-            rm -f "/tmp/aidle-${RELEASE_TAG}.tar.gz"
+            rm -f "/tmp/aaidle-${RELEASE_TAG}.tar.gz"
       - name: Write summary
         run: |
           {

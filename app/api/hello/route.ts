@@ -1,5 +1,5 @@
 export function GET() {
   return Response.json({
-    message: "Hello from Aidle",
+    message: "Hello from aAidle",
   });
 }

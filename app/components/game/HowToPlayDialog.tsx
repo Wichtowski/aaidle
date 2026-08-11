@@ -81,6 +81,11 @@ export function HowToPlayDialog({ open, onClose }: { open: boolean; onClose: () 
         <p className="how-to-play-modal__tip">
           There is no guess limit: follow the clues, keep narrowing, and protect your streak.
         </p>
+        <div className="how-to-play-modal__actions">
+          <button className="button button--primary" type="button" onClick={onClose}>
+            Got it
+          </button>
+        </div>
       </section>
     </div>
   );
