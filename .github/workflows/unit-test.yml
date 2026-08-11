@@ -15,14 +15,15 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_tag }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.3
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
       - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Validate and test
         run: |
           pnpm db:validate-seed
