@@ -9,6 +9,9 @@ RUN pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 
+ARG AAIDLE_VERSION=dev
+ENV AAIDLE_VERSION=$AAIDLE_VERSION
+
 COPY . .
 RUN pnpm build
 
@@ -18,8 +21,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+ARG AAIDLE_VERSION=dev
+ENV AAIDLE_VERSION=$AAIDLE_VERSION
 
-RUN corepack enable && useradd --create-home --system --uid 1001 --user-group aidle && mkdir /data && chown aidle:aidle /data
+RUN corepack enable && useradd --create-home --system --uid 1001 --user-group aaidle && mkdir /data && chown aaidle:aaidle /data
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
@@ -30,7 +35,7 @@ COPY --from=build /app/data ./data
 COPY --from=build /app/database ./database
 COPY --from=build /app/scripts ./scripts
 
-USER aidle
+USER aaidle
 VOLUME ["/data"]
 EXPOSE 3000
 

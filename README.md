@@ -1,40 +1,52 @@
-# AIdle
+# aAIdle
 
-AIdle is a daily, LoLdle-style guessing game for AI models. The hidden daily answer remains exclusively in SQLite; the browser receives a public challenge DTO and server-computed comparison results only.
+aAIdle is a daily guessing game for AI models.
+It runs on a VPS with Node.js and SQLite.
+The daily answer stays server-side.
 
-## Stack
-
-Vinext App Router, React, strict TypeScript, Tailwind CSS, Node.js, SQLite, Zod, Vitest, React Testing Library, Playwright, and pnpm. There is no Python backend.
-
-## Local setup
+## Local development
 
 ```bash
 pnpm install
 cp .env.example .env
-pnpm db:validate-seed
 pnpm db:migrate
 pnpm db:seed
 pnpm dev
 ```
 
-Use `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:e2e` for verification. SQLite is created at `data/aidle.db` by the migration command. Set `DATABASE_PATH` to use another location.
+Run all required checks with:
 
-## VPS deployment
+```bash
+pnpm check
+pnpm test:e2e
+```
 
-The VPS deployment uses Docker Compose, a persistent SQLite volume, and the shared `echotrade_app_net` network so Caddy can proxy `aidle-app:3000`.
+## Delivery
 
-Configure these repository secrets before running the deploy workflow:
+Pull requests to `main` run `pnpm check`.
+Formatting-only lint failures are fixed and committed by `github-actions[bot]` to the PR branch.
+Automation never commits to `main`.
 
-- `VPS_HOST`
-- `VPS_USER`
-- `VPS_SSH_KEY`
-- `AIDLE_DEPLOY_PATH`
-- `AIDLE_DAILY_SELECTION_SECRET`
+After merge, the release workflow creates a SemVer tag, verifies the application and Docker image, publishes a GitHub Release, then waits for `production` approval before deploying.
+The release tag is exposed as `html[version]` in the deployed page.
+Production browser tests run in two shards and publish an Allure report to GitHub Pages.
 
-Point both `aaidle.com` and `www.aaidle.com` at the VPS, then add the Aidle Caddy route from the shared edge configuration.
+Configure the `production` GitHub Environment with a required reviewer.
+Set GitHub Pages to deploy from GitHub Actions.
 
-The challenge rolls over at `00:00 UTC`. The first same-origin request to `/api/challenges/today?mode=classic` lazily, idempotently creates that day’s record using a SHA-256 derived selection. Production requires `DAILY_SELECTION_SECRET`.
+Repository secrets:
 
-## Content and modes
+- `AAIDLE_VPS_HOST`
+- `AAIDLE_VPS_USER`
+- `AAIDLE_VPS_SSH_KEY`
+- `AAIDLE_DEPLOY_PATH`
+- `AAIDLE_DAILY_SELECTION_SECRET`
 
-Add verified model records to [data/models.seed.json](data/models.seed.json) and run `pnpm db:validate-seed` before seeding. The domain exposes a `ChallengeMode` union for future modes; only `classic` is currently registered and implemented.
+## Model catalog
+
+Update [data/models.seed.json](data/models.seed.json), then run:
+
+```bash
+pnpm db:validate-seed
+pnpm db:seed
+```

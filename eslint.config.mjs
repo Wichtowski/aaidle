@@ -7,5 +7,24 @@ export default tseslint.config(
     files: ["scripts/**/*.mjs"],
     languageOptions: { globals: { URL: "readonly", process: "readonly", console: "readonly" } },
   },
-  { ignores: ["dist/**", ".next/**", ".wrangler/**", "worker-configuration.d.ts"] },
+  {
+    files: ["app/**/*.{ts,tsx}", "lib/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
+      "curly": ["error", "multi-line"],
+      "eqeqeq": ["error", "always", { null: "ignore" }],
+      "no-console": ["error", { allow: ["warn", "error"] }],
+    },
+  },
+  {
+    ignores: [
+      "dist/**",
+      ".next/**",
+      ".vinext/**",
+      ".wrangler/**",
+      "tests/results/**",
+      "tests/reports/**",
+      "worker-configuration.d.ts",
+    ],
+  },
 );

@@ -1,6 +1,6 @@
 import { ComparisonCell } from "./ComparisonCell";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
+import type { ComparableModel } from "../../../lib/domain/models/model-types";
 
 const countryForProvider: Record<string, string> = {
   OpenAI: "United States",
@@ -84,6 +84,9 @@ export function GuessRow({
   matchingOutputModalities,
   matchingUseCases,
   rowIndex,
+  revealed,
+  animate,
+  showCards,
 }: {
   model: ComparableModel;
   comparison: ClassicComparison;
@@ -92,6 +95,9 @@ export function GuessRow({
   matchingOutputModalities: string[];
   matchingUseCases: string[];
   rowIndex: number;
+  revealed: boolean;
+  animate: boolean;
+  showCards: boolean;
 }) {
   const fields = [
     { status: comparison.provider, value: label(model.provider) },
@@ -133,13 +139,21 @@ export function GuessRow({
         <span>Guess {rowIndex + 1}.</span>
         <strong>{model.name}</strong>
       </header>
-      <div className="guess-row__cards">
-        {fields.map((field, index) => (
-          <ComparisonCell delay={index * 100} key={index} status={field.status}>
-            {field.value}
-          </ComparisonCell>
-        ))}
-      </div>
+      {showCards && (
+        <div className="guess-row__cards">
+          {fields.map((field, index) => (
+            <ComparisonCell
+              animate={animate}
+              delay={index * 125}
+              key={index}
+              revealed={revealed}
+              status={field.status}
+            >
+              {field.value}
+            </ComparisonCell>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

@@ -1,7 +1,16 @@
-import { database } from "../../../../../lib/db/client";
+import { database } from "../../../../../../../lib/db/client";
+import { errorResponse } from "../../../../../../../lib/validation/api";
 export async function GET(_: Request, { params }: { params: Promise<{ challengeId: string }> }) {
   const { challengeId } = await params;
   const DB = database();
+  const challenge = await DB.prepare(
+    "SELECT 1 FROM daily_challenges WHERE id = ? AND mode = 'classic'",
+  )
+    .bind(challengeId)
+    .first();
+  if (!challenge) {
+    return errorResponse("CHALLENGE_NOT_FOUND", "Challenge not found.", 404);
+  }
   const totals = await DB.prepare(
     'SELECT COALESCE(SUM(total_guess_count), 0) AS "totalGuesses", COALESCE(SUM(unique_player_count), 0) AS "uniquePlayers" FROM challenge_guess_stats WHERE challenge_id = ?',
   )

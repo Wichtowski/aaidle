@@ -9,19 +9,22 @@ const migrationFiles = readdirSync(migrationsDirectory)
 
 try {
   database.exec(`
-    CREATE TABLE IF NOT EXISTS aidle_migrations (
+    CREATE TABLE IF NOT EXISTS aaidle_migrations (
       name TEXT PRIMARY KEY,
       applied_at INTEGER NOT NULL DEFAULT (unixepoch())
     )
   `);
 
-  const isApplied = database.prepare("SELECT 1 FROM aidle_migrations WHERE name = ?");
-  const recordMigration = database.prepare("INSERT INTO aidle_migrations (name) VALUES (?)");
+  const isApplied = database.prepare("SELECT 1 FROM aaidle_migrations WHERE name = ?");
+  const recordMigration = database.prepare("INSERT INTO aaidle_migrations (name) VALUES (?)");
 
   for (const file of migrationFiles) {
     if (isApplied.get(file)) continue;
 
-    const migration = readFileSync(new URL(`../database/migrations/${file}`, import.meta.url), "utf8");
+    const migration = readFileSync(
+      new URL(`../database/migrations/${file}`, import.meta.url),
+      "utf8",
+    );
     database.exec("BEGIN IMMEDIATE");
     try {
       database.exec(migration);

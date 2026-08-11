@@ -1,0 +1,65 @@
+name: Publish GitHub Release
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+    outputs:
+      tag:
+        value: ${{ jobs.publish.outputs.tag }}
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ inputs.release_tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag }}
+      - name: Create deployment archive
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          tar \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=.env \
+            --exclude=.env.* \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=.next \
+            --exclude=.vinext \
+            --exclude=.wrangler \
+            -czf "aaidle-$RELEASE_TAG.tar.gz" .
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --clobber
+          else
+            gh release create "$RELEASE_TAG" "aaidle-$RELEASE_TAG.tar.gz" --title "aAidle $RELEASE_TAG" --generate-notes
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aaidle-${{ inputs.release_tag }}
+          path: aaidle-${{ inputs.release_tag }}.tar.gz
+          if-no-files-found: error
+      - name: Write summary
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          {
+            echo "## Release $RELEASE_TAG"
+            echo
+            echo "- GitHub Release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$RELEASE_TAG"
+            echo "- Deployment waits for production approval"
+          } >> "$GITHUB_STEP_SUMMARY"

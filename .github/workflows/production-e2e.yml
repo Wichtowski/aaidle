@@ -1,0 +1,109 @@
+name: Production E2E
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    name: Production E2E shard ${{ matrix.id }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: 1
+            shard: 1/2
+          - id: 2
+            shard: 2/2
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.3
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install test dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - name: Wait for the deployed app
+        run: curl --fail --show-error --retry 12 --retry-all-errors --retry-delay 5 https://aaidle.com/classic
+      - name: Test the deployed domain
+        env:
+          PLAYWRIGHT_BASE_URL: https://aaidle.com
+        run: pnpm exec playwright test --shard=${{ matrix.shard }}
+      - name: Upload Playwright blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-blob-${{ matrix.id }}
+          path: tests/reports/blob
+          if-no-files-found: ignore
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.id }}
+          path: tests/reports/allure-results
+          if-no-files-found: ignore
+
+  publish-allure-report:
+    name: Publish Allure report
+    needs: test
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.3
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install report tooling
+        run: pnpm install --frozen-lockfile
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: tests/reports/allure-input
+          merge-multiple: true
+      - name: Build Allure report
+        run: |
+          pnpm exec allure generate tests/reports/allure-input --clean -o tests/reports/allure-html
+          touch tests/reports/allure-html/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tests/reports/allure-html
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Write summary
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          {
+            echo "## Production E2E"
+            echo
+            echo "- Release: $RELEASE_TAG"
+            echo "- [Allure report]($PAGE_URL)"
+          } >> "$GITHUB_STEP_SUMMARY"

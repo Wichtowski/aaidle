@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FaCookieBite } from "react-icons/fa6";
 
-const consentCookie = "aidle_cookie_consent";
+const consentCookie = "aaidle_cookie_consent";
 
 function readConsent() {
   return document.cookie.split("; ").some((entry) => entry.startsWith(`${consentCookie}=`));
@@ -27,7 +27,7 @@ export function CookieConsent() {
     <aside className="cookie-consent" aria-label="Cookie consent">
       <FaCookieBite aria-hidden focusable="false" />
       <p>
-        AIdle uses essential browser storage for your game progress and this preference. We do not
+        aAidle uses essential browser storage for your game progress and this preference. We do not
         use advertising cookies.
       </p>
       <div>

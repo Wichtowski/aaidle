@@ -1,6 +1,6 @@
 import { GuessRow } from "./GuessRow";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
+import type { ComparableModel } from "../../../lib/domain/models/model-types";
 const headings = [
   "Provider",
   "Country",
@@ -25,6 +25,10 @@ export function GuessBoard({
     matchingInputModalities: string[];
     matchingUseCases: string[];
     matchingOutputModalities: string[];
+    requestId: string;
+    revealed: boolean;
+    animate: boolean;
+    showCards: boolean;
   }>;
 }) {
   return (
@@ -44,7 +48,7 @@ export function GuessBoard({
         </div>
       </div>
       {guesses.map((guess, index) => (
-        <GuessRow {...guess} rowIndex={index} key={`${guess.model.id}-${index}`} />
+        <GuessRow {...guess} rowIndex={index} key={guess.requestId} />
       ))}
     </section>
   );

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FaCheck, FaCopy } from "react-icons/fa6";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
+import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
 
 const emojiForStatus: Record<string, string> = {
   correct: "🟩",
@@ -33,10 +33,10 @@ export function ShareResultButton({
         .join(""),
     );
     const share = [
-      `AIdle Classic — ${date}`,
+      `aAidle Classic - ${date}`,
       `Solved in ${guesses.length} guesses 🔥 ${streak}`,
       ...grid,
-      "#AIdle",
+      "#aAidle",
       window.location.origin,
     ].join("\n");
 

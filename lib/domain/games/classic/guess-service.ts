@@ -1,7 +1,8 @@
-import { database } from "../../db/client";
-import { catalogModel } from "../../server/model-catalog";
-import { compareClassicModels } from "./comparison-engine";
-export async function submitGuess(input: {
+import { database } from "../../../db/client";
+import { catalogModel } from "../../../server/model-catalog";
+import { compareClassicModels } from "../../guesses/comparison-engine";
+
+export async function submitClassicGuess(input: {
   guessedModelId: string;
   attemptNumber: number;
   challengeId: string;

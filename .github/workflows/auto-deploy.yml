@@ -1,0 +1,61 @@
+name: Release and Deploy aAidle
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: SemVer increment
+        required: true
+        default: auto
+        type: choice
+        options: [auto, initial, patch, minor, major]
+
+concurrency:
+  group: aaidle-production-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  create-release-tag:
+    uses: ./.github/workflows/create-release-tag.yml
+    with:
+      bump: ${{ inputs.bump || 'auto' }}
+      source_ref: ${{ github.event_name == 'push' && github.sha || 'main' }}
+
+  unit-tests:
+    needs: create-release-tag
+    uses: ./.github/workflows/unit-test.yml
+    with:
+      release_tag: ${{ needs.create-release-tag.outputs.tag }}
+
+  docker-build:
+    needs: create-release-tag
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      release_tag: ${{ needs.create-release-tag.outputs.tag }}
+
+  publish-release:
+    needs: [create-release-tag, unit-tests, docker-build]
+    uses: ./.github/workflows/publish-release.yml
+    with:
+      release_tag: ${{ needs.create-release-tag.outputs.tag }}
+
+  deploy:
+    needs: publish-release
+    uses: ./.github/workflows/deploy-vps.yml
+    with:
+      release_tag: ${{ needs.publish-release.outputs.tag }}
+    secrets: inherit
+
+  production-e2e:
+    needs: [deploy, publish-release]
+    uses: ./.github/workflows/production-e2e.yml
+    with:
+      release_tag: ${{ needs.publish-release.outputs.tag }}
+    secrets: inherit
