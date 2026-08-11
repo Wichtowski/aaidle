@@ -1,0 +1,11 @@
+node_modules
+.env*
+.next
+next-env.d.ts
+/dist/
+.vinext/
+.wrangler/
+
+test-results/
+playwright-report/
+tsconfig.tsbuildinfo
