@@ -10,6 +10,7 @@ const countryCode = {
   France: "FR",
   Poland: "PL",
 };
+const unknownProvider = "Unknown";
 const slug = (value) =>
   value
     .toLowerCase()
@@ -38,6 +39,9 @@ const upsertModel = database.prepare(`
     source_label, created_at, updated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 1, '2026-08-11', 'Official model documentation', ?, ?)
   ON CONFLICT(id) DO UPDATE SET
+    provider_id = excluded.provider_id,
+    family_id = excluded.family_id,
+    name = excluded.name,
     release_date = excluded.release_date,
     release_year = excluded.release_year,
     context_window_tokens = excluded.context_window_tokens,
@@ -79,43 +83,46 @@ const insertLink = {
 
 const seed = database.transaction(() => {
   for (const model of models) {
-    const providerId = slug(model.provider);
-    const familyId = `${providerId}-${slug(model.family)}`;
-    const releaseYear = Number(model.releaseDate.slice(0, 4));
+    const providerName = model.provider ?? unknownProvider;
+    const providerId = slug(providerName);
+    const familyId = model.family ? `${providerId}-${slug(model.family)}` : null;
+    const releaseYear = model.releaseDate ? Number(model.releaseDate.slice(0, 4)) : null;
 
     upsertProvider.run(
       providerId,
-      model.provider,
+      providerName,
       providerId,
       countryCode[model.country] ?? "UN",
       now,
       now,
     );
-    insertFamily.run(familyId, providerId, model.family, slug(model.family), now, now);
+    if (familyId) {
+      insertFamily.run(familyId, providerId, model.family, slug(model.family), now, now);
+    }
     upsertModel.run(
       model.id,
       providerId,
       familyId,
       model.name,
       model.id,
-      model.releaseDate,
+      model.releaseDate ?? null,
       releaseYear,
       model.contextWindowTokens,
-      model.openWeights ? 1 : 0,
-      model.localExecution,
-      model.reasoningSupport,
+      model.openWeights == null ? null : model.openWeights ? 1 : 0,
+      model.localExecution ?? "unknown",
+      model.reasoningSupport ?? "unknown",
       now,
       now,
     );
 
-    for (const alias of model.aliases)
+    for (const alias of model.aliases ?? [])
       insertAlias.run(`${model.id}-${slug(alias)}`, model.id, alias, slug(alias));
 
     for (const [table, values, link] of [
       ["categories", model.categories, "model_categories"],
-      ["modalities", model.inputModalities, "model_input_modalities"],
-      ["modalities", model.outputModalities, "model_output_modalities"],
-      ["use_cases", model.useCases, "model_use_cases"],
+      ["modalities", model.inputModalities ?? [], "model_input_modalities"],
+      ["modalities", model.outputModalities ?? [], "model_output_modalities"],
+      ["use_cases", model.useCases ?? [], "model_use_cases"],
     ]) {
       for (const value of values) {
         const id = slug(value);

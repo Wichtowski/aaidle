@@ -71,6 +71,29 @@ export function HowToPlayDialog({ open, onClose }: { open: boolean; onClose: () 
           <li>Previously guessed models stay visible but cannot be submitted again.</li>
         </ul>
 
+        <h3 className="how-to-play-modal__section-title">Choose your difficulty</h3>
+        <p className="how-to-play-modal__modes-intro">
+          Every difficulty has its own daily answer and saved progress. The model pools build on one
+          another, so a tougher mode always includes the earlier one.
+        </p>
+        <ul className="how-to-play-modal__modes">
+          <li>
+            <strong>Normal</strong>
+            <span>A focused pool of well-known large language models.</span>
+          </li>
+          <li>
+            <strong>Challenge</strong>
+            <span>Broader model catalogue, including every model in Normal and more specialist entries.</span>
+          </li>
+          <li>
+            <strong>Hardcore</strong>
+            <span>
+              The complete model catalogue, including every Normal and Challenge model. Only exact
+              matches are green. Every other clue is red, with no arrows or highlighted overlaps.
+            </span>
+          </li>
+        </ul>
+
         <h3 className="how-to-play-modal__section-title">Your data</h3>
         <p className="how-to-play-modal__privacy">
           <FaHardDrive aria-hidden="true" /> Until you sign in, your guesses, streak, and statistics

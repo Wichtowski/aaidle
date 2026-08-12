@@ -9,19 +9,31 @@ on:
 
 jobs:
   build:
-    name: Docker build test
+    name: Test and publish container image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_tag }}
       - name: Build and initialize production image
         env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
-          docker build --build-arg "AAIDLE_VERSION=$RELEASE_TAG" --tag "aaidle:$RELEASE_TAG" .
-          docker run --rm --entrypoint sh "aaidle:$RELEASE_TAG" -ec '
+          image="${IMAGE_NAME,,}:$RELEASE_TAG"
+          docker build --build-arg "AAIDLE_VERSION=$RELEASE_TAG" --tag "$image" .
+          docker run --rm --entrypoint sh "$image" -ec '
             DATABASE_PATH=/tmp/aaidle.db node scripts/migrate.mjs
             DATABASE_PATH=/tmp/aaidle.db node scripts/seed.mjs
           '
+      - name: Sign in to GitHub Container Registry
+        run: echo "${{ github.token }}" | docker login ghcr.io --username "${{ github.actor }}" --password-stdin
+      - name: Publish tagged image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: docker push "${IMAGE_NAME,,}:$RELEASE_TAG"

@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { SiteNavbar } from "../components/ui/SiteNavbar";
 import { useLocalProgress } from "../../lib/storage/use-local-progress";
 
 const historyPageSize = 3;
@@ -21,11 +22,7 @@ export default function Stats() {
 
   return (
     <main className="page prose">
-      <nav>
-        <a className="brand" href="/">
-          A<span>AI</span>dle
-        </a>
-      </nav>
+      <SiteNavbar />
       <p className="eyebrow">Your device record</p>
       <h1>Statistics</h1>
       <div className="stat-grid">

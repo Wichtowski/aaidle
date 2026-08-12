@@ -27,8 +27,9 @@ Pull requests to `main` run `pnpm check`.
 Formatting-only lint failures are fixed and committed by `github-actions[bot]` to the PR branch.
 Automation never commits to `main`.
 
-After merge, the release workflow creates a SemVer tag, verifies the application and Docker image, then publishes the deployment archive as a GitHub Release asset.
-After `production` approval, the deploy workflow downloads that versioned release asset from GitHub, uploads it temporarily to the VPS, and removes the uploaded archive after deployment.
+After merge, the release workflow creates a SemVer tag, verifies the application and Docker image, and publishes the tagged image to GitHub Container Registry.
+After `production` approval, the VPS pulls that image and keeps only the runtime Compose file, environment file, and persistent SQLite volume.
+Make the linked GitHub Container Registry package public so the VPS can pull it without a registry credential.
 The release tag is exposed as `html[version]` in the deployed page.
 Production browser tests run in two shards and publish an Allure report to GitHub Pages.
 
@@ -42,6 +43,19 @@ Repository secrets:
 - `AAIDLE_VPS_SSH_KEY`
 - `AAIDLE_DEPLOY_PATH`
 - `AAIDLE_DAILY_SELECTION_SECRET`
+
+## Accounts
+
+Accounts support GitHub and Google OAuth, plus email/password sign-in.
+The production environment also needs these secrets before account sign-in is enabled:
+
+- `AAIDLE_AUTH_SECRET`
+- `AAIDLE_GITHUB_CLIENT_ID`
+- `AAIDLE_GITHUB_CLIENT_SECRET`
+- `AAIDLE_GOOGLE_CLIENT_ID`
+- `AAIDLE_GOOGLE_CLIENT_SECRET`
+
+Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v1/auth/oauth/<provider>/callback`.
 
 ## Model catalog
 

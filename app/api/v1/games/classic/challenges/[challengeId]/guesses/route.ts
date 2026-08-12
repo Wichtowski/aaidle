@@ -1,5 +1,5 @@
-import { submitClassicGuess } from "../../../../../../../lib/domain/games/classic/guess-service";
-import { errorResponse, parseJson } from "../../../../../../../lib/validation/api";
+import { submitClassicGuess } from "../../../../../../../../lib/domain/games/classic/guess-service";
+import { errorResponse, parseJson } from "../../../../../../../../lib/validation/api";
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ challengeId: string }> },
@@ -17,6 +17,9 @@ export async function POST(
     }
     if (code === "CHALLENGE_NOT_FOUND") return errorResponse(code, "Challenge not found.", 404);
     if (code === "MODEL_NOT_FOUND") return errorResponse(code, "Model not found.", 404);
+    if (code === "MODEL_NOT_AVAILABLE") {
+      return errorResponse(code, "This model is not available in this difficulty.", 400);
+    }
     if (code === "BODY_TOO_LARGE") return errorResponse(code, "Request is too large.", 413);
     return errorResponse("INVALID_REQUEST", "The guess request is invalid.", 400);
   }

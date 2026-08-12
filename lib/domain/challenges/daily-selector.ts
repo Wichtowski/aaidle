@@ -1,4 +1,10 @@
 import { NoEligibleModelsError } from "./challenge-types";
+import {
+  classicChallengeMode,
+  classicDifficulties,
+  type ClassicDifficulty,
+} from "../models/model-types";
+
 export type SelectableModel = { id: string };
 export async function stableSelectionIndex(
   date: string,
@@ -40,4 +46,36 @@ export async function selectDailyModel({
   return candidates[
     await stableSelectionIndex(date, mode, secret, selectionVersion, candidates.length)
   ]!;
+}
+
+export async function selectDistinctClassicDailyModels({
+  date,
+  secret,
+  modelsByDifficulty,
+  recentlyUsedByDifficulty,
+}: {
+  date: string;
+  secret: string;
+  modelsByDifficulty: Record<ClassicDifficulty, SelectableModel[]>;
+  recentlyUsedByDifficulty: Record<ClassicDifficulty, string[]>;
+}): Promise<Record<ClassicDifficulty, SelectableModel>> {
+  const selectedIds = new Set<string>();
+  const selected = {} as Record<ClassicDifficulty, SelectableModel>;
+
+  for (const difficulty of classicDifficulties) {
+    const candidates = modelsByDifficulty[difficulty].filter(
+      (model) => !selectedIds.has(model.id),
+    );
+    const answer = await selectDailyModel({
+      date,
+      mode: classicChallengeMode(difficulty),
+      secret,
+      models: candidates,
+      recentlyUsed: recentlyUsedByDifficulty[difficulty],
+    });
+    selected[difficulty] = answer;
+    selectedIds.add(answer.id);
+  }
+
+  return selected;
 }

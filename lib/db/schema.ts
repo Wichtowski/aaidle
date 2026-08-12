@@ -165,6 +165,44 @@ export const anonymousPlayers = sqliteTable("anonymous_players", {
   createdAt: integer("created_at").notNull(),
   lastSeenAt: integer("last_seen_at").notNull(),
 });
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull(),
+    emailNormalized: text("email_normalized").notNull().unique(),
+    displayName: text("display_name"),
+    passwordHash: text("password_hash"),
+    emailVerifiedAt: integer("email_verified_at"),
+    ...timestamps,
+  },
+);
+export const userIdentities = sqliteTable(
+  "user_identities",
+  {
+    provider: text("provider").notNull(),
+    providerUserId: text("provider_user_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.provider, t.providerUserId] })],
+);
+export const userSessions = sqliteTable(
+  "user_sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    tokenHash: text("token_hash").notNull().unique(),
+    expiresAt: integer("expires_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+  },
+  (t) => [index("user_sessions_user_idx").on(t.userId), index("user_sessions_expires_idx").on(t.expiresAt)],
+);
 export const playerModeStats = sqliteTable(
   "player_mode_stats",
   {

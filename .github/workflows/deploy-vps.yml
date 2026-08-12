@@ -17,6 +17,16 @@ on:
         required: true
       AAIDLE_DAILY_SELECTION_SECRET:
         required: true
+      AAIDLE_AUTH_SECRET:
+        required: false
+      AAIDLE_GITHUB_CLIENT_ID:
+        required: false
+      AAIDLE_GITHUB_CLIENT_SECRET:
+        required: false
+      AAIDLE_GOOGLE_CLIENT_ID:
+        required: false
+      AAIDLE_GOOGLE_CLIENT_SECRET:
+        required: false
 
 permissions:
   contents: read
@@ -32,31 +42,39 @@ jobs:
       DEPLOY_PATH: ${{ secrets.AAIDLE_DEPLOY_PATH }}
       RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
-      - name: Download release from GitHub
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          gh release download "$RELEASE_TAG" \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern "aaidle-$RELEASE_TAG.tar.gz" \
-            --dir .
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag }}
       - name: Create production environment file
         env:
           AAIDLE_DAILY_SELECTION_SECRET: ${{ secrets.AAIDLE_DAILY_SELECTION_SECRET }}
+          AAIDLE_AUTH_SECRET: ${{ secrets.AAIDLE_AUTH_SECRET }}
+          AAIDLE_GITHUB_CLIENT_ID: ${{ secrets.AAIDLE_GITHUB_CLIENT_ID }}
+          AAIDLE_GITHUB_CLIENT_SECRET: ${{ secrets.AAIDLE_GITHUB_CLIENT_SECRET }}
+          AAIDLE_GOOGLE_CLIENT_ID: ${{ secrets.AAIDLE_GOOGLE_CLIENT_ID }}
+          AAIDLE_GOOGLE_CLIENT_SECRET: ${{ secrets.AAIDLE_GOOGLE_CLIENT_SECRET }}
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
         run: |
           umask 077
+          image="${IMAGE_NAME,,}"
           {
             printf 'DAILY_SELECTION_SECRET=%s\n' "$AAIDLE_DAILY_SELECTION_SECRET"
+            printf 'APP_ORIGIN=%s\n' 'https://aaidle.com'
+            printf 'AUTH_SECRET=%s\n' "$AAIDLE_AUTH_SECRET"
+            printf 'GITHUB_CLIENT_ID=%s\n' "$AAIDLE_GITHUB_CLIENT_ID"
+            printf 'GITHUB_CLIENT_SECRET=%s\n' "$AAIDLE_GITHUB_CLIENT_SECRET"
+            printf 'GOOGLE_CLIENT_ID=%s\n' "$AAIDLE_GOOGLE_CLIENT_ID"
+            printf 'GOOGLE_CLIENT_SECRET=%s\n' "$AAIDLE_GOOGLE_CLIENT_SECRET"
+            printf 'AAIDLE_IMAGE=%s\n' "$image"
             printf 'AAIDLE_VERSION=%s\n' "$RELEASE_TAG"
           } > aaidle.env
-      - name: Copy release to VPS
+      - name: Copy runtime configuration to VPS
         uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.AAIDLE_VPS_HOST }}
           username: ${{ secrets.AAIDLE_VPS_USER }}
           key: ${{ secrets.AAIDLE_VPS_SSH_KEY }}
-          source: aaidle-${{ inputs.release_tag }}.tar.gz,aaidle.env
+          source: compose.prod.yml,aaidle.env
           target: /tmp
       - name: Deploy approved release
         uses: appleboy/ssh-action@v1.2.0
@@ -69,23 +87,24 @@ jobs:
           script: |
             set -euo pipefail
 
-            app_dir="${DEPLOY_PATH}/app"
+            runtime_dir="${DEPLOY_PATH}/runtime"
             staging_dir=$(mktemp -d "${DEPLOY_PATH}/.deploy.XXXXXX")
             trap 'rm -rf "$staging_dir"' EXIT
 
-            tar -xzf "/tmp/aaidle-${RELEASE_TAG}.tar.gz" -C "$staging_dir"
+            mv /tmp/compose.prod.yml "$staging_dir/compose.prod.yml"
             mv /tmp/aaidle.env "$staging_dir/.env"
             chmod 600 "$staging_dir/.env"
 
             cd "$staging_dir"
-            docker compose --env-file .env -f compose.prod.yml up -d --build --remove-orphans
+            docker compose --env-file .env -f compose.prod.yml pull app
+            docker compose --env-file .env -f compose.prod.yml up -d --remove-orphans
             docker compose --env-file .env -f compose.prod.yml ps
 
-            rm -rf "$app_dir"
-            mv "$staging_dir" "$app_dir"
+
+            rm -rf "$runtime_dir"
+            mv "$staging_dir" "$runtime_dir"
             trap - EXIT
-            rm -rf "${DEPLOY_PATH}/releases" "${DEPLOY_PATH}/current"
-            rm -f "/tmp/aaidle-${RELEASE_TAG}.tar.gz"
+            rm -rf "${DEPLOY_PATH}/app" "${DEPLOY_PATH}/releases" "${DEPLOY_PATH}/current"
       - name: Write summary
         run: |
           {

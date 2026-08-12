@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { selectDailyModel } from "../../lib/domain/challenges/daily-selector";
+import {
+  selectDailyModel,
+  selectDistinctClassicDailyModels,
+} from "../../lib/domain/challenges/daily-selector";
 import { NoEligibleModelsError } from "../../lib/domain/challenges/challenge-types";
 const models = [{ id: "a" }, { id: "b" }, { id: "c" }];
 describe("daily selector", () => {
@@ -41,4 +44,23 @@ describe("daily selector", () => {
     await expect(
       selectDailyModel({ date: "2026-08-11", mode: "classic", secret: "s", models: [] }),
     ).rejects.toBeInstanceOf(NoEligibleModelsError));
+
+  it("selects a different answer for each nested Classic difficulty", async () => {
+    const selected = await selectDistinctClassicDailyModels({
+      date: "2026-08-11",
+      secret: "s",
+      modelsByDifficulty: {
+        normal: [{ id: "normal" }],
+        challenge: [{ id: "normal" }, { id: "challenge" }],
+        hardcore: [{ id: "normal" }, { id: "challenge" }, { id: "hardcore" }],
+      },
+      recentlyUsedByDifficulty: { normal: [], challenge: [], hardcore: [] },
+    });
+
+    expect(selected).toEqual({
+      normal: { id: "normal" },
+      challenge: { id: "challenge" },
+      hardcore: { id: "hardcore" },
+    });
+  });
 });
