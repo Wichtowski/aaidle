@@ -1,5 +1,9 @@
 import { database } from "../../../db/client";
-import { catalogModel } from "../../../server/model-catalog";
+import { catalogModel, isModelEligibleForDifficulty } from "../../../server/model-catalog";
+import {
+  classicDifficultyFromChallengeMode,
+  type ClassicChallengeMode,
+} from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
 
 export async function submitClassicGuess(input: {
@@ -8,10 +12,17 @@ export async function submitClassicGuess(input: {
   challengeId: string;
 }) {
   const DB = database();
-  const challenge = await DB.prepare("SELECT * FROM daily_challenges WHERE id=? AND mode='classic'")
+  const challenge = await DB.prepare(
+    "SELECT answer_model_id, mode FROM daily_challenges WHERE id=? AND mode LIKE 'classic:%'",
+  )
     .bind(input.challengeId)
-    .first<{ answer_model_id: string }>();
+    .first<{ answer_model_id: string; mode: ClassicChallengeMode }>();
   if (!challenge) throw new Error("CHALLENGE_NOT_FOUND");
+
+  const difficulty = classicDifficultyFromChallengeMode(challenge.mode);
+  if (!isModelEligibleForDifficulty(input.guessedModelId, difficulty)) {
+    throw new Error("MODEL_NOT_AVAILABLE");
+  }
 
   const guessed = catalogModel(input.guessedModelId);
   const answer = catalogModel(challenge.answer_model_id);

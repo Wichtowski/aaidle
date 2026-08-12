@@ -5,13 +5,23 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { GuessAutocomplete } from "./GuessAutocomplete";
 import { GuessBoard } from "./GuessBoard";
 import { DailyCountdown } from "./DailyCountdown";
+import { SiteNavbar } from "../ui/SiteNavbar";
 import { GameCompletedDialog } from "./GameCompletedDialog";
 import { HowToPlayDialog } from "./HowToPlayDialog";
 import { useLocalProgress } from "../../../lib/storage/use-local-progress";
 import { updateProgress } from "../../../lib/storage/local-progress-store";
 import { applySolvedStreak } from "../../../lib/domain/players/streak-service";
+import {
+  classicDifficultyCookieMaxAge,
+  classicDifficultyCookieName,
+} from "../../../lib/domain/games/classic/difficulty-preference";
 import type { PublicDailyChallengeDto } from "../../../lib/domain/challenges/challenge-types";
-import type { PublicModelIndex, ComparableModel } from "../../../lib/domain/models/model-types";
+import {
+  classicChallengeMode,
+  type ClassicDifficulty,
+  type PublicModelIndex,
+  type ComparableModel,
+} from "../../../lib/domain/models/model-types";
 import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
 
 type SavedGuess = {
@@ -30,8 +40,7 @@ type SavedGuess = {
   comparison: ClassicComparison;
 };
 
-type DailyPayload = { challenge: PublicDailyChallengeDto };
-type ModelsPayload = { models: PublicModelIndex[] };
+type GamePayload = { challenge: PublicDailyChallengeDto; models: PublicModelIndex[] };
 type GuessPayload = {
   guess: {
     isCorrect: boolean;
@@ -84,11 +93,26 @@ const coveredModel = (model: PublicModelIndex): ComparableModel => ({
   contextWindowTokens: null,
 });
 
-export function ClassicGame() {
+const difficultyLabels: Record<ClassicDifficulty, string> = {
+  normal: "Normal",
+  challenge: "Challenge",
+  hardcore: "Hardcore",
+};
+
+const difficultyApiPaths: Record<ClassicDifficulty, string> = {
+  normal: "/api/v1/games/classic/normal",
+  challenge: "/api/v1/games/classic/challenge",
+  hardcore: "/api/v1/games/classic/hardcore",
+};
+
+export function ClassicGame({ difficulty }: { difficulty: ClassicDifficulty }) {
   const progress = useLocalProgress();
+  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
+  const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
   const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(null);
   const [models, setModels] = useState<PublicModelIndex[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingGame, setIsLoadingGame] = useState(true);
   const [busy, setBusy] = useState(false);
   const [pendingGuess, setPendingGuess] = useState<PendingGuess | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -96,20 +120,51 @@ export function ClassicGame() {
   const [progressReady, setProgressReady] = useState(false);
   const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
   const animatedGameKey = useRef<string | null>(null);
+  const loadedDifficultyRef = useRef(difficulty);
+  const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>({});
 
   useEffect(() => {
-    void Promise.all([
-      fetch("/api/games/classic/today").then((r) => r.json() as Promise<DailyPayload>),
-      fetch("/api/models").then((r) => r.json() as Promise<ModelsPayload>),
-    ])
-      .then(([daily, index]) => {
-        setChallenge(daily.challenge);
-        setModels(index.models);
-      })
-      .catch(() => setError("Could not load today’s game. Please try again."));
-  }, []);
+    const cachedGame = gameCache.current[selectedDifficulty];
 
-  const key = challenge ? `classic:${challenge.date}` : "";
+    if (cachedGame) {
+      setChallenge(cachedGame.challenge);
+      setModels(cachedGame.models);
+      setLoadedDifficulty(selectedDifficulty);
+      loadedDifficultyRef.current = selectedDifficulty;
+      setIsLoadingGame(false);
+      setError(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsLoadingGame(true);
+    setError(null);
+
+    void fetch(difficultyApiPaths[selectedDifficulty], { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Could not load today’s game.");
+        return response.json() as Promise<GamePayload>;
+      })
+      .then((game) => {
+        gameCache.current[selectedDifficulty] = game;
+        setChallenge(game.challenge);
+        setModels(game.models);
+        setLoadedDifficulty(selectedDifficulty);
+        loadedDifficultyRef.current = selectedDifficulty;
+      })
+      .catch((fetchError: unknown) => {
+        if (controller.signal.aborted) return;
+        setSelectedDifficulty(loadedDifficultyRef.current);
+        setError(fetchError instanceof Error ? fetchError.message : "Could not load today’s game.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoadingGame(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedDifficulty]);
+
+  const key = challenge ? `classic:${loadedDifficulty}:${challenge.date}` : "";
   const game = key ? progress.games[key] : undefined;
   const guesses = (game?.guesses ?? []) as SavedGuess[];
   const guessed = new Set([
@@ -142,6 +197,22 @@ export function ClassicGame() {
     }
   };
 
+  const setDifficultyPreference = (nextDifficulty: ClassicDifficulty) => {
+    document.cookie = [
+      `${classicDifficultyCookieName}=${nextDifficulty}`,
+      "Path=/",
+      `Max-Age=${classicDifficultyCookieMaxAge}`,
+      "SameSite=Lax",
+    ].join("; ");
+  };
+
+  const selectDifficulty = (nextDifficulty: ClassicDifficulty) => {
+    if (nextDifficulty === selectedDifficulty) return;
+    setDifficultyPreference(nextDifficulty);
+    setIsLoadingGame(true);
+    setSelectedDifficulty(nextDifficulty);
+  };
+
   useEffect(() => {
     if (game?.status !== "solved" || !game.completedAt) {
       setShowCompletion(false);
@@ -169,7 +240,7 @@ export function ClassicGame() {
     setPendingGuess({ requestId, model });
 
     try {
-      const response = await fetch(`/api/games/classic/challenges/${challenge.id}/guesses`, {
+      const response = await fetch(`/api/v1/games/classic/challenges/${challenge.id}/guesses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -206,7 +277,7 @@ export function ClassicGame() {
             [key]: {
               challengeId: challenge.id,
               challengeDate: challenge.date,
-              mode: "classic",
+              mode: classicChallengeMode(loadedDifficulty),
               status: entry.isCorrect ? "solved" : "in-progress",
               guesses: [...(old?.guesses ?? []), entry],
               startedAt: old?.startedAt ?? entry.attemptedAt,
@@ -255,24 +326,43 @@ export function ClassicGame() {
 
   return (
     <main className="page game-page">
-      <header className="game-header">
-        <a href="/" className="brand">
-          a<span>A</span>idle
-        </a>
-        {challenge && <DailyCountdown expiresAt={challenge.expiresAt} />}
-      </header>
+      <SiteNavbar />
 
       <section className="game-intro">
-        <p className="eyebrow">Classic · {challenge?.date ?? "Loading"}</p>
+        <div className="game-intro__meta">
+          <p className="eyebrow">Classic · {challenge?.date ?? "Loading"}</p>
+          {challenge && <DailyCountdown expiresAt={challenge.expiresAt} />}
+        </div>
         <h1>Guess today’s AI model</h1>
         <p className="lede">
-          Use every comparison to narrow down the model. Green matches, amber overlaps, arrows point
-          toward the answer.
+          Every model leaves a trail. Follow it until the answer reveals itself.
         </p>
+
+        <div aria-busy={isLoadingGame} className="game-intro__difficulty">
+          <span>Difficulty</span>
+          <div className="difficulty-switch" aria-label="Classic difficulty" role="group">
+            {(["normal", "challenge", "hardcore"] as const).map((option) => (
+              <button
+                aria-pressed={option === selectedDifficulty}
+                disabled={isLoadingGame && option !== selectedDifficulty}
+                key={option}
+                onClick={() => selectDifficulty(option)}
+                type="button"
+              >
+                {difficultyLabels[option]}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {challenge && game?.status !== "solved" && (
           <>
-            <GuessAutocomplete disabled={busy} models={models} excluded={guessed} onPick={pick} />
+            <GuessAutocomplete
+              disabled={busy || isLoadingGame}
+              models={models}
+              excluded={guessed}
+              onPick={pick}
+            />
           </>
         )}
 
@@ -290,6 +380,7 @@ export function ClassicGame() {
 
       {challenge && (
         <GuessBoard
+          difficulty={selectedDifficulty}
           guesses={[
             ...guesses.map((guess) => ({
               ...guess,

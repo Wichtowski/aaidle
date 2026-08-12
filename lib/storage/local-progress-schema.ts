@@ -17,7 +17,7 @@ export const localProgressSchema = z.object({
     z.object({
       challengeId: z.string(),
       challengeDate: z.string(),
-      mode: z.literal("classic"),
+      mode: z.enum(["classic", "classic:normal", "classic:challenge", "classic:hardcore"]),
       status: z.enum(["in-progress", "solved"]),
       guesses: z.array(
         z.object({

@@ -1,10 +1,10 @@
-import { database } from "../../../../../../../lib/db/client";
-import { errorResponse } from "../../../../../../../lib/validation/api";
+import { database } from "../../../../../../../../lib/db/client";
+import { errorResponse } from "../../../../../../../../lib/validation/api";
 export async function GET(_: Request, { params }: { params: Promise<{ challengeId: string }> }) {
   const { challengeId } = await params;
   const DB = database();
   const challenge = await DB.prepare(
-    "SELECT 1 FROM daily_challenges WHERE id = ? AND mode = 'classic'",
+    "SELECT 1 FROM daily_challenges WHERE id = ? AND mode LIKE 'classic:%'",
   )
     .bind(challengeId)
     .first();

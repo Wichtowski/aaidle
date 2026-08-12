@@ -6,26 +6,30 @@ export function ComparisonCell({
   delay = 0,
   revealed = true,
   animate = false,
+  hardcore = false,
 }: {
   status: string;
   children: ReactNode;
   delay?: number;
   revealed?: boolean;
   animate?: boolean;
+  hardcore?: boolean;
 }) {
+  const displayStatus = hardcore && status !== "correct" ? "incorrect" : status;
   const label =
-    status === "correct"
+    displayStatus === "correct"
       ? "Correct"
-      : status === "partial"
+      : displayStatus === "partial"
         ? "Partially matches"
-        : status === "higher"
+        : displayStatus === "higher"
           ? "Target is higher"
-          : status === "lower"
+          : displayStatus === "lower"
             ? "Target is lower"
-            : status === "unknown"
+            : displayStatus === "unknown"
               ? "Unknown"
               : "Does not match";
-  const DirectionIcon = status === "higher" ? FaArrowUp : status === "lower" ? FaArrowDown : null;
+  const DirectionIcon =
+    displayStatus === "higher" ? FaArrowUp : displayStatus === "lower" ? FaArrowDown : null;
   return (
     <div
       className="comparison-card"
@@ -46,7 +50,7 @@ export function ComparisonCell({
           <FaQuestion aria-hidden focusable="false" />
         </div>
         <div
-          className={`comparison comparison--${status} comparison-card__face comparison-card__face--result`}
+          className={`comparison comparison--${displayStatus} comparison-card__face comparison-card__face--result`}
         >
           {DirectionIcon && <DirectionIcon aria-hidden focusable="false" />}
           <div className="comparison-card__value">{children ?? "Unknown"}</div>

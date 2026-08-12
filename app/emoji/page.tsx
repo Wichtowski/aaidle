@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { FaArrowLeft, FaHourglassHalf } from "react-icons/fa6";
+import { SiteNavbar } from "../components/ui/SiteNavbar";
 import { emojiGame } from "../../lib/domain/games/emoji/definition";
 
 export default function EmojiPage() {
   return (
     <main className="page game-placeholder-page">
-      <nav>
-        <a className="brand" href="/">
-          a<span>A</span>idle
-        </a>
-        <Link href="/classic">Classic</Link>
-      </nav>
+      <SiteNavbar />
       <section className="game-placeholder">
         <p className="eyebrow">{emojiGame.name} game</p>
         <div className="game-placeholder__status">

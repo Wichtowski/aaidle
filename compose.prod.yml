@@ -2,15 +2,19 @@ name: aaidle
 
 services:
   app:
-    build:
-      context: .
-      args:
-        AAIDLE_VERSION: ${AAIDLE_VERSION:-dev}
+    image: ${AAIDLE_IMAGE}:${AAIDLE_VERSION}
+    pull_policy: always
     container_name: aaidle-app
     restart: unless-stopped
     environment:
       DATABASE_PATH: /data/aaidle.db
       DAILY_SELECTION_SECRET: ${DAILY_SELECTION_SECRET}
+      APP_ORIGIN: ${APP_ORIGIN}
+      AUTH_SECRET: ${AUTH_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       AAIDLE_VERSION: ${AAIDLE_VERSION:-dev}
       NODE_ENV: production
     volumes:

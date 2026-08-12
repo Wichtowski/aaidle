@@ -1,5 +1,24 @@
+export const classicDifficulties = ["normal", "challenge", "hardcore"] as const;
+export type ClassicDifficulty = (typeof classicDifficulties)[number];
+export type ModelPoolRank = 0 | 1 | 2;
+
+export function isClassicDifficulty(value: string | null | undefined): value is ClassicDifficulty {
+  return classicDifficulties.includes(value as ClassicDifficulty);
+}
+
+export const classicDifficultyRank: Record<ClassicDifficulty, ModelPoolRank> = {
+  normal: 0,
+  challenge: 1,
+  hardcore: 2,
+};
+
+export const classicChallengeModes = classicDifficulties.map(
+  (difficulty) => `classic:${difficulty}` as const,
+);
+export type ClassicChallengeMode = (typeof classicChallengeModes)[number];
+
 export const challengeModes = [
-  "classic",
+  ...classicChallengeModes,
   "provider",
   "emoji",
   "logo",
@@ -8,7 +27,14 @@ export const challengeModes = [
   "timeline",
 ] as const;
 export type ChallengeMode = (typeof challengeModes)[number];
-export type ClassicMode = "classic";
+
+export function classicChallengeMode(difficulty: ClassicDifficulty): ClassicChallengeMode {
+  return `classic:${difficulty}`;
+}
+
+export function classicDifficultyFromChallengeMode(mode: ClassicChallengeMode): ClassicDifficulty {
+  return mode.slice("classic:".length) as ClassicDifficulty;
+}
 export type LocalExecution = "yes" | "no" | "limited" | "unknown";
 export type ReasoningSupport = "native" | "optional" | "no" | "unknown";
 

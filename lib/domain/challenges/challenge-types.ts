@@ -1,16 +1,16 @@
-import type { ChallengeMode } from "../models/model-types";
+import type { ClassicChallengeMode, ClassicDifficulty } from "../models/model-types";
 import type { ClassicColumn } from "../guesses/comparison-types";
 export type PublicDailyChallengeDto = {
   id: string;
   date: string;
-  mode: "classic";
+  mode: ClassicDifficulty;
   expiresAt: string;
   columns: ClassicColumn[];
 };
 export type DailyChallenge = {
   id: string;
   challengeDate: string;
-  mode: ChallengeMode;
+  mode: ClassicChallengeMode;
   answerModelId: string;
   selectionVersion: number;
   generatedAt: number;

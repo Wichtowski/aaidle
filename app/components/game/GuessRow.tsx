@@ -1,4 +1,5 @@
 import { ComparisonCell } from "./ComparisonCell";
+import { FaChevronUp } from "react-icons/fa6";
 import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../../lib/domain/models/model-types";
 
@@ -21,11 +22,20 @@ const countryForProvider: Record<string, string> = {
 };
 
 const countryFlag: Record<string, string> = {
+  Australia: "🇦🇺",
   "United States": "🇺🇸",
   Canada: "🇨🇦",
   China: "🇨🇳",
   France: "🇫🇷",
+  "France / United States": "🇫🇷 🇺🇸",
+  Germany: "🇩🇪",
+  Israel: "🇮🇱",
+  Netherlands: "🇳🇱",
   Poland: "🇵🇱",
+  Russia: "🇷🇺",
+  Switzerland: "🇨🇭",
+  Taiwan: "🇹🇼",
+  "United Kingdom": "🇬🇧",
 };
 
 function CountryValue({ country }: { country: string | null | undefined }) {
@@ -56,7 +66,15 @@ const contextWindow = (tokens: number | null) => {
   return `${tokens / 1_000}K`;
 };
 
-function MatchedList({ items, matches }: { items: string[] | null; matches: string[] }) {
+function MatchedList({
+  items,
+  matches,
+  highlightMatches,
+}: {
+  items: string[] | null;
+  matches: string[];
+  highlightMatches: boolean;
+}) {
   if (!items?.length) return <>Unknown</>;
 
   return (
@@ -67,7 +85,7 @@ function MatchedList({ items, matches }: { items: string[] | null; matches: stri
         );
         return (
           <span key={item}>
-            {isMatch ? <strong className="matched-value">{item}</strong> : item}
+            {highlightMatches && isMatch ? <strong className="matched-value">{item}</strong> : item}
             {index < items.length - 1 ? ", " : ""}
           </span>
         );
@@ -87,6 +105,8 @@ export function GuessRow({
   revealed,
   animate,
   showCards,
+  hardcore,
+  onCollapse,
 }: {
   model: ComparableModel;
   comparison: ClassicComparison;
@@ -98,6 +118,8 @@ export function GuessRow({
   revealed: boolean;
   animate: boolean;
   showCards: boolean;
+  hardcore: boolean;
+  onCollapse?: () => void;
 }) {
   const fields = [
     { status: comparison.provider, value: label(model.provider) },
@@ -112,19 +134,43 @@ export function GuessRow({
     { status: comparison.family, value: label(model.family) },
     {
       status: comparison.categories,
-      value: <MatchedList items={model.categories} matches={matchingCategories} />,
+      value: (
+        <MatchedList
+          highlightMatches={!hardcore}
+          items={model.categories}
+          matches={matchingCategories}
+        />
+      ),
     },
     {
       status: comparison.inputModalities,
-      value: <MatchedList items={model.inputModalities} matches={matchingInputModalities} />,
+      value: (
+        <MatchedList
+          highlightMatches={!hardcore}
+          items={model.inputModalities}
+          matches={matchingInputModalities}
+        />
+      ),
     },
     {
       status: comparison.outputModalities,
-      value: <MatchedList items={model.outputModalities} matches={matchingOutputModalities} />,
+      value: (
+        <MatchedList
+          highlightMatches={!hardcore}
+          items={model.outputModalities}
+          matches={matchingOutputModalities}
+        />
+      ),
     },
     {
       status: comparison.useCases,
-      value: <MatchedList items={model.useCases} matches={matchingUseCases} />,
+      value: (
+        <MatchedList
+          highlightMatches={!hardcore}
+          items={model.useCases}
+          matches={matchingUseCases}
+        />
+      ),
     },
     { status: comparison.reasoningSupport, value: label(model.reasoningSupport) },
     { status: comparison.openWeights, value: label(model.openWeights) },
@@ -133,11 +179,32 @@ export function GuessRow({
     { status: comparison.contextWindowTokens, value: contextWindow(model.contextWindowTokens) },
   ];
 
+  const modelSummary = (
+    <>
+      <div className="guess-row__label">
+        <span>Guess {rowIndex + 1}.</span>
+        {onCollapse && <FaChevronUp aria-hidden focusable="false" />}
+      </div>
+      <strong>{model.name}</strong>
+    </>
+  );
+
   return (
     <article className="guess-row" role="row">
       <header className="guess-row__model" role="rowheader">
-        <span>Guess {rowIndex + 1}.</span>
-        <strong>{model.name}</strong>
+        {onCollapse ? (
+          <button
+            aria-expanded="true"
+            aria-label={`Collapse comparison for guess ${rowIndex + 1}: ${model.name}`}
+            className="guess-row__toggle"
+            onClick={onCollapse}
+            type="button"
+          >
+            {modelSummary}
+          </button>
+        ) : (
+          modelSummary
+        )}
       </header>
       {showCards && (
         <div className="guess-row__cards">
@@ -148,6 +215,7 @@ export function GuessRow({
               key={index}
               revealed={revealed}
               status={field.status}
+              hardcore={hardcore}
             >
               {field.value}
             </ComparisonCell>

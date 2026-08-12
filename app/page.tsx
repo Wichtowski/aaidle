@@ -1,17 +1,11 @@
 import Link from "next/link";
 import { FaArrowRight, FaHourglassHalf } from "react-icons/fa6";
+import { SiteNavbar } from "./components/ui/SiteNavbar";
 import { emojiGame } from "../lib/domain/games/emoji/definition";
 export default function Home() {
   return (
     <main className="page home">
-      <nav>
-        <a className="brand" href="/">
-          a<span>A</span>idle
-        </a>
-        <div>
-          <Link href="/stats">Stats</Link>
-        </div>
-      </nav>
+      <SiteNavbar />
       <section className="hero">
         <p className="eyebrow">A daily deduction game</p>
         <h1>
