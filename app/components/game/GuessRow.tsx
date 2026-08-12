@@ -1,6 +1,11 @@
 import { ComparisonCell } from "./ComparisonCell";
 import { FaChevronUp } from "react-icons/fa6";
-import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
+import type { ReactNode } from "react";
+import {
+  classicColumns,
+  type ClassicColumn,
+  type ClassicComparison,
+} from "../../../lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../../lib/domain/models/model-types";
 
 const countryForProvider: Record<string, string> = {
@@ -39,7 +44,7 @@ const countryFlag: Record<string, string> = {
 };
 
 function CountryValue({ country }: { country: string | null | undefined }) {
-  if (!country) return <>Unknown</>;
+  if (!country) return <>N/A</>;
   return (
     <span className="country-value">
       <span className="country-value__flag" aria-hidden="true">
@@ -51,20 +56,49 @@ function CountryValue({ country }: { country: string | null | undefined }) {
 }
 
 const label = (value: string | number | boolean | null | undefined) =>
-  value == null ? "Unknown" : typeof value === "boolean" ? (value ? "Yes" : "No") : value;
+  value == null ? "N/A" : typeof value === "boolean" ? (value ? "Yes" : "No") : value;
 
 const yq = (model: ComparableModel) => {
-  if (model.releaseYear === null) return "Unknown";
+  if (model.releaseYear === null) return "N/A";
   const month = model.releaseDate ? Number(model.releaseDate.slice(5, 7)) : 0;
   return month ? `${model.releaseYear} · Q${Math.ceil(month / 3)}` : String(model.releaseYear);
 };
 
 const contextWindow = (tokens: number | null) => {
-  if (tokens === null) return "Unknown";
+  if (tokens === null) return "N/A";
   if (tokens <= 10_000 || tokens % 100 !== 0) return String(tokens);
 
   return `${tokens / 1_000}K`;
 };
+
+function categoryValue(model: ComparableModel, field: string): ReactNode {
+  const details = model.categoryDetails;
+  const language = details?.["language-model"];
+  const vision = details?.["computer-vision"];
+  const nlp = details?.nlp;
+  const detection = details?.["object-detection"];
+  const classical = details?.["classical-ml"];
+  const value = {
+    supportedLanguages: language?.supportedLanguages ?? nlp?.supportedLanguages,
+    toolUse: language?.toolUse,
+    multimodal: language?.multimodal,
+    visionTasks: vision?.visionTasks,
+    architecture: vision?.architecture ?? nlp?.architecture ?? detection?.architecture,
+    trainingDatasets: vision?.trainingDatasets ?? nlp?.trainingDatasets ?? detection?.trainingDatasets,
+    license: vision?.license,
+    nlpTasks: nlp?.nlpTasks,
+    detectionTypes: detection?.detectionTypes,
+    realTimeCapable: detection?.realTimeCapable,
+    algorithmTypes: classical?.algorithmTypes,
+    learningParadigms: classical?.learningParadigms,
+    objectives: classical?.objectives,
+    featureTypes: classical?.featureTypes,
+    frameworks: classical?.frameworks,
+  }[field];
+  if (Array.isArray(value)) return value.length ? value.join(", ") : "N/A";
+  if (value == null) return "N/A";
+  return label(value);
+}
 
 function MatchedList({
   items,
@@ -75,7 +109,7 @@ function MatchedList({
   matches: string[];
   highlightMatches: boolean;
 }) {
-  if (!items?.length) return <>Unknown</>;
+  if (!items?.length) return <>N/A</>;
 
   return (
     <>
@@ -106,6 +140,7 @@ export function GuessRow({
   animate,
   showCards,
   hardcore,
+  columns = classicColumns,
   onCollapse,
 }: {
   model: ComparableModel;
@@ -119,11 +154,12 @@ export function GuessRow({
   animate: boolean;
   showCards: boolean;
   hardcore: boolean;
+  columns?: readonly ClassicColumn[];
   onCollapse?: () => void;
 }) {
-  const fields = [
-    { status: comparison.provider, value: label(model.provider) },
-    {
+  const fields: Record<string, { status: string; value: ReactNode }> = {
+    provider: { status: comparison.provider, value: label(model.provider) },
+    country: {
       status: comparison.country,
       value: (
         <CountryValue
@@ -131,8 +167,8 @@ export function GuessRow({
         />
       ),
     },
-    { status: comparison.family, value: label(model.family) },
-    {
+    family: { status: comparison.family, value: label(model.family) },
+    categories: {
       status: comparison.categories,
       value: (
         <MatchedList
@@ -142,7 +178,7 @@ export function GuessRow({
         />
       ),
     },
-    {
+    inputModalities: {
       status: comparison.inputModalities,
       value: (
         <MatchedList
@@ -152,7 +188,7 @@ export function GuessRow({
         />
       ),
     },
-    {
+    outputModalities: {
       status: comparison.outputModalities,
       value: (
         <MatchedList
@@ -162,7 +198,7 @@ export function GuessRow({
         />
       ),
     },
-    {
+    useCases: {
       status: comparison.useCases,
       value: (
         <MatchedList
@@ -172,12 +208,15 @@ export function GuessRow({
         />
       ),
     },
-    { status: comparison.reasoningSupport, value: label(model.reasoningSupport) },
-    { status: comparison.openWeights, value: label(model.openWeights) },
-    { status: comparison.localExecution, value: label(model.localExecution) },
-    { status: comparison.releaseYear, value: yq(model) },
-    { status: comparison.contextWindowTokens, value: contextWindow(model.contextWindowTokens) },
-  ];
+    reasoningSupport: { status: comparison.reasoningSupport, value: label(model.reasoningSupport) },
+    weightAvailability: { status: comparison.weightAvailability, value: label(model.weightAvailability) },
+    release: { status: comparison.release, value: yq(model) },
+    contextWindowTokens: {
+      status: comparison.contextWindowTokens,
+      value: contextWindow(model.contextWindowTokens),
+    },
+    ...Object.fromEntries(["supportedLanguages", "toolUse", "multimodal", "visionTasks", "architecture", "trainingDatasets", "license", "nlpTasks", "detectionTypes", "realTimeCapable", "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks"].map((field) => [field, { status: comparison[field] ?? "unknown", value: categoryValue(model, field) }])),
+  };
 
   const modelSummary = (
     <>
@@ -208,18 +247,26 @@ export function GuessRow({
       </header>
       {showCards && (
         <div className="guess-row__cards">
-          {fields.map((field, index) => (
+          {columns.map((column, index) => {
+            const field = fields[column];
+            return (
             <ComparisonCell
               animate={animate}
               delay={index * 125}
-              key={index}
+              key={column}
               revealed={revealed}
               status={field.status}
               hardcore={hardcore}
             >
               {field.value}
             </ComparisonCell>
-          ))}
+            );
+          })}
+        </div>
+      )}
+      {!showCards && (
+        <div aria-label="Loading comparison cards" className="guess-row__loading" role="status">
+          <span aria-hidden="true" className="guess-row__spinner" />
         </div>
       )}
     </article>

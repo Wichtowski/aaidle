@@ -26,7 +26,7 @@ export function ComparisonCell({
           : displayStatus === "lower"
             ? "Target is lower"
             : displayStatus === "unknown"
-              ? "Unknown"
+              ? "Not applicable"
               : "Does not match";
   const DirectionIcon =
     displayStatus === "higher" ? FaArrowUp : displayStatus === "lower" ? FaArrowDown : null;
@@ -53,7 +53,7 @@ export function ComparisonCell({
           className={`comparison comparison--${displayStatus} comparison-card__face comparison-card__face--result`}
         >
           {DirectionIcon && <DirectionIcon aria-hidden focusable="false" />}
-          <div className="comparison-card__value">{children ?? "Unknown"}</div>
+          <div className="comparison-card__value">{children ?? "N/A"}</div>
         </div>
       </div>
     </div>

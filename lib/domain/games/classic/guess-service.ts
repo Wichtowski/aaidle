@@ -1,7 +1,7 @@
 import { database } from "../../../db/client";
-import { catalogModel, isModelEligibleForDifficulty } from "../../../server/model-catalog";
+import { catalogModel, isModelEligibleForClassic } from "../../../server/model-catalog";
 import {
-  classicDifficultyFromChallengeMode,
+  classicModeFromChallengeMode,
   type ClassicChallengeMode,
 } from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
@@ -19,8 +19,8 @@ export async function submitClassicGuess(input: {
     .first<{ answer_model_id: string; mode: ClassicChallengeMode }>();
   if (!challenge) throw new Error("CHALLENGE_NOT_FOUND");
 
-  const difficulty = classicDifficultyFromChallengeMode(challenge.mode);
-  if (!isModelEligibleForDifficulty(input.guessedModelId, difficulty)) {
+  const { category, difficulty } = classicModeFromChallengeMode(challenge.mode);
+  if (!isModelEligibleForClassic(input.guessedModelId, category, difficulty)) {
     throw new Error("MODEL_NOT_AVAILABLE");
   }
 

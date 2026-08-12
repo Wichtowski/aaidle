@@ -21,7 +21,7 @@ body {
 }
 .page {
   min-height: 100vh;
-  max-width: 1180px;
+  max-width: 1200px;
   margin: auto;
   padding: 28px 32px 72px;
 }
@@ -46,6 +46,50 @@ body {
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--panel);
+}
+.classic-category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0;
+}
+.classic-category-nav a {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.classic-category-nav a[aria-current="page"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.classic-category-nav__locked {
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.72;
+}
+.classic-category-nav button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+.classic-category-nav button[aria-selected="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
 }
 .difficulty-switch button {
   border: 0;
@@ -150,7 +194,7 @@ a {
   color: var(--muted);
   font-size: 19px;
   line-height: 1.55;
-  max-width: 660px;
+  max-width: 785px;
 }
 .button {
   border: 1px solid var(--ink);
@@ -704,6 +748,78 @@ a {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.hell-meter {
+  margin: 34px 0 42px;
+  border: 1px solid #e0d5c8;
+  border-radius: 9px;
+  padding: 20px;
+  background: var(--panel);
+}
+.hell-meter__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hell-meter__steps span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.hell-meter__steps .is-complete {
+  border-color: #963329;
+  background: #ffe7dc;
+  color: #85271e;
+}
+.hell-meter__final {
+  border-color: #79241d !important;
+  background: #2b1115 !important;
+  color: #ff9a78 !important;
+}
+.hell-meter > p:last-child {
+  margin: 18px 0 0;
+}
+.stats-page--hell {
+  isolation: isolate;
+  color: #f7eee8;
+}
+.stats-page--hell::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 50% 110%, #69160e 0, transparent 38%), #120d12;
+  content: "";
+}
+.stats-page--hell .site-navbar,
+.stats-page--hell .stats-section,
+.stats-page--hell .hell-meter {
+  border-color: #69372f;
+}
+.stats-page--hell .hell-meter {
+  background: #201014;
+  box-shadow: 0 22px 54px #0006;
+}
+.stats-page--hell .hell-meter__steps span {
+  border-color: #65342e;
+  background: #2d171a;
+  color: #d8b9af;
+}
+.stats-page--hell .hell-meter__steps .is-complete {
+  border-color: #e05a38;
+  background: #63231c;
+  color: #ffe2d8;
+}
+.stats-page--hell .prose p,
+.stats-page--hell .stats-section__heading > span,
+.stats-page--hell .distribution__label {
+  color: #d8b9af;
+}
+.stats-page--hell .distribution__row > strong,
+.stats-page--hell h2 {
+  color: #fff2e9;
+}
 .distribution {
   display: grid;
   gap: 10px;
@@ -994,6 +1110,15 @@ a {
     font-size: 50px;
   }
 }
+.site-navbar__auth {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
@@ -1009,6 +1134,130 @@ a {
 }
 .game-page {
   max-width: 1180px;
+}
+.game-page--hardcore {
+  isolation: isolate;
+  color: #f7eee8;
+}
+.game-page--hardcore::before {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 110%, #6a130b 0, transparent 35%),
+    radial-gradient(circle at 10% 15%, #3d0d13 0, transparent 35%),
+    #120d12;
+  content: "";
+}
+.game-page--hardcore .site-navbar {
+  border-color: #6c3b35;
+}
+.game-page--hardcore .lede,
+.game-page--hardcore .game-intro__difficulty > span,
+.game-page--hardcore .guess-row__model span,
+.game-page--hardcore .board-head__cards span {
+  color: #d4bab2;
+}
+.game-page--hardcore .autocomplete label,
+.game-page--hardcore .guess-row__model,
+.game-page--hardcore .board-head {
+  color: #f7eee8;
+}
+.game-page--hardcore .autocomplete input,
+.game-page--hardcore .autocomplete ul {
+  border-color: #7a4037;
+  background: #fff7f1;
+  color: var(--ink);
+}
+.game-page--hardcore .autocomplete input::placeholder,
+.game-page--hardcore .autocomplete small {
+  color: #705a53;
+}
+.game-page--hardcore .autocomplete button {
+  color: var(--ink);
+}
+.game-page--hardcore .autocomplete button:hover,
+.game-page--hardcore .autocomplete button.is-active {
+  background: #f3d4c8;
+}
+.game-page--hardcore .guess-row__expand,
+.game-page--hardcore .guess-row__expand:hover,
+.game-page--hardcore .guess-row__expand-model span,
+.game-page--hardcore .guess-row__expand-guess svg {
+  color: var(--accent);
+}
+.game-page--hardcore .guess-row__toggle strong {
+  color: var(--accent);
+}
+.game-page--hardcore .classic-category-nav a,
+.game-page--hardcore .difficulty-switch,
+.game-page--hardcore .difficulty-switch button {
+  border-color: #75443c;
+  background: #28161a;
+  color: #f0d6ce;
+}
+.game-page--hardcore .classic-category-nav a[aria-current="page"],
+.game-page--hardcore .difficulty-switch button[aria-pressed="true"] {
+  border-color: #ff6d39;
+  background: #a1291b;
+  color: #fff;
+}
+.game-page--hardcore .comparison-card__face--cover {
+  background: #2c1215;
+}
+.game-page--hardcore .comparison--correct {
+  background: #24513a;
+  color: #e1ffe8;
+}
+.game-page--hardcore .comparison--incorrect {
+  background: #68221d;
+  color: #ffe0d8;
+}
+.game-page--unlocking::after {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, #ff5329 0, #7f160f 25%, #11080c 72%);
+  animation: hardcore-unlock 1.25s ease-in both;
+  content: "";
+}
+.hardcore-lock {
+  max-width: 700px;
+  padding: 16vh 0;
+}
+.hardcore-lock p:last-child {
+  color: var(--muted);
+  font-size: 19px;
+}
+.hardcore-summoning {
+  margin: 18px 0;
+  border: 1px solid #85392e;
+  border-radius: 8px;
+  padding: 13px 15px;
+  background: #fff1ea;
+  color: #72261e;
+}
+.hardcore-summoning strong {
+  color: var(--accent);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+}
+@keyframes hardcore-unlock {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.hardcore-atmosphere {
+  position: fixed;
+  z-index: -1;
+  right: 0;
+  bottom: -15px;
+  left: 0;
+  height: 180px;
+  overflow: hidden;
+  pointer-events: none;
+  background: url("/hardcore-fire.gif") bottom left / 100% 180px no-repeat;
+  filter: blur(0.35px);
 }
 .game-intro {
   padding-top: 52px;
@@ -1051,6 +1300,33 @@ a {
   flex-flow: row wrap;
   gap: 10px;
 }
+.guess-row__loading {
+  display: grid;
+  flex: 1;
+  min-height: 112px;
+  place-items: center;
+}
+.guess-row__spinner {
+  width: 32px;
+  height: 32px;
+  border: 4px solid var(--lime);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: guess-card-loading 1.5s linear infinite;
+}
+@keyframes guess-card-loading {
+  0% {
+    transform: rotate(0deg);
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+  }
+  50% {
+    transform: rotate(540deg);
+    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  }
+  100% {
+    transform: rotate(720deg);
+  }
+}
 .comparison-card {
   flex: 1 1 118px;
   min-width: 0;
@@ -1061,8 +1337,8 @@ a {
   height: 100%;
   min-height: 112px;
   position: relative;
-  transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
   transform: rotateY(0);
 }
 .comparison-card__inner--revealed {
@@ -1076,8 +1352,8 @@ a {
   position: absolute;
   inset: 0;
   display: flex;
-  backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   border-radius: 8px;
 }
 .comparison-card__face--cover {
@@ -1095,8 +1371,8 @@ a {
   flex-direction: column;
   justify-content: space-between;
   padding: 10px;
-  transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
   min-width: 0;
 }
 .comparison-card__heading {
@@ -1215,10 +1491,17 @@ a {
 .board-head__cards,
 .guess-row__cards {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--guess-board-columns, 12), minmax(0, 1fr));
   gap: 7px;
   flex: 1;
   min-width: 0;
+}
+.board-wrap--hardcore .board-head__cards,
+.board-wrap--hardcore .guess-row__cards {
+  grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(52px, 0.65fr) minmax(52px, 0.65fr) repeat(2, minmax(0, 1fr));
+}
+.guess-row__loading {
+  min-height: 70px;
 }
 .board-head__cards span {
   padding: 5px 2px;
@@ -1245,7 +1528,8 @@ a {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  width: 100%;
 }
 .guess-row__model strong {
   font-size: 14px;
@@ -1323,11 +1607,15 @@ a {
 .guess-row__expand-guess {
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  width: 100%;
 }
 .guess-row__expand-guess svg,
 .guess-row__label svg {
   color: var(--muted);
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
 }
 .comparison-card {
   container-type: inline-size;
@@ -1380,6 +1668,9 @@ a {
   .guess-row__cards {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+  .board-wrap--hardcore .guess-row__cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
   .comparison-card {
     min-height: 76px;
   }
@@ -1389,6 +1680,9 @@ a {
 }
 @media (max-width: 520px) {
   .guess-row__cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .board-wrap--hardcore .guess-row__cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .comparison-card__value {
@@ -1414,11 +1708,11 @@ a {
   font-weight: inherit;
 }
 
-/* Unknown is intentionally unfilled; comparison colors remain reserved for actual signals. */
+/* N/A is a neutral, gray card: the attribute does not apply to this model. */
 .comparison--unknown {
-  background: transparent;
+  background: #e7e9e7;
   color: var(--muted);
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
 }
 .country-value {
   display: inline-flex;
@@ -1573,6 +1867,7 @@ a {
 }
 
 .cookie-consent {
+  margin: auto;
   width: min(620px, calc(100vw - 40px));
   padding: 0;
   border: 1px solid var(--ink);
@@ -1905,6 +2200,74 @@ body::-webkit-scrollbar-thumb:hover,
   color: var(--muted);
 }
 
+/* Keep the Hardcore guide inside the same infernal world as the board. */
+.game-page--hardcore .how-to-play-modal {
+  background: #080507d9;
+}
+.game-page--hardcore .how-to-play-modal__content {
+  border: 1px solid #72362e;
+  background:
+    radial-gradient(circle at 84% 0%, #4b1715 0, transparent 36%),
+    #1a0d10;
+  box-shadow: 0 28px 80px #000c;
+  color: #f7eee8;
+}
+.game-page--hardcore .how-to-play-modal__content h2,
+.game-page--hardcore .how-to-play-modal__content h3,
+.game-page--hardcore .how-to-play-modal__close {
+  color: #fff2e9;
+}
+.game-page--hardcore .how-to-play-modal__content p,
+.game-page--hardcore .how-to-play-modal__modes span {
+  color: #d8b9af;
+}
+.game-page--hardcore .how-to-play-modal__section-title::after {
+  background: #66342e;
+}
+.game-page--hardcore .how-to-play-modal__item--correct {
+  background: #1d4a32;
+  color: #d9ffe4 !important;
+}
+.game-page--hardcore .how-to-play-modal__item--partial,
+.game-page--hardcore .how-to-play-modal__item--direction {
+  background: #482c18;
+  color: #ffe1a4 !important;
+}
+.game-page--hardcore .how-to-play-modal__item--incorrect {
+  background: #64201d;
+  color: #ffe0d7 !important;
+}
+.game-page--hardcore .how-to-play-modal__item--unknown {
+  background: #332b2d;
+  color: #d6ccca !important;
+}
+.game-page--hardcore .how-to-play-modal__details li,
+.game-page--hardcore .how-to-play-modal__modes li {
+  border-left-color: #f06035;
+  background: #291519;
+  color: #f2d9d0;
+}
+.game-page--hardcore .how-to-play-modal__details li::before {
+  background: #ff7846;
+}
+.game-page--hardcore .how-to-play-modal__privacy {
+  border-color: #79422f;
+  background: #332015;
+  color: #f7d9aa;
+}
+.game-page--hardcore .how-to-play-modal__privacy svg {
+  color: #ff7846;
+}
+.game-page--hardcore .how-to-play-modal__actions .button--primary {
+  border-color: #ff7b45;
+  background: #a62c1d;
+  box-shadow: 0 4px 0 #58130d;
+}
+.game-page--hardcore .how-to-play-modal__actions .button--primary:hover {
+  background: #c43a24;
+  box-shadow: 0 2px 0 #58130d;
+}
+
 .completed-modal {
   animation: completion-backdrop-in 280ms ease-out both;
 }
@@ -1934,7 +2297,8 @@ body::-webkit-scrollbar-thumb:hover,
 @media (prefers-reduced-motion: reduce) {
   .comparison-card__inner,
   .completed-modal,
-  .completed {
+  .completed,
+  .guess-row__spinner {
     animation-duration: 1ms;
     animation-delay: 0ms;
   }

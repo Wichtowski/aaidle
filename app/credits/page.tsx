@@ -8,7 +8,7 @@ export default function CreditsPage() {
         <p className="eyebrow">The people behind the game</p>
         <h1>Credits</h1>
         <p className="credits__lede">
-          Some games make a prompt the destination. aAidle begins somewhere wider.
+          Some games make a prompt the destination. aAIdle begins somewhere wider.
         </p>
         <p>
           In an early conversation about the idea, Michał suggested looking beyond prompts.
@@ -24,6 +24,10 @@ export default function CreditsPage() {
           <div>
             <dt>First game played by</dt>
             <dd><a href="https://www.linkedin.com/in/wojciech-piszczek/" target="_blank" rel="noopener noreferrer">Wojciech Piszczek</a></dd>
+          </div>
+          <div>
+            <dt>First production classic solved by</dt>
+            <dd><a href="https://www.linkedin.com/in/marcinkorcz/" target="_blank" rel="noopener noreferrer">Marcin Korcz</a></dd>
           </div>
         </dl>
       </section>

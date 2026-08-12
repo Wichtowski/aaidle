@@ -30,12 +30,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "optional",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-05-13"
+    "releaseDate": "2024-05-13",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-4-1",
@@ -64,12 +72,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-04-14"
+    "releaseDate": "2025-04-14",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "o3",
@@ -99,12 +115,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-04-16"
+    "releaseDate": "2025-04-16",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-7-sonnet",
@@ -134,12 +158,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "optional",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-02-24"
+    "releaseDate": "2025-02-24",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-sonnet-4",
@@ -169,12 +201,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-05-22"
+    "releaseDate": "2025-05-22",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-opus-4",
@@ -204,12 +244,20 @@
       "research",
       "general"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-05-22"
+    "releaseDate": "2025-05-22",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-2-5-pro",
@@ -242,12 +290,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-03-25"
+    "releaseDate": "2025-03-25",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-2-5-flash",
@@ -280,12 +336,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-04-17"
+    "releaseDate": "2025-04-17",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemma-3-27b",
@@ -313,12 +377,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2025-03-12"
+    "releaseDate": "2025-03-12",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "llama-4-maverick",
@@ -347,12 +419,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2025-04-05"
+    "releaseDate": "2025-04-05",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "llama-3-3-70b-instruct",
@@ -379,12 +459,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-12-06"
+    "releaseDate": "2024-12-06",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mistral-large-2",
@@ -411,12 +499,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "France",
-    "releaseDate": "2024-07-24"
+    "releaseDate": "2024-07-24",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mistral-small-3-1",
@@ -446,12 +542,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "unknown",
     "country": "France",
-    "releaseDate": "2025-03-17"
+    "releaseDate": "2025-03-17",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "deepseek-v3",
@@ -480,12 +584,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-12-26"
+    "releaseDate": "2024-12-26",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "deepseek-r1",
@@ -514,12 +626,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2025-01-20"
+    "releaseDate": "2025-01-20",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "grok-3",
@@ -548,12 +668,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-02-17"
+    "releaseDate": "2025-02-17",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "qwen2-5-max",
@@ -581,12 +709,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "closed",
     "country": "China",
-    "releaseDate": "2025-01-29"
+    "releaseDate": "2025-01-29",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen3-32b",
@@ -615,12 +751,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "native",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2025-04-29"
+    "releaseDate": "2025-04-29",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "command-a",
@@ -648,12 +792,42 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 256000,
+    "weightAvailability": "restricted",
     "country": "Canada",
-    "releaseDate": "2025-03-13"
+    "releaseDate": "2025-03-13",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english",
+          "french",
+          "spanish",
+          "italian",
+          "german",
+          "portuguese",
+          "japanese",
+          "korean",
+          "chinese",
+          "arabic",
+          "russian",
+          "polish",
+          "turkish",
+          "vietnamese",
+          "dutch",
+          "czech",
+          "indonesian",
+          "ukrainian",
+          "romanian",
+          "greek",
+          "hindi",
+          "hebrew",
+          "persian"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "command-r-plus",
@@ -681,12 +855,20 @@
       "search",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "Canada",
-    "releaseDate": "2024-04-04"
+    "releaseDate": "2024-04-04",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "phi-4",
@@ -714,12 +896,20 @@
       "mathematics",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 16384,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-12-12"
+    "releaseDate": "2024-12-12",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 16384,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "phi-4-multimodal-instruct",
@@ -749,12 +939,20 @@
       "vision",
       "speech-to-text"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2025-02-26"
+    "releaseDate": "2025-02-26",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "amazon-nova-pro",
@@ -784,12 +982,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 300000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-03"
+    "releaseDate": "2024-12-03",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 300000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "amazon-nova-lite",
@@ -818,12 +1024,20 @@
       "general",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 300000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-03"
+    "releaseDate": "2024-12-03",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 300000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "ibm-granite-3-3-8b-instruct",
@@ -850,12 +1064,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2025-04-16"
+    "releaseDate": "2025-04-16",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "aya-expanse-32b",
@@ -881,12 +1103,42 @@
       "general",
       "creative-writing"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "restricted",
     "country": "Canada",
-    "releaseDate": "2024-12-03"
+    "releaseDate": "2024-12-03",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english",
+          "french",
+          "spanish",
+          "italian",
+          "german",
+          "portuguese",
+          "japanese",
+          "korean",
+          "chinese",
+          "arabic",
+          "russian",
+          "polish",
+          "turkish",
+          "vietnamese",
+          "dutch",
+          "czech",
+          "indonesian",
+          "ukrainian",
+          "romanian",
+          "greek",
+          "hindi",
+          "hebrew",
+          "persian"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "gpt-4o-mini",
@@ -915,12 +1167,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-07-18"
+    "releaseDate": "2024-07-18",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-2-0-flash",
@@ -952,12 +1212,20 @@
       "vision",
       "speech-to-text"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-11"
+    "releaseDate": "2024-12-11",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "mistral-nemo",
@@ -984,12 +1252,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2024-07-18"
+    "releaseDate": "2024-07-18",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-3-2-11b-vision-instruct",
@@ -1017,12 +1293,20 @@
       "general",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-09-25"
+    "releaseDate": "2024-09-25",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-5-sonnet",
@@ -1052,12 +1336,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-06-20"
+    "releaseDate": "2024-06-20",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-1-5-pro",
@@ -1089,12 +1381,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 2000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-02-15"
+    "releaseDate": "2024-02-15",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 2000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "llama-3-1-405b-instruct",
@@ -1122,12 +1422,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-07-23"
+    "releaseDate": "2024-07-23",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mixtral-8x22b-instruct",
@@ -1154,12 +1462,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 65536,
+    "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2024-04-17"
+    "releaseDate": "2024-04-17",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 65536,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mistral-7b-instruct-v0-3",
@@ -1186,12 +1502,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2024-05-07"
+    "releaseDate": "2024-05-07",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "deepseek-v2-5",
@@ -1219,12 +1543,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-09-05"
+    "releaseDate": "2024-09-05",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-5-72b-instruct",
@@ -1252,12 +1584,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-09-19"
+    "releaseDate": "2024-09-19",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "command-r",
@@ -1285,12 +1625,20 @@
       "search",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "Canada",
-    "releaseDate": "2024-03-11"
+    "releaseDate": "2024-03-11",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "phi-3-medium-128k-instruct",
@@ -1318,12 +1666,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-05-21"
+    "releaseDate": "2024-05-21",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "amazon-nova-micro",
@@ -1348,12 +1704,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-03"
+    "releaseDate": "2024-12-03",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "gpt-4-turbo",
@@ -1382,12 +1746,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2023-11-06"
+    "releaseDate": "2023-11-06",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-4",
@@ -1415,12 +1787,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2023-03-14"
+    "releaseDate": "2023-03-14",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "gpt-3-5-turbo",
@@ -1447,12 +1827,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 16385,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2022-11-30"
+    "releaseDate": "2022-11-30",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 16385,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "o1",
@@ -1482,12 +1870,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-05"
+    "releaseDate": "2024-12-05",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "o4-mini",
@@ -1517,12 +1913,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-04-16"
+    "releaseDate": "2025-04-16",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-opus",
@@ -1551,12 +1955,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-03-04"
+    "releaseDate": "2024-03-04",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-sonnet",
@@ -1584,12 +1996,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-03-04"
+    "releaseDate": "2024-03-04",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-haiku",
@@ -1616,12 +2036,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-03-13"
+    "releaseDate": "2024-03-13",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-3-5-haiku",
@@ -1649,12 +2077,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-10-22"
+    "releaseDate": "2024-10-22",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-1-5-flash",
@@ -1686,12 +2122,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 1000000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-05-14"
+    "releaseDate": "2024-05-14",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gemini-1-0-pro",
@@ -1717,12 +2161,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 32760,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2023-12-13"
+    "releaseDate": "2023-12-13",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32760,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "gemma-2-27b-it",
@@ -1749,12 +2201,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-06-27"
+    "releaseDate": "2024-06-27",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-3-70b-instruct",
@@ -1781,12 +2241,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-04-18"
+    "releaseDate": "2024-04-18",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-3-8b-instruct",
@@ -1813,12 +2281,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-04-18"
+    "releaseDate": "2024-04-18",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-2-70b-chat",
@@ -1843,12 +2319,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 4096,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2023-07-18"
+    "releaseDate": "2023-07-18",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mixtral-8x7b-instruct",
@@ -1875,12 +2359,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2023-12-08"
+    "releaseDate": "2023-12-08",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "mistral-medium-3",
@@ -1909,12 +2401,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "closed",
     "country": "France",
-    "releaseDate": "2025-05-07"
+    "releaseDate": "2025-05-07",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "codestral-25-01",
@@ -1940,12 +2440,20 @@
     "useCases": [
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 256000,
+    "weightAvailability": "closed",
     "country": "France",
-    "releaseDate": "2025-01-13"
+    "releaseDate": "2025-01-13",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "deepseek-coder-v2",
@@ -1971,12 +2479,20 @@
     "useCases": [
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-06-17"
+    "releaseDate": "2024-06-17",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "deepseek-math-7b",
@@ -2002,12 +2518,20 @@
     "useCases": [
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 4096,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2023-11-02"
+    "releaseDate": "2023-11-02",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "grok-2",
@@ -2036,12 +2560,20 @@
       "coding",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-08-13"
+    "releaseDate": "2024-08-13",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "grok-1",
@@ -2066,12 +2598,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-11-04"
+    "releaseDate": "2023-11-04",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-vl-72b-instruct",
@@ -2100,12 +2640,20 @@
       "general",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-08-29"
+    "releaseDate": "2024-08-29",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "qwen2-72b-instruct",
@@ -2132,12 +2680,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2024-06-07"
+    "releaseDate": "2024-06-07",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "command-light",
@@ -2162,12 +2718,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 4096,
+    "weightAvailability": "closed",
     "country": "Canada",
-    "releaseDate": "2023-09-27"
+    "releaseDate": "2023-09-27",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "aya-23-35b",
@@ -2193,12 +2757,20 @@
       "general",
       "creative-writing"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "restricted",
     "country": "Canada",
-    "releaseDate": "2024-05-23"
+    "releaseDate": "2024-05-23",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "phi-3-mini-128k-instruct",
@@ -2226,12 +2798,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-06-12"
+    "releaseDate": "2024-06-12",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "phi-3-5-mini-instruct",
@@ -2258,12 +2838,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 128000,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-08-20"
+    "releaseDate": "2024-08-20",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "granite-3-1-8b-instruct",
@@ -2290,12 +2878,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-10-21"
+    "releaseDate": "2024-10-21",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "amazon-nova-canvas",
@@ -2321,12 +2917,10 @@
     "useCases": [
       "creative-writing"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 5120,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-12-03"
+    "releaseDate": "2024-12-03",
+    "categoryDetails": {}
   },
   {
     "id": "gpt-5",
@@ -2358,12 +2952,20 @@
       "research",
       "mathematics"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-08-07"
+    "releaseDate": "2025-08-07",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-mini",
@@ -2390,12 +2992,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-08-07"
+    "releaseDate": "2025-08-07",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-nano",
@@ -2423,12 +3033,20 @@
       "classification",
       "general"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-08-07"
+    "releaseDate": "2025-08-07",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-pro",
@@ -2455,12 +3073,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-08-07"
+    "releaseDate": "2025-08-07",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-4",
@@ -2487,12 +3113,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-03-05"
+    "releaseDate": "2026-03-05",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-4-mini",
@@ -2519,12 +3153,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-03-17"
+    "releaseDate": "2026-03-17",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-4-nano",
@@ -2552,12 +3194,20 @@
       "classification",
       "general"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-03-17"
+    "releaseDate": "2026-03-17",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-5",
@@ -2584,12 +3234,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-04-23"
+    "releaseDate": "2026-04-23",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-6-sol",
@@ -2616,12 +3274,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-07-09"
+    "releaseDate": "2026-07-09",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-6-terra",
@@ -2648,12 +3314,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-07-09"
+    "releaseDate": "2026-07-09",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "gpt-5-6-luna",
@@ -2681,12 +3355,20 @@
       "classification",
       "general"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 400000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-07-09"
+    "releaseDate": "2026-07-09",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 400000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-opus-4-6",
@@ -2717,12 +3399,20 @@
       "coding",
       "research"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-02-05"
+    "releaseDate": "2026-02-05",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-sonnet-4-5",
@@ -2752,12 +3442,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-09-29"
+    "releaseDate": "2025-09-29",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-haiku-4-5",
@@ -2787,12 +3485,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-10-15"
+    "releaseDate": "2025-10-15",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-opus-4-8",
@@ -2822,12 +3528,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-05-28"
+    "releaseDate": "2026-05-28",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "claude-sonnet-5",
@@ -2857,12 +3571,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "native",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 200000,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2026-06-30"
+    "releaseDate": "2026-06-30",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
   },
   {
     "id": "qwen2-5-7b-instruct",
@@ -2889,12 +3611,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2024-09-19"
+    "releaseDate": "2024-09-19",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-5-14b-instruct",
@@ -2921,12 +3651,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2024-09-19"
+    "releaseDate": "2024-09-19",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-5-coder-7b",
@@ -2952,12 +3690,20 @@
     "useCases": [
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2024-11-12"
+    "releaseDate": "2024-11-12",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-5-coder-32b",
@@ -2983,12 +3729,20 @@
     "useCases": [
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2024-11-12"
+    "releaseDate": "2024-11-12",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen3-8b",
@@ -3016,12 +3770,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "native",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2025-04-29"
+    "releaseDate": "2025-04-29",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen3-30b-a3b",
@@ -3049,12 +3811,20 @@
       "coding",
       "mathematics"
     ],
-    "reasoningSupport": "native",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2025-04-29"
+    "releaseDate": "2025-04-29",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "qwen2-5-vl-7b",
@@ -3085,12 +3855,32 @@
       "vision",
       "document-understanding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2025-01-26"
+    "releaseDate": "2025-01-26",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": true,
+        "multimodal": true
+      },
+      "computer-vision": {
+        "visionTasks": [
+          "document-understanding"
+        ],
+        "architecture": [
+          "qwen"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "llama-3-2-1b-instruct",
@@ -3115,12 +3905,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-09-25"
+    "releaseDate": "2024-09-25",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-3-2-3b-instruct",
@@ -3145,12 +3943,20 @@
     "useCases": [
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-09-25"
+    "releaseDate": "2024-09-25",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "llama-3-2-90b-vision-instruct",
@@ -3180,12 +3986,32 @@
       "vision",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-09-25"
+    "releaseDate": "2024-09-25",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": true
+      },
+      "computer-vision": {
+        "visionTasks": [
+          "unknown"
+        ],
+        "architecture": [
+          "llama"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "llama-3-1-8b-instruct",
@@ -3212,12 +4038,20 @@
       "general",
       "coding"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 131072,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2024-07-23"
+    "releaseDate": "2024-07-23",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      }
+    }
   },
   {
     "id": "sam",
@@ -3246,12 +4080,23 @@
       "vision",
       "segmentation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-04-05"
+    "releaseDate": "2023-04-05",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "sa-1b"
+        ],
+        "license": "apache-2.0"
+      }
+    }
   },
   {
     "id": "sam-2",
@@ -3282,12 +4127,23 @@
       "vision",
       "segmentation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-07-29"
+    "releaseDate": "2024-07-29",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "sa-v"
+        ],
+        "license": "apache-2.0"
+      }
+    }
   },
   {
     "id": "dinov2-base",
@@ -3316,12 +4172,24 @@
       "classification",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-04-14"
+    "releaseDate": "2023-04-14",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "image-embedding"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "lvd-142m"
+        ],
+        "license": "apache-2.0"
+      }
+    }
   },
   {
     "id": "facebook-detr-resnet-50",
@@ -3350,12 +4218,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 1333,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-05-26"
+    "releaseDate": "2020-05-26",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "detr"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "license": "apache-2.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "detr"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "convnext-base",
@@ -3382,12 +4273,23 @@
       "classification",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 224,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2022-01-10"
+    "releaseDate": "2022-01-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "mit"
+      }
+    }
   },
   {
     "id": "roberta-base",
@@ -3414,12 +4316,35 @@
       "text-classification",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-07-26"
+    "releaseDate": "2019-07-26",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "bart-large",
@@ -3447,12 +4372,39 @@
       "translation",
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-10-29"
+    "releaseDate": "2019-10-29",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "bookcorpus",
+          "english-wikipedia",
+          "cc-news",
+          "openwebtext",
+          "stories"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "nllb-200-600m",
@@ -3478,12 +4430,35 @@
     "useCases": [
       "translation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "restricted",
     "country": "United States",
-    "releaseDate": "2022-07-06"
+    "releaseDate": "2022-07-06",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "multilingual"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "translation"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "parallel-web-data",
+          "common-crawl"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "yolov8",
@@ -3514,12 +4489,37 @@
       "vision",
       "segmentation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 640,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-01-10"
+    "releaseDate": "2023-01-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "image-segmentation"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "license": "agpl-3.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "segmentation"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "yolo11",
@@ -3550,12 +4550,37 @@
       "vision",
       "segmentation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 640,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-09-10"
+    "releaseDate": "2024-09-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "image-segmentation"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "license": "agpl-3.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "segmentation"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "grounding-dino-base",
@@ -3585,12 +4610,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1200,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2023-03-20"
+    "releaseDate": "2023-03-20",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "grounding-dino"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "grounding-dino"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "rtdetr-r50",
@@ -3618,12 +4666,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 640,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2023-09-01"
+    "releaseDate": "2023-09-01",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rt-detr"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rt-detr"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "vit-base-patch16-224",
@@ -3651,12 +4722,24 @@
       "classification",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 224,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-10-22"
+    "releaseDate": "2020-10-22",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-21k",
+          "imagenet-1k"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "clip-vit-large-patch14",
@@ -3686,12 +4769,25 @@
       "embeddings",
       "classification"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 224,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-01-05"
+    "releaseDate": "2021-01-05",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-embedding",
+          "image-classification"
+        ],
+        "architecture": [
+          "dual-encoder"
+        ],
+        "trainingDatasets": [
+          "web-image-text",
+          "yfcc100m"
+        ],
+        "license": "mit"
+      }
+    }
   },
   {
     "id": "florence-2-large",
@@ -3723,12 +4819,36 @@
       "object-detection",
       "image-captioning"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2024-06-17"
+    "releaseDate": "2024-06-17",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "image-captioning"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "bert-base-uncased",
@@ -3757,12 +4877,37 @@
       "embeddings",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-10-11"
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "books-corpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "bert-large-uncased",
@@ -3791,12 +4936,37 @@
       "embeddings",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-10-11"
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "books-corpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "distilbert-base-uncased",
@@ -3823,12 +4993,35 @@
       "text-classification",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-10-02"
+    "releaseDate": "2019-10-02",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "deberta-v3-base",
@@ -3856,12 +5049,36 @@
       "embeddings",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-12-17"
+    "releaseDate": "2021-12-17",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "t5-base",
@@ -3889,12 +5106,36 @@
       "translation",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-02-11"
+    "releaseDate": "2020-02-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "c4"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "flan-t5-xl",
@@ -3922,12 +5163,37 @@
       "translation",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 2048,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2022-10-20"
+    "releaseDate": "2022-10-20",
+    "contextWindowTokens": 2048,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "c4",
+          "flan-collection"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "e5-large-v2",
@@ -3954,12 +5220,27 @@
       "embeddings",
       "retrieval"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2023-05-25"
+    "releaseDate": "2023-05-25",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "bge-large-en-v1-5",
@@ -3986,12 +5267,27 @@
       "embeddings",
       "retrieval"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2023-09-15"
+    "releaseDate": "2023-09-15",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "all-minilm-l6-v2",
@@ -4018,12 +5314,27 @@
       "embeddings",
       "retrieval"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 256,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-08-20"
+    "releaseDate": "2021-08-20",
+    "contextWindowTokens": 256,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "whisper-large-v3",
@@ -4050,12 +5361,10 @@
       "transcription",
       "translation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 448,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-11-06"
+    "releaseDate": "2023-11-06",
+    "categoryDetails": {}
   },
   {
     "id": "text-embedding-3-large",
@@ -4082,12 +5391,27 @@
       "embeddings",
       "retrieval"
     ],
-    "reasoningSupport": "no",
-    "openWeights": false,
-    "localExecution": "no",
-    "contextWindowTokens": 8191,
+    "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2024-01-25"
+    "releaseDate": "2024-01-25",
+    "contextWindowTokens": 8191,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "bielik-11b-v3-0-instruct",
@@ -4117,12 +5441,35 @@
       "question-answering",
       "summarization"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "unknown",
     "country": "Poland",
-    "releaseDate": "2025-12-31"
+    "releaseDate": "2025-12-31",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "polish"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "question-answering",
+          "summarization"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "pllum-12b-nc-250715",
@@ -4152,12 +5499,35 @@
       "question-answering",
       "summarization"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 32768,
+    "weightAvailability": "restricted",
     "country": "Poland",
-    "releaseDate": "2025-07-15"
+    "releaseDate": "2025-07-15",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "polish"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "question-answering",
+          "summarization"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
   },
   {
     "id": "herbert-base-cased",
@@ -4187,12 +5557,36 @@
       "embeddings",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "Poland",
-    "releaseDate": "2020-05-01"
+    "releaseDate": "2020-05-01",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "polish"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "plt5-base",
@@ -4222,12 +5616,36 @@
       "summarization",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "Poland",
-    "releaseDate": "2022-05-18"
+    "releaseDate": "2022-05-18",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "polish"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "translation",
+          "summarization",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "rcnn",
@@ -4256,12 +5674,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2013-11-11"
+    "releaseDate": "2013-11-11",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "fast-rcnn",
@@ -4290,12 +5731,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-04-30"
+    "releaseDate": "2015-04-30",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "faster-rcnn",
@@ -4324,12 +5788,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-06-04"
+    "releaseDate": "2015-06-04",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "mask-rcnn",
@@ -4360,12 +5847,37 @@
       "instance-segmentation",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2017-03-20"
+    "releaseDate": "2017-03-20",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "instance-segmentation"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "instance-segmentation"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "retinanet",
@@ -4393,12 +5905,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2017-08-07"
+    "releaseDate": "2017-08-07",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "retinanet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "retinanet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "ssd",
@@ -4428,12 +5963,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-12-08"
+    "releaseDate": "2015-12-08",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "fcos",
@@ -4462,12 +6020,35 @@
       "vision",
       "anchor-free-detection"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Australia",
-    "releaseDate": "2019-04-02"
+    "releaseDate": "2019-04-02",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "fcos"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "fcos"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "yolov3",
@@ -4497,12 +6078,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-04-08"
+    "releaseDate": "2018-04-08",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "yolov5",
@@ -4532,12 +6136,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-06-26"
+    "releaseDate": "2020-06-26",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "license": "agpl-3.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "yolov7",
@@ -4567,12 +6194,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Taiwan",
-    "releaseDate": "2022-07-06"
+    "releaseDate": "2022-07-06",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "yolov10",
@@ -4602,12 +6252,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2024-05-23"
+    "releaseDate": "2024-05-23",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "efficientdet",
@@ -4635,12 +6308,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-11-20"
+    "releaseDate": "2019-11-20",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "efficientdet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "efficientdet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "deeplabv3",
@@ -4669,12 +6365,23 @@
       "semantic-segmentation",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2017-06-17"
+    "releaseDate": "2017-06-17",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "deeplab"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "unet",
@@ -4703,12 +6410,23 @@
       "medical-imaging",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Germany",
-    "releaseDate": "2015-05-18"
+    "releaseDate": "2015-05-18",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "u-net"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "lenet-5",
@@ -4738,12 +6456,23 @@
       "handwriting-recognition",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "1998-11-01",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "lenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "alexnet",
@@ -4772,12 +6501,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Canada",
-    "releaseDate": null
+    "releaseDate": "2012-12-03",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "alexnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "vgg16",
@@ -4807,12 +6548,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United Kingdom",
-    "releaseDate": "2014-09-04"
+    "releaseDate": "2014-09-04",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "resnet-50",
@@ -4842,12 +6595,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-12-10"
+    "releaseDate": "2015-12-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "googlenet",
@@ -4878,12 +6643,24 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2014-09-17"
+    "releaseDate": "2014-09-17",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "object-detection"
+        ],
+        "architecture": [
+          "inception"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "inception-v3",
@@ -4913,12 +6690,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-12-02"
+    "releaseDate": "2015-12-02",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "inception"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "densenet-121",
@@ -4948,12 +6737,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2016-08-25"
+    "releaseDate": "2016-08-25",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "densenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "mobilenet-v2",
@@ -4983,12 +6784,23 @@
       "mobile-inference",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-01-13"
+    "releaseDate": "2018-01-13",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mobilenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "efficientnet-b0",
@@ -5018,12 +6830,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-05-28"
+    "releaseDate": "2019-05-28",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "swin-transformer",
@@ -5055,12 +6879,25 @@
       "segmentation",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-03-25"
+    "releaseDate": "2021-03-25",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "object-detection",
+          "image-segmentation"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "gpt-2",
@@ -5089,12 +6926,34 @@
       "general",
       "zero-shot-learning"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2019-02-14"
+    "releaseDate": "2019-02-14",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "webtext"
+        ]
+      }
+    }
   },
   {
     "id": "albert",
@@ -5123,12 +6982,37 @@
       "question-answering",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-09-26"
+    "releaseDate": "2019-09-26",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "bookcorpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "electra",
@@ -5156,12 +7040,36 @@
       "question-answering",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-03-23"
+    "releaseDate": "2020-03-23",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "xlnet",
@@ -5189,12 +7097,39 @@
       "question-answering",
       "language-modeling"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-06-19"
+    "releaseDate": "2019-06-19",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "english-wikipedia",
+          "bookcorpus",
+          "giga5",
+          "clueweb",
+          "common-crawl"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "modernbert",
@@ -5223,12 +7158,36 @@
       "text-classification",
       "embeddings"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 8192,
+    "weightAvailability": "unknown",
     "country": "France / United States",
-    "releaseDate": "2024-12-19"
+    "releaseDate": "2024-12-19",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "retrieval",
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "xlm-roberta",
@@ -5259,12 +7218,36 @@
       "embeddings",
       "multilingual-nlp"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-11-05"
+    "releaseDate": "2019-11-05",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "multilingual"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "multilingual-nlp"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "cc100"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "random-forest",
@@ -5272,7 +7255,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
     "family": "Tree Ensembles",
     "aliases": [
       "Random Forests",
@@ -5293,12 +7276,29 @@
       "regression",
       "feature-importance"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "China / United States",
+    "releaseDate": "1995-08-14",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "random-forest"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "decision-tree",
@@ -5306,7 +7306,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Ross Quinlan",
     "family": "Decision Trees",
     "aliases": [
       "Decision Trees",
@@ -5326,12 +7326,29 @@
       "classification",
       "regression"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "Australia",
+    "releaseDate": "1986-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "decision-tree"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "svm",
@@ -5339,7 +7356,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Corinna Cortes, Vladimir Vapnik",
     "family": "Kernel Methods",
     "aliases": [
       "SVM",
@@ -5360,12 +7377,30 @@
       "regression",
       "anomaly-detection"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States / Russia",
+    "releaseDate": "1995-09-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "svm"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "anomaly-detection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "knn",
@@ -5373,7 +7408,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Evelyn Fix, Joseph Hodges",
     "family": "Nearest Neighbors",
     "aliases": [
       "KNN",
@@ -5395,12 +7430,30 @@
       "regression",
       "nearest-neighbor-search"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States",
+    "releaseDate": "1951-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "knn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "nearest-neighbor-search"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "naive-bayes",
@@ -5408,7 +7461,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Thomas Bayes",
     "family": "Bayesian Classifiers",
     "aliases": [
       "Naive Bayes Classifier"
@@ -5427,12 +7480,28 @@
       "classification",
       "text-classification"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United Kingdom",
+    "releaseDate": "1763-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "naive-bayes"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "xgboost",
@@ -5462,12 +7531,30 @@
       "regression",
       "ranking"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2016-03-09"
+    "releaseDate": "2016-03-09",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "xgboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "xgboost"
+        ]
+      }
+    }
   },
   {
     "id": "adaboost",
@@ -5495,12 +7582,29 @@
       "classification",
       "regression"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "1996-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "adaboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "gradient-boosting",
@@ -5508,7 +7612,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": null,
+    "provider": "Jerome Friedman",
     "family": "Boosting",
     "aliases": [
       "Gradient Boosted Decision Trees",
@@ -5530,12 +7634,30 @@
       "regression",
       "ranking"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "gradient-boosting"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "cnn",
@@ -5543,7 +7665,7 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": null,
+    "provider": "Kunihiko Fukushima, Yann LeCun",
     "family": "CNN",
     "aliases": [
       "CNN",
@@ -5567,12 +7689,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "Japan / France",
+    "releaseDate": "1980-01-01",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "rnn",
@@ -5580,7 +7714,7 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": null,
+    "provider": "John Hopfield",
     "family": "RNN",
     "aliases": [
       "RNN",
@@ -5603,12 +7737,10 @@
       "time-series",
       "nlp"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States",
+    "releaseDate": "1982-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "lstm",
@@ -5639,12 +7771,10 @@
       "time-series",
       "nlp"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Switzerland",
-    "releaseDate": null
+    "releaseDate": "1997-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "gru",
@@ -5675,12 +7805,10 @@
       "time-series",
       "nlp"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Canada",
-    "releaseDate": "2014-06-03"
+    "releaseDate": "2014-06-03",
+    "categoryDetails": {}
   },
   {
     "id": "transformer",
@@ -5712,12 +7840,10 @@
       "sequence-modeling",
       "representation-learning"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2017-06-12"
+    "releaseDate": "2017-06-12",
+    "categoryDetails": {}
   },
   {
     "id": "autoencoder",
@@ -5725,7 +7851,7 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": null,
+    "provider": "David Rumelhart, Geoffrey Hinton, Ronald Williams",
     "family": "Autoencoder",
     "aliases": [
       "AE",
@@ -5746,12 +7872,10 @@
       "representation-learning",
       "denoising"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States / Canada",
+    "releaseDate": "1986-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "vae",
@@ -5780,12 +7904,10 @@
       "representation-learning",
       "image-generation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Netherlands",
-    "releaseDate": "2013-12-20"
+    "releaseDate": "2013-12-20",
+    "categoryDetails": {}
   },
   {
     "id": "gan",
@@ -5816,12 +7938,10 @@
       "generative-modeling",
       "data-synthesis"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Canada",
-    "releaseDate": "2014-06-10"
+    "releaseDate": "2014-06-10",
+    "categoryDetails": {}
   },
   {
     "id": "dcgan",
@@ -5850,12 +7970,23 @@
       "image-generation",
       "generative-modeling"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-11-19"
+    "releaseDate": "2015-11-19",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "unknown"
+        ],
+        "architecture": [
+          "gan"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "diffusion-model",
@@ -5863,7 +7994,7 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": null,
+    "provider": "Jascha Sohl-Dickstein, Eric Weiss, Niru Maheswaranathan, Surya Ganguli",
     "family": "Diffusion",
     "aliases": [
       "Diffusion Models",
@@ -5886,12 +8017,10 @@
       "generative-modeling",
       "data-synthesis"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States",
+    "releaseDate": "2015-03-12",
+    "categoryDetails": {}
   },
   {
     "id": "keypoint-rcnn",
@@ -5922,12 +8051,38 @@
       "pose-estimation",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "2017-03-20",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "keypoint-detection",
+          "object-detection",
+          "pose-estimation"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "keypoint-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "ssdlite",
@@ -5957,12 +8112,35 @@
       "vision",
       "mobile-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-01-13"
+    "releaseDate": "2018-01-13",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "centernet",
@@ -5994,12 +8172,38 @@
       "vision",
       "pose-estimation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-04-16"
+    "releaseDate": "2019-04-16",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "keypoint-detection",
+          "pose-estimation"
+        ],
+        "architecture": [
+          "centernet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "keypoint-detection"
+        ],
+        "architecture": [
+          "centernet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "cascade-rcnn",
@@ -6028,12 +8232,35 @@
       "object-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2017-12-03"
+    "releaseDate": "2017-12-03",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "owl-vit",
@@ -6065,12 +8292,35 @@
       "zero-shot-detection",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2022-05-12"
+    "releaseDate": "2022-05-12",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": null
+      }
+    }
   },
   {
     "id": "yolo-nas",
@@ -6100,12 +8350,35 @@
       "vision",
       "real-time-inference"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Israel",
-    "releaseDate": "2023-05-03"
+    "releaseDate": "2023-05-03",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "realTimeCapable": true
+      }
+    }
   },
   {
     "id": "xception",
@@ -6134,12 +8407,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2016-10-07"
+    "releaseDate": "2016-10-07",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "xception"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "resnet-101",
@@ -6169,12 +8454,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-12-10"
+    "releaseDate": "2015-12-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "resnet-152",
@@ -6204,12 +8501,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2015-12-10"
+    "releaseDate": "2015-12-10",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "vgg19",
@@ -6239,12 +8548,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United Kingdom",
-    "releaseDate": "2014-09-04"
+    "releaseDate": "2014-09-04",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "mobilenet-v3",
@@ -6274,12 +8595,23 @@
       "mobile-inference",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-05-06"
+    "releaseDate": "2019-05-06",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mobilenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "efficientnet-b7",
@@ -6309,12 +8641,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-05-28"
+    "releaseDate": "2019-05-28",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "efficientnet-v2",
@@ -6344,12 +8688,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-04-01"
+    "releaseDate": "2021-04-01",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "resnext",
@@ -6378,12 +8734,24 @@
       "feature-extraction",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2016-11-16"
+    "releaseDate": "2016-11-16",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnext"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "wide-resnet",
@@ -6412,12 +8780,23 @@
       "image-classification",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "France",
-    "releaseDate": "2016-05-23"
+    "releaseDate": "2016-05-23",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "shufflenet",
@@ -6446,12 +8825,23 @@
       "mobile-inference",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "China",
-    "releaseDate": "2017-07-04"
+    "releaseDate": "2017-07-04",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "shufflenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "squeezenet",
@@ -6480,12 +8870,23 @@
       "efficient-inference",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2016-02-24"
+    "releaseDate": "2016-02-24",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "squeezenet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "mnasnet",
@@ -6515,12 +8916,23 @@
       "mobile-inference",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2018-07-31"
+    "releaseDate": "2018-07-31",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mnasnet"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "maxvit",
@@ -6550,12 +8962,23 @@
       "image-classification",
       "vision"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2022-04-22"
+    "releaseDate": "2022-04-22",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
+        "license": "undisclosed"
+      }
+    }
   },
   {
     "id": "distilgpt2",
@@ -6583,12 +9006,34 @@
       "text-generation",
       "general"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "2019-10-01",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english"
+        ],
+        "toolUse": null,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "webtext"
+        ]
+      }
+    }
   },
   {
     "id": "mbert",
@@ -6618,12 +9063,36 @@
       "question-answering",
       "multilingual-nlp"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "yes",
-    "contextWindowTokens": 512,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "multilingual"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "multilingual-nlp"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "multilingual-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "pegasus",
@@ -6650,12 +9119,35 @@
       "summarization",
       "text-generation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 1024,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2019-12-18"
+    "releaseDate": "2019-12-18",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "longformer",
@@ -6683,12 +9175,36 @@
       "text-classification",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 4096,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-04-10"
+    "releaseDate": "2020-04-10",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "long-document-understanding",
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "bigbird",
@@ -6716,12 +9232,36 @@
       "text-classification",
       "question-answering"
     ],
-    "reasoningSupport": "no",
-    "openWeights": true,
-    "localExecution": "limited",
-    "contextWindowTokens": 4096,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2020-07-28"
+    "releaseDate": "2020-07-28",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "toolUse": false,
+        "multimodal": false
+      },
+      "nlp": {
+        "nlpTasks": [
+          "long-document-understanding",
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "unknown"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
   },
   {
     "id": "lightgbm",
@@ -6751,12 +9291,30 @@
       "regression",
       "ranking"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "2017-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "lightgbm"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "lightgbm"
+        ]
+      }
+    }
   },
   {
     "id": "catboost",
@@ -6787,12 +9345,30 @@
       "ranking",
       "categorical-data"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Russia",
-    "releaseDate": "2017-06-28"
+    "releaseDate": "2017-06-28",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "catboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "catboost"
+        ]
+      }
+    }
   },
   {
     "id": "gaussian-process",
@@ -6800,7 +9376,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 2,
-    "provider": null,
+    "provider": "Danie Krige",
     "family": "Gaussian Processes",
     "aliases": [
       "Gaussian Processes",
@@ -6821,12 +9397,30 @@
       "classification",
       "uncertainty-estimation"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "South Africa",
+    "releaseDate": "1951-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "gaussian-process"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "classification",
+          "uncertainty-estimation"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "ridge-regression",
@@ -6834,7 +9428,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 2,
-    "provider": null,
+    "provider": "Arthur Hoerl, Robert Kennard",
     "family": "Linear Models",
     "aliases": [
       "Ridge",
@@ -6854,12 +9448,28 @@
     "useCases": [
       "regression"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States",
+    "releaseDate": "1970-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "ridge-regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "lasso",
@@ -6867,7 +9477,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 2,
-    "provider": null,
+    "provider": "Robert Tibshirani",
     "family": "Linear Models",
     "aliases": [
       "LASSO",
@@ -6887,12 +9497,29 @@
       "regression",
       "feature-selection"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "Canada / United States",
+    "releaseDate": "1996-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "lasso"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "feature-selection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "elastic-net",
@@ -6900,7 +9527,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 2,
-    "provider": null,
+    "provider": "Hui Zou, Trevor Hastie",
     "family": "Linear Models",
     "aliases": [
       "ElasticNet",
@@ -6920,12 +9547,29 @@
       "regression",
       "feature-selection"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "China / United States",
+    "releaseDate": "2005-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "elastic-net"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "feature-selection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
   },
   {
     "id": "hopfield-network",
@@ -6953,12 +9597,10 @@
       "associative-memory",
       "optimization"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": null
+    "releaseDate": "1982-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "rbm",
@@ -6986,12 +9628,10 @@
       "representation-learning",
       "generative-modeling"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Canada",
-    "releaseDate": null
+    "releaseDate": "1986-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "boltzmann-machine",
@@ -6999,7 +9639,7 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 2,
-    "provider": null,
+    "provider": "David Ackley, Geoffrey Hinton, Terrence Sejnowski",
     "family": "Boltzmann Machine",
     "aliases": [
       "Boltzmann Network"
@@ -7018,12 +9658,10 @@
       "generative-modeling",
       "representation-learning"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
-    "country": null,
-    "releaseDate": null
+    "weightAvailability": "unknown",
+    "country": "United States / Canada",
+    "releaseDate": "1985-01-01",
+    "categoryDetails": {}
   },
   {
     "id": "echo-state-network",
@@ -7053,11 +9691,9 @@
       "sequence-modeling",
       "forecasting"
     ],
-    "reasoningSupport": "no",
-    "openWeights": null,
-    "localExecution": "yes",
-    "contextWindowTokens": null,
+    "weightAvailability": "unknown",
     "country": "Germany",
-    "releaseDate": null
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {}
   }
 ]

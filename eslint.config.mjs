@@ -24,7 +24,6 @@ export default tseslint.config(
       ".wrangler/**",
       "tests/results/**",
       "tests/reports/**",
-      "worker-configuration.d.ts",
     ],
   },
 );

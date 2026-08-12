@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa6";
+import { apiClient } from "../../../lib/api/client";
 
 type FormMode = "sign-in" | "register";
 
@@ -22,13 +23,8 @@ export function LoginForm() {
     setBusy(true);
     setNotice(null);
     try {
-      const response = await fetch(`/api/v1/auth/${mode === "register" ? "register" : "password"}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const payload = (await response.json()) as { error?: { message: string } };
-      if (!response.ok) throw new Error(payload.error?.message ?? "Could not sign in.");
+      if (mode === "register") await apiClient.register(email, password);
+      else await apiClient.signInWithPassword(email, password);
       window.location.assign("/classic");
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not sign in.");

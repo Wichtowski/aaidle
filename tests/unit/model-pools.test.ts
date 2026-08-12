@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   eligibleModelIdsByDifficulty,
+  eligibleModelIdsForClassic,
   isModelEligibleForDifficulty,
   publicModelIndexByDifficulty,
 } from "../../lib/server/model-catalog";
@@ -22,6 +23,14 @@ describe("Classic model pools", () => {
     expect(publicModelIndexByDifficulty.normal).toHaveLength(48);
     expect(publicModelIndexByDifficulty.challenge).toHaveLength(150);
     expect(publicModelIndexByDifficulty.hardcore).toHaveLength(209);
+  });
+
+  it("builds non-empty category pools from catalogue categories", () => {
+    expect(eligibleModelIdsForClassic("llm", "normal")).not.toHaveLength(0);
+    expect(eligibleModelIdsForClassic("cv", "challenge")).not.toHaveLength(0);
+    expect(eligibleModelIdsForClassic("classical-ml", "normal")).not.toHaveLength(0);
+    expect(eligibleModelIdsForClassic("object-detection", "normal")).not.toHaveLength(0);
+    expect(eligibleModelIdsForClassic("hardcore", "hardcore")).toHaveLength(209);
   });
 
   it("does not allow a model from a harder pool to be guessed in an easier mode", () => {

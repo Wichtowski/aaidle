@@ -68,7 +68,7 @@ export async function selectDistinctClassicDailyModels({
     );
     const answer = await selectDailyModel({
       date,
-      mode: classicChallengeMode(difficulty),
+      mode: classicChallengeMode("hardcore", difficulty),
       secret,
       models: candidates,
       recentlyUsed: recentlyUsedByDifficulty[difficulty],

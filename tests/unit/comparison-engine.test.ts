@@ -16,8 +16,7 @@ const base: ComparableModel = {
   outputModalities: ["Text"],
   useCases: ["Coding"],
   reasoningSupport: "no",
-  openWeights: false,
-  localExecution: "no",
+  weightAvailability: "closed",
   releaseYear: 2024,
   releaseDate: "2024-05-13",
   contextWindowTokens: 128000,
@@ -35,10 +34,10 @@ describe("comparison engine", () => {
     expect(compareNullableBoolean(false, false)).toBe("correct");
     expect(compareNullableBoolean(null, false)).toBe("unknown");
   });
-  it("reports number direction for year and context", () => {
-    const answer = { ...base, id: "b", releaseYear: 2025, contextWindowTokens: 64000 };
+  it("reports release direction by year and quarter", () => {
+    const answer = { ...base, id: "b", releaseYear: 2024, releaseDate: "2024-10-01", contextWindowTokens: 64000 };
     const result = compareClassicModels(base, answer);
-    expect(result.releaseYear).toBe("higher");
+    expect(result.release).toBe("higher");
     expect(result.contextWindowTokens).toBe("lower");
   });
   it("reports scalar mismatch", () =>

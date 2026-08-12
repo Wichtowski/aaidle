@@ -5,6 +5,7 @@ import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { GuessRow } from "../../app/components/game/GuessRow";
 import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
+import { classicColumnsByCategory } from "../../lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../lib/domain/models/model-types";
 
 const model: ComparableModel = {
@@ -18,8 +19,7 @@ const model: ComparableModel = {
   outputModalities: ["Text"],
   useCases: ["Writing", "Coding"],
   reasoningSupport: "optional",
-  openWeights: false,
-  localExecution: "no",
+  weightAvailability: "closed",
   releaseYear: 2026,
   releaseDate: "2026-01-01",
   contextWindowTokens: 128_000,
@@ -36,7 +36,7 @@ const comparison: ClassicComparison = {
   reasoningSupport: "incorrect",
   openWeights: "incorrect",
   localExecution: "incorrect",
-  releaseYear: "higher",
+  release: "higher",
   contextWindowTokens: "unknown",
 };
 
@@ -55,10 +55,11 @@ describe("Hardcore GuessRow", () => {
         animate: false,
         showCards: true,
         hardcore: true,
+        columns: classicColumnsByCategory.hardcore,
       }),
     );
 
-    expect(container.querySelectorAll(".comparison--correct, .comparison--incorrect")).toHaveLength(12);
+    expect(container.querySelectorAll(".comparison--correct, .comparison--incorrect")).toHaveLength(8);
     expect(container.querySelector(".comparison--partial, .comparison--higher, .comparison--unknown")).toBeNull();
     expect(container.querySelector(".matched-value")).toBeNull();
   });

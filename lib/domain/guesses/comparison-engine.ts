@@ -12,8 +12,9 @@ const normalized = (value: string) =>
     .toLocaleLowerCase()
     .replace(/[–—]/g, "-")
     .replace(/[\s_-]+/g, "-");
+const undisclosed = (value: string | null) => value != null && ["unknown", "undisclosed"].includes(normalized(value));
 export function compareScalar(a: string | null, b: string | null): ScalarComparison {
-  return a == null || b == null
+  return a == null || b == null || undisclosed(a) || undisclosed(b)
     ? "unknown"
     : normalized(a) === normalized(b)
       ? "correct"
@@ -24,7 +25,7 @@ export function compareNullableBoolean(a: boolean | null, b: boolean | null): Sc
 }
 export const compareEnum = compareScalar;
 export function compareSets(a: string[] | null, b: string[] | null): SetComparison {
-  if (!a?.length || !b?.length) return "unknown";
+  if (!a?.length || !b?.length || a.some(undisclosed) || b.some(undisclosed)) return "unknown";
   const left = new Set(a.map(normalized));
   const right = new Set(b.map(normalized));
   if (left.size === right.size && [...left].every((value) => right.has(value))) return "correct";
@@ -40,10 +41,21 @@ export function compareNumber(guess: number | null, answer: number | null): Numb
         : "lower";
 }
 export const compareYear = compareNumber;
+const releaseQuarter = (model: ComparableModel) => {
+  if (!model.releaseDate) return null;
+  const year = Number(model.releaseDate.slice(0, 4));
+  const month = Number(model.releaseDate.slice(5, 7));
+  return Number.isFinite(year) && month >= 1 && month <= 12 ? year * 4 + Math.ceil(month / 3) : null;
+};
 export function compareClassicModels(
   guessed: ComparableModel,
   answer: ComparableModel,
 ): ClassicComparison {
+  const language = (model: ComparableModel) => model.categoryDetails?.["language-model"];
+  const vision = (model: ComparableModel) => model.categoryDetails?.["computer-vision"];
+  const nlp = (model: ComparableModel) => model.categoryDetails?.nlp;
+  const detection = (model: ComparableModel) => model.categoryDetails?.["object-detection"];
+  const classical = (model: ComparableModel) => model.categoryDetails?.["classical-ml"];
   return {
     provider: compareScalar(guessed.provider, answer.provider),
     country: compareScalar(guessed.country, answer.country),
@@ -53,9 +65,23 @@ export function compareClassicModels(
     outputModalities: compareSets(guessed.outputModalities, answer.outputModalities),
     useCases: compareSets(guessed.useCases, answer.useCases),
     reasoningSupport: compareEnum(guessed.reasoningSupport, answer.reasoningSupport),
-    openWeights: compareNullableBoolean(guessed.openWeights, answer.openWeights),
-    localExecution: compareEnum(guessed.localExecution, answer.localExecution),
-    releaseYear: compareYear(guessed.releaseYear, answer.releaseYear),
+    weightAvailability: compareEnum(guessed.weightAvailability, answer.weightAvailability),
+    release: compareNumber(releaseQuarter(guessed), releaseQuarter(answer)),
     contextWindowTokens: compareNumber(guessed.contextWindowTokens, answer.contextWindowTokens),
+    supportedLanguages: compareSets(language(guessed)?.supportedLanguages ?? nlp(guessed)?.supportedLanguages ?? null, language(answer)?.supportedLanguages ?? nlp(answer)?.supportedLanguages ?? null),
+    toolUse: compareNullableBoolean(language(guessed)?.toolUse ?? null, language(answer)?.toolUse ?? null),
+    multimodal: compareNullableBoolean(language(guessed)?.multimodal ?? null, language(answer)?.multimodal ?? null),
+    visionTasks: compareSets(vision(guessed)?.visionTasks ?? null, vision(answer)?.visionTasks ?? null),
+    architecture: compareSets(vision(guessed)?.architecture ?? nlp(guessed)?.architecture ?? detection(guessed)?.architecture ?? null, vision(answer)?.architecture ?? nlp(answer)?.architecture ?? detection(answer)?.architecture ?? null),
+    trainingDatasets: compareSets(vision(guessed)?.trainingDatasets ?? nlp(guessed)?.trainingDatasets ?? detection(guessed)?.trainingDatasets ?? null, vision(answer)?.trainingDatasets ?? nlp(answer)?.trainingDatasets ?? detection(answer)?.trainingDatasets ?? null),
+    license: compareScalar(vision(guessed)?.license ?? null, vision(answer)?.license ?? null),
+    nlpTasks: compareSets(nlp(guessed)?.nlpTasks ?? null, nlp(answer)?.nlpTasks ?? null),
+    detectionTypes: compareSets(detection(guessed)?.detectionTypes ?? null, detection(answer)?.detectionTypes ?? null),
+    realTimeCapable: compareNullableBoolean(detection(guessed)?.realTimeCapable ?? null, detection(answer)?.realTimeCapable ?? null),
+    algorithmTypes: compareSets(classical(guessed)?.algorithmTypes ?? null, classical(answer)?.algorithmTypes ?? null),
+    learningParadigms: compareSets(classical(guessed)?.learningParadigms ?? null, classical(answer)?.learningParadigms ?? null),
+    objectives: compareSets(classical(guessed)?.objectives ?? null, classical(answer)?.objectives ?? null),
+    featureTypes: compareSets(classical(guessed)?.featureTypes ?? null, classical(answer)?.featureTypes ?? null),
+    frameworks: compareSets(classical(guessed)?.frameworks ?? null, classical(answer)?.frameworks ?? null),
   };
 }

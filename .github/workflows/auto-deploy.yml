@@ -1,4 +1,4 @@
-name: Release and Deploy aAidle
+name: Release and Deploy aAIdle
 
 on:
   push:

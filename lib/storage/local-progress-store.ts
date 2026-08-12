@@ -33,7 +33,7 @@ export const freshProgress = (): LocalProgress => ({
       guessDistribution: distribution(),
     },
   },
-  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false },
+  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false, hardcoreUnlocked: false },
 });
 
 const serverSnapshot: LocalProgress = {
@@ -52,7 +52,7 @@ const serverSnapshot: LocalProgress = {
       guessDistribution: distribution(),
     },
   },
-  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false },
+  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false, hardcoreUnlocked: false },
 };
 
 function reconcileLocalStats(progress: LocalProgress): LocalProgress {

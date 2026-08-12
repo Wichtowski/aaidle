@@ -6,9 +6,9 @@ export default function LoginPage() {
     <main className="page login-page">
       <SiteNavbar />
       <section className="login">
-        <p className="eyebrow">Your aAidle account</p>
+        <p className="eyebrow">Your aAIdle account</p>
         <h1>Keep your progress.</h1>
-        <p className="lede">Create your aAidle profile for account features and future game modes.</p>
+        <p className="lede">Create your aAIdle profile for account features and future game modes.</p>
         <LoginForm />
       </section>
     </main>

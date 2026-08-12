@@ -1,5 +1,24 @@
 export const classicDifficulties = ["normal", "challenge", "hardcore"] as const;
 export type ClassicDifficulty = (typeof classicDifficulties)[number];
+export const classicCategories = ["llm", "cv", "nlp", "object-detection", "classical-ml", "hardcore"] as const;
+export type ClassicCategory = (typeof classicCategories)[number];
+export const focusedClassicCategories = classicCategories.filter((category) => category !== "hardcore") as Exclude<
+  ClassicCategory,
+  "hardcore"
+>[];
+
+export const classicCategoryDetails: Record<ClassicCategory, { label: string; catalogCategory?: string }> = {
+  llm: { label: "LLM", catalogCategory: "language-model" },
+  cv: { label: "CV", catalogCategory: "computer-vision" },
+  nlp: { label: "NLP", catalogCategory: "nlp" },
+  "object-detection": { label: "Object detection", catalogCategory: "object-detection" },
+  "classical-ml": { label: "Classical ML", catalogCategory: "classical-ml" },
+  hardcore: { label: "Hardcore" },
+};
+
+export function isClassicCategory(value: string | null | undefined): value is ClassicCategory {
+  return classicCategories.includes(value as ClassicCategory);
+}
 export type ModelPoolRank = 0 | 1 | 2;
 
 export function isClassicDifficulty(value: string | null | undefined): value is ClassicDifficulty {
@@ -12,13 +31,10 @@ export const classicDifficultyRank: Record<ClassicDifficulty, ModelPoolRank> = {
   hardcore: 2,
 };
 
-export const classicChallengeModes = classicDifficulties.map(
-  (difficulty) => `classic:${difficulty}` as const,
-);
-export type ClassicChallengeMode = (typeof classicChallengeModes)[number];
+export type ClassicChallengeMode = `classic:${ClassicCategory}:${ClassicDifficulty}`;
 
 export const challengeModes = [
-  ...classicChallengeModes,
+  "classic",
   "provider",
   "emoji",
   "logo",
@@ -28,15 +44,26 @@ export const challengeModes = [
 ] as const;
 export type ChallengeMode = (typeof challengeModes)[number];
 
-export function classicChallengeMode(difficulty: ClassicDifficulty): ClassicChallengeMode {
-  return `classic:${difficulty}`;
+export function classicChallengeMode(
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+): ClassicChallengeMode {
+  return `classic:${category}:${difficulty}`;
 }
 
-export function classicDifficultyFromChallengeMode(mode: ClassicChallengeMode): ClassicDifficulty {
-  return mode.slice("classic:".length) as ClassicDifficulty;
+export function classicModeFromChallengeMode(mode: ClassicChallengeMode) {
+  const [, category, difficulty] = mode.split(":");
+  return { category: category as ClassicCategory, difficulty: difficulty as ClassicDifficulty };
 }
-export type LocalExecution = "yes" | "no" | "limited" | "unknown";
 export type ReasoningSupport = "native" | "optional" | "no" | "unknown";
+export type WeightAvailability = "open" | "closed" | "restricted" | "unknown";
+export type CategoryDetails = Partial<{
+  "language-model": { supportedLanguages: string[]; toolUse: boolean | null; multimodal: boolean };
+  "computer-vision": { visionTasks: string[]; architecture: string[]; trainingDatasets: string[]; license: string | null };
+  nlp: { nlpTasks: string[]; supportedLanguages: string[]; architecture: string[]; trainingDatasets: string[] };
+  "object-detection": { detectionTypes: string[]; architecture: string[]; trainingDatasets: string[]; realTimeCapable: boolean | null };
+  "classical-ml": { algorithmTypes: string[]; learningParadigms: string[]; objectives: string[]; featureTypes: string[]; frameworks: string[] };
+}>;
 
 export type PublicModelIndex = {
   id: string;
@@ -56,8 +83,8 @@ export type ComparableModel = {
   outputModalities: string[] | null;
   useCases: string[] | null;
   reasoningSupport: ReasoningSupport | null;
-  openWeights: boolean | null;
-  localExecution: LocalExecution | null;
+  weightAvailability: WeightAvailability | null;
+  categoryDetails?: CategoryDetails;
   releaseYear: number | null;
   releaseDate: string | null;
   contextWindowTokens: number | null;

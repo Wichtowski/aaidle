@@ -1,27 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { GuessRow } from "./GuessRow";
-import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
-import type { ClassicDifficulty, ComparableModel } from "../../../lib/domain/models/model-types";
+import {
+  classicColumnHeadings,
+  classicColumns,
+  classicColumnsForGame,
+  type ClassicComparison,
+  type ClassicColumn,
+} from "../../../lib/domain/guesses/comparison-types";
+import type {
+  ClassicCategory,
+  ClassicDifficulty,
+  ComparableModel,
+} from "../../../lib/domain/models/model-types";
 
 const compactAfterGuessCount = 5;
-
-const headings = [
-  "Provider",
-  "Country",
-  "Family",
-  "Categories",
-  "Input",
-  "Output",
-  "Use cases",
-  "Reasoning",
-  "Open",
-  "Local",
-  "Year · Q",
-  "Context",
-];
 
 type BoardGuess = {
   model: ComparableModel;
@@ -44,10 +39,15 @@ const autoCollapsedGuessIds = (requestIds: string[]) =>
 export function GuessBoard({
   guesses,
   difficulty = "normal",
+  category,
 }: {
   guesses: BoardGuess[];
   difficulty?: ClassicDifficulty;
+  category?: ClassicCategory;
 }) {
+  const columns: readonly ClassicColumn[] = category
+    ? classicColumnsForGame(category, difficulty)
+    : classicColumns;
   const guessIds = guesses.map((guess) => guess.requestId);
   const guessKey = guessIds.join(":");
   const [collapsedGuessIds, setCollapsedGuessIds] = useState<Set<string>>(() => new Set());
@@ -83,16 +83,19 @@ export function GuessBoard({
 
   return (
     <section
-      className={`board-wrap${guesses.length === 0 ? " board-wrap--empty" : ""}`}
+      className={`board-wrap${guesses.length === 0 ? " board-wrap--empty" : ""}${
+        category === "hardcore" ? " board-wrap--hardcore" : ""
+      }`}
       aria-label="Guess comparisons"
       role="table"
+      style={{ "--guess-board-columns": columns.length } as CSSProperties}
     >
       <div className="board-head" role="row">
         <span aria-hidden="true" className="board-head__guess" />
         <div className="board-head__cards">
-          {headings.map((heading) => (
-            <span key={heading} role="columnheader">
-              {heading}
+          {columns.map((column) => (
+            <span key={column} role="columnheader">
+              {classicColumnHeadings[column]}
             </span>
           ))}
         </div>
@@ -126,6 +129,7 @@ export function GuessBoard({
         return (
           <GuessRow
             {...guess}
+            columns={columns}
             hardcore={difficulty === "hardcore"}
             key={guess.requestId}
             onCollapse={canCollapse ? () => collapseGuess(guess.requestId) : undefined}

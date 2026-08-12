@@ -1,12 +1,14 @@
 import rawModels from "../../data/models.seed.json";
-import { classicDifficultyRank } from "../domain/models/model-types";
+import { classicCategoryDetails, classicDifficultyRank } from "../domain/models/model-types";
 import type {
+  ClassicCategory,
   ClassicDifficulty,
   ComparableModel,
   ModelPoolRank,
-  LocalExecution,
   PublicModelIndex,
   ReasoningSupport,
+  WeightAvailability,
+  CategoryDetails,
 } from "../domain/models/model-types";
 
 type SeedModel = {
@@ -21,8 +23,8 @@ type SeedModel = {
   outputModalities?: string[];
   useCases?: string[];
   reasoningSupport?: ReasoningSupport;
-  openWeights?: boolean;
-  localExecution?: LocalExecution;
+  weightAvailability?: WeightAvailability;
+  categoryDetails?: CategoryDetails;
   releaseDate?: string;
   contextWindowTokens?: number;
   aliases?: string[];
@@ -46,8 +48,8 @@ const models: CatalogModel[] = (rawModels as SeedModel[]).map((model) => ({
   outputModalities: readableList(model.outputModalities),
   useCases: readableList(model.useCases),
   reasoningSupport: model.reasoningSupport ?? null,
-  openWeights: model.openWeights ?? null,
-  localExecution: model.localExecution ?? null,
+  weightAvailability: model.weightAvailability ?? null,
+  categoryDetails: model.categoryDetails ?? {},
   releaseYear: model.releaseDate ? Number(model.releaseDate.slice(0, 4)) : null,
   releaseDate: model.releaseDate ?? null,
   contextWindowTokens: model.contextWindowTokens ?? null,
@@ -80,8 +82,50 @@ export const eligibleModelIdsByDifficulty: Record<ClassicDifficulty, string[]> =
   hardcore: models.filter((model) => model.minPool <= 2).map((model) => model.id),
 };
 
+const isInCategory = (model: CatalogModel, category: ClassicCategory) =>
+  category === "hardcore" ||
+  model.categories?.some(
+    (value) => value === readable(classicCategoryDetails[category].catalogCategory ?? ""),
+  );
+
+const categoryModels = (category: ClassicCategory) =>
+  models
+    .filter((model) => isInCategory(model, category))
+    .sort((left, right) => left.id.localeCompare(right.id));
+
+const modelsForClassicDifficulty = (category: ClassicCategory, difficulty: ClassicDifficulty) => {
+  const pool = categoryModels(category);
+  if (category === "hardcore" || difficulty === "hardcore" || difficulty === "challenge") return pool;
+
+  // Focused categories use a category-local introductory pool, because the former global ranks
+  // leave several valid categories (such as Classical ML) with no Normal candidates.
+  return pool.slice(0, Math.max(8, Math.ceil(pool.length * 0.4)));
+};
+
+export const publicModelIndexForClassic = (category: ClassicCategory, difficulty: ClassicDifficulty) =>
+  modelsForClassicDifficulty(category, difficulty)
+    .map(({ id, name, provider, family, aliases }) => ({
+      id,
+      name,
+      providerName: provider ?? "N/A",
+      familyName: family ?? "N/A",
+      aliases,
+    }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+
+export const eligibleModelIdsForClassic = (category: ClassicCategory, difficulty: ClassicDifficulty) =>
+  modelsForClassicDifficulty(category, difficulty).map((model) => model.id);
+
 export function isModelEligibleForDifficulty(id: string, difficulty: ClassicDifficulty): boolean {
   return (byId.get(id)?.minPool ?? Infinity) <= classicDifficultyRank[difficulty];
+}
+
+export function isModelEligibleForClassic(
+  id: string,
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+): boolean {
+  return eligibleModelIdsForClassic(category, difficulty).includes(id);
 }
 
 export function catalogModel(id: string): ComparableModel | null {
@@ -99,8 +143,8 @@ export function catalogModel(id: string): ComparableModel | null {
     outputModalities: model.outputModalities,
     useCases: model.useCases,
     reasoningSupport: model.reasoningSupport,
-    openWeights: model.openWeights,
-    localExecution: model.localExecution,
+    weightAvailability: model.weightAvailability,
+    categoryDetails: model.categoryDetails,
     releaseYear: model.releaseYear,
     releaseDate: model.releaseDate,
     contextWindowTokens: model.contextWindowTokens,

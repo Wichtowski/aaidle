@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import { CelebrationPhysics } from "./CelebrationPhysics";
 import { ShareResultButton, type ShareGuess } from "./ShareResultButton";
+import type { ClassicCategory } from "../../../lib/domain/models/model-types";
 
 function resultMessage(guessCount: number) {
   if (guessCount === 1) return "One guess. Either genius or delightfully suspicious.";
@@ -15,10 +16,14 @@ function resultMessage(guessCount: number) {
 
 export function GameCompletedDialog({
   date,
+  category,
+  difficulty,
   guesses,
   stats,
 }: {
   date: string;
+  category: ClassicCategory;
+  difficulty: "normal" | "challenge" | "hardcore";
   guesses: ShareGuess[];
   stats: { currentStreak: number; bestStreak: number; gamesPlayed: number } | null;
 }) {
@@ -68,7 +73,13 @@ export function GameCompletedDialog({
           </div>
         </div>
         <div className="completed__actions">
-          <ShareResultButton date={date} guesses={guesses} streak={stats?.currentStreak ?? 0} />
+          <ShareResultButton
+            date={date}
+            category={category}
+            difficulty={difficulty}
+            guesses={guesses}
+            streak={stats?.currentStreak ?? 0}
+          />
         </div>
       </section>
     </div>

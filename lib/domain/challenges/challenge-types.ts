@@ -1,9 +1,9 @@
-import type { ClassicChallengeMode, ClassicDifficulty } from "../models/model-types";
+import type { ClassicCategory, ClassicChallengeMode, ClassicDifficulty } from "../models/model-types";
 import type { ClassicColumn } from "../guesses/comparison-types";
 export type PublicDailyChallengeDto = {
   id: string;
   date: string;
-  mode: ClassicDifficulty;
+  mode: { category: ClassicCategory; difficulty: ClassicDifficulty };
   expiresAt: string;
   columns: ClassicColumn[];
 };
