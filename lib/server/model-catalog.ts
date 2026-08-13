@@ -36,6 +36,20 @@ const readable = (value: string) => value.replaceAll("-", " ");
 
 const readableList = (values: string[] | undefined) => values?.map(readable) ?? null;
 
+const normalizeCategoryDetails = (details: CategoryDetails | undefined): CategoryDetails => {
+  const language = details?.["language-model"];
+
+  if (!language) return details ?? {};
+
+  return {
+    ...details,
+    "language-model": {
+      ...language,
+      toolUse: language.toolUse ?? false,
+    },
+  };
+};
+
 const models: CatalogModel[] = (rawModels as SeedModel[]).map((model) => ({
   id: model.id,
   name: model.name,
@@ -49,7 +63,7 @@ const models: CatalogModel[] = (rawModels as SeedModel[]).map((model) => ({
   useCases: readableList(model.useCases),
   reasoningSupport: model.reasoningSupport ?? null,
   weightAvailability: model.weightAvailability ?? null,
-  categoryDetails: model.categoryDetails ?? {},
+  categoryDetails: normalizeCategoryDetails(model.categoryDetails),
   releaseYear: model.releaseDate ? Number(model.releaseDate.slice(0, 4)) : null,
   releaseDate: model.releaseDate ?? null,
   contextWindowTokens: model.contextWindowTokens ?? null,
@@ -97,9 +111,11 @@ const modelsForClassicDifficulty = (category: ClassicCategory, difficulty: Class
   const pool = categoryModels(category);
   if (category === "hardcore" || difficulty === "hardcore" || difficulty === "challenge") return pool;
 
-  // Focused categories use a category-local introductory pool, because the former global ranks
-  // leave several valid categories (such as Classical ML) with no Normal candidates.
-  return pool.slice(0, Math.max(8, Math.ceil(pool.length * 0.4)));
+  const normalPool = pool.filter((model) => model.minPool <= classicDifficultyRank.normal);
+
+  // Some focused categories do not yet have enough Normal-ranked models. Keep them playable
+  // without arbitrarily excluding Normal-ranked models from categories with a larger catalogue.
+  return normalPool.length >= 8 ? normalPool : pool.slice(0, Math.max(8, Math.ceil(pool.length * 0.4)));
 };
 
 export const publicModelIndexForClassic = (category: ClassicCategory, difficulty: ClassicDifficulty) =>

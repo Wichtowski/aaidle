@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { CookieConsent } from "./components/ui/CookieConsent";
+import { GlobalHellMode } from "./components/ui/GlobalHellMode";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aaidle.com"),
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" {...{ version }}>
       <body>
         <AuthProvider>
+          <GlobalHellMode />
           {children}
           <CookieConsent />
         </AuthProvider>

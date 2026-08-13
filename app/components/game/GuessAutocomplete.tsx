@@ -8,13 +8,11 @@ export function GuessAutocomplete({
   models,
   excluded,
   onPick,
-  onSecretCode,
   disabled = false,
 }: {
   models: PublicModelIndex[];
   excluded: Set<string>;
   onPick: (model: PublicModelIndex) => void;
-  onSecretCode?: (code: string) => void;
   disabled?: boolean;
 }) {
   const rootRef = useRef<HTMLFormElement>(null);
@@ -69,13 +67,10 @@ export function GuessAutocomplete({
   const firstAvailableIndex = () => results.findIndex((model) => !excluded.has(model.id));
 
   const selected = results[activeIndex] ?? results[firstAvailableIndex()];
-  const canConfirm = Boolean(
-    (selected && !excluded.has(selected.id) || (onSecretCode && query.trim())) && !disabled,
-  );
+  const canConfirm = Boolean(selected && !excluded.has(selected.id) && !disabled);
 
   const confirm = () => {
     if (selected) choose(selected);
-    else if (query.trim()) onSecretCode?.(query.trim());
   };
 
   const moveActiveOption = (direction: 1 | -1) => {

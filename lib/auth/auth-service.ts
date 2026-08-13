@@ -14,6 +14,14 @@ type UserRow = {
 export type AuthenticatedUser = Pick<UserRow, "id" | "email" | "display_name" | "email_verified_at">;
 
 const sessionLifetimeMs = sessionMaxAgeSeconds * 1_000;
+const emailTokenLifetimes: Record<AuthEmailTokenPurpose, number> = {
+  "email-verification": 30 * 60 * 1_000,
+  "password-reset": 15 * 60 * 1_000,
+  "account-deletion": 5 * 60 * 1_000,
+};
+
+type AuthEmailTokenPurpose = "email-verification" | "password-reset" | "account-deletion";
+
 export const normalizeEmail = (email: string) => email.trim().toLocaleLowerCase("en-US");
 
 async function userByEmail(email: string): Promise<UserRow | null> {
@@ -110,11 +118,89 @@ export async function registerWithPassword({ email, password }: { email: string;
   return user;
 }
 
+async function createAuthEmailToken(userId: string, purpose: AuthEmailTokenPurpose): Promise<string> {
+  const token = randomToken();
+  const now = Date.now();
+  const DB = database();
+  await DB.prepare("DELETE FROM auth_email_tokens WHERE user_id=? AND purpose=?")
+    .bind(userId, purpose)
+    .run();
+  await DB.prepare(
+    "INSERT INTO auth_email_tokens (id, user_id, token_hash, purpose, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+  )
+    .bind(crypto.randomUUID(), userId, tokenHash(token), purpose, now + emailTokenLifetimes[purpose], now)
+    .run();
+  return token;
+}
+
+export async function createEmailVerificationToken(userId: string) {
+  return createAuthEmailToken(userId, "email-verification");
+}
+
+export async function createEmailVerificationTokenForEmail(email: string) {
+  const user = await userByEmail(email);
+  if (!user || user.email_verified_at) return null;
+  return { email: user.email, token: await createEmailVerificationToken(user.id) };
+}
+
+export async function createPasswordResetToken(email: string): Promise<string | null> {
+  const user = await userByEmail(email);
+  return user ? createAuthEmailToken(user.id, "password-reset") : null;
+}
+
+export function createAccountDeletionToken(userId: string): Promise<string> {
+  return createAuthEmailToken(userId, "account-deletion");
+}
+
+async function consumeAuthEmailToken(token: string, purpose: AuthEmailTokenPurpose): Promise<string | null> {
+  const record = await database()
+    .prepare(
+      "DELETE FROM auth_email_tokens WHERE token_hash=? AND purpose=? AND expires_at>? RETURNING user_id",
+    )
+    .bind(tokenHash(token), purpose, Date.now())
+    .first<{ user_id: string }>();
+  return record?.user_id ?? null;
+}
+
+export async function verifyEmailAddress(token: string): Promise<boolean> {
+  const userId = await consumeAuthEmailToken(token, "email-verification");
+  if (!userId) return false;
+  const now = Date.now();
+  await database()
+    .prepare("UPDATE users SET email_verified_at=COALESCE(email_verified_at, ?), updated_at=? WHERE id=?")
+    .bind(now, now, userId)
+    .run();
+  return true;
+}
+
+export async function resetPasswordWithToken({ token, password }: { token: string; password: string }) {
+  const userId = await consumeAuthEmailToken(token, "password-reset");
+  if (!userId) return null;
+  const now = Date.now();
+  await database()
+    .prepare("UPDATE users SET password_hash=?, updated_at=? WHERE id=?")
+    .bind(await hashPassword(password), now, userId)
+    .run();
+  await database().prepare("DELETE FROM user_sessions WHERE user_id=?").bind(userId).run();
+  return userId;
+}
+
+export async function deleteAccountWithToken(token: string): Promise<boolean> {
+  const result = await database()
+    .prepare(
+      "DELETE FROM users WHERE id=(SELECT user_id FROM auth_email_tokens WHERE token_hash=? AND purpose='account-deletion' AND expires_at>?) RETURNING id",
+    )
+    .bind(tokenHash(token), Date.now())
+    .first<{ id: string }>();
+  return Boolean(result);
+}
+
 export async function authenticateWithPassword({ email, password }: { email: string; password: string }) {
   const user = await userByEmail(email);
   if (!user?.password_hash || !(await verifyPassword(password, user.password_hash))) {
     throw new Error("INVALID_CREDENTIALS");
   }
+  if (!user.email_verified_at) throw new Error("EMAIL_UNVERIFIED");
   return user;
 }
 

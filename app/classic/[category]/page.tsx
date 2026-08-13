@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClassicGame } from "../../components/game/ClassicGame";
-import { classicCategoryDetails, isClassicCategory, isClassicDifficulty } from "../../../lib/domain/models/model-types";
+import { classicCategoryDetails, classicCategoryFromRouteSegment, isClassicDifficulty } from "../../../lib/domain/models/model-types";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { classicDifficultyCookieName } from "../../../lib/domain/games/classic/difficulty-preference";
@@ -9,8 +9,9 @@ import { classicGameData } from "../../../lib/domain/games/classic/classic-game-
 type ClassicCategoryPageProps = { params: Promise<{ category: string }> };
 
 export async function generateMetadata({ params }: ClassicCategoryPageProps): Promise<Metadata> {
-  const { category } = await params;
-  if (!isClassicCategory(category)) return {};
+  const { category: requestedRouteSegment } = await params;
+  const category = classicCategoryFromRouteSegment(requestedRouteSegment);
+  if (!category) return {};
 
   const label = classicCategoryDetails[category].label;
   const title = `Classic ${label}`;
@@ -19,16 +20,24 @@ export async function generateMetadata({ params }: ClassicCategoryPageProps): Pr
   return {
     title,
     description,
-    alternates: { canonical: `/classic/${category}` },
-    openGraph: { title, description, url: `/classic/${category}` },
+    alternates: { canonical: `/classic/${classicCategoryDetails[category].routeSegment}` },
+    openGraph: { title, description, url: `/classic/${classicCategoryDetails[category].routeSegment}` },
     twitter: { title, description },
   };
 }
 
 export default async function ClassicCategoryPage({ params }: ClassicCategoryPageProps) {
-  const { category } = await params;
-  if (!isClassicCategory(category)) notFound();
+  const { category: routeSegment } = await params;
+  const category = classicCategoryFromRouteSegment(routeSegment);
+  if (!category) notFound();
   const savedDifficulty = (await cookies()).get(classicDifficultyCookieName)?.value;
   const difficulty = category === "hardcore" ? "hardcore" : isClassicDifficulty(savedDifficulty) && savedDifficulty !== "hardcore" ? savedDifficulty : "normal";
-  return <ClassicGame category={category} difficulty={difficulty} initialGame={await classicGameData(category, difficulty)} />;
+  return (
+    <ClassicGame
+      category={category}
+      difficulty={difficulty}
+      initialGame={await classicGameData(category, difficulty)}
+      key={category}
+    />
+  );
 }

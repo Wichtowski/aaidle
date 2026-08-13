@@ -1,4 +1,5 @@
 import { distribution } from "../utils/dates";
+import { canonicalClassicChallengeMode } from "../domain/models/model-types";
 import { localProgressSchema, type LocalProgress } from "./local-progress-schema";
 
 export const progressKey = "aaidle:progress:v1";
@@ -33,7 +34,13 @@ export const freshProgress = (): LocalProgress => ({
       guessDistribution: distribution(),
     },
   },
-  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false, hardcoreUnlocked: false },
+  preferences: {
+    reducedMotion: false,
+    highContrast: false,
+    hasSeenClassicPrivacy: false,
+    hardcoreUnlocked: false,
+    hellMode: false,
+  },
 });
 
 const serverSnapshot: LocalProgress = {
@@ -52,7 +59,13 @@ const serverSnapshot: LocalProgress = {
       guessDistribution: distribution(),
     },
   },
-  preferences: { reducedMotion: false, highContrast: false, hasSeenClassicPrivacy: false, hardcoreUnlocked: false },
+  preferences: {
+    reducedMotion: false,
+    highContrast: false,
+    hasSeenClassicPrivacy: false,
+    hardcoreUnlocked: false,
+    hellMode: false,
+  },
 };
 
 function reconcileLocalStats(progress: LocalProgress): LocalProgress {
@@ -77,13 +90,34 @@ function reconcileLocalStats(progress: LocalProgress): LocalProgress {
   };
 }
 
+function migrateClassicChallengeModes(progress: LocalProgress): LocalProgress {
+  let changed = false;
+  const games = Object.fromEntries(
+    Object.values(progress.games).map((game) => {
+      const mode = canonicalClassicChallengeMode(game.mode);
+      if (!mode || mode === game.mode) return [`${game.mode}:${game.challengeDate}`, game];
+
+      changed = true;
+      return [
+        `${mode}:${game.challengeDate}`,
+        {
+          ...game,
+          mode,
+        },
+      ];
+    }),
+  );
+
+  return changed ? { ...progress, games } : progress;
+}
+
 export function readProgress() {
   if (typeof window === "undefined") return serverSnapshot;
 
   try {
     const value = window.localStorage.getItem(progressKey);
     const progress = reconcileLocalStats(
-      value ? localProgressSchema.parse(JSON.parse(value)) : freshProgress(),
+      migrateClassicChallengeModes(value ? localProgressSchema.parse(JSON.parse(value)) : freshProgress()),
     );
     const playerId = devicePlayerId(progress.playerId);
     return progress.playerId === playerId ? progress : { ...progress, playerId };
@@ -93,6 +127,7 @@ export function readProgress() {
 }
 
 let snapshot: LocalProgress = serverSnapshot;
+let initialised = false;
 const listeners = new Set<() => void>();
 export const subscribe = (listener: () => void) => {
   listeners.add(listener);
@@ -100,9 +135,14 @@ export const subscribe = (listener: () => void) => {
 };
 export const getSnapshot = () => snapshot;
 export const getServerSnapshot = () => serverSnapshot;
+export const getInitialisedSnapshot = () => initialised;
+export const getServerInitialisedSnapshot = () => false;
 
 export function initialiseProgress() {
+  if (initialised) return;
+
   snapshot = readProgress();
+  initialised = true;
   window.addEventListener("storage", (event) => {
     if (event.key === progressKey || event.key === playerIdKey) {
       snapshot = readProgress();

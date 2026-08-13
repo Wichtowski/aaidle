@@ -8,8 +8,8 @@ import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
 export function SiteNavbar({ children, hardcore = false }: { children?: ReactNode; hardcore?: boolean }) {
   const { user, signOut } = useAuth();
   const labels = hardcore
-    ? { stats: "Sins", privacy: "Pacts", credits: "Infernal credits", issues: "Report a demon", signIn: "Enter the circle", signOut: "Leave the circle" }
-    : { stats: "Stats", privacy: "Privacy", credits: "Credits", issues: "Report an issue", signIn: "Sign in", signOut: "Sign out" };
+    ? { profile: "Soul", privacy: "Pacts", credits: "Infernal credits", issues: "Report a demon", signIn: "Enter the circle", signOut: "Leave the circle" }
+    : { profile: "Profile", privacy: "Privacy", credits: "Credits", issues: "Report an issue", signIn: "Sign in", signOut: "Sign out" };
 
   return (
     <nav className="site-navbar">
@@ -18,7 +18,7 @@ export function SiteNavbar({ children, hardcore = false }: { children?: ReactNod
       </Link>
       <div className="site-navbar__actions">
         {children}
-        <Link href="/stats">{labels.stats}</Link>
+        <Link href="/profile">{labels.profile}</Link>
         <Link href="/privacy/v1">{labels.privacy}</Link>
         <Link href="/credits">{labels.credits}</Link>
         <a href="https://github.com/Wichtowski/aaidle/issues/new" rel="noreferrer" target="_blank">

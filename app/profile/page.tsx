@@ -1,37 +1,83 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+import { ProfileDangerZone } from "../components/auth/ProfileDangerZone";
 import { useLocalProgress } from "../../lib/storage/use-local-progress";
-import { classicCategories, classicCategoryDetails, type ClassicCategory } from "../../lib/domain/models/model-types";
+import {
+  classicCategories,
+  classicCategoryDetails,
+  classicChallengeMode,
+  focusedClassicCategories,
+  type ClassicCategory,
+} from "../../lib/domain/models/model-types";
 import { distribution } from "../../lib/utils/dates";
 import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
 } from "../../lib/domain/games/classic/hardcore-unlock";
+import { updateProgress } from "../../lib/storage/local-progress-store";
 
 const historyPageSize = 3;
 const ritualHints = [
   "Complete focused Challenge boards to see whether the ledger starts watching back.",
   "Something is not right. One seal has warmed. Complete the remaining Challenges today.",
   "Two seals are open. The ledger has begun to remember your name. Keep going.",
-  "Three seals have shifted. Do not stop now; two Challenges remain.",
-  "Four seals are broken. One more Challenge today should reveal what is underneath.",
+  "Three seals have shifted. Do not stop now. Three Challenges remain.",
+  "Four seals are broken. Two Challenges remain.",
+  "Five seals are broken. One Challenge remains.",
 ] as const;
 
-export default function Stats() {
+type RitualContentProps = {
+  hellAwake: boolean;
+  ritualCategories: readonly ClassicCategory[];
+  ritualComplete: boolean;
+  onEnterInnerCircle: () => void;
+};
+
+function RitualContent({ hellAwake, ritualCategories, ritualComplete, onEnterInnerCircle }: RitualContentProps) {
+  return (
+    <>
+      <div className="hell-meter__steps" aria-label={`${ritualCategories.length} of ${focusedClassicCategories.length} Challenge categories solved today`}>
+        {classicCategories.filter((item) => item !== "hardcore").map((item) => {
+          const complete = ritualCategories.includes(item);
+          return <span className={complete ? "is-complete" : undefined} key={item}>{complete ? "✦" : "○"} {classicCategoryDetails[item].label}</span>;
+        })}
+      </div>
+      <p>
+        {hellAwake
+          ? "All six seals are broken. The ledger has opened a path below the catalogue."
+          : ritualComplete
+            ? "The inner circle remembers your name."
+            : ritualHints[ritualCategories.length]}
+      </p>
+      {hellAwake && (
+        <button className="button button--inner-circle" onClick={onEnterInnerCircle} type="button">
+          Enter the inner circle
+        </button>
+      )}
+    </>
+  );
+}
+
+export default function Profile() {
+  const router = useRouter();
   const progress = useLocalProgress();
   const today = new Date().toISOString().slice(0, 10);
   const ritualCategories = solvedChallengeCategoriesForDate(progress, today);
   const ritualComplete = hasCompletedChallengeRitual(progress, today);
   const hellAwake = ritualComplete && !progress.preferences.hardcoreUnlocked;
+  const hellModeEnabled = progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
+  const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
   const [category, setCategory] = useState<ClassicCategory>("llm");
   const allHistory = Object.values(progress.games).sort((a, b) =>
     b.challengeDate.localeCompare(a.challengeDate),
   );
-  const categoryHistory = allHistory.filter((game) => game.mode.startsWith(`classic:${category}:`));
+  const categoryModePrefix = classicChallengeMode(category, "normal").replace(/normal$/, "");
+  const categoryHistory = allHistory.filter((game) => game.mode.startsWith(categoryModePrefix));
   const solved = categoryHistory.filter((game) => game.status === "solved");
   const guessDistribution = distribution();
   for (const game of solved) {
@@ -55,33 +101,66 @@ export default function Stats() {
   const totalPages = Math.max(1, Math.ceil(categoryHistory.length / historyPageSize));
   const page = Math.min(historyPage, totalPages);
   const historyGames = categoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
+  const enterInnerCircle = () => {
+    updateProgress((state) => ({
+      ...state,
+      preferences: { ...state.preferences, hardcoreUnlocked: true },
+    }));
+    router.push("/classic/hardcore");
+  };
+  const toggleHellMode = () => {
+    updateProgress((state) => ({
+      ...state,
+      preferences: { ...state.preferences, hellMode: !state.preferences.hellMode },
+    }));
+  };
+
+  useEffect(() => {
+    document.body.classList.toggle("profile-hell", hellActive);
+    return () => document.body.classList.remove("profile-hell");
+  }, [hellActive]);
 
   return (
-    <main className={`page prose stats-page${hellAwake ? " stats-page--hell" : ""}`}>
-      <SiteNavbar hardcore={hellAwake} />
-      <p className="eyebrow">{hellAwake ? "The ledger has noticed you" : "Your device record"}</p>
-      <h1>{hellAwake ? "The infernal ledger" : "Statistics"}</h1>
-      <section className="hell-meter" aria-labelledby="hell-meter-title">
-        <div className="stats-section__heading">
-          <div>
-            <p className="eyebrow">Challenge ritual · {today}</p>
-            <h2 id="hell-meter-title">{hellAwake ? "Something is brewing" : "A quiet disturbance"}</h2>
+    <main className={`page prose profile-page${hellActive ? " profile-page--hell" : ""}`}>
+      <SiteNavbar hardcore={hellActive} />
+      <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
+      <h1>{hellActive ? "The infernal" : "Profile"}</h1>
+      {!ritualComplete && (
+        <section className="hell-meter" aria-labelledby="hell-meter-title">
+          <div className="stats-section__heading">
+            <div>
+              <p className="eyebrow">Challenge ritual · {today}</p>
+              <h2 id="hell-meter-title">{hellActive ? "Something is brewing" : "A quiet disturbance"}</h2>
+            </div>
+            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
           </div>
-          <span>{ritualCategories.length}/{hellAwake ? 6 : 5}</span>
-        </div>
-        <div className="hell-meter__steps" aria-label={`${ritualCategories.length} of 5 Challenge categories solved today`}>
-          {classicCategories.filter((item) => item !== "hardcore").map((item) => {
-            const complete = ritualCategories.includes(item);
-            return <span className={complete ? "is-complete" : undefined} key={item}>{complete ? "✦" : "○"} {classicCategoryDetails[item].label}</span>;
-          })}
-          {hellAwake && <span className="hell-meter__final">☠ 666</span>}
-        </div>
-        <p>
-          {hellAwake
-            ? "Five seals are broken. Return to the familiar catalogue and offer the number the ledger has been waiting for."
-            : ritualHints[ritualCategories.length]}
-        </p>
-      </section>
+          <RitualContent
+            hellAwake={hellAwake}
+            onEnterInnerCircle={enterInnerCircle}
+            ritualCategories={ritualCategories}
+            ritualComplete={ritualComplete}
+          />
+        </section>
+      )}
+      {ritualComplete && !progress.preferences.hardcoreUnlocked && (
+        <details className="hell-meter hell-meter--complete" open>
+          <summary>
+            <span>
+              <span className="eyebrow">Challenge ritual · {today}</span>
+              <strong>Something is brewing</strong>
+            </span>
+            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
+          </summary>
+          <div className="hell-meter__content">
+            <RitualContent
+              hellAwake={hellAwake}
+              onEnterInnerCircle={enterInnerCircle}
+              ritualCategories={ritualCategories}
+              ritualComplete={ritualComplete}
+            />
+          </div>
+        </details>
+      )}
       <div className="classic-category-nav" role="tablist" aria-label="Classic category statistics">
         {classicCategories
           .filter((item) => item !== "hardcore" || progress.preferences.hardcoreUnlocked)
@@ -198,6 +277,44 @@ export default function Stats() {
           <p className="stats-empty">Play a game and your guesses will appear here.</p>
         )}
       </section>
+      {ritualComplete && progress.preferences.hardcoreUnlocked && (
+        <details className="hell-meter hell-meter--complete">
+          <summary>
+            <span>
+              <span className="eyebrow">Challenge ritual · {today}</span>
+              <strong>The six seals are broken</strong>
+            </span>
+            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
+          </summary>
+          <div className="hell-meter__content">
+            <RitualContent
+              hellAwake={hellAwake}
+              onEnterInnerCircle={enterInnerCircle}
+              ritualCategories={ritualCategories}
+              ritualComplete={ritualComplete}
+            />
+          </div>
+        </details>
+      )}
+      {progress.preferences.hardcoreUnlocked && (
+        <section className="hell-mode-control" aria-labelledby="hell-mode-title">
+          <div className="hell-mode-control__copy">
+            <p className="eyebrow">Inner circle</p>
+            <h2 id="hell-mode-title">Use hell mode everywhere</h2>
+            <p>
+              {hellModeEnabled
+                ? "The ledger is following you through every page."
+                : "Let the ledger follow you through every page."}
+            </p>
+          </div>
+          <label className="hell-mode-toggle">
+            <span className="sr-only">Use hell mode everywhere</span>
+            <input checked={hellModeEnabled} onChange={toggleHellMode} type="checkbox" />
+            <span aria-hidden="true" className="hell-mode-toggle__control" />
+          </label>
+        </section>
+      )}
+      <ProfileDangerZone />
     </main>
   );
 }

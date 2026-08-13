@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa6";
 import { apiClient } from "../../../lib/api/client";
 
@@ -14,6 +14,29 @@ export function LoginForm() {
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("activated")) setNotice("Your account is active. You can now sign in.");
+    if (params.get("error") === "activation") setNotice("That activation link is invalid or expired.");
+    if (params.get("error") === "reset-link") setNotice("That password reset link is invalid or expired.");
+  }, []);
+
+  const sendEmailRequest = async (
+    request: (address: string) => Promise<unknown>,
+    successMessage: string,
+  ) => {
+    setBusy(true);
+    setNotice(null);
+    try {
+      await request(email);
+      setNotice(successMessage);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Could not send the email.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const submitPassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (mode === "register" && password !== confirmPassword) {
@@ -23,8 +46,12 @@ export function LoginForm() {
     setBusy(true);
     setNotice(null);
     try {
-      if (mode === "register") await apiClient.register(email, password);
-      else await apiClient.signInWithPassword(email, password);
+      if (mode === "register") {
+        await apiClient.register(email, password);
+        setNotice("Check your inbox to activate your account.");
+        return;
+      }
+      await apiClient.signInWithPassword(email, password);
       window.location.assign("/classic");
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not sign in.");
@@ -83,6 +110,36 @@ export function LoginForm() {
           {mode === "register" ? "Create account" : "Sign in"}
         </button>
       </form>
+      {mode === "sign-in" && (
+        <div className="auth-card__recovery">
+          <button
+            className="auth-card__toggle"
+            disabled={busy || !email}
+            onClick={() =>
+              sendEmailRequest(
+                apiClient.requestPasswordReset.bind(apiClient),
+                "If that account exists, a password reset link is on its way.",
+              )
+            }
+            type="button"
+          >
+            Forgot password?
+          </button>
+          <button
+            className="auth-card__toggle"
+            disabled={busy || !email}
+            onClick={() =>
+              sendEmailRequest(
+                apiClient.resendActivationEmail.bind(apiClient),
+                "If that account needs activation, a new link is on its way.",
+              )
+            }
+            type="button"
+          >
+            Resend activation email
+          </button>
+        </div>
+      )}
       <button
         className="auth-card__toggle"
         onClick={() => {

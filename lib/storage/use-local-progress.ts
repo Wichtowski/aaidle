@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useSyncExternalStore } from "react";
 import {
+  getInitialisedSnapshot,
+  getServerInitialisedSnapshot,
   getServerSnapshot,
   getSnapshot,
   initialiseProgress,
@@ -11,4 +13,8 @@ export function useLocalProgress() {
     initialiseProgress();
   }, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+export function useLocalProgressReady() {
+  return useSyncExternalStore(subscribe, getInitialisedSnapshot, getServerInitialisedSnapshot);
 }

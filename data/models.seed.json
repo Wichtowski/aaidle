@@ -30,7 +30,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-05-13",
     "reasoningSupport": "optional",
@@ -72,7 +72,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-04-14",
     "reasoningSupport": "no",
@@ -115,7 +115,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-04-16",
     "reasoningSupport": "native",
@@ -158,7 +158,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-02-24",
     "reasoningSupport": "optional",
@@ -201,7 +201,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-05-22",
     "reasoningSupport": "native",
@@ -244,7 +244,7 @@
       "research",
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-05-22",
     "reasoningSupport": "native",
@@ -290,7 +290,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-03-25",
     "reasoningSupport": "native",
@@ -336,7 +336,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-04-17",
     "reasoningSupport": "native",
@@ -499,7 +499,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2024-07-24",
     "reasoningSupport": "no",
@@ -542,7 +542,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2025-03-17",
     "reasoningSupport": "no",
@@ -668,7 +668,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-02-17",
     "reasoningSupport": "native",
@@ -709,7 +709,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-01-29",
     "reasoningSupport": "no",
@@ -855,7 +855,7 @@
       "search",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "Canada",
     "releaseDate": "2024-04-04",
     "reasoningSupport": "no",
@@ -982,7 +982,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-03",
     "reasoningSupport": "no",
@@ -1024,7 +1024,7 @@
       "general",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-03",
     "reasoningSupport": "no",
@@ -1167,7 +1167,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-07-18",
     "reasoningSupport": "no",
@@ -1212,7 +1212,7 @@
       "vision",
       "speech-to-text"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-11",
     "reasoningSupport": "no",
@@ -1336,7 +1336,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-06-20",
     "reasoningSupport": "no",
@@ -1381,7 +1381,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-02-15",
     "reasoningSupport": "no",
@@ -1625,7 +1625,7 @@
       "search",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "Canada",
     "releaseDate": "2024-03-11",
     "reasoningSupport": "no",
@@ -1704,7 +1704,7 @@
     "useCases": [
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-03",
     "reasoningSupport": "no",
@@ -1746,7 +1746,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-11-06",
     "reasoningSupport": "no",
@@ -1787,7 +1787,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-03-14",
     "reasoningSupport": "no",
@@ -1827,7 +1827,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-11-30",
     "reasoningSupport": "no",
@@ -1870,7 +1870,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-05",
     "reasoningSupport": "native",
@@ -1913,7 +1913,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-04-16",
     "reasoningSupport": "native",
@@ -1955,7 +1955,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-03-04",
     "reasoningSupport": "no",
@@ -1996,7 +1996,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-03-04",
     "reasoningSupport": "no",
@@ -2036,7 +2036,7 @@
     "useCases": [
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-03-13",
     "reasoningSupport": "no",
@@ -2077,7 +2077,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-10-22",
     "reasoningSupport": "no",
@@ -2122,7 +2122,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-05-14",
     "reasoningSupport": "no",
@@ -2161,7 +2161,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-12-13",
     "reasoningSupport": "no",
@@ -2401,7 +2401,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2025-05-07",
     "reasoningSupport": "no",
@@ -2440,7 +2440,7 @@
     "useCases": [
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2025-01-13",
     "reasoningSupport": "no",
@@ -2560,7 +2560,7 @@
       "coding",
       "vision"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-08-13",
     "reasoningSupport": "no",
@@ -2718,7 +2718,7 @@
     "useCases": [
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "Canada",
     "releaseDate": "2023-09-27",
     "reasoningSupport": "no",
@@ -2917,7 +2917,7 @@
     "useCases": [
       "creative-writing"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-03",
     "categoryDetails": {}
@@ -2952,7 +2952,7 @@
       "research",
       "mathematics"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -2992,7 +2992,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3033,7 +3033,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3073,7 +3073,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3113,7 +3113,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-03-05",
     "reasoningSupport": "native",
@@ -3153,7 +3153,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
@@ -3194,7 +3194,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
@@ -3234,7 +3234,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-04-23",
     "reasoningSupport": "native",
@@ -3274,7 +3274,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3314,7 +3314,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3355,7 +3355,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3399,7 +3399,7 @@
       "coding",
       "research"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-02-05",
     "reasoningSupport": "native",
@@ -3442,7 +3442,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-09-29",
     "reasoningSupport": "native",
@@ -3485,7 +3485,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-10-15",
     "reasoningSupport": "native",
@@ -3528,7 +3528,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-05-28",
     "reasoningSupport": "native",
@@ -3855,7 +3855,7 @@
       "vision",
       "document-understanding"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2025-01-26",
     "reasoningSupport": "no",
@@ -3878,7 +3878,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -4009,7 +4009,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "llama-3-2-community-license"
       }
     }
   },
@@ -4218,7 +4218,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-05-26",
     "categoryDetails": {
@@ -4273,7 +4273,7 @@
       "classification",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-01-10",
     "categoryDetails": {
@@ -4316,7 +4316,7 @@
       "text-classification",
       "embeddings"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-07-26",
     "contextWindowTokens": 512,
@@ -4372,7 +4372,7 @@
       "translation",
       "general"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-10-29",
     "contextWindowTokens": 1024,
@@ -4610,7 +4610,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2023-03-20",
     "categoryDetails": {
@@ -4624,7 +4624,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -4666,7 +4666,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2023-09-01",
     "categoryDetails": {
@@ -4680,7 +4680,7 @@
         "trainingDatasets": [
           "coco"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -4722,7 +4722,7 @@
       "classification",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-10-22",
     "categoryDetails": {
@@ -4737,7 +4737,7 @@
           "imagenet-21k",
           "imagenet-1k"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -4769,7 +4769,7 @@
       "embeddings",
       "classification"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2021-01-05",
     "categoryDetails": {
@@ -4819,7 +4819,7 @@
       "object-detection",
       "image-captioning"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-06-17",
     "categoryDetails": {
@@ -4834,7 +4834,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       },
       "object-detection": {
         "detectionTypes": [
@@ -4877,7 +4877,7 @@
       "embeddings",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2018-10-11",
     "contextWindowTokens": 512,
@@ -4936,7 +4936,7 @@
       "embeddings",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2018-10-11",
     "contextWindowTokens": 512,
@@ -4993,7 +4993,7 @@
       "text-classification",
       "embeddings"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-10-02",
     "contextWindowTokens": 512,
@@ -5049,7 +5049,7 @@
       "embeddings",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2021-12-17",
     "contextWindowTokens": 512,
@@ -5106,7 +5106,7 @@
       "translation",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-02-11",
     "contextWindowTokens": 512,
@@ -5163,7 +5163,7 @@
       "translation",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-10-20",
     "contextWindowTokens": 2048,
@@ -5220,7 +5220,7 @@
       "embeddings",
       "retrieval"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-05-25",
     "contextWindowTokens": 512,
@@ -5267,7 +5267,7 @@
       "embeddings",
       "retrieval"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2023-09-15",
     "contextWindowTokens": 512,
@@ -5314,7 +5314,7 @@
       "embeddings",
       "retrieval"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2021-08-20",
     "contextWindowTokens": 256,
@@ -5441,7 +5441,7 @@
       "question-answering",
       "summarization"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "restricted",
     "country": "Poland",
     "releaseDate": "2025-12-31",
     "reasoningSupport": "no",
@@ -5557,7 +5557,7 @@
       "embeddings",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "Poland",
     "releaseDate": "2020-05-01",
     "contextWindowTokens": 512,
@@ -5616,7 +5616,7 @@
       "summarization",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "open",
     "country": "Poland",
     "releaseDate": "2022-05-18",
     "contextWindowTokens": 512,
@@ -5674,7 +5674,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2013-11-11",
     "categoryDetails": {
@@ -5688,7 +5688,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-2-clause"
       },
       "object-detection": {
         "detectionTypes": [
@@ -5731,7 +5731,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-04-30",
     "categoryDetails": {
@@ -5745,7 +5745,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-2-clause"
       },
       "object-detection": {
         "detectionTypes": [
@@ -5788,7 +5788,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-06-04",
     "categoryDetails": {
@@ -5802,7 +5802,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-2-clause"
       },
       "object-detection": {
         "detectionTypes": [
@@ -5847,7 +5847,7 @@
       "instance-segmentation",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
@@ -5862,7 +5862,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       },
       "object-detection": {
         "detectionTypes": [
@@ -5905,7 +5905,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-08-07",
     "categoryDetails": {
@@ -5919,7 +5919,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -5963,7 +5963,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-12-08",
     "categoryDetails": {
@@ -5977,7 +5977,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6020,7 +6020,7 @@
       "vision",
       "anchor-free-detection"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Australia",
     "releaseDate": "2019-04-02",
     "categoryDetails": {
@@ -6034,7 +6034,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6078,7 +6078,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2018-04-08",
     "categoryDetails": {
@@ -6092,7 +6092,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "agpl-3.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6136,7 +6136,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2020-06-26",
     "categoryDetails": {
@@ -6194,7 +6194,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Taiwan",
     "releaseDate": "2022-07-06",
     "categoryDetails": {
@@ -6208,7 +6208,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "gpl-3.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6252,7 +6252,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "China",
     "releaseDate": "2024-05-23",
     "categoryDetails": {
@@ -6266,7 +6266,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "agpl-3.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6308,7 +6308,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-11-20",
     "categoryDetails": {
@@ -6322,7 +6322,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -6365,7 +6365,7 @@
       "semantic-segmentation",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-06-17",
     "categoryDetails": {
@@ -6379,7 +6379,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -6410,7 +6410,7 @@
       "medical-imaging",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Germany",
     "releaseDate": "2015-05-18",
     "categoryDetails": {
@@ -6424,7 +6424,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -6456,7 +6456,7 @@
       "handwriting-recognition",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1998-11-01",
     "categoryDetails": {
@@ -6470,7 +6470,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -6501,7 +6501,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Canada",
     "releaseDate": "2012-12-03",
     "categoryDetails": {
@@ -6516,7 +6516,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -6548,7 +6548,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United Kingdom",
     "releaseDate": "2014-09-04",
     "categoryDetails": {
@@ -6563,7 +6563,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "cc-by-4.0"
       }
     }
   },
@@ -6595,7 +6595,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
@@ -6610,7 +6610,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -6643,7 +6643,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2014-09-17",
     "categoryDetails": {
@@ -6658,7 +6658,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -6690,7 +6690,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-12-02",
     "categoryDetails": {
@@ -6705,7 +6705,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -6737,7 +6737,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2016-08-25",
     "categoryDetails": {
@@ -6752,7 +6752,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -6784,7 +6784,7 @@
       "mobile-inference",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2018-01-13",
     "categoryDetails": {
@@ -6798,7 +6798,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -6830,7 +6830,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-05-28",
     "categoryDetails": {
@@ -6845,7 +6845,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -6879,7 +6879,7 @@
       "segmentation",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2021-03-25",
     "categoryDetails": {
@@ -6895,7 +6895,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -6982,7 +6982,7 @@
       "question-answering",
       "embeddings"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-09-26",
     "contextWindowTokens": 512,
@@ -7040,7 +7040,7 @@
       "question-answering",
       "embeddings"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2020-03-23",
     "contextWindowTokens": 512,
@@ -7097,7 +7097,7 @@
       "question-answering",
       "language-modeling"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-06-19",
     "contextWindowTokens": 512,
@@ -7158,7 +7158,7 @@
       "text-classification",
       "embeddings"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "France / United States",
     "releaseDate": "2024-12-19",
     "contextWindowTokens": 8192,
@@ -7218,7 +7218,7 @@
       "embeddings",
       "multilingual-nlp"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-11-05",
     "contextWindowTokens": 512,
@@ -7276,7 +7276,7 @@
       "regression",
       "feature-importance"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "China / United States",
     "releaseDate": "1995-08-14",
     "categoryDetails": {
@@ -7326,7 +7326,7 @@
       "classification",
       "regression"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Australia",
     "releaseDate": "1986-01-01",
     "categoryDetails": {
@@ -7377,7 +7377,7 @@
       "regression",
       "anomaly-detection"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States / Russia",
     "releaseDate": "1995-09-01",
     "categoryDetails": {
@@ -7430,7 +7430,7 @@
       "regression",
       "nearest-neighbor-search"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1951-01-01",
     "categoryDetails": {
@@ -7480,7 +7480,7 @@
       "classification",
       "text-classification"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United Kingdom",
     "releaseDate": "1763-01-01",
     "categoryDetails": {
@@ -7531,7 +7531,7 @@
       "regression",
       "ranking"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2016-03-09",
     "categoryDetails": {
@@ -7582,7 +7582,7 @@
       "classification",
       "regression"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1996-01-01",
     "categoryDetails": {
@@ -7634,7 +7634,7 @@
       "regression",
       "ranking"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2001-01-01",
     "categoryDetails": {
@@ -7689,7 +7689,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Japan / France",
     "releaseDate": "1980-01-01",
     "categoryDetails": {
@@ -7704,7 +7704,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "not-applicable"
       }
     }
   },
@@ -7737,7 +7737,7 @@
       "time-series",
       "nlp"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1982-01-01",
     "categoryDetails": {}
@@ -7771,7 +7771,7 @@
       "time-series",
       "nlp"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Switzerland",
     "releaseDate": "1997-01-01",
     "categoryDetails": {}
@@ -7805,7 +7805,7 @@
       "time-series",
       "nlp"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Canada",
     "releaseDate": "2014-06-03",
     "categoryDetails": {}
@@ -7840,7 +7840,7 @@
       "sequence-modeling",
       "representation-learning"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-06-12",
     "categoryDetails": {}
@@ -7872,7 +7872,7 @@
       "representation-learning",
       "denoising"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States / Canada",
     "releaseDate": "1986-01-01",
     "categoryDetails": {}
@@ -7904,7 +7904,7 @@
       "representation-learning",
       "image-generation"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Netherlands",
     "releaseDate": "2013-12-20",
     "categoryDetails": {}
@@ -7938,7 +7938,7 @@
       "generative-modeling",
       "data-synthesis"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Canada",
     "releaseDate": "2014-06-10",
     "categoryDetails": {}
@@ -7970,7 +7970,7 @@
       "image-generation",
       "generative-modeling"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-11-19",
     "categoryDetails": {
@@ -7984,7 +7984,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -8017,7 +8017,7 @@
       "generative-modeling",
       "data-synthesis"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-03-12",
     "categoryDetails": {}
@@ -8051,7 +8051,7 @@
       "pose-estimation",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
@@ -8067,7 +8067,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8112,7 +8112,7 @@
       "vision",
       "mobile-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2018-01-13",
     "categoryDetails": {
@@ -8126,7 +8126,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8172,7 +8172,7 @@
       "vision",
       "pose-estimation"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-04-16",
     "categoryDetails": {
@@ -8188,7 +8188,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8232,7 +8232,7 @@
       "object-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-12-03",
     "categoryDetails": {
@@ -8246,7 +8246,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8292,7 +8292,7 @@
       "zero-shot-detection",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2022-05-12",
     "categoryDetails": {
@@ -8306,7 +8306,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8350,7 +8350,7 @@
       "vision",
       "real-time-inference"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Israel",
     "releaseDate": "2023-05-03",
     "categoryDetails": {
@@ -8364,7 +8364,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       },
       "object-detection": {
         "detectionTypes": [
@@ -8407,7 +8407,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2016-10-07",
     "categoryDetails": {
@@ -8422,7 +8422,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -8454,7 +8454,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
@@ -8469,7 +8469,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -8501,7 +8501,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
@@ -8516,7 +8516,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -8548,7 +8548,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United Kingdom",
     "releaseDate": "2014-09-04",
     "categoryDetails": {
@@ -8563,7 +8563,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "cc-by-4.0"
       }
     }
   },
@@ -8595,7 +8595,7 @@
       "mobile-inference",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-05-06",
     "categoryDetails": {
@@ -8609,7 +8609,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -8641,7 +8641,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-05-28",
     "categoryDetails": {
@@ -8656,7 +8656,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -8688,7 +8688,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2021-04-01",
     "categoryDetails": {
@@ -8703,7 +8703,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -8734,7 +8734,7 @@
       "feature-extraction",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2016-11-16",
     "categoryDetails": {
@@ -8749,7 +8749,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -8780,7 +8780,7 @@
       "image-classification",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "France",
     "releaseDate": "2016-05-23",
     "categoryDetails": {
@@ -8794,7 +8794,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "mit"
       }
     }
   },
@@ -8825,7 +8825,7 @@
       "mobile-inference",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "China",
     "releaseDate": "2017-07-04",
     "categoryDetails": {
@@ -8839,7 +8839,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-3-clause"
       }
     }
   },
@@ -8870,7 +8870,7 @@
       "efficient-inference",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2016-02-24",
     "categoryDetails": {
@@ -8884,7 +8884,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "bsd-2-clause"
       }
     }
   },
@@ -8916,7 +8916,7 @@
       "mobile-inference",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2018-07-31",
     "categoryDetails": {
@@ -8930,7 +8930,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -8962,7 +8962,7 @@
       "image-classification",
       "vision"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2022-04-22",
     "categoryDetails": {
@@ -8976,7 +8976,7 @@
         "trainingDatasets": [
           "undisclosed"
         ],
-        "license": "undisclosed"
+        "license": "apache-2.0"
       }
     }
   },
@@ -9006,7 +9006,7 @@
       "text-generation",
       "general"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-10-01",
     "reasoningSupport": "no",
@@ -9063,7 +9063,7 @@
       "question-answering",
       "multilingual-nlp"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2018-10-11",
     "contextWindowTokens": 512,
@@ -9119,7 +9119,7 @@
       "summarization",
       "text-generation"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2019-12-18",
     "contextWindowTokens": 1024,
@@ -9175,7 +9175,7 @@
       "text-classification",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2020-04-10",
     "contextWindowTokens": 4096,
@@ -9232,7 +9232,7 @@
       "text-classification",
       "question-answering"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2020-07-28",
     "contextWindowTokens": 4096,
@@ -9291,7 +9291,7 @@
       "regression",
       "ranking"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2017-12-01",
     "categoryDetails": {
@@ -9345,7 +9345,7 @@
       "ranking",
       "categorical-data"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Russia",
     "releaseDate": "2017-06-28",
     "categoryDetails": {
@@ -9397,7 +9397,7 @@
       "classification",
       "uncertainty-estimation"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "South Africa",
     "releaseDate": "1951-01-01",
     "categoryDetails": {
@@ -9448,7 +9448,7 @@
     "useCases": [
       "regression"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1970-01-01",
     "categoryDetails": {
@@ -9497,7 +9497,7 @@
       "regression",
       "feature-selection"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Canada / United States",
     "releaseDate": "1996-01-01",
     "categoryDetails": {
@@ -9547,7 +9547,7 @@
       "regression",
       "feature-selection"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "China / United States",
     "releaseDate": "2005-01-01",
     "categoryDetails": {
@@ -9597,7 +9597,7 @@
       "associative-memory",
       "optimization"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "1982-01-01",
     "categoryDetails": {}
@@ -9628,7 +9628,7 @@
       "representation-learning",
       "generative-modeling"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Canada",
     "releaseDate": "1986-01-01",
     "categoryDetails": {}
@@ -9658,7 +9658,7 @@
       "generative-modeling",
       "representation-learning"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "United States / Canada",
     "releaseDate": "1985-01-01",
     "categoryDetails": {}
@@ -9691,9 +9691,4217 @@
       "sequence-modeling",
       "forecasting"
     ],
-    "weightAvailability": "unknown",
+    "weightAvailability": "closed",
     "country": "Germany",
     "releaseDate": "2001-01-01",
     "categoryDetails": {}
+  },
+  {
+    "id": "kimi-k2-instruct",
+    "name": "Kimi K2",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "Kimi K2",
+      "Kimi-K2",
+      "Kimi K2 Instruct",
+      "Kimi-K2-Instruct"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2025-07-11",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 128000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "kimi-k2-thinking",
+    "name": "Kimi K2 Thinking",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "K2 Thinking",
+      "Kimi-K2-Thinking"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2025-11-06",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "kimi-k2-5",
+    "name": "Kimi K2.5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "Kimi K2.5",
+      "Kimi-K2.5",
+      "K2.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2026-01-27",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "kimi-k2-6",
+    "name": "Kimi K2.6",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "Kimi K2.6",
+      "Kimi-K2.6",
+      "K2.6"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2026-04-20",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "kimi-k2-7-code",
+    "name": "Kimi K2.7 Code",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "Kimi K2.7",
+      "Kimi-K2.7-Code",
+      "K2.7 Code"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "software-engineering",
+      "tool-use",
+      "vision"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2026-06-12",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 256000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "kimi-k3",
+    "name": "Kimi K3",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Moonshot AI",
+    "family": "Kimi",
+    "aliases": [
+      "Kimi-K3",
+      "K3"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
+    "weightAvailability": "restricted",
+    "country": "China",
+    "releaseDate": "2026-07-16",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1048576,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "gpt-oss-20b",
+    "name": "GPT-OSS 20B",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "family": "GPT-OSS",
+    "aliases": [
+      "gpt-oss-20b",
+      "GPT OSS 20B"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2025-08-05",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "gpt-oss-120b",
+    "name": "GPT-OSS 120B",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "OpenAI",
+    "family": "GPT-OSS",
+    "aliases": [
+      "gpt-oss-120b",
+      "GPT OSS 120B"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2025-08-05",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "deepseek-v4-flash-0731",
+    "name": "DeepSeek-V4-Flash",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "DeepSeek",
+    "family": "DeepSeek",
+    "aliases": [
+      "DeepSeek V4 Flash",
+      "DeepSeek-V4-Flash-0731"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": "2026-07-31",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1048576,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "granite-4-1-8b",
+    "name": "Granite 4.1 8B",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "IBM",
+    "family": "Granite",
+    "aliases": [
+      "IBM Granite 4.1 8B",
+      "Granite-4.1-8B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2026-04-29",
+    "contextWindowTokens": 131072,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [
+          "english",
+          "german",
+          "spanish",
+          "french",
+          "japanese",
+          "portuguese",
+          "arabic",
+          "czech",
+          "italian",
+          "korean",
+          "dutch",
+          "chinese"
+        ],
+        "toolUse": true,
+        "multimodal": false
+      }
+    }
+  },
+  {
+    "id": "bge-m3",
+    "name": "BGE-M3",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "BAAI",
+    "family": "BGE",
+    "aliases": [
+      "BAAI/bge-m3",
+      "BGE M3"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": null,
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "semantic-search"
+        ],
+        "supportedLanguages": [],
+        "architecture": [
+          "encoder",
+          "xlm-roberta"
+        ],
+        "trainingDatasets": [
+          "bge-m3-data",
+          "mldr"
+        ]
+      }
+    }
+  },
+  {
+    "id": "all-mpnet-base-v2",
+    "name": "all-mpnet-base-v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "family": "Sentence Transformers",
+    "aliases": [
+      "sentence-transformers/all-mpnet-base-v2",
+      "All MPNet Base v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "clustering"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": "2021-08-30",
+    "contextWindowTokens": 384,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "semantic-similarity",
+          "clustering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "mpnet"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "paraphrase-multilingual-minilm-l12-v2",
+    "name": "paraphrase-multilingual-MiniLM-L12-v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "family": "Sentence Transformers",
+    "aliases": [
+      "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "Multilingual MiniLM L12 v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "semantic-similarity",
+      "clustering"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": null,
+    "contextWindowTokens": 128,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "semantic-similarity",
+          "clustering"
+        ],
+        "supportedLanguages": [],
+        "architecture": [
+          "encoder",
+          "minilm"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "nomic-embed-text-v1-5",
+    "name": "nomic-embed-text-v1.5",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Nomic AI",
+    "family": "Nomic Embed",
+    "aliases": [
+      "nomic-ai/nomic-embed-text-v1.5",
+      "Nomic Embed Text v1.5"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "clustering",
+      "classification"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2024-02-14",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "classification"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "nomic-bert"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "embeddinggemma-300m",
+    "name": "EmbeddingGemma 300M",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Google",
+    "family": "Gemma",
+    "aliases": [
+      "EmbeddingGemma",
+      "google/embeddinggemma-300m"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "classification",
+      "clustering"
+    ],
+    "weightAvailability": "restricted",
+    "country": "United States",
+    "releaseDate": "2025-09-04",
+    "contextWindowTokens": 2048,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "classification"
+        ],
+        "supportedLanguages": [],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "table-transformer-detection",
+    "name": "Table Transformer",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "family": "Table Transformer",
+    "aliases": [
+      "Table Transformer Detection",
+      "TATR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "table-detection",
+      "document-understanding",
+      "object-detection"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2022-03-04",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection",
+          "table-detection"
+        ],
+        "architecture": [
+          "detr"
+        ],
+        "trainingDatasets": [
+          "pubtables-1m"
+        ],
+        "license": "mit"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection",
+          "table-detection"
+        ],
+        "architecture": [
+          "detr"
+        ],
+        "trainingDatasets": [
+          "pubtables-1m"
+        ],
+        "realTimeCapable": null
+      }
+    }
+  },
+  {
+    "id": "yolos-small",
+    "name": "YOLOS Small",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "HUST Vision Lab",
+    "family": "YOLOS",
+    "aliases": [
+      "YOLOS",
+      "YOLOS-Small"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": "2021-06-01",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer",
+          "detr"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco-2017"
+        ],
+        "license": "apache-2.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer",
+          "detr"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco-2017"
+        ],
+        "realTimeCapable": null
+      }
+    }
+  },
+  {
+    "id": "clipseg-rd64-refined",
+    "name": "CLIPSeg",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "University of Göttingen",
+    "family": "CLIPSeg",
+    "aliases": [
+      "CLIPSeg RD64 Refined",
+      "CLIPSeg rd64-refined"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "referring-image-segmentation",
+      "zero-shot-segmentation"
+    ],
+    "weightAvailability": "closed",
+    "country": "Germany",
+    "releaseDate": "2021-12-18",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation",
+          "zero-shot-segmentation"
+        ],
+        "architecture": [
+          "clip",
+          "vision-transformer",
+          "transformer-decoder"
+        ],
+        "trainingDatasets": [
+          "phrasecut"
+        ],
+        "license": null
+      }
+    }
+  },
+  {
+    "id": "mask2former-swin-small-ade-semantic",
+    "name": "Mask2Former Swin Small",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Meta",
+    "family": "Mask2Former",
+    "aliases": [
+      "Mask2Former",
+      "Mask2Former Swin Small ADE20K"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask",
+      "labels"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "vision"
+    ],
+    "weightAvailability": "restricted",
+    "country": "United States",
+    "releaseDate": "2021-12-02",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation",
+          "semantic-segmentation"
+        ],
+        "architecture": [
+          "mask2former",
+          "swin-transformer"
+        ],
+        "trainingDatasets": [
+          "ade20k"
+        ],
+        "license": "cc-by-nc-4.0"
+      }
+    }
+  },
+  {
+    "id": "segformer-b0-ade20k",
+    "name": "SegFormer B0",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "NVIDIA",
+    "family": "SegFormer",
+    "aliases": [
+      "SegFormer",
+      "SegFormer B0 ADE20K"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask",
+      "labels"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "vision"
+    ],
+    "weightAvailability": "restricted",
+    "country": "United States",
+    "releaseDate": "2021-05-31",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "image-segmentation",
+          "semantic-segmentation"
+        ],
+        "architecture": [
+          "segformer",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "ade20k"
+        ],
+        "license": "nvidia-source-code-license"
+      }
+    }
+  },
+  {
+    "id": "deformable-detr",
+    "name": "Deformable DETR",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "SenseTime",
+    "family": "DETR",
+    "aliases": [
+      "Deformable-DETR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": "2020-10-08",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "deformable-detr",
+          "resnet-50"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
+        "license": "apache-2.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "deformable-detr",
+          "resnet-50"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
+        "realTimeCapable": null
+      }
+    }
+  },
+  {
+    "id": "rf-detr-base",
+    "name": "RF-DETR Base",
+    "modelClass": "vision",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Roboflow",
+    "family": "RF-DETR",
+    "aliases": [
+      "RF-DETR",
+      "RF DETR Base"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2025-03-20",
+    "categoryDetails": {
+      "computer-vision": {
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rf-detr",
+          "dinov2",
+          "deformable-detr"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
+        "license": "apache-2.0"
+      },
+      "object-detection": {
+        "detectionTypes": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rf-detr",
+          "dinov2",
+          "deformable-detr"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
+        "realTimeCapable": true
+      }
+    }
+  },
+  {
+    "id": "mdeberta-v3-base",
+    "name": "mDeBERTa v3 Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "family": "DeBERTa",
+    "aliases": [
+      "mDeBERTa",
+      "Multilingual DeBERTa v3 Base"
+    ],
+    "categories": [
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2021-10-27",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [],
+        "architecture": [
+          "encoder",
+          "deberta"
+        ],
+        "trainingDatasets": [
+          "cc100"
+        ]
+      }
+    }
+  },
+  {
+    "id": "camembert-base",
+    "name": "CamemBERT Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "ALMAnaCH (Inria)",
+    "family": "CamemBERT",
+    "aliases": [
+      "CamemBERT"
+    ],
+    "categories": [
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "named-entity-recognition",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "France",
+    "releaseDate": "2019-11-10",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "named-entity-recognition",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "french"
+        ],
+        "architecture": [
+          "encoder",
+          "roberta"
+        ],
+        "trainingDatasets": [
+          "oscar"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bio-clinicalbert",
+    "name": "BioClinicalBERT",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": null,
+    "family": "BERT",
+    "aliases": [
+      "Bio_ClinicalBERT",
+      "ClinicalBERT Bio + Clinical"
+    ],
+    "categories": [
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "clinical-nlp",
+      "text-classification",
+      "named-entity-recognition",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": "2019-04-06",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "named-entity-recognition",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "bert"
+        ],
+        "trainingDatasets": [
+          "mimic-iii"
+        ]
+      }
+    }
+  },
+  {
+    "id": "esm2-t33-650m-ur50d",
+    "name": "ESM-2 650M",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Meta",
+    "family": "ESM",
+    "aliases": [
+      "ESM-2",
+      "esm2_t33_650M_UR50D"
+    ],
+    "categories": [
+      "biological-model",
+      "protein-language-model"
+    ],
+    "inputModalities": [
+      "protein-sequence"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "protein-embeddings",
+      "protein-sequence-modeling"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": null,
+    "categoryDetails": {}
+  },
+  {
+    "id": "linear-regression",
+    "name": "Linear Regression",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Adrien-Marie Legendre",
+    "family": "Regression",
+    "aliases": [
+      "Linear regression"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "numeric-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1805-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "numeric-prediction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "logistic-regression",
+    "name": "Logistic Regression",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "David Cox",
+    "family": "Regression",
+    "aliases": [
+      "Logit regression"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1958-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "regression",
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "k-means",
+    "name": "K-Means",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Stuart Lloyd",
+    "family": "Clustering",
+    "aliases": [
+      "KMeans"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1957-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "dbscan",
+    "name": "DBSCAN",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Martin Ester",
+    "family": "Density clustering",
+    "aliases": [
+      "Density-based clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment",
+      "anomaly-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1996-08-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment",
+          "anomaly-detection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "principal-component-analysis",
+    "name": "PCA",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "family": "Dimensionality reduction",
+    "aliases": [
+      "Principal Component Analysis"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1901-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gaussian-mixture-model",
+    "name": "Gaussian Mixture Model",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "family": "Probabilistic modelling",
+    "aliases": [
+      "GMM"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "probabilities",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1894-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "density-estimation",
+          "clustering"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "probabilities",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "perceptron",
+    "name": "Perceptron",
+    "modelClass": "neural_network",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Frank Rosenblatt",
+    "family": "Linear classifier",
+    "aliases": [
+      "Single-layer Perceptron"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1958-07-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "multi-layer-perceptron",
+    "name": "Multi-Layer Perceptron",
+    "modelClass": "neural_network",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "David Rumelhart",
+    "family": "Neural network",
+    "aliases": [
+      "MLP"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "predictions"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1986-10-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification",
+          "regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "predictions"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "linear-discriminant-analysis",
+    "name": "Linear Discriminant Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Ronald Fisher",
+    "family": "Discriminant analysis",
+    "aliases": [
+      "LDA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "class-labels",
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1936-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "class-labels",
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "isolation-forest",
+    "name": "Isolation Forest",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Fei Tony Liu",
+    "family": "Anomaly detection",
+    "aliases": [
+      "iForest"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2008-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "agglomerative-clustering",
+    "name": "Agglomerative Clustering",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Robert Sokal",
+    "family": "Hierarchical clustering",
+    "aliases": [
+      "Hierarchical clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "dendrogram",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1963-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "hierarchical"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "dendrogram",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "spectral-clustering",
+    "name": "Spectral Clustering",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Andrew Ng",
+    "family": "Spectral clustering",
+    "aliases": [
+      "Normalized cuts"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "spectral"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mean-shift",
+    "name": "Mean Shift",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Keinosuke Fukunaga",
+    "family": "Mode seeking",
+    "aliases": [
+      "Mean-shift clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Japan",
+    "releaseDate": "1975-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-estimation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "affinity-propagation",
+    "name": "Affinity Propagation",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Brendan Frey",
+    "family": "Exemplar clustering",
+    "aliases": [
+      "AP clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "exemplars",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Canada",
+    "releaseDate": "2007-02-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "message-passing"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "exemplars",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "optics",
+    "name": "OPTICS",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Mihael Ankerst",
+    "family": "Density clustering",
+    "aliases": [
+      "Ordering Points To Identify the Clustering Structure"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "ordering",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1999-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "ordering",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "kernel-pca",
+    "name": "Kernel PCA",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "family": "Kernel methods",
+    "aliases": [
+      "KPCA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1997-07-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "kernel-method"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "independent-component-analysis",
+    "name": "Independent Component Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Aapo Hyvärinen",
+    "family": "Blind source separation",
+    "aliases": [
+      "ICA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "independent-components"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Finland",
+    "releaseDate": "1994-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "source-separation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "independent-components"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "non-negative-matrix-factorization",
+    "name": "Non-negative Matrix Factorization",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Daniel Lee",
+    "family": "Matrix factorization",
+    "aliases": [
+      "NMF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "components"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1999-10-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "matrix-factorization",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "components"
+        ],
+        "featureTypes": [
+          "non-negative"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "truncated-svd",
+    "name": "Truncated SVD",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Gene Golub",
+    "family": "Matrix factorization",
+    "aliases": [
+      "TSVD"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1970-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "matrix-factorization",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "sparse"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "t-sne",
+    "name": "t-SNE",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Laurens van der Maaten",
+    "family": "Visualisation",
+    "aliases": [
+      "t-distributed Stochastic Neighbor Embedding"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "embedding"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Netherlands",
+    "releaseDate": "2008-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "visualisation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "embedding"
+        ],
+        "featureTypes": [
+          "high-dimensional"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "quadratic-discriminant-analysis",
+    "name": "Quadratic Discriminant Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Ronald Fisher",
+    "family": "Discriminant analysis",
+    "aliases": [
+      "QDA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "class-labels",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1936-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "class-labels",
+          "probabilities"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "local-outlier-factor",
+    "name": "Local Outlier Factor",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Markus Breunig",
+    "family": "Anomaly detection",
+    "aliases": [
+      "LOF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "2000-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "one-class-svm",
+    "name": "One-Class SVM",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "family": "Kernel methods",
+    "aliases": [
+      "One-class Support Vector Machine"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "inlier-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection",
+          "kernel-method"
+        ],
+        "learningParadigms": [
+          "semi-supervised"
+        ],
+        "objectives": [
+          "inlier-prediction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "hidden-markov-model",
+    "name": "Hidden Markov Model",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Leonard Baum",
+    "family": "Probabilistic sequence model",
+    "aliases": [
+      "HMM"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "state-sequence",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1966-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "sequence-modelling",
+          "probabilistic-modelling"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "state-sequence",
+          "probabilities"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "conditional-random-field",
+    "name": "Conditional Random Field",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "John Lafferty",
+    "family": "Probabilistic sequence model",
+    "aliases": [
+      "CRF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "label-sequence"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2001-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "sequence-labelling",
+          "probabilistic-modelling"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "label-sequence"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "sobel-operator",
+    "name": "Sobel Operator",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Irwin Sobel",
+    "family": "Edge detection",
+    "aliases": [
+      "Sobel filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "gradient-image",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1968-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "gradient-image",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "canny-edge-detector",
+    "name": "Canny Edge Detector",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "John Canny",
+    "family": "Edge detection",
+    "aliases": [
+      "Canny"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1986-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gaussian-blur",
+    "name": "Gaussian Blur",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Carl Friedrich Gauss",
+    "family": "Smoothing",
+    "aliases": [
+      "Gaussian filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "blurred-image"
+    ],
+    "useCases": [
+      "smoothing",
+      "denoising"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1809-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "smoothing",
+          "denoising"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "blurred-image"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "median-filter",
+    "name": "Median Filter",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "John Tukey",
+    "family": "Smoothing",
+    "aliases": [
+      "Median blur"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "filtered-image"
+    ],
+    "useCases": [
+      "smoothing",
+      "denoising"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1971-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "smoothing",
+          "denoising"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "filtered-image"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "laplacian-operator",
+    "name": "Laplacian Operator",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Pierre-Simon Laplace",
+    "family": "Edge detection",
+    "aliases": [
+      "Laplacian filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "gradient-image",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1782-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "gradient-image",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "erosion",
+    "name": "Erosion",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Morphological erosion"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask"
+    ],
+    "useCases": [
+      "morphology"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "dilation",
+    "name": "Dilation",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Morphological dilation"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask"
+    ],
+    "useCases": [
+      "morphology"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "otsu-thresholding",
+    "name": "Otsu Thresholding",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Nobuyuki Otsu",
+    "family": "Thresholding",
+    "aliases": [
+      "Otsu method"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask",
+      "threshold"
+    ],
+    "useCases": [
+      "thresholding",
+      "segmentation"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Japan",
+    "releaseDate": "1979-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "thresholding",
+          "segmentation"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask",
+          "threshold"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "harris-corner-detector",
+    "name": "Harris Corner Detector",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Chris Harris",
+    "family": "Feature detection",
+    "aliases": [
+      "Harris detector"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "corners",
+      "keypoints"
+    ],
+    "useCases": [
+      "corner-detection",
+      "feature-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1988-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "corner-detection",
+          "feature-detection"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "corners",
+          "keypoints"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "sift",
+    "name": "SIFT",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "David Lowe",
+    "family": "Feature detection",
+    "aliases": [
+      "Scale-Invariant Feature Transform"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "keypoints",
+      "descriptors"
+    ],
+    "useCases": [
+      "feature-detection",
+      "feature-description"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Canada",
+    "releaseDate": "1999-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-detection",
+          "feature-description"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "keypoints",
+          "descriptors"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "hog",
+    "name": "HOG",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Navneet Dalal",
+    "family": "Feature description",
+    "aliases": [
+      "Histogram of Oriented Gradients"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "feature-vector"
+    ],
+    "useCases": [
+      "feature-description",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "2005-06-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-description",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "8x8"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "feature-vector"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "scharr-operator",
+    "name": "Scharr Operator",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "H. Scharr",
+    "family": "Edge detection",
+    "aliases": [
+      "Scharr filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "gradient-image",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "2000-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "gradient-image",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "prewitt-operator",
+    "name": "Prewitt Operator",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Judith Prewitt",
+    "family": "Edge detection",
+    "aliases": [
+      "Prewitt filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "gradient-image",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1970-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "gradient-image",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "roberts-cross",
+    "name": "Roberts Cross",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Lawrence Roberts",
+    "family": "Edge detection",
+    "aliases": [
+      "Roberts operator"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "gradient-image",
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "gradient"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1963-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "gradient"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "2x2"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "gradient-image",
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "laplacian-of-gaussian",
+    "name": "Laplacian of Gaussian",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "David Marr",
+    "family": "Edge detection",
+    "aliases": [
+      "LoG"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "edges"
+    ],
+    "useCases": [
+      "edge-detection",
+      "smoothing"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1980-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "smoothing"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "difference-of-gaussians",
+    "name": "Difference of Gaussians",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "David Marr",
+    "family": "Feature detection",
+    "aliases": [
+      "DoG"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "edges",
+      "keypoints"
+    ],
+    "useCases": [
+      "edge-detection",
+      "feature-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1980-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "edge-detection",
+          "feature-detection"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "edges",
+          "keypoints"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bilateral-filter",
+    "name": "Bilateral Filter",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Carlo Tomasi",
+    "family": "Edge-preserving smoothing",
+    "aliases": [
+      "Bilateral blur"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "filtered-image"
+    ],
+    "useCases": [
+      "smoothing",
+      "denoising"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1998-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "smoothing",
+          "denoising"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "filtered-image"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "box-filter",
+    "name": "Box Filter",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Image processing",
+    "family": "Smoothing",
+    "aliases": [
+      "Averaging filter"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "blurred-image"
+    ],
+    "useCases": [
+      "smoothing"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1960-01-01",
+    "categoryDetails": {
+      "filters": {
+      "operationTypes": [
+        "smoothing"
+      ],
+      "kernelBased": true,
+      "kernelSizes": [
+        "3x3",
+        "5x5",
+        "7x7"
+      ],
+      "linearity": "linear",
+      "requiresTraining": false,
+      "outputTypes": [
+        "blurred-image"
+      ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gabor-filter",
+    "name": "Gabor Filter",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Dennis Gabor",
+    "family": "Texture analysis",
+    "aliases": [
+      "Gabor wavelet"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "filter-response"
+    ],
+    "useCases": [
+      "feature-extraction",
+      "texture-analysis"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1946-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-extraction",
+          "texture-analysis"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "filter-response"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "morphological-opening",
+    "name": "Morphological Opening",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Opening"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask"
+    ],
+    "useCases": [
+      "morphology",
+      "noise-removal"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology",
+          "noise-removal"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "morphological-closing",
+    "name": "Morphological Closing",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Closing"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask"
+    ],
+    "useCases": [
+      "morphology",
+      "hole-filling"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology",
+          "hole-filling"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "morphological-gradient",
+    "name": "Morphological Gradient",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Morphological gradient"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "edges"
+    ],
+    "useCases": [
+      "morphology",
+      "edge-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology",
+          "edge-detection"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "edges"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "top-hat",
+    "name": "Top Hat",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "White top-hat"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "enhanced-image"
+    ],
+    "useCases": [
+      "morphology",
+      "contrast-enhancement"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology",
+          "contrast-enhancement"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "enhanced-image"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "black-hat",
+    "name": "Black Hat",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "family": "Mathematical morphology",
+    "aliases": [
+      "Black top-hat"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "enhanced-image"
+    ],
+    "useCases": [
+      "morphology",
+      "contrast-enhancement"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1964-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "morphology",
+          "contrast-enhancement"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "enhanced-image"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "adaptive-thresholding",
+    "name": "Adaptive Thresholding",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Image processing",
+    "family": "Thresholding",
+    "aliases": [
+      "Local thresholding"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "binary-mask"
+    ],
+    "useCases": [
+      "thresholding",
+      "segmentation"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1989-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "thresholding",
+          "segmentation"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "binary-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "shi-tomasi-corner-detector",
+    "name": "Shi-Tomasi Corner Detector",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Jianbo Shi",
+    "family": "Feature detection",
+    "aliases": [
+      "Good Features to Track"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "corners",
+      "keypoints"
+    ],
+    "useCases": [
+      "corner-detection",
+      "feature-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1994-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "corner-detection",
+          "feature-detection"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "corners",
+          "keypoints"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "surf",
+    "name": "SURF",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Herbert Bay",
+    "family": "Feature detection",
+    "aliases": [
+      "Speeded-Up Robust Features"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "keypoints",
+      "descriptors"
+    ],
+    "useCases": [
+      "feature-detection",
+      "feature-description"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Switzerland",
+    "releaseDate": "2006-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-detection",
+          "feature-description"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "9x9",
+          "15x15"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "keypoints",
+          "descriptors"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "orb",
+    "name": "ORB",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Ethan Rublee",
+    "family": "Feature detection",
+    "aliases": [
+      "Oriented FAST and Rotated BRIEF"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "keypoints",
+      "descriptors"
+    ],
+    "useCases": [
+      "feature-detection",
+      "feature-description"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2011-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-detection",
+          "feature-description"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "keypoints",
+          "descriptors"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "fast-corner-detector",
+    "name": "FAST Corner Detector",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Edward Rosten",
+    "family": "Feature detection",
+    "aliases": [
+      "FAST"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "corners",
+      "keypoints"
+    ],
+    "useCases": [
+      "corner-detection",
+      "feature-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "2006-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "corner-detection",
+          "feature-detection"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "corners",
+          "keypoints"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "brief",
+    "name": "BRIEF",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Michael Calonder",
+    "family": "Feature description",
+    "aliases": [
+      "Binary Robust Independent Elementary Features"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "descriptors"
+    ],
+    "useCases": [
+      "feature-description"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Switzerland",
+    "releaseDate": "2010-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-description"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "descriptors"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "local-binary-pattern",
+    "name": "Local Binary Pattern",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Timo Ojala",
+    "family": "Texture analysis",
+    "aliases": [
+      "LBP"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "feature-vector"
+    ],
+    "useCases": [
+      "feature-extraction",
+      "texture-analysis"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Finland",
+    "releaseDate": "1996-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "feature-extraction",
+          "texture-analysis"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3"
+        ],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "feature-vector"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "hough-line-transform",
+    "name": "Hough Line Transform",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Paul Hough",
+    "family": "Shape detection",
+    "aliases": [
+      "Hough transform"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "lines"
+    ],
+    "useCases": [
+      "line-detection",
+      "shape-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1962-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "line-detection",
+          "shape-detection"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "lines"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "hough-circle-transform",
+    "name": "Hough Circle Transform",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Richard Duda",
+    "family": "Shape detection",
+    "aliases": [
+      "Circular Hough transform"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "circles"
+    ],
+    "useCases": [
+      "circle-detection",
+      "shape-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1972-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "circle-detection",
+          "shape-detection"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "circles"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "watershed",
+    "name": "Watershed",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Serge Beucher",
+    "family": "Segmentation",
+    "aliases": [
+      "Watershed transform"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "segmentation"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1979-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "segmentation"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "segmentation-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "grabcut",
+    "name": "GrabCut",
+    "modelClass": "image_processing",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Carsten Rother",
+    "family": "Segmentation",
+    "aliases": [
+      "Grab cut"
+    ],
+    "categories": [
+      "filters"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "segmentation",
+      "foreground-extraction"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "2004-01-01",
+    "categoryDetails": {
+      "filters": {
+        "operationTypes": [
+          "segmentation",
+          "foreground-extraction"
+        ],
+        "kernelBased": false,
+        "kernelSizes": [],
+        "linearity": "non-linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "segmentation-mask"
+        ],
+        "frameworks": [
+          "opencv",
+          "scipy"
+        ]
+      }
+    }
   }
 ]

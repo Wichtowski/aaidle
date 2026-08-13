@@ -56,7 +56,33 @@ class ApiClient {
   }
 
   register(email: string, password: string) {
-    return this.authenticate("register", email, password);
+    return this.request<{ accepted: true }>("/api/v1/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+  }
+
+  requestPasswordReset(email: string) {
+    return this.request<{ accepted: true }>("/api/v1/auth/password-reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  requestAccountDeletion() {
+    return this.request<{ accepted: true }>("/api/v1/auth/account-deletion", {
+      method: "POST",
+    });
+  }
+
+  resendActivationEmail(email: string) {
+    return this.request<{ accepted: true }>("/api/v1/auth/email-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
   }
 
   private authenticate(path: "password" | "register", email: string, password: string) {

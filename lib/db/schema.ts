@@ -184,7 +184,7 @@ export const userIdentities = sqliteTable(
     providerUserId: text("provider_user_id").notNull(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     createdAt: integer("created_at").notNull(),
   },
   (t) => [primaryKey({ columns: [t.provider, t.providerUserId] })],
@@ -195,13 +195,30 @@ export const userSessions = sqliteTable(
     id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     tokenHash: text("token_hash").notNull().unique(),
     expiresAt: integer("expires_at").notNull(),
     createdAt: integer("created_at").notNull(),
     lastSeenAt: integer("last_seen_at").notNull(),
   },
   (t) => [index("user_sessions_user_idx").on(t.userId), index("user_sessions_expires_idx").on(t.expiresAt)],
+);
+export const authEmailTokens = sqliteTable(
+  "auth_email_tokens",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull().unique(),
+    purpose: text("purpose", { enum: ["email-verification", "password-reset", "account-deletion"] }).notNull(),
+    expiresAt: integer("expires_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    index("auth_email_tokens_user_purpose_idx").on(t.userId, t.purpose),
+    index("auth_email_tokens_expires_idx").on(t.expiresAt),
+  ],
 );
 export const playerModeStats = sqliteTable(
   "player_mode_stats",

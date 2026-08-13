@@ -12,6 +12,7 @@ export const FOCUSED_CATEGORY = {
   NLP: "nlp",
   OBJECT_DETECTION: "object-detection",
   CLASSICAL_ML: "classical-ml",
+  FILTERS: "filters",
 } as const;
 
 export type FocusedCategory =
@@ -30,7 +31,6 @@ export const COMMON_FIELDS = [
 
 export const HARDCORE_FIELDS = [
   "provider",
-  "family",
   "categories",
   "inputModalities",
   "outputModalities",
@@ -116,6 +116,17 @@ const NORMAL_CATEGORY_FIELDS = {
     "categoryDetails.classical-ml.featureTypes",
     "categoryDetails.classical-ml.frameworks",
     "weightAvailability",
+  ],
+
+  filters: [
+    "provider",
+    "country",
+    "family",
+    "outputModalities",
+    "releaseDate",
+    "categoryDetails.filters.operationTypes",
+    "categoryDetails.filters.kernelBased",
+    "categoryDetails.filters.linearity",
   ],
 } as const satisfies Record<FocusedCategory, readonly string[]>;
 

@@ -22,7 +22,7 @@ export default function EmojiPage() {
             </div>
           ))}
         </dl>
-        <Link className="button" href="/classic">
+        <Link className="button game-placeholder__classic-link" href="/classic">
           <FaArrowLeft aria-hidden focusable="false" /> Play Classic while you wait
         </Link>
       </section>

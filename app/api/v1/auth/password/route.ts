@@ -32,6 +32,9 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
+    if (code === "EMAIL_UNVERIFIED") {
+      return authError(code, "Activate your account from the email before signing in.", 403);
+    }
     if (code === "INVALID_CREDENTIALS") {
       return authError(code, "Email or password is incorrect.", 401);
     }

@@ -19,6 +19,7 @@ const MODEL_CLASSES = new Set([
   "image_generation",
   "classical_ml",
   "neural_network",
+  "image_processing",
 ]);
 
 const ENTITY_TYPES = new Set([
@@ -33,6 +34,7 @@ const WEIGHT_AVAILABILITY = new Set([
   "closed",
   "restricted",
   "unknown",
+  "not-applicable",
 ]);
 
 const REASONING_SUPPORT = new Set(["no", "optional", "native"]);
@@ -43,6 +45,7 @@ const FOCUSED_CATEGORIES = new Set([
   "nlp",
   "object-detection",
   "classical-ml",
+  "filters",
 ]);
 
 const CATEGORY_DETAIL_KEYS = {
@@ -74,6 +77,15 @@ const CATEGORY_DETAIL_KEYS = {
     "learningParadigms",
     "objectives",
     "featureTypes",
+    "frameworks",
+  ]),
+  filters: new Set([
+    "operationTypes",
+    "kernelBased",
+    "kernelSizes",
+    "linearity",
+    "requiresTraining",
+    "outputTypes",
     "frameworks",
   ]),
 };
@@ -349,6 +361,45 @@ function validateDetailShape(category, detail, id) {
         { allowEmpty: true },
       );
       break;
+
+    case "filters":
+      validateSlugArray(
+        detail.operationTypes,
+        "categoryDetails.filters.operationTypes",
+        id,
+        { allowEmpty: true },
+      );
+      assert(
+        typeof detail.kernelBased === "boolean",
+        `categoryDetails.filters.kernelBased must be boolean: ${id}`,
+      );
+      validateSlugArray(
+        detail.kernelSizes,
+        "categoryDetails.filters.kernelSizes",
+        id,
+        { allowEmpty: true },
+      );
+      assert(
+        ["linear", "non-linear", "mixed"].includes(detail.linearity),
+        `categoryDetails.filters.linearity is invalid: ${id}`,
+      );
+      assert(
+        typeof detail.requiresTraining === "boolean",
+        `categoryDetails.filters.requiresTraining must be boolean: ${id}`,
+      );
+      validateSlugArray(
+        detail.outputTypes,
+        "categoryDetails.filters.outputTypes",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.frameworks,
+        "categoryDetails.filters.frameworks",
+        id,
+        { allowEmpty: true },
+      );
+      break;
   }
 }
 
@@ -424,14 +475,14 @@ for (const model of data) {
   );
 
   // General game/provenance metadata
-  assert(isNonEmptyString(model.provider), `Invalid provider: ${model.id}`);
+  validateNullableString(model.provider, "provider", model.id);
   assert(isNonEmptyString(model.family), `Invalid family: ${model.id}`);
   validateStringArray(model.aliases, "aliases", model.id);
   validateSlugArray(model.categories, "categories", model.id);
   validateSlugArray(model.inputModalities, "inputModalities", model.id);
   validateSlugArray(model.outputModalities, "outputModalities", model.id);
   validateSlugArray(model.useCases, "useCases", model.id);
-  assert(isNonEmptyString(model.country), `Invalid country: ${model.id}`);
+  validateNullableString(model.country, "country", model.id);
 
   assert(
     WEIGHT_AVAILABILITY.has(model.weightAvailability),
@@ -439,8 +490,8 @@ for (const model of data) {
   );
 
   assert(
-    isIsoDate(model.releaseDate),
-    `releaseDate must be YYYY-MM-DD: ${model.id}`,
+    model.releaseDate === null || isIsoDate(model.releaseDate),
+    `releaseDate must be YYYY-MM-DD or null: ${model.id}`,
   );
 
   // Optional semantic fields
@@ -501,8 +552,19 @@ for (const model of data) {
   // Cross-check a few semantics with internal classification.
   if (model.categories.includes("classical-ml")) {
     assert(
-      model.modelClass === "classical_ml",
-      `classical-ml category requires modelClass=classical_ml: ${model.id}`,
+      ["classical_ml", "neural_network"].includes(model.modelClass),
+      `classical-ml category requires modelClass=classical_ml or neural_network: ${model.id}`,
+    );
+  }
+
+  if (model.categories.includes("filters")) {
+    assert(
+      model.modelClass === "image_processing",
+      `filters category requires modelClass=image_processing: ${model.id}`,
+    );
+    assert(
+      model.weightAvailability === "not-applicable",
+      `filters category requires weightAvailability=not-applicable: ${model.id}`,
     );
   }
 

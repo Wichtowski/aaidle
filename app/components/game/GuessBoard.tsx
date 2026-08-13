@@ -88,7 +88,12 @@ export function GuessBoard({
       }`}
       aria-label="Guess comparisons"
       role="table"
-      style={{ "--guess-board-columns": columns.length } as CSSProperties}
+      style={
+        {
+          "--guess-board-columns": columns.length,
+          "--guess-board-width": `${Math.min(1720, 160 + columns.length * 130)}px`,
+        } as CSSProperties
+      }
     >
       <div className="board-head" role="row">
         <span aria-hidden="true" className="board-head__guess" />
@@ -130,6 +135,7 @@ export function GuessBoard({
           <GuessRow
             {...guess}
             columns={columns}
+            difficulty={difficulty}
             hardcore={difficulty === "hardcore"}
             key={guess.requestId}
             onCollapse={canCollapse ? () => collapseGuess(guess.requestId) : undefined}

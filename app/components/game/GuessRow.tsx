@@ -6,7 +6,7 @@ import {
   type ClassicColumn,
   type ClassicComparison,
 } from "../../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../../lib/domain/models/model-types";
+import type { ClassicDifficulty, ComparableModel } from "../../../lib/domain/models/model-types";
 
 const countryForProvider: Record<string, string> = {
   OpenAI: "United States",
@@ -71,6 +71,11 @@ const contextWindow = (tokens: number | null) => {
   return `${tokens / 1_000}K`;
 };
 
+const tooltipFor = (items: string[] | null) => {
+  const fullValue = items?.join(", ");
+  return fullValue && fullValue.length > 44 ? fullValue : undefined;
+};
+
 function categoryValue(model: ComparableModel, field: string): ReactNode {
   const details = model.categoryDetails;
   const language = details?.["language-model"];
@@ -78,6 +83,7 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
   const nlp = details?.nlp;
   const detection = details?.["object-detection"];
   const classical = details?.["classical-ml"];
+  const filters = details?.filters;
   const value = {
     supportedLanguages: language?.supportedLanguages ?? nlp?.supportedLanguages,
     toolUse: language?.toolUse,
@@ -94,6 +100,12 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
     objectives: classical?.objectives,
     featureTypes: classical?.featureTypes,
     frameworks: classical?.frameworks,
+    operationTypes: filters?.operationTypes,
+    kernelBased: filters?.kernelBased,
+    kernelSizes: filters?.kernelSizes,
+    linearity: filters?.linearity,
+    requiresTraining: filters?.requiresTraining,
+    outputTypes: filters?.outputTypes,
   }[field];
   if (Array.isArray(value)) return value.length ? value.join(", ") : "N/A";
   if (value == null) return "N/A";
@@ -140,6 +152,7 @@ export function GuessRow({
   animate,
   showCards,
   hardcore,
+  difficulty = hardcore ? "hardcore" : "normal",
   columns = classicColumns,
   onCollapse,
 }: {
@@ -154,10 +167,11 @@ export function GuessRow({
   animate: boolean;
   showCards: boolean;
   hardcore: boolean;
+  difficulty?: ClassicDifficulty;
   columns?: readonly ClassicColumn[];
   onCollapse?: () => void;
 }) {
-  const fields: Record<string, { status: string; value: ReactNode }> = {
+  const fields: Record<string, { status: string; value: ReactNode; tooltip?: string }> = {
     provider: { status: comparison.provider, value: label(model.provider) },
     country: {
       status: comparison.country,
@@ -170,9 +184,11 @@ export function GuessRow({
     family: { status: comparison.family, value: label(model.family) },
     categories: {
       status: comparison.categories,
-      value: (
+      value: hardcore ? (
+        comparison.categories === "correct" ? "Yes" : "No"
+      ) : (
         <MatchedList
-          highlightMatches={!hardcore}
+          highlightMatches={difficulty === "normal" && comparison.categories === "partial"}
           items={model.categories}
           matches={matchingCategories}
         />
@@ -182,7 +198,7 @@ export function GuessRow({
       status: comparison.inputModalities,
       value: (
         <MatchedList
-          highlightMatches={!hardcore}
+          highlightMatches={difficulty === "normal" && comparison.inputModalities === "partial"}
           items={model.inputModalities}
           matches={matchingInputModalities}
         />
@@ -192,7 +208,7 @@ export function GuessRow({
       status: comparison.outputModalities,
       value: (
         <MatchedList
-          highlightMatches={!hardcore}
+          highlightMatches={difficulty === "normal" && comparison.outputModalities === "partial"}
           items={model.outputModalities}
           matches={matchingOutputModalities}
         />
@@ -200,9 +216,10 @@ export function GuessRow({
     },
     useCases: {
       status: comparison.useCases,
+      tooltip: tooltipFor(model.useCases),
       value: (
         <MatchedList
-          highlightMatches={!hardcore}
+          highlightMatches={difficulty === "normal" && comparison.useCases === "partial"}
           items={model.useCases}
           matches={matchingUseCases}
         />
@@ -215,7 +232,7 @@ export function GuessRow({
       status: comparison.contextWindowTokens,
       value: contextWindow(model.contextWindowTokens),
     },
-    ...Object.fromEntries(["supportedLanguages", "toolUse", "multimodal", "visionTasks", "architecture", "trainingDatasets", "license", "nlpTasks", "detectionTypes", "realTimeCapable", "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks"].map((field) => [field, { status: comparison[field] ?? "unknown", value: categoryValue(model, field) }])),
+    ...Object.fromEntries(["supportedLanguages", "toolUse", "multimodal", "visionTasks", "architecture", "trainingDatasets", "license", "nlpTasks", "detectionTypes", "realTimeCapable", "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks", "operationTypes", "kernelBased", "kernelSizes", "linearity", "requiresTraining", "outputTypes"].map((field) => [field, { status: comparison[field] ?? "unknown", value: categoryValue(model, field) }])),
   };
 
   const modelSummary = (
@@ -257,6 +274,7 @@ export function GuessRow({
               revealed={revealed}
               status={field.status}
               hardcore={hardcore}
+              tooltip={field.tooltip}
             >
               {field.value}
             </ComparisonCell>

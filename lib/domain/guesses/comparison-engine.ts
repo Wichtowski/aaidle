@@ -12,20 +12,23 @@ const normalized = (value: string) =>
     .toLocaleLowerCase()
     .replace(/[–—]/g, "-")
     .replace(/[\s_-]+/g, "-");
-const undisclosed = (value: string | null) => value != null && ["unknown", "undisclosed"].includes(normalized(value));
+const unknown = (value: string | null) => value != null && normalized(value) === "unknown";
 export function compareScalar(a: string | null, b: string | null): ScalarComparison {
-  return a == null || b == null || undisclosed(a) || undisclosed(b)
-    ? "unknown"
-    : normalized(a) === normalized(b)
-      ? "correct"
-      : "incorrect";
+  if (a == null || b == null) return "unknown";
+  if (unknown(a) || unknown(b)) return unknown(a) && unknown(b) ? "correct" : "unknown";
+
+  return normalized(a) === normalized(b) ? "correct" : "incorrect";
 }
 export function compareNullableBoolean(a: boolean | null, b: boolean | null): ScalarComparison {
   return a == null || b == null ? "unknown" : a === b ? "correct" : "incorrect";
 }
 export const compareEnum = compareScalar;
 export function compareSets(a: string[] | null, b: string[] | null): SetComparison {
-  if (!a?.length || !b?.length || a.some(undisclosed) || b.some(undisclosed)) return "unknown";
+  if (!a?.length || !b?.length) return "unknown";
+  if (a.some(unknown) || b.some(unknown)) {
+    return a.every(unknown) && b.every(unknown) ? "correct" : "unknown";
+  }
+
   const left = new Set(a.map(normalized));
   const right = new Set(b.map(normalized));
   if (left.size === right.size && [...left].every((value) => right.has(value))) return "correct";
@@ -56,6 +59,7 @@ export function compareClassicModels(
   const nlp = (model: ComparableModel) => model.categoryDetails?.nlp;
   const detection = (model: ComparableModel) => model.categoryDetails?.["object-detection"];
   const classical = (model: ComparableModel) => model.categoryDetails?.["classical-ml"];
+  const filters = (model: ComparableModel) => model.categoryDetails?.filters;
   return {
     provider: compareScalar(guessed.provider, answer.provider),
     country: compareScalar(guessed.country, answer.country),
@@ -83,5 +87,11 @@ export function compareClassicModels(
     objectives: compareSets(classical(guessed)?.objectives ?? null, classical(answer)?.objectives ?? null),
     featureTypes: compareSets(classical(guessed)?.featureTypes ?? null, classical(answer)?.featureTypes ?? null),
     frameworks: compareSets(classical(guessed)?.frameworks ?? null, classical(answer)?.frameworks ?? null),
+    operationTypes: compareSets(filters(guessed)?.operationTypes ?? null, filters(answer)?.operationTypes ?? null),
+    kernelBased: compareNullableBoolean(filters(guessed)?.kernelBased ?? null, filters(answer)?.kernelBased ?? null),
+    kernelSizes: compareSets(filters(guessed)?.kernelSizes ?? null, filters(answer)?.kernelSizes ?? null),
+    linearity: compareScalar(filters(guessed)?.linearity ?? null, filters(answer)?.linearity ?? null),
+    requiresTraining: compareNullableBoolean(filters(guessed)?.requiresTraining ?? null, filters(answer)?.requiresTraining ?? null),
+    outputTypes: compareSets(filters(guessed)?.outputTypes ?? null, filters(answer)?.outputTypes ?? null),
   };
 }

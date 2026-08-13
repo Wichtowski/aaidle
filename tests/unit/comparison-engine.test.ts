@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   compareClassicModels,
   compareNullableBoolean,
+  compareScalar,
   compareSets,
 } from "../../lib/domain/guesses/comparison-engine";
 import type { ComparableModel } from "../../lib/domain/models/model-types";
@@ -29,6 +30,14 @@ describe("comparison engine", () => {
   it("returns partial and unknown correctly", () => {
     expect(compareSets(["coding"], ["coding", "vision"])).toBe("partial");
     expect(compareSets(null, ["coding"])).toBe("unknown");
+  });
+  it("treats unknown metadata as neutral and undisclosed metadata as a concrete value", () => {
+    expect(compareSets(["undisclosed"], ["unknown"])).toBe("unknown");
+    expect(compareSets(["undisclosed"], ["imagenet"])).toBe("incorrect");
+    expect(compareSets(["undisclosed"], ["undisclosed"])).toBe("correct");
+    expect(compareScalar("unknown", "undisclosed")).toBe("unknown");
+    expect(compareScalar("undisclosed", "closed")).toBe("incorrect");
+    expect(compareScalar("unknown", "closed")).toBe("unknown");
   });
   it("compares nullable booleans", () => {
     expect(compareNullableBoolean(false, false)).toBe("correct");

@@ -9,7 +9,7 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
       {classicCategories
         .filter((item) => item !== "hardcore" || progress.preferences.hardcoreUnlocked)
         .map((item) => (
-          <Link aria-current={item === category ? "page" : undefined} href={`/classic/${item}`} key={item} prefetch>
+          <Link aria-current={item === category ? "page" : undefined} href={`/classic/${classicCategoryDetails[item].routeSegment}`} key={item} prefetch>
             {classicCategoryDetails[item].label}
           </Link>
         ))}

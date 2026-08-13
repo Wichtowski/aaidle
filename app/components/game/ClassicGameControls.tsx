@@ -17,7 +17,6 @@ export function ClassicGameControls({
   guessed,
   onDifficultyChange,
   onPick,
-  onSecretCode,
 }: {
   category: ClassicCategory;
   date: string | null;
@@ -30,7 +29,6 @@ export function ClassicGameControls({
   guessed: Set<string>;
   onDifficultyChange: (difficulty: ClassicDifficulty) => void;
   onPick: (model: PublicModelIndex) => void;
-  onSecretCode?: (code: string) => void;
 }) {
   const choices = (category === "hardcore" ? ["hardcore"] : ["normal", "challenge"]) as ClassicDifficulty[];
   return (
@@ -58,7 +56,7 @@ export function ClassicGameControls({
           </div>
         </div>
       )}
-      {date && canGuess && <GuessAutocomplete disabled={busy || loading} models={models} excluded={guessed} onPick={onPick} onSecretCode={onSecretCode} />}
+      {date && canGuess && <GuessAutocomplete disabled={busy || loading} models={models} excluded={guessed} onPick={onPick} />}
       {busy && <p aria-live="polite" className="attempts">Checking…</p>}
     </section>
   );
