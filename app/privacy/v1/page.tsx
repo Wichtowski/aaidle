@@ -1,4 +1,11 @@
 import { SiteNavbar } from "../../components/ui/SiteNavbar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy",
+  description: "Learn how aAIdle uses essential cookies and handles game and account data.",
+  alternates: { canonical: "/privacy/v1" },
+};
 
 export default function PrivacyV1Page() {
   return (

@@ -1,4 +1,11 @@
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Credits",
+  description: "Meet the people behind aAIdle, the daily AI model guessing game.",
+  alternates: { canonical: "/credits" },
+};
 
 export default function CreditsPage() {
   return (

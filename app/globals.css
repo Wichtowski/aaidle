@@ -337,8 +337,12 @@ a {
 }
 .auth-card__recovery {
   display: flex;
+  min-height: 18px;
   flex-wrap: wrap;
   gap: 14px;
+}
+.auth-card__toggle--right {
+  margin-left: auto;
 }
 .auth-card__toggle:disabled {
   cursor: not-allowed;
@@ -349,6 +353,99 @@ a {
   color: var(--lime);
   font-size: 13px;
   font-weight: 700;
+}
+.auth-card__local-link {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-underline-offset: 3px;
+}
+.toast {
+  position: fixed;
+  z-index: 100;
+  bottom: 20px;
+  left: 50%;
+  display: flex;
+  max-width: min(400px, calc(100vw - 40px));
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--accent);
+  box-shadow: 0 10px 28px #17202c40;
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateX(-50%);
+  animation: toast-in 220ms ease-out both;
+}
+.toast[data-variant="success"] {
+  color: var(--lime);
+}
+.toast button {
+  display: grid;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.toast button:hover,
+.toast button:focus-visible {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+.account-activation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--lime) 14%, var(--panel));
+}
+.account-activation h2,
+.account-activation p {
+  margin: 0;
+}
+.account-activation h2 {
+  margin-top: 5px;
+  font-size: 20px;
+}
+.account-activation p:not(.eyebrow):not(.account-activation__notice) {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.account-activation__actions {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.account-activation__notice,
+.account-activation__link {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+.account-activation__link {
+  text-underline-offset: 3px;
 }
 .game-modes {
   margin: 44px 0 0;
@@ -510,6 +607,11 @@ body.hell-mode .game-placeholder__status {
 .game-intro__meta .eyebrow {
   margin: 0;
 }
+.game-intro__timing {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+}
 .game-intro__difficulty {
   display: flex;
   align-items: center;
@@ -528,6 +630,13 @@ body.hell-mode .game-placeholder__status {
   color: var(--muted);
   font-weight: 700;
   white-space: nowrap;
+}
+.game-intro__completed {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
 }
 .autocomplete {
   position: relative;

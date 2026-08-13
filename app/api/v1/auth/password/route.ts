@@ -12,13 +12,26 @@ export async function POST(request: Request) {
       scope: "password-login",
       subjectHash: rateLimitSubject(request, email),
       limit: 10,
-      windowMs: 15 * 60 * 1_000,
+      windowMs: 5 * 60 * 1_000,
     });
-    if (!allowed) return authError("RATE_LIMITED", "Try again later.", 429);
+    if (!allowed) {
+      return authError(
+        "RATE_LIMITED",
+        "Too many sign-in attempts. Please wait a few minutes before trying again.",
+        429,
+      );
+    }
 
     const user = await authenticateWithPassword({ email, password });
     return Response.json(
-      { user: { id: user.id, email: user.email, displayName: user.display_name } },
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          displayName: user.display_name,
+          emailVerified: Boolean(user.email_verified_at),
+        },
+      },
       {
         headers: {
           "Cache-Control": "no-store",
@@ -32,9 +45,6 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
-    if (code === "EMAIL_UNVERIFIED") {
-      return authError(code, "Activate your account from the email before signing in.", 403);
-    }
     if (code === "INVALID_CREDENTIALS") {
       return authError(code, "Email or password is incorrect.", 401);
     }

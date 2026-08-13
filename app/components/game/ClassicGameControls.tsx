@@ -14,6 +14,7 @@ export function ClassicGameControls({
   loading,
   busy,
   canGuess,
+  completedCount,
   guessed,
   onDifficultyChange,
   onPick,
@@ -26,6 +27,7 @@ export function ClassicGameControls({
   loading: boolean;
   busy: boolean;
   canGuess: boolean;
+  completedCount: number;
   guessed: Set<string>;
   onDifficultyChange: (difficulty: ClassicDifficulty) => void;
   onPick: (model: PublicModelIndex) => void;
@@ -35,7 +37,10 @@ export function ClassicGameControls({
     <section className="game-intro">
       <div className="game-intro__meta">
         <p className="eyebrow">Classic · {date ?? "Loading"} · {classicCategoryDetails[category].label}</p>
-        {expiresAt && <DailyCountdown expiresAt={expiresAt} />}
+        <div className="game-intro__timing">
+          {expiresAt && <DailyCountdown expiresAt={expiresAt} />}
+          {!canGuess && <p className="game-intro__completed">{completedCount} completed</p>}
+        </div>
       </div>
       <h1>{category === "hardcore" ? "Pray you guess today’s AI model." : "Guess today’s AI model"}</h1>
       <p className="lede">

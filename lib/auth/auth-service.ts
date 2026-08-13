@@ -200,7 +200,6 @@ export async function authenticateWithPassword({ email, password }: { email: str
   if (!user?.password_hash || !(await verifyPassword(password, user.password_hash))) {
     throw new Error("INVALID_CREDENTIALS");
   }
-  if (!user.email_verified_at) throw new Error("EMAIL_UNVERIFIED");
   return user;
 }
 

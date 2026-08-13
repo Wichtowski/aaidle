@@ -1,5 +1,11 @@
 import { LoginForm } from "../components/auth/LoginForm";
+import type { Metadata } from "next";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+};
 
 export default function LoginPage() {
   return (

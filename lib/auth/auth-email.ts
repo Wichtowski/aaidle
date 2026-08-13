@@ -1,12 +1,15 @@
-import { applicationOrigin } from "./auth-config";
+import { applicationOrigin, isProduction } from "./auth-config";
 
 type EmailPurpose = "email-verification" | "password-reset" | "account-deletion";
 
+export type AuthEmailDelivery = {
+  localUrl?: string;
+};
+
 const sender = "aAidle <accounts@aaidle.com>";
 
-function requiredResendApiKey() {
+function resendApiKey() {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) throw new Error("EMAIL_DELIVERY_NOT_CONFIGURED");
   return apiKey;
 }
 
@@ -28,7 +31,7 @@ export async function sendAuthEmail({
   email: string;
   purpose: EmailPurpose;
   token: string;
-}) {
+}): Promise<AuthEmailDelivery> {
   const isVerification = purpose === "email-verification";
   const isDeletion = purpose === "account-deletion";
   const link = authEmailLink(purpose, token);
@@ -40,10 +43,15 @@ export async function sendAuthEmail({
   const action = isVerification ? "Activate account" : isDeletion ? "Delete account" : "Reset password";
   const expiry = isVerification ? "30 minutes" : isDeletion ? "5 minutes" : "15 minutes";
   const warning = isDeletion ? " This permanently deletes your account and cannot be undone." : "";
+  const apiKey = resendApiKey();
+  if (!apiKey) {
+    if (!isProduction) return { localUrl: link };
+    throw new Error("EMAIL_DELIVERY_NOT_CONFIGURED");
+  }
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${requiredResendApiKey()}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
       "Idempotency-Key": crypto.randomUUID(),
       "User-Agent": "aAidle/1.0",
@@ -58,4 +66,5 @@ export async function sendAuthEmail({
   });
 
   if (!response.ok) throw new Error("EMAIL_DELIVERY_FAILED");
+  return {};
 }

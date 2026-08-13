@@ -1,5 +1,11 @@
 import { ResetPasswordForm } from "../components/auth/ResetPasswordForm";
+import type { Metadata } from "next";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+
+export const metadata: Metadata = {
+  title: "Reset password",
+  robots: { index: false, follow: false },
+};
 
 export default function ResetPasswordPage() {
   return (

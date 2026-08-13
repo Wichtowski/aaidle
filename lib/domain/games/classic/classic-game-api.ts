@@ -3,14 +3,19 @@ import type { ClassicCategory, ClassicDifficulty } from "../../models/model-type
 import { publicModelIndexForClassic } from "../../../server/model-catalog";
 import { utcDate } from "../../../utils/dates";
 import { errorResponse } from "../../../validation/api";
+import { globalClassicCompletionCount } from "./guess-service";
 
-type PublicClassicGame = {
+type PublicClassicGameBase = {
   challenge: ReturnType<typeof publicChallenge>;
   models: ReturnType<typeof publicModelIndexForClassic>;
 };
 
+type PublicClassicGame = PublicClassicGameBase & {
+  globalCompletionCount: number;
+};
+
 let cachedDate: string | null = null;
-const gamePayloads = new Map<string, Promise<PublicClassicGame>>();
+const gamePayloads = new Map<string, Promise<PublicClassicGameBase>>();
 
 export async function classicGameData(category: ClassicCategory, difficulty: ClassicDifficulty): Promise<PublicClassicGame> {
   const date = utcDate();
@@ -22,16 +27,20 @@ export async function classicGameData(category: ClassicCategory, difficulty: Cla
   const key = `${category}:${difficulty}`;
   let payload = gamePayloads.get(key);
   if (!payload) {
-    payload = (async () => ({
-      challenge: publicChallenge(await ensureDailyChallenge({ date, category, difficulty })),
-      // The complete catalogue is a module-level, server-resident index built from the seed data.
-      models: publicModelIndexForClassic(category, difficulty),
-    }))();
+    payload = (async () => {
+      const challenge = publicChallenge(await ensureDailyChallenge({ date, category, difficulty }));
+      return {
+        challenge,
+        // The complete catalogue is a module-level, server-resident index built from the seed data.
+        models: publicModelIndexForClassic(category, difficulty),
+      };
+    })();
     gamePayloads.set(key, payload);
   }
 
   try {
-    return await payload;
+    const game = await payload;
+    return { ...game, globalCompletionCount: await globalClassicCompletionCount(game.challenge.id) };
   } catch (error) {
     gamePayloads.delete(key);
     throw error;

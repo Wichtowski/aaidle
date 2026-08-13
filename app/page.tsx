@@ -1,10 +1,39 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { FaArrowRight, FaHourglassHalf } from "react-icons/fa6";
 import { SiteNavbar } from "./components/ui/SiteNavbar";
 import { emojiGame } from "../lib/domain/games/emoji/definition";
+
+export const metadata: Metadata = {
+  title: "Daily AI Model Guessing Game",
+  description: "Play today’s AI model guessing game. Use clues about providers, capabilities, context windows, and more to identify the model.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    url: "/",
+    title: "aAIdle | Daily AI Model Guessing Game",
+    description: "Can you identify today’s AI model? Compare the clues and make your guess.",
+  },
+};
+
+const gameSchema = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  name: "aAIdle",
+  description: "A daily AI model guessing game where players compare clues to identify the featured model.",
+  url: "https://aaidle.com",
+  applicationCategory: "Game",
+  genre: ["Puzzle", "Educational"],
+  operatingSystem: "Any",
+  isAccessibleForFree: true,
+};
+
 export default function Home() {
   return (
     <main className="page home">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(gameSchema).replace(/</g, "\\u003c") }}
+        type="application/ld+json"
+      />
       <SiteNavbar />
       <section className="hero">
         <p className="eyebrow">A daily deduction game</p>

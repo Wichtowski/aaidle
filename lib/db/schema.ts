@@ -220,6 +220,29 @@ export const authEmailTokens = sqliteTable(
     index("auth_email_tokens_expires_idx").on(t.expiresAt),
   ],
 );
+export const userProgress = sqliteTable("user_progress", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  progressJson: text("progress_json").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+export const userChallengeCompletions = sqliteTable(
+  "user_challenge_completions",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    challengeId: text("challenge_id")
+      .notNull()
+      .references(() => dailyChallenges.id),
+    completedAt: integer("completed_at").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.challengeId] }),
+    index("user_challenge_completions_challenge_idx").on(t.challengeId),
+  ],
+);
 export const playerModeStats = sqliteTable(
   "player_mode_stats",
   {

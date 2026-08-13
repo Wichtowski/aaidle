@@ -2,36 +2,50 @@
 
 import { useEffect, useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa6";
-import { apiClient } from "../../../lib/api/client";
+import { ApiError, apiClient } from "../../../lib/api/client";
+import { ActivationPrompt } from "./ActivationPrompt";
+import { useAuth } from "./useAuth";
+import { Toast } from "../ui/Toast";
 
 type FormMode = "sign-in" | "register";
+type ToastState = { message: string; variant: "error" | "success" } | null;
 
 export function LoginForm() {
+  const { user, setAuthenticatedUser } = useAuth();
   const [mode, setMode] = useState<FormMode>("sign-in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
+  const [localActivationUrl, setLocalActivationUrl] = useState<string | null>(null);
+  const [signedInUnverifiedEmail, setSignedInUnverifiedEmail] = useState<string | null>(null);
+  const [signInErrorCode, setSignInErrorCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const canRequestEmail = Boolean(email.trim());
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has("activated")) setNotice("Your account is active. You can now sign in.");
-    if (params.get("error") === "activation") setNotice("That activation link is invalid or expired.");
-    if (params.get("error") === "reset-link") setNotice("That password reset link is invalid or expired.");
+    if (params.has("activated")) setToast({ message: "Your account is active. You can now sign in.", variant: "success" });
+    if (params.get("error") === "activation") setToast({ message: "That activation link is invalid or expired.", variant: "error" });
+    if (params.get("error") === "reset-link") setToast({ message: "That password reset link is invalid or expired.", variant: "error" });
   }, []);
 
   const sendEmailRequest = async (
-    request: (address: string) => Promise<unknown>,
+    request: (address: string) => Promise<{ accepted: true; activationUrl?: string }>,
     successMessage: string,
   ) => {
     setBusy(true);
     setNotice(null);
+    setToast(null);
+    setLocalActivationUrl(null);
     try {
-      await request(email);
-      setNotice(successMessage);
+      const { activationUrl } = await request(email);
+      setLocalActivationUrl(activationUrl ?? null);
+      if (activationUrl) setNotice("Activate your local account to complete registration.");
+      else setToast({ message: successMessage, variant: "success" });
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not send the email.");
+      setToast({ message: error instanceof Error ? error.message : "Could not send the email.", variant: "error" });
     } finally {
       setBusy(false);
     }
@@ -40,21 +54,31 @@ export function LoginForm() {
   const submitPassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (mode === "register" && password !== confirmPassword) {
-      setNotice("Passwords do not match.");
+      setToast({ message: "Passwords do not match.", variant: "error" });
       return;
     }
     setBusy(true);
     setNotice(null);
+    setToast(null);
+    setSignInErrorCode(null);
     try {
       if (mode === "register") {
-        await apiClient.register(email, password);
-        setNotice("Check your inbox to activate your account.");
+        const { activationUrl } = await apiClient.register(email, password);
+        setLocalActivationUrl(activationUrl ?? null);
+        if (activationUrl) setNotice("Activate your local account to complete registration.");
+        else setToast({ message: "Check your inbox to activate your account.", variant: "success" });
         return;
       }
-      await apiClient.signInWithPassword(email, password);
+      const { user: signedInUser } = await apiClient.signInWithPassword(email, password);
+      setAuthenticatedUser(signedInUser);
+      if (!signedInUser.emailVerified) {
+        setSignedInUnverifiedEmail(signedInUser.email);
+        return;
+      }
       window.location.assign("/classic");
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not sign in.");
+      if (mode === "sign-in") setSignInErrorCode(error instanceof ApiError ? error.code ?? "UNKNOWN" : "UNKNOWN");
+      setToast({ message: error instanceof Error ? error.message : "Could not sign in.", variant: "error" });
     } finally {
       setBusy(false);
     }
@@ -62,6 +86,10 @@ export function LoginForm() {
 
   return (
     <div className="auth-card">
+      <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
+      {((user && !user.emailVerified && user.email) || signedInUnverifiedEmail) && (
+        <ActivationPrompt email={signedInUnverifiedEmail ?? user?.email ?? ""} />
+      )}
       <div className="auth-card__providers">
         <a className="button" href="/api/v1/auth/oauth/github">
           <FaGithub aria-hidden="true" /> Continue with GitHub
@@ -71,23 +99,29 @@ export function LoginForm() {
         </a>
       </div>
       <div className="auth-divider">or use your email</div>
-      <label className="auth-field">
-        Email
-        <input
-          autoComplete="email"
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          type="email"
-          value={email}
-        />
-      </label>
       <form className="auth-card__password" onSubmit={submitPassword}>
+        <label className="auth-field">
+          Email
+          <input
+            autoComplete="email"
+            onChange={(event) => {
+              setEmail(event.target.value);
+              setSignInErrorCode(null);
+            }}
+            required
+            type="email"
+            value={email}
+          />
+        </label>
         <label className="auth-field">
           Password
           <input
             autoComplete={mode === "register" ? "new-password" : "current-password"}
             minLength={mode === "register" ? 12 : undefined}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setSignInErrorCode(null);
+            }}
             required
             type="password"
             value={password}
@@ -106,38 +140,27 @@ export function LoginForm() {
             />
           </label>
         )}
-        <button className="button button--primary" disabled={busy || !email || !password} type="submit">
+        <button className="button button--primary" disabled={busy} type="submit">
           {mode === "register" ? "Create account" : "Sign in"}
         </button>
       </form>
       {mode === "sign-in" && (
         <div className="auth-card__recovery">
-          <button
-            className="auth-card__toggle"
-            disabled={busy || !email}
-            onClick={() =>
-              sendEmailRequest(
-                apiClient.requestPasswordReset.bind(apiClient),
-                "If that account exists, a password reset link is on its way.",
-              )
-            }
-            type="button"
-          >
-            Forgot password?
-          </button>
-          <button
-            className="auth-card__toggle"
-            disabled={busy || !email}
-            onClick={() =>
-              sendEmailRequest(
-                apiClient.resendActivationEmail.bind(apiClient),
-                "If that account needs activation, a new link is on its way.",
-              )
-            }
-            type="button"
-          >
-            Resend activation email
-          </button>
+          {signInErrorCode && (
+            <button
+              className="auth-card__toggle auth-card__toggle--right"
+              disabled={busy || !canRequestEmail}
+              onClick={() =>
+                sendEmailRequest(
+                  apiClient.requestPasswordReset.bind(apiClient),
+                  "If that account exists, a password reset link is on its way.",
+                )
+              }
+              type="button"
+            >
+              Forgot password?
+            </button>
+          )}
         </div>
       )}
       <button
@@ -146,12 +169,20 @@ export function LoginForm() {
           setMode((current) => (current === "sign-in" ? "register" : "sign-in"));
           setConfirmPassword("");
           setNotice(null);
+          setToast(null);
+          setLocalActivationUrl(null);
+          setSignInErrorCode(null);
         }}
         type="button"
       >
         {mode === "sign-in" ? "Need an account? Create one" : "Already have an account? Sign in"}
       </button>
       {notice && <p aria-live="polite" className="auth-card__notice">{notice}</p>}
+      {localActivationUrl && (
+        <a className="auth-card__local-link" href={localActivationUrl}>
+          Activate local account
+        </a>
+      )}
     </div>
   );
 }

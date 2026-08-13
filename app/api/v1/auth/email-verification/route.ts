@@ -17,14 +17,19 @@ export async function POST(request: Request) {
     if (!allowed) return authError("RATE_LIMITED", "Try again later.", 429);
 
     const verification = await createEmailVerificationTokenForEmail(email);
+    let activationUrl: string | undefined;
     if (verification) {
-      await sendAuthEmail({
+      const delivery = await sendAuthEmail({
         email: verification.email,
         purpose: "email-verification",
         token: verification.token,
       });
+      activationUrl = delivery.localUrl;
     }
-    return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { accepted: true, activationUrl },
+      { status: 202, headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "EMAIL_DELIVERY_NOT_CONFIGURED" || code === "EMAIL_DELIVERY_FAILED") {

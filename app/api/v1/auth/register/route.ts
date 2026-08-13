@@ -21,12 +21,15 @@ export async function POST(request: Request) {
     if (!allowed) return authError("RATE_LIMITED", "Try again later.", 429);
 
     const user = await registerWithPassword({ email, password });
-    await sendAuthEmail({
+    const delivery = await sendAuthEmail({
       email: user.email,
       purpose: "email-verification",
       token: await createEmailVerificationToken(user.id),
     });
-    return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { accepted: true, activationUrl: delivery.localUrl },
+      { status: 202, headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "ACCOUNT_EXISTS") return authError(code, "An account with this email already exists.", 409);

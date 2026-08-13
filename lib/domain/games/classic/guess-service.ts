@@ -10,6 +10,7 @@ export async function submitClassicGuess(input: {
   guessedModelId: string;
   attemptNumber: number;
   challengeId: string;
+  completedByUserId?: string | null;
 }) {
   const DB = database();
   const challenge = await DB.prepare(
@@ -36,11 +37,22 @@ export async function submitClassicGuess(input: {
       ),
     );
 
+  const isCorrect = guessed.id === answer.id;
+  let globalCompletionCount: number | null = null;
+  if (isCorrect && input.completedByUserId) {
+    await DB.prepare(
+      "INSERT OR IGNORE INTO user_challenge_completions (user_id, challenge_id, completed_at) VALUES (?, ?, ?)",
+    )
+      .bind(input.completedByUserId, input.challengeId, Date.now())
+      .run();
+    globalCompletionCount = await globalClassicCompletionCount(input.challengeId);
+  }
+
   return {
     guess: {
       model: guessed,
       comparison,
-      isCorrect: guessed.id === answer.id,
+      isCorrect,
       attemptNumber: input.attemptNumber,
       sameGuessCount: 0,
       matchingCategories: matches(guessed.categories, answer.categories),
@@ -48,6 +60,15 @@ export async function submitClassicGuess(input: {
       matchingOutputModalities: matches(guessed.outputModalities, answer.outputModalities),
       matchingUseCases: matches(guessed.useCases, answer.useCases),
     },
+    globalCompletionCount,
     playerStats: null,
   };
+}
+
+export async function globalClassicCompletionCount(challengeId: string): Promise<number> {
+  const count = await database()
+    .prepare("SELECT COUNT(*) AS count FROM user_challenge_completions WHERE challenge_id=?")
+    .bind(challengeId)
+    .first<{ count: number }>();
+  return count?.count ?? 0;
 }

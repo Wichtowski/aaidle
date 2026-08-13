@@ -1,22 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { Toast } from "../ui/Toast";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [notice, setNotice] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; variant: "error" } | null>(null);
   const [busy, setBusy] = useState(false);
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (password !== confirmPassword) {
-      setNotice("Passwords do not match.");
+      setToast({ message: "Passwords do not match.", variant: "error" });
       return;
     }
 
     setBusy(true);
-    setNotice(null);
+    setToast(null);
     try {
       const response = await fetch("/api/v1/auth/password-reset/complete", {
         method: "POST",
@@ -27,7 +28,7 @@ export function ResetPasswordForm() {
       if (!response.ok) throw new Error(payload.error?.message ?? "Could not reset your password.");
       window.location.assign("/classic");
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not reset your password.");
+      setToast({ message: error instanceof Error ? error.message : "Could not reset your password.", variant: "error" });
     } finally {
       setBusy(false);
     }
@@ -35,6 +36,7 @@ export function ResetPasswordForm() {
 
   return (
     <form className="auth-card auth-card__password" onSubmit={submit}>
+      <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
       <label className="auth-field">
         New password
         <input
@@ -60,7 +62,6 @@ export function ResetPasswordForm() {
       <button className="button button--primary" disabled={busy || !password || !confirmPassword} type="submit">
         Set new password
       </button>
-      {notice && <p aria-live="polite" className="auth-card__notice">{notice}</p>}
     </form>
   );
 }

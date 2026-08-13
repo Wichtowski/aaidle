@@ -4,7 +4,9 @@ import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+import { ActivationPrompt } from "../components/auth/ActivationPrompt";
 import { ProfileDangerZone } from "../components/auth/ProfileDangerZone";
+import { useAuth } from "../components/auth/useAuth";
 import { useLocalProgress } from "../../lib/storage/use-local-progress";
 import {
   classicCategories,
@@ -64,6 +66,7 @@ function RitualContent({ hellAwake, ritualCategories, ritualComplete, onEnterInn
 
 export default function Profile() {
   const router = useRouter();
+  const { user } = useAuth();
   const progress = useLocalProgress();
   const today = new Date().toISOString().slice(0, 10);
   const ritualCategories = solvedChallengeCategoriesForDate(progress, today);
@@ -125,6 +128,7 @@ export default function Profile() {
       <SiteNavbar hardcore={hellActive} />
       <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
       <h1>{hellActive ? "The infernal" : "Profile"}</h1>
+      {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
       {!ritualComplete && (
         <section className="hell-meter" aria-labelledby="hell-meter-title">
           <div className="stats-section__heading">

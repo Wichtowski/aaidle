@@ -11,7 +11,14 @@ export async function GET(request: Request) {
     );
   }
   return Response.json(
-    { user: { id: user.id, email: user.email, displayName: user.display_name } },
+    {
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name,
+        emailVerified: Boolean(user.email_verified_at),
+      },
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

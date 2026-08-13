@@ -111,6 +111,7 @@ export function ClassicGame({
   const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
   const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(initialGame.challenge);
   const [models, setModels] = useState<PublicModelIndex[]>(initialGame.models);
+  const [globalCompletionCount, setGlobalCompletionCount] = useState(initialGame.globalCompletionCount);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingGame, setIsLoadingGame] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -132,6 +133,7 @@ export function ClassicGame({
     if (cachedGame) {
       setChallenge(cachedGame.challenge);
       setModels(cachedGame.models);
+      setGlobalCompletionCount(cachedGame.globalCompletionCount);
       setLoadedDifficulty(selectedDifficulty);
       loadedDifficultyRef.current = selectedDifficulty;
       setIsLoadingGame(false);
@@ -149,6 +151,7 @@ export function ClassicGame({
         gameCache.current[selectedDifficulty] = game;
         setChallenge(game.challenge);
         setModels(game.models);
+        setGlobalCompletionCount(game.globalCompletionCount);
         setLoadedDifficulty(selectedDifficulty);
         loadedDifficultyRef.current = selectedDifficulty;
       })
@@ -280,6 +283,7 @@ export function ClassicGame({
 
     try {
       const payload = await apiClient.submitClassicGuess(challenge.id, model.id, attemptNumber);
+      if (payload.globalCompletionCount !== null) setGlobalCompletionCount(payload.globalCompletionCount);
 
       const entry: SavedGuess = {
         requestId,
@@ -385,7 +389,7 @@ export function ClassicGame({
       {category === "hardcore" && <HardcoreAtmosphere />}
       <SiteNavbar hardcore={category === "hardcore"} />
 
-      <ClassicGameControls category={category} date={challenge?.date ?? null} expiresAt={challenge?.expiresAt ?? null} models={models} difficulty={selectedDifficulty} loading={isLoadingGame} busy={busy} canGuess={game?.status !== "solved"} guessed={guessed} onDifficultyChange={selectDifficulty} onPick={pick} />
+      <ClassicGameControls category={category} date={challenge?.date ?? null} expiresAt={challenge?.expiresAt ?? null} models={models} difficulty={selectedDifficulty} loading={isLoadingGame} busy={busy} canGuess={game?.status !== "solved"} completedCount={globalCompletionCount} guessed={guessed} onDifficultyChange={selectDifficulty} onPick={pick} />
       {error && <p role="alert" className="notice">{error}</p>}
 
       {challenge && (

@@ -14,6 +14,8 @@ pnpm db:seed
 pnpm dev
 ```
 
+When `RESEND_API_KEY` is not configured locally, account activation links are shown in the browser instead of being sent by email.
+
 Run all required checks with:
 
 ```bash

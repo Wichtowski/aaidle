@@ -1,4 +1,4 @@
-const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = process.env.NODE_ENV === "production";
 
 export const sessionCookieName = "aaidle_session";
 export const oauthStateCookieName = "aaidle_oauth_state";
