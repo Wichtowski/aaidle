@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FaTriangleExclamation, FaXmark } from "react-icons/fa6";
 import { apiClient } from "../../../lib/api/client";
+import { playerIdKey, progressKey } from "../../../lib/storage/local-progress-store";
 import { useAuth } from "./useAuth";
 
 type Confirmation = "local-data" | "account" | null;
@@ -31,7 +32,8 @@ export function ProfileDangerZone() {
   };
 
   const clearLocalData = () => {
-    window.localStorage.clear();
+    window.localStorage.removeItem(progressKey);
+    window.localStorage.removeItem(playerIdKey);
     window.location.assign("/");
   };
 
@@ -55,7 +57,7 @@ export function ProfileDangerZone() {
       <div className="danger-zone__item">
         <div>
           <strong>Clear local data</strong>
-          <p>Erase all game history, streaks, preferences, and the anonymous player ID stored by aAIdle in this browser.</p>
+          <p>Erase this browser’s saved game history, streaks, preferences, and anonymous player ID. Your permanent Inner Circle access remains available.</p>
         </div>
         <button className="button button--danger" onClick={() => setConfirmation("local-data")} type="button">
           Clear local data
@@ -101,7 +103,7 @@ export function ProfileDangerZone() {
               <>
                 <p className="eyebrow">This cannot be undone</p>
                 <h2 id="danger-confirmation-title">Clear all local data?</h2>
-                <p>This permanently removes your saved guesses, streaks, preferences, and anonymous player ID from this browser. It does not delete a signed-in account.</p>
+                <p>This permanently removes saved guesses, streaks, preferences, and the anonymous player ID from this browser. It does not remove your permanent Inner Circle access or account progress.</p>
                 <div className="danger-modal__actions">
                   <button className="button" onClick={close} type="button">Cancel</button>
                   <button className="button button--danger-solid" onClick={clearLocalData} type="button">Yes, clear everything</button>

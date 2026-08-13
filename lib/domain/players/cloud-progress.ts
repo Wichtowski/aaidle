@@ -60,7 +60,16 @@ export function mergeCloudProgress(current: LocalProgress | null, incoming: Loca
   return reconcileStats({
     ...current,
     ...incoming,
+    playerId: current.playerId,
     games,
-    preferences: { ...current.preferences, ...incoming.preferences },
+    preferences: {
+      ...current.preferences,
+      ...incoming.preferences,
+      hardcoreUnlocked:
+        current.preferences.hardcoreUnlocked || incoming.preferences.hardcoreUnlocked,
+      hasAutoplayedHardcoreSoundtrack:
+        current.preferences.hasAutoplayedHardcoreSoundtrack ||
+        incoming.preferences.hasAutoplayedHardcoreSoundtrack,
+    },
   });
 }

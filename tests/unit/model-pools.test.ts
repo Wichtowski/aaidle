@@ -53,7 +53,11 @@ describe("Classic model pools", () => {
       "release",
       "operationTypes",
       "kernelBased",
+      "kernelSizes",
       "linearity",
+      "requiresTraining",
+      "outputTypes",
+      "frameworks",
       "outputModalities",
     ]);
   });
@@ -74,6 +78,42 @@ describe("Classic model pools", () => {
   it("normalizes absent LLM tool calling metadata to No", () => {
     expect(catalogModel("gpt-4o")?.categoryDetails?.["language-model"]?.toolUse).toBe(false);
     expect(catalogModel("claude-3-7-sonnet")?.categoryDetails?.["language-model"]?.toolUse).toBe(true);
+  });
+
+  it("replaces placeholder language metadata with conservative coverage estimates", () => {
+    expect(catalogModel("gpt-5")?.categoryDetails?.["language-model"]?.supportedLanguages).toEqual(
+      expect.arrayContaining(["english", "spanish", "chinese"]),
+    );
+    expect(catalogModel("deepseek-v3")?.categoryDetails?.["language-model"]?.supportedLanguages).toEqual(
+      expect.arrayContaining(["english", "chinese"]),
+    );
+    expect(catalogModel("text-embedding-3-large")?.categoryDetails?.nlp?.supportedLanguages).toEqual(
+      expect.arrayContaining(["english", "french", "japanese"]),
+    );
+  });
+
+  it("exposes non-placeholder language coverage for every LLM and NLP model", () => {
+    for (const model of rawModels) {
+      const seededLanguages =
+        model.categoryDetails?.["language-model"]?.supportedLanguages ??
+        model.categoryDetails?.nlp?.supportedLanguages;
+
+      if (!seededLanguages) continue;
+
+      const catalogLanguages =
+        catalogModel(model.id)?.categoryDetails?.["language-model"]?.supportedLanguages ??
+        catalogModel(model.id)?.categoryDetails?.nlp?.supportedLanguages;
+
+      expect(catalogLanguages, model.id).toBeDefined();
+      expect(catalogLanguages, model.id).not.toHaveLength(0);
+      expect(catalogLanguages, model.id).not.toEqual(["unknown"]);
+    }
+  });
+
+  it("preserves documented, model-specific language lists", () => {
+    expect(catalogModel("bielik-11b-v3-0-instruct")?.categoryDetails?.["language-model"]?.supportedLanguages).toEqual([
+      "polish",
+    ]);
   });
 
   it("does not allow a model from a harder pool to be guessed in an easier mode", () => {

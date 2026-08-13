@@ -1,23 +1,41 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { useAuth } from "../auth/useAuth";
 
 export function RitualGateDialog() {
+  const enterLinkRef = useRef<HTMLAnchorElement>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    enterLinkRef.current?.focus();
+  }, []);
+
   return (
     <div
       aria-describedby="ritual-gate-description"
       aria-labelledby="ritual-gate-title"
       aria-modal="true"
       className="completed-modal ritual-gate"
+      onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        event.preventDefault();
+        enterLinkRef.current?.focus();
+      }}
       role="dialog"
     >
       <section className="completed ritual-gate__content">
         <p className="eyebrow">Six seals broken</p>
         <h2 id="ritual-gate-title">Something has noticed you.</h2>
         <p id="ritual-gate-description" className="completed__message">
-          The ledger will not let you return to the catalogue yet.
+          {user
+            ? "Your account can now carry this victory into Hardcore."
+            : "Sign in or create an account to enter Hardcore and keep this victory."}
         </p>
         <div className="completed__actions">
-          <Link className="button button--inner-circle" href="/profile">
-            Enter your soul
+          <Link className="button button--inner-circle" href={user ? "/classic/hardcore" : "/login"} ref={enterLinkRef}>
+            {user ? "Enter the inner circle" : "Sign in to enter"}
           </Link>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { FaChevronUp } from "react-icons/fa6";
 import type { ReactNode } from "react";
 import {
   classicColumns,
+  classicColumnHeadings,
   type ClassicColumn,
   type ClassicComparison,
 } from "../../../lib/domain/guesses/comparison-types";
@@ -89,7 +90,7 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
     toolUse: language?.toolUse,
     multimodal: language?.multimodal,
     visionTasks: vision?.visionTasks,
-    architecture: vision?.architecture ?? nlp?.architecture ?? detection?.architecture,
+    architecture: language?.architecture ?? vision?.architecture ?? nlp?.architecture ?? detection?.architecture,
     trainingDatasets: vision?.trainingDatasets ?? nlp?.trainingDatasets ?? detection?.trainingDatasets,
     license: vision?.license,
     nlpTasks: nlp?.nlpTasks,
@@ -99,7 +100,7 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
     learningParadigms: classical?.learningParadigms,
     objectives: classical?.objectives,
     featureTypes: classical?.featureTypes,
-    frameworks: classical?.frameworks,
+    frameworks: classical?.frameworks ?? filters?.frameworks,
     operationTypes: filters?.operationTypes,
     kernelBased: filters?.kernelBased,
     kernelSizes: filters?.kernelSizes,
@@ -185,7 +186,7 @@ export function GuessRow({
     categories: {
       status: comparison.categories,
       value: hardcore ? (
-        comparison.categories === "correct" ? "Yes" : "No"
+        model.categories?.join(", ") || "N/A"
       ) : (
         <MatchedList
           highlightMatches={difficulty === "normal" && comparison.categories === "partial"}
@@ -196,7 +197,9 @@ export function GuessRow({
     },
     inputModalities: {
       status: comparison.inputModalities,
-      value: (
+      value: hardcore ? (
+        model.inputModalities?.join(", ") || "N/A"
+      ) : (
         <MatchedList
           highlightMatches={difficulty === "normal" && comparison.inputModalities === "partial"}
           items={model.inputModalities}
@@ -206,7 +209,9 @@ export function GuessRow({
     },
     outputModalities: {
       status: comparison.outputModalities,
-      value: (
+      value: hardcore ? (
+        model.outputModalities?.join(", ") || "N/A"
+      ) : (
         <MatchedList
           highlightMatches={difficulty === "normal" && comparison.outputModalities === "partial"}
           items={model.outputModalities}
@@ -217,7 +222,9 @@ export function GuessRow({
     useCases: {
       status: comparison.useCases,
       tooltip: tooltipFor(model.useCases),
-      value: (
+      value: hardcore ? (
+        model.useCases?.join(", ") || "N/A"
+      ) : (
         <MatchedList
           highlightMatches={difficulty === "normal" && comparison.useCases === "partial"}
           items={model.useCases}
@@ -234,6 +241,14 @@ export function GuessRow({
     },
     ...Object.fromEntries(["supportedLanguages", "toolUse", "multimodal", "visionTasks", "architecture", "trainingDatasets", "license", "nlpTasks", "detectionTypes", "realTimeCapable", "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks", "operationTypes", "kernelBased", "kernelSizes", "linearity", "requiresTraining", "outputTypes"].map((field) => [field, { status: comparison[field] ?? "unknown", value: categoryValue(model, field) }])),
   };
+
+  if (hardcore) {
+    for (const field of Object.values(fields)) {
+      if (typeof field.value === "string" && field.value !== "N/A") {
+        field.tooltip = field.value;
+      }
+    }
+  }
 
   const modelSummary = (
     <>
@@ -274,6 +289,7 @@ export function GuessRow({
               revealed={revealed}
               status={field.status}
               hardcore={hardcore}
+              heading={classicColumnHeadings[column]}
               tooltip={field.tooltip}
             >
               {field.value}

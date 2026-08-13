@@ -4,8 +4,49 @@ import { localProgressSchema, type LocalProgress } from "./local-progress-schema
 
 export const progressKey = "aaidle:progress:v1";
 export const playerIdKey = "aaidle:player-id:v1";
+export const innerCircleKey = "aaidle:inner-circle:v1";
 const serverPlayerId = "00000000-0000-4000-8000-000000000000";
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+type InnerCirclePreferences = Pick<
+  LocalProgress["preferences"],
+  "hardcoreUnlocked" | "hasAutoplayedHardcoreSoundtrack"
+>;
+
+const emptyInnerCirclePreferences: InnerCirclePreferences = {
+  hardcoreUnlocked: false,
+  hasAutoplayedHardcoreSoundtrack: false,
+};
+
+function readInnerCirclePreferences(): InnerCirclePreferences {
+  if (typeof window === "undefined") return emptyInnerCirclePreferences;
+
+  try {
+    const value = JSON.parse(window.localStorage.getItem(innerCircleKey) ?? "null") as unknown;
+    if (!value || typeof value !== "object") return emptyInnerCirclePreferences;
+    const preferences = value as Partial<InnerCirclePreferences>;
+    return {
+      hardcoreUnlocked: preferences.hardcoreUnlocked === true,
+      hasAutoplayedHardcoreSoundtrack:
+        preferences.hasAutoplayedHardcoreSoundtrack === true,
+    };
+  } catch {
+    return emptyInnerCirclePreferences;
+  }
+}
+
+function saveInnerCirclePreferences(progress: LocalProgress) {
+  if (typeof window === "undefined") return;
+
+  const preferences = {
+    hardcoreUnlocked: progress.preferences.hardcoreUnlocked,
+    hasAutoplayedHardcoreSoundtrack:
+      progress.preferences.hasAutoplayedHardcoreSoundtrack,
+  };
+  if (preferences.hardcoreUnlocked || preferences.hasAutoplayedHardcoreSoundtrack) {
+    window.localStorage.setItem(innerCircleKey, JSON.stringify(preferences));
+  }
+}
 
 function devicePlayerId(fallback?: string) {
   if (typeof window === "undefined") return serverPlayerId;
@@ -18,30 +59,35 @@ function devicePlayerId(fallback?: string) {
   return playerId;
 }
 
-export const freshProgress = (): LocalProgress => ({
-  version: 1,
-  playerId: devicePlayerId(),
-  activeMode: "classic",
-  games: {},
-  stats: {
-    classic: {
-      currentStreak: 0,
-      bestStreak: 0,
-      gamesPlayed: 0,
-      gamesWon: 0,
-      lastPlayedDate: null,
-      lastSolvedDate: null,
-      guessDistribution: distribution(),
+export const freshProgress = (): LocalProgress => {
+  const innerCircle = readInnerCirclePreferences();
+  return {
+    version: 1,
+    playerId: devicePlayerId(),
+    activeMode: "classic",
+    games: {},
+    stats: {
+      classic: {
+        currentStreak: 0,
+        bestStreak: 0,
+        gamesPlayed: 0,
+        gamesWon: 0,
+        lastPlayedDate: null,
+        lastSolvedDate: null,
+        guessDistribution: distribution(),
+      },
     },
-  },
-  preferences: {
-    reducedMotion: false,
-    highContrast: false,
-    hasSeenClassicPrivacy: false,
-    hardcoreUnlocked: false,
-    hellMode: false,
-  },
-});
+    preferences: {
+      reducedMotion: false,
+      highContrast: false,
+      hasSeenClassicPrivacy: false,
+      hardcoreUnlocked: innerCircle.hardcoreUnlocked,
+      hellMode: false,
+      hasAutoplayedHardcoreSoundtrack:
+        innerCircle.hasAutoplayedHardcoreSoundtrack,
+    },
+  };
+};
 
 const serverSnapshot: LocalProgress = {
   version: 1,
@@ -65,6 +111,7 @@ const serverSnapshot: LocalProgress = {
     hasSeenClassicPrivacy: false,
     hardcoreUnlocked: false,
     hellMode: false,
+    hasAutoplayedHardcoreSoundtrack: false,
   },
 };
 
@@ -111,13 +158,32 @@ function migrateClassicChallengeModes(progress: LocalProgress): LocalProgress {
   return changed ? { ...progress, games } : progress;
 }
 
+function reconcileInnerCirclePreferences(progress: LocalProgress): LocalProgress {
+  const innerCircle = readInnerCirclePreferences();
+  const preferences = {
+    ...progress.preferences,
+    hardcoreUnlocked:
+      progress.preferences.hardcoreUnlocked || innerCircle.hardcoreUnlocked,
+    hasAutoplayedHardcoreSoundtrack:
+      progress.preferences.hasAutoplayedHardcoreSoundtrack ||
+      innerCircle.hasAutoplayedHardcoreSoundtrack,
+  };
+  const nextProgress = { ...progress, preferences };
+  saveInnerCirclePreferences(nextProgress);
+  return nextProgress;
+}
+
 export function readProgress() {
   if (typeof window === "undefined") return serverSnapshot;
 
   try {
     const value = window.localStorage.getItem(progressKey);
-    const progress = reconcileLocalStats(
-      migrateClassicChallengeModes(value ? localProgressSchema.parse(JSON.parse(value)) : freshProgress()),
+    const progress = reconcileInnerCirclePreferences(
+      reconcileLocalStats(
+        migrateClassicChallengeModes(
+          value ? localProgressSchema.parse(JSON.parse(value)) : freshProgress(),
+        ),
+      ),
     );
     const playerId = devicePlayerId(progress.playerId);
     return progress.playerId === playerId ? progress : { ...progress, playerId };
@@ -128,6 +194,7 @@ export function readProgress() {
 
 let snapshot: LocalProgress = serverSnapshot;
 let initialised = false;
+let storageMode: "local" | "cloud" = "local";
 const listeners = new Set<() => void>();
 export const subscribe = (listener: () => void) => {
   listeners.add(listener);
@@ -144,7 +211,8 @@ export function initialiseProgress() {
   snapshot = readProgress();
   initialised = true;
   window.addEventListener("storage", (event) => {
-    if (event.key === progressKey || event.key === playerIdKey) {
+    if (storageMode === "cloud") return;
+    if (event.key === progressKey || event.key === playerIdKey || event.key === innerCircleKey) {
       snapshot = readProgress();
       listeners.forEach((listener) => listener());
     }
@@ -152,11 +220,26 @@ export function initialiseProgress() {
   listeners.forEach((listener) => listener());
 }
 
+export function startCloudProgress() {
+  storageMode = "cloud";
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem(playerIdKey);
+    window.localStorage.removeItem(progressKey);
+  }
+}
+
+export function replaceProgress(progress: LocalProgress) {
+  snapshot = progress;
+  listeners.forEach((listener) => listener());
+}
+
 export function updateProgress(mutator: (state: LocalProgress) => LocalProgress) {
   snapshot = mutator(snapshot);
-  if (typeof window !== "undefined") {
+  saveInnerCirclePreferences(snapshot);
+  if (typeof window !== "undefined" && storageMode === "local") {
     window.localStorage.setItem(playerIdKey, snapshot.playerId);
     window.localStorage.setItem(progressKey, JSON.stringify(snapshot));
   }
   listeners.forEach((listener) => listener());
+  return snapshot;
 }

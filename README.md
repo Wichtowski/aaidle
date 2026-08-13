@@ -54,6 +54,7 @@ The production environment also needs these secrets before account sign-in is en
 - `AAIDLE_AUTH_SECRET`
 - `AAIDLE_GITHUB_CLIENT_ID`
 - `AAIDLE_GITHUB_CLIENT_SECRET`
+- `AAIDLE_GITHUB_ISSUES_TOKEN` with Issues write access for `Wichtowski/aaidle`
 - `AAIDLE_GOOGLE_CLIENT_ID`
 - `AAIDLE_GOOGLE_CLIENT_SECRET`
 - `AAIDLE_RESEND_API_KEY`
@@ -74,4 +75,10 @@ Update [data/models.seed.json](data/models.seed.json), then run:
 ```bash
 pnpm db:validate-seed
 pnpm db:seed
+```
+
+To discard and rebuild the local SQLite database from the current migrations and seed data, stop the development server and run:
+
+```bash
+pnpm db:reload
 ```

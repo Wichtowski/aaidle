@@ -51,6 +51,7 @@ const FOCUSED_CATEGORIES = new Set([
 const CATEGORY_DETAIL_KEYS = {
   "language-model": new Set([
     "supportedLanguages",
+    "architecture",
     "toolUse",
     "multimodal",
   ]),
@@ -219,9 +220,10 @@ function validateDetailShape(category, detail, id) {
   const expected = CATEGORY_DETAIL_KEYS[category];
   const actual = Object.keys(detail);
 
+  const optionalKeys = category === "language-model" ? new Set(["architecture"]) : new Set();
   assert(
-    actual.length === expected.size &&
-      actual.every((key) => expected.has(key)),
+    actual.every((key) => expected.has(key)) &&
+      [...expected].every((key) => optionalKeys.has(key) || actual.includes(key)),
     `categoryDetails.${category} has invalid keys: ${id}`,
   );
 
@@ -233,6 +235,14 @@ function validateDetailShape(category, detail, id) {
         id,
         { allowEmpty: true },
       );
+      if (detail.architecture !== undefined) {
+        validateSlugArray(
+          detail.architecture,
+          "categoryDetails.language-model.architecture",
+          id,
+          { allowEmpty: true },
+        );
+      }
       validateNullableBoolean(
         detail.toolUse,
         "categoryDetails.language-model.toolUse",

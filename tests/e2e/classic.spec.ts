@@ -1,5 +1,38 @@
 import { test, expect } from "@playwright/test";
 
+const expectedVersion = process.env.PLAYWRIGHT_EXPECTED_VERSION;
+const versionCheckIntervalMs = 30_000;
+const versionCheckTimeoutMs = 10 * 60_000;
+
+test.beforeEach(async ({ page }) => {
+  if (!expectedVersion) {
+    return;
+  }
+
+  test.setTimeout(versionCheckTimeoutMs);
+
+  const deadline = Date.now() + versionCheckTimeoutMs;
+  let actualVersion: string | null = null;
+
+  await page.goto("/");
+
+  while (Date.now() < deadline) {
+    actualVersion = await page.locator("html").getAttribute("version");
+
+    if (actualVersion === expectedVersion) {
+      return;
+    }
+
+    await page.waitForTimeout(versionCheckIntervalMs);
+    await page.reload();
+  }
+
+  expect(
+    actualVersion,
+    `Expected deployed version ${expectedVersion}, but found ${actualVersion ?? "no version attribute"}`,
+  ).toBe(expectedVersion);
+});
+
 test("Cookie consent requires an explicit choice", async ({ page }) => {
   await page.goto("/");
 

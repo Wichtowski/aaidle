@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { FaCheck, FaCopy } from "react-icons/fa6";
 import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
-import { classicCategoryDetails, type ClassicCategory } from "../../../lib/domain/models/model-types";
+import {
+  classicCategoryDetails,
+  type ClassicCategory,
+} from "../../../lib/domain/models/model-types";
 
 const emojiForStatus: Record<string, string> = {
   correct: "🟩",
@@ -47,7 +50,9 @@ export function ShareResultButton({
     );
     const share = [
       `aAIdle Classic ${classicCategoryDetails[category].label} ${emoji} ${label} - ${date}`,
-      `Solved in ${guesses.length} guesses 🔥 ${streak}`,
+      difficulty === "hardcore"
+        ? `Escaped in ${guesses.length} offerings 🔥 ${streak}`
+        : `Solved in ${guesses.length} guesses 🔥 ${streak}`,
       ...grid,
       "#aAIdle",
       window.location.origin,

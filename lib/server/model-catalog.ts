@@ -109,16 +109,23 @@ const categoryModels = (category: ClassicCategory) =>
 
 const modelsForClassicDifficulty = (category: ClassicCategory, difficulty: ClassicDifficulty) => {
   const pool = categoryModels(category);
-  if (category === "hardcore" || difficulty === "hardcore" || difficulty === "challenge") return pool;
+  if (category === "hardcore" || difficulty === "hardcore" || difficulty === "challenge") {
+    return pool;
+  }
 
   const normalPool = pool.filter((model) => model.minPool <= classicDifficultyRank.normal);
 
   // Some focused categories do not yet have enough Normal-ranked models. Keep them playable
   // without arbitrarily excluding Normal-ranked models from categories with a larger catalogue.
-  return normalPool.length >= 8 ? normalPool : pool.slice(0, Math.max(8, Math.ceil(pool.length * 0.4)));
+  return normalPool.length >= 8
+    ? normalPool
+    : pool.slice(0, Math.max(8, Math.ceil(pool.length * 0.4)));
 };
 
-export const publicModelIndexForClassic = (category: ClassicCategory, difficulty: ClassicDifficulty) =>
+export const publicModelIndexForClassic = (
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+) =>
   modelsForClassicDifficulty(category, difficulty)
     .map(({ id, name, provider, family, aliases }) => ({
       id,
@@ -129,8 +136,10 @@ export const publicModelIndexForClassic = (category: ClassicCategory, difficulty
     }))
     .sort((left, right) => left.name.localeCompare(right.name));
 
-export const eligibleModelIdsForClassic = (category: ClassicCategory, difficulty: ClassicDifficulty) =>
-  modelsForClassicDifficulty(category, difficulty).map((model) => model.id);
+export const eligibleModelIdsForClassic = (
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+) => modelsForClassicDifficulty(category, difficulty).map((model) => model.id);
 
 export function isModelEligibleForDifficulty(id: string, difficulty: ClassicDifficulty): boolean {
   return (byId.get(id)?.minPool ?? Infinity) <= classicDifficultyRank[difficulty];
@@ -165,4 +174,11 @@ export function catalogModel(id: string): ComparableModel | null {
     releaseDate: model.releaseDate,
     contextWindowTokens: model.contextWindowTokens,
   };
+}
+
+export function catalogModelsForClassic(
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+): ComparableModel[] {
+  return modelsForClassicDifficulty(category, difficulty).map((model) => catalogModel(model.id)!);
 }

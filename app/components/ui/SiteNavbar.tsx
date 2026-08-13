@@ -6,11 +6,31 @@ import { canManageUsers } from "@/lib/auth/permissions";
 import { useAuth } from "../auth/useAuth";
 import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
 
-export function SiteNavbar({ children, hardcore = false }: { children?: ReactNode; hardcore?: boolean }) {
+export function SiteNavbar({
+  children,
+  hardcore = false,
+}: {
+  children?: ReactNode;
+  hardcore?: boolean;
+}) {
   const { user, signOut } = useAuth();
   const labels = hardcore
-    ? { profile: "Soul", privacy: "Pacts", credits: "Infernal credits", issues: "Report a demon", signIn: "Enter the circle", signOut: "Leave the circle" }
-    : { profile: "Profile", privacy: "Privacy", credits: "Credits", issues: "Report an issue", signIn: "Sign in", signOut: "Sign out" };
+    ? {
+        profile: "Soul",
+        privacy: "Pacts",
+        credits: "Infernal credits",
+        issues: "Report a demon",
+        signIn: "Enter the circle",
+        signOut: "Leave the circle",
+      }
+    : {
+        profile: "Profile",
+        privacy: "Privacy",
+        credits: "Credits",
+        issues: "Report an issue",
+        signIn: "Sign in",
+        signOut: "Sign out",
+      };
 
   return (
     <nav className="site-navbar">
@@ -23,9 +43,7 @@ export function SiteNavbar({ children, hardcore = false }: { children?: ReactNod
         {user && canManageUsers(user.permission) && <Link href="/admin">Admin</Link>}
         <Link href="/privacy/v1">{labels.privacy}</Link>
         <Link href="/credits">{labels.credits}</Link>
-        <a href="https://github.com/Wichtowski/aaidle/issues/new" rel="noreferrer" target="_blank">
-          {labels.issues}
-        </a>
+        {user && !user.disabled && <Link href="/report-issue">{labels.issues}</Link>}
         {user ? (
           <button className="site-navbar__auth" onClick={signOut} type="button">
             {labels.signOut}

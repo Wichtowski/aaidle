@@ -91,7 +91,11 @@ export function GuessBoard({
       style={
         {
           "--guess-board-columns": columns.length,
-          "--guess-board-width": `${Math.min(1720, 160 + columns.length * 130)}px`,
+          "--guess-board-width": `${
+            category === "hardcore"
+              ? 160 + columns.length * 100
+              : Math.min(1720, 160 + columns.length * 130)
+          }px`,
         } as CSSProperties
       }
     >

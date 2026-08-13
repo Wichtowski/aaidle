@@ -76,7 +76,10 @@ export function compareClassicModels(
     toolUse: compareNullableBoolean(language(guessed)?.toolUse ?? null, language(answer)?.toolUse ?? null),
     multimodal: compareNullableBoolean(language(guessed)?.multimodal ?? null, language(answer)?.multimodal ?? null),
     visionTasks: compareSets(vision(guessed)?.visionTasks ?? null, vision(answer)?.visionTasks ?? null),
-    architecture: compareSets(vision(guessed)?.architecture ?? nlp(guessed)?.architecture ?? detection(guessed)?.architecture ?? null, vision(answer)?.architecture ?? nlp(answer)?.architecture ?? detection(answer)?.architecture ?? null),
+    architecture: compareSets(
+      language(guessed)?.architecture ?? vision(guessed)?.architecture ?? nlp(guessed)?.architecture ?? detection(guessed)?.architecture ?? null,
+      language(answer)?.architecture ?? vision(answer)?.architecture ?? nlp(answer)?.architecture ?? detection(answer)?.architecture ?? null,
+    ),
     trainingDatasets: compareSets(vision(guessed)?.trainingDatasets ?? nlp(guessed)?.trainingDatasets ?? detection(guessed)?.trainingDatasets ?? null, vision(answer)?.trainingDatasets ?? nlp(answer)?.trainingDatasets ?? detection(answer)?.trainingDatasets ?? null),
     license: compareScalar(vision(guessed)?.license ?? null, vision(answer)?.license ?? null),
     nlpTasks: compareSets(nlp(guessed)?.nlpTasks ?? null, nlp(answer)?.nlpTasks ?? null),
@@ -86,7 +89,10 @@ export function compareClassicModels(
     learningParadigms: compareSets(classical(guessed)?.learningParadigms ?? null, classical(answer)?.learningParadigms ?? null),
     objectives: compareSets(classical(guessed)?.objectives ?? null, classical(answer)?.objectives ?? null),
     featureTypes: compareSets(classical(guessed)?.featureTypes ?? null, classical(answer)?.featureTypes ?? null),
-    frameworks: compareSets(classical(guessed)?.frameworks ?? null, classical(answer)?.frameworks ?? null),
+    frameworks: compareSets(
+      classical(guessed)?.frameworks ?? filters(guessed)?.frameworks ?? null,
+      classical(answer)?.frameworks ?? filters(answer)?.frameworks ?? null,
+    ),
     operationTypes: compareSets(filters(guessed)?.operationTypes ?? null, filters(answer)?.operationTypes ?? null),
     kernelBased: compareNullableBoolean(filters(guessed)?.kernelBased ?? null, filters(answer)?.kernelBased ?? null),
     kernelSizes: compareSets(filters(guessed)?.kernelSizes ?? null, filters(answer)?.kernelSizes ?? null),

@@ -14,6 +14,12 @@ const gameCommandSchema = z
         message: "The hardcore category must use hardcore difficulty and vice versa.",
       });
     }
+    if (category === "hardcore") {
+      context.addIssue({
+        code: "custom",
+        message: "Hardcore is available only in a signed-in browser session.",
+      });
+    }
   });
 
 const guessCommandSchema = z.object({

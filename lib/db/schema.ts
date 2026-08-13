@@ -165,19 +165,26 @@ export const anonymousPlayers = sqliteTable("anonymous_players", {
   createdAt: integer("created_at").notNull(),
   lastSeenAt: integer("last_seen_at").notNull(),
 });
-export const users = sqliteTable(
-  "users",
-  {
-    id: text("id").primaryKey(),
-    email: text("email").notNull(),
-    emailNormalized: text("email_normalized").notNull().unique(),
-    displayName: text("display_name"),
-    passwordHash: text("password_hash"),
-    emailVerifiedAt: integer("email_verified_at"),
-    permission: text("permission", { enum: ["user", "developer", "superadmin"] }).notNull().default("user"),
-    ...timestamps,
-  },
-);
+export const siteSettings = sqliteTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull(),
+  emailNormalized: text("email_normalized").notNull().unique(),
+  displayName: text("display_name"),
+  passwordHash: text("password_hash"),
+  emailVerifiedAt: integer("email_verified_at"),
+  permission: text("permission", { enum: ["user", "developer", "superadmin"] })
+    .notNull()
+    .default("user"),
+  disabledAt: integer("disabled_at"),
+  disabledReason: text("disabled_reason"),
+  disabledByUserId: text("disabled_by_user_id"),
+  ...timestamps,
+});
 export const userIdentities = sqliteTable(
   "user_identities",
   {
@@ -202,7 +209,10 @@ export const userSessions = sqliteTable(
     createdAt: integer("created_at").notNull(),
     lastSeenAt: integer("last_seen_at").notNull(),
   },
-  (t) => [index("user_sessions_user_idx").on(t.userId), index("user_sessions_expires_idx").on(t.expiresAt)],
+  (t) => [
+    index("user_sessions_user_idx").on(t.userId),
+    index("user_sessions_expires_idx").on(t.expiresAt),
+  ],
 );
 export const authEmailTokens = sqliteTable(
   "auth_email_tokens",
@@ -212,7 +222,9 @@ export const authEmailTokens = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     tokenHash: text("token_hash").notNull().unique(),
-    purpose: text("purpose", { enum: ["email-verification", "password-reset", "account-deletion"] }).notNull(),
+    purpose: text("purpose", {
+      enum: ["email-verification", "password-reset", "account-deletion"],
+    }).notNull(),
     expiresAt: integer("expires_at").notNull(),
     createdAt: integer("created_at").notNull(),
   },
@@ -227,6 +239,12 @@ export const userProgress = sqliteTable("user_progress", {
     .references(() => users.id, { onDelete: "cascade" }),
   progressJson: text("progress_json").notNull(),
   updatedAt: integer("updated_at").notNull(),
+});
+export const userHardcoreAccess = sqliteTable("user_hardcore_access", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  unlockedAt: integer("unlocked_at").notNull(),
 });
 export const userChallengeCompletions = sqliteTable(
   "user_challenge_completions",

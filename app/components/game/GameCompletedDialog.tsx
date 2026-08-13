@@ -5,7 +5,8 @@ import Link from "next/link";
 import { FaXmark } from "react-icons/fa6";
 import { CelebrationPhysics } from "./CelebrationPhysics";
 import { ShareResultButton, type ShareGuess } from "./ShareResultButton";
-import type { ClassicCategory } from "../../../lib/domain/models/model-types";
+import type { ClassicCategory, ComparableModel } from "../../../lib/domain/models/model-types";
+import { CompletionTrajectory } from "./CompletionTrajectory";
 
 function resultMessage(guessCount: number) {
   if (guessCount === 1) return "One guess. Either genius or delightfully suspicious.";
@@ -13,6 +14,14 @@ function resultMessage(guessCount: number) {
   if (guessCount <= 6) return "Crisp work. You clearly read the clues.";
   if (guessCount <= 10) return "You found it. The detour was merely… research.";
   return "Technically solved. The models had time to form a support group.";
+}
+
+function hardcoreResultMessage(guessCount: number) {
+  if (guessCount === 1) return "One offering. The abyss answered before it learned your name.";
+  if (guessCount <= 3) return "The pit yielded quickly. Do not mistake this for mercy.";
+  if (guessCount <= 6) return "You followed the embers and found the mark.";
+  if (guessCount <= 10) return "The ledger endured your search. The answer finally surfaced.";
+  return "The underworld counted every offering. At last, it accepted one.";
 }
 
 type LedgerCorruption = "clear" | "frayed" | "corrupted" | "lost";
@@ -43,7 +52,13 @@ export function GameCompletedDialog({
   date: string;
   category: ClassicCategory;
   difficulty: "normal" | "challenge" | "hardcore";
-  guesses: ShareGuess[];
+  guesses: Array<
+    ShareGuess & {
+      attemptNumber: number;
+      isCorrect: boolean;
+      model: ComparableModel;
+    }
+  >;
   onClose: () => void;
   ritualNotice?: string;
   stats: { currentStreak: number; bestStreak: number; gamesPlayed: number } | null;
@@ -51,6 +66,8 @@ export function GameCompletedDialog({
   const [open, setOpen] = useState(true);
   const modalRef = useRef<HTMLElement>(null);
   const corruption = ledgerCorruption(guesses.length);
+  const isHardcore = difficulty === "hardcore";
+  const answer = guesses.find((guess) => guess.isCorrect)?.model;
 
   if (!open) return null;
 
@@ -61,7 +78,7 @@ export function GameCompletedDialog({
 
   return (
     <div
-      className="completed-modal"
+      className={`completed-modal${isHardcore ? " completed-modal--hardcore" : ""}`}
       role="dialog"
       aria-labelledby="completed-title"
       aria-modal="true"
@@ -70,17 +87,15 @@ export function GameCompletedDialog({
       }}
     >
       <CelebrationPhysics obstacleRef={modalRef} />
-      <section className="completed" ref={modalRef}>
-        <button
-          aria-label="Close completion dialog"
-          className="completed__close"
-          onClick={close}
-        >
+      <section className={`completed${isHardcore ? " completed--hardcore" : ""}`} ref={modalRef}>
+        <button aria-label="Close completion dialog" className="completed__close" onClick={close}>
           <FaXmark aria-hidden focusable="false" />
         </button>
-        <p className="eyebrow">Model identified</p>
-        <h2 id="completed-title">Excellent work.</h2>
-        <p className="completed__message">{resultMessage(guesses.length)}</p>
+        <p className="eyebrow">{isHardcore ? "The pit relented" : "Model identified"}</p>
+        <h2 id="completed-title">{isHardcore ? "It has been named." : "Excellent work."}</h2>
+        <p className="completed__message">
+          {isHardcore ? hardcoreResultMessage(guesses.length) : resultMessage(guesses.length)}
+        </p>
         {ritualNotice && (
           <p
             className={`completed__ritual-notice completed__ritual-notice--${corruption}`}
@@ -92,21 +107,22 @@ export function GameCompletedDialog({
         <div className="completed__stats" aria-label="Your game statistics">
           <div>
             <strong>{guesses.length}</strong>
-            <span>Guesses</span>
+            <span>{isHardcore ? "Offerings" : "Guesses"}</span>
           </div>
           <div>
             <strong>{stats?.currentStreak ?? 0}</strong>
-            <span>Streak</span>
+            <span>{isHardcore ? "Survival streak" : "Streak"}</span>
           </div>
           <div>
             <strong>{stats?.bestStreak ?? 0}</strong>
-            <span>Best streak</span>
+            <span>{isHardcore ? "Longest survival" : "Best streak"}</span>
           </div>
           <div>
             <strong>{stats?.gamesPlayed ?? 0}</strong>
-            <span>Solved games</span>
+            <span>{isHardcore ? "Escapes" : "Solved games"}</span>
           </div>
         </div>
+        {answer && <CompletionTrajectory answer={answer} guesses={guesses} />}
         <div className="completed__actions">
           <ShareResultButton
             date={date}

@@ -11,9 +11,14 @@ type UserRow = {
   password_hash: string | null;
   email_verified_at: number | null;
   permission: UserPermission;
+  disabled_at: number | null;
+  disabled_reason: string | null;
 };
 
-type SessionUser = Pick<UserRow, "id" | "email" | "display_name" | "email_verified_at" | "permission">;
+type SessionUser = Pick<
+  UserRow,
+  "id" | "email" | "display_name" | "email_verified_at" | "permission" | "disabled_at" | "disabled_reason"
+>;
 
 export type AuthenticatedUser = SessionUser;
 
@@ -31,7 +36,7 @@ export const normalizeEmail = (email: string) => email.trim().toLocaleLowerCase(
 async function userByEmail(email: string): Promise<UserRow | null> {
   return database()
     .prepare(
-      "SELECT id, email, email_normalized, display_name, password_hash, email_verified_at, permission FROM users WHERE email_normalized=?",
+      "SELECT id, email, email_normalized, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE email_normalized=?",
     )
     .bind(normalizeEmail(email))
     .first<UserRow>();
@@ -57,6 +62,8 @@ async function createUser({
     password_hash: passwordHash,
     email_verified_at: emailVerifiedAt,
     permission: "user",
+    disabled_at: null,
+    disabled_reason: null,
   };
   await database()
     .prepare(
@@ -210,10 +217,16 @@ export async function authenticateWithPassword({ email, password }: { email: str
   if (!user?.password_hash || !(await verifyPassword(password, user.password_hash))) {
     throw new Error("INVALID_CREDENTIALS");
   }
+  if (isAccountDisabled(user)) throw new Error("ACCOUNT_DISABLED");
   return user;
 }
 
 export async function createSession(userId: string): Promise<string> {
+  const user = await database()
+    .prepare("SELECT disabled_at FROM users WHERE id=?")
+    .bind(userId)
+    .first<{ disabled_at: number | null }>();
+  if (!user || user.disabled_at) throw new Error("ACCOUNT_DISABLED");
   const token = randomToken();
   const now = Date.now();
   await database()
@@ -235,7 +248,7 @@ export async function userForSession(token: string | null): Promise<Authenticate
   const now = Date.now();
   const user = await database()
     .prepare(
-      "SELECT u.id, u.email, u.display_name, u.email_verified_at, u.permission FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?",
+      "SELECT u.id, u.email, u.display_name, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?",
     )
     .bind(tokenHash(token), now)
     .first<SessionUser>();
@@ -246,6 +259,10 @@ export async function userForSession(token: string | null): Promise<Authenticate
       .run();
   }
   return user;
+}
+
+export function isAccountDisabled(user: Pick<AuthenticatedUser, "disabled_at">): boolean {
+  return user.disabled_at !== null;
 }
 
 export async function findOrCreateOauthUser({
@@ -261,7 +278,7 @@ export async function findOrCreateOauthUser({
 }): Promise<UserRow> {
   const DB = database();
   const existingIdentity = await DB.prepare(
-    "SELECT u.id, u.email, u.email_normalized, u.display_name, u.password_hash, u.email_verified_at, u.permission FROM user_identities i JOIN users u ON u.id=i.user_id WHERE i.provider=? AND i.provider_user_id=?",
+    "SELECT u.id, u.email, u.email_normalized, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason FROM user_identities i JOIN users u ON u.id=i.user_id WHERE i.provider=? AND i.provider_user_id=?",
   )
     .bind(provider, providerUserId)
     .first<UserRow>();

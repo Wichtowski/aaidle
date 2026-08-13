@@ -19,14 +19,48 @@ export const classicColumnHeadings: Record<ClassicColumn, string> = {
 };
 
 const base = ["provider", "country", "family", "inputModalities", "outputModalities", "useCases", "release", "weightAvailability"] as const;
+const hardcoreExcludedColumns = new Set<ClassicColumn>([
+  "provider",
+  "country",
+  "family",
+  "reasoningSupport",
+  "visionTasks",
+  "license",
+  "detectionTypes",
+  "realTimeCapable",
+  "algorithmTypes",
+  "learningParadigms",
+  "objectives",
+  "featureTypes",
+  "frameworks",
+  "operationTypes",
+  "kernelBased",
+  "kernelSizes",
+  "linearity",
+  "outputTypes",
+]);
+const hardcoreColumns = classicColumns.filter((column) => !hardcoreExcludedColumns.has(column));
 export const classicColumnsByCategory = {
   llm: [...base, "reasoningSupport", "contextWindowTokens", "toolUse", "multimodal"],
   cv: [...base, "visionTasks", "architecture", "trainingDatasets", "license"],
   nlp: [...base, "contextWindowTokens", "nlpTasks", "supportedLanguages", "architecture", "trainingDatasets"],
   "object-detection": [...base, "detectionTypes", "architecture", "trainingDatasets", "realTimeCapable"],
   "classical-ml": [...base, "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks"],
-  filters: ["provider", "country", "family", "release", "operationTypes", "kernelBased", "linearity", "outputModalities"],
-  hardcore: ["provider", "categories", "inputModalities", "outputModalities", "useCases", "release", "weightAvailability"],
+  filters: [
+    "provider",
+    "country",
+    "family",
+    "release",
+    "operationTypes",
+    "kernelBased",
+    "kernelSizes",
+    "linearity",
+    "requiresTraining",
+    "outputTypes",
+    "frameworks",
+    "outputModalities",
+  ],
+  hardcore: hardcoreColumns,
 } as const satisfies Record<string, readonly ClassicColumn[]>;
 
 export function classicColumnsForGame(category: keyof typeof classicColumnsByCategory, difficulty: "normal" | "challenge" | "hardcore"): readonly ClassicColumn[] {

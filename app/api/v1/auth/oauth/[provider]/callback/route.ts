@@ -1,6 +1,6 @@
 import { applicationOrigin, oauthStateCookieName, sessionCookieName, sessionMaxAgeSeconds } from "@/lib/auth/auth-config";
 import { clearCookie, cookieValue, isValidOauthState, setCookie } from "@/lib/auth/auth-http";
-import { findOrCreateOauthUser, createSession } from "@/lib/auth/auth-service";
+import { findOrCreateOauthUser, createSession, isAccountDisabled } from "@/lib/auth/auth-service";
 import { oauthIdentity, oauthProviders, type OAuthProvider } from "@/lib/auth/oauth-service";
 
 const isProvider = (value: string): value is OAuthProvider =>
@@ -30,6 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ prov
   try {
     const identity = await oauthIdentity(provider, code);
     const user = await findOrCreateOauthUser({ provider, ...identity });
+    if (isAccountDisabled(user)) return redirect("/account-disabled");
     return redirect("/classic", await createSession(user.id));
   } catch {
     return redirect("/login?error=oauth");

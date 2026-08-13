@@ -5,6 +5,7 @@ import {
   type ClassicChallengeMode,
 } from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
+import { hasHardcoreAccess } from "./hardcore-access";
 
 export async function submitClassicGuess(input: {
   guessedModelId: string;
@@ -21,6 +22,9 @@ export async function submitClassicGuess(input: {
   if (!challenge) throw new Error("CHALLENGE_NOT_FOUND");
 
   const { category, difficulty } = classicModeFromChallengeMode(challenge.mode);
+  if (category === "hardcore" && (!input.completedByUserId || !(await hasHardcoreAccess(input.completedByUserId)))) {
+    throw new Error("HARDCORE_LOCKED");
+  }
   if (!isModelEligibleForClassic(input.guessedModelId, category, difficulty)) {
     throw new Error("MODEL_NOT_AVAILABLE");
   }

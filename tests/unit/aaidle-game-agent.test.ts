@@ -42,6 +42,20 @@ describe("aAIdle game agent protocol", () => {
     ).toThrow("hardcore");
   });
 
+  it("keeps Hardcore out of the unauthenticated agent protocol", () => {
+    expect(() =>
+      parseAgentRequest({
+        ...getGameRequest,
+        params: {
+          message: {
+            ...getGameRequest.params.message,
+            parts: [{ mediaType: "application/json", data: { operation: "get_game", category: "hardcore", difficulty: "hardcore" } }],
+          },
+        },
+      }),
+    ).toThrow("Hardcore");
+  });
+
   it("returns a completed task with a structured artifact", () => {
     const task = agentTask({
       contextId: "1f5f7a08-0dbe-447e-94ae-f401388243bb",

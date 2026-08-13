@@ -3,8 +3,12 @@ import { ClassicGame } from "../../components/game/ClassicGame";
 import { classicCategoryDetails, classicCategoryFromRouteSegment, isClassicDifficulty } from "../../../lib/domain/models/model-types";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { classicDifficultyCookieName } from "../../../lib/domain/games/classic/difficulty-preference";
 import { classicGameData } from "../../../lib/domain/games/classic/classic-game-api";
+import { sessionCookieName } from "@/lib/auth/auth-config";
+import { userForSession } from "@/lib/auth/auth-service";
+import { hasHardcoreAccess } from "@/lib/domain/games/classic/hardcore-access";
 
 type ClassicCategoryPageProps = { params: Promise<{ category: string }> };
 
@@ -27,16 +31,25 @@ export async function generateMetadata({ params }: ClassicCategoryPageProps): Pr
 }
 
 export default async function ClassicCategoryPage({ params }: ClassicCategoryPageProps) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(sessionCookieName)?.value ?? null;
+  const user = await userForSession(session);
+  if (user?.disabled_at) redirect("/account-disabled");
   const { category: routeSegment } = await params;
   const category = classicCategoryFromRouteSegment(routeSegment);
   if (!category) notFound();
-  const savedDifficulty = (await cookies()).get(classicDifficultyCookieName)?.value;
+  if (category === "hardcore" && !user) redirect("/login");
+  const savedDifficulty = cookieStore.get(classicDifficultyCookieName)?.value;
   const difficulty = category === "hardcore" ? "hardcore" : isClassicDifficulty(savedDifficulty) && savedDifficulty !== "hardcore" ? savedDifficulty : "normal";
+  const hasHardcoreGameAccess =
+    category !== "hardcore" ||
+    Boolean(user && (await hasHardcoreAccess(user.id)));
   return (
     <ClassicGame
       category={category}
       difficulty={difficulty}
-      initialGame={await classicGameData(category, difficulty)}
+      initialGame={hasHardcoreGameAccess ? await classicGameData(category, difficulty) : null}
+      hasHardcoreAccess={hasHardcoreGameAccess}
       key={category}
     />
   );

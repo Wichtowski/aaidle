@@ -35,4 +35,29 @@ describe("cloud progress", () => {
     expect(Object.keys(merged.games)).toEqual(expect.arrayContaining([firstKey, secondKey]));
     expect(merged.stats.classic.gamesWon).toBe(2);
   });
+
+  it("keeps permanent Inner Circle state when a fresh device syncs", () => {
+    const cloud = freshProgress();
+    const freshDevice = freshProgress();
+    cloud.playerId = "11111111-1111-4111-8111-111111111111";
+    freshDevice.playerId = "22222222-2222-4222-8222-222222222222";
+    cloud.preferences.hardcoreUnlocked = true;
+    cloud.preferences.hasAutoplayedHardcoreSoundtrack = true;
+
+    const merged = mergeCloudProgress(cloud, freshDevice);
+
+    expect(merged.playerId).toBe(cloud.playerId);
+    expect(merged.preferences.hardcoreUnlocked).toBe(true);
+    expect(merged.preferences.hasAutoplayedHardcoreSoundtrack).toBe(true);
+  });
+
+  it("retains a legacy Hardcore unlock while merging progress", () => {
+    const cloud = freshProgress();
+    const incoming = freshProgress();
+    cloud.preferences.hardcoreUnlocked = true;
+
+    const merged = mergeCloudProgress(cloud, incoming);
+
+    expect(merged.preferences.hardcoreUnlocked).toBe(true);
+  });
 });

@@ -16,8 +16,11 @@
     "check": "pnpm ci:validate-actions && pnpm db:validate-seed && pnpm typecheck && pnpm lint && pnpm test",
     "ci:validate-actions": "node scripts/validate-workflow-action-pins.mjs",
     "db:migrate": "node scripts/migrate.mjs",
+    "db:reload": "node scripts/reload-database.mjs",
     "db:validate-seed": "node scripts/validate-model-data.mjs",
     "db:seed": "node scripts/seed.mjs",
+    "dev:create-superadmin": "node scripts/create-local-superadmin.mjs",
+    "dev:today-challenges": "node scripts/show-todays-challenges.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {

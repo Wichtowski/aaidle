@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Toast } from "../ui/Toast";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [toast, setToast] = useState<{ message: string; variant: "error" } | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -39,25 +42,45 @@ export function ResetPasswordForm() {
       <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
       <label className="auth-field">
         New password
-        <input
-          autoComplete="new-password"
-          minLength={12}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          type="password"
-          value={password}
-        />
+        <span className="password-input">
+          <input
+            autoComplete="new-password"
+            minLength={12}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            type={passwordVisible ? "text" : "password"}
+            value={password}
+          />
+          <button
+            aria-label={passwordVisible ? "Hide password" : "Show password"}
+            className="password-input__toggle"
+            onClick={() => setPasswordVisible((visible) => !visible)}
+            type="button"
+          >
+            {passwordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+          </button>
+        </span>
       </label>
       <label className="auth-field">
         Retype new password
-        <input
-          autoComplete="new-password"
-          minLength={12}
-          onChange={(event) => setConfirmPassword(event.target.value)}
-          required
-          type="password"
-          value={confirmPassword}
-        />
+        <span className="password-input">
+          <input
+            autoComplete="new-password"
+            minLength={12}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            required
+            type={confirmPasswordVisible ? "text" : "password"}
+            value={confirmPassword}
+          />
+          <button
+            aria-label={confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"}
+            className="password-input__toggle"
+            onClick={() => setConfirmPasswordVisible((visible) => !visible)}
+            type="button"
+          >
+            {confirmPasswordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+          </button>
+        </span>
       </label>
       <button className="button button--primary" disabled={busy || !password || !confirmPassword} type="submit">
         Set new password

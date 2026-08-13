@@ -18,6 +18,7 @@ export async function GET(request: Request) {
         displayName: user.display_name,
         emailVerified: Boolean(user.email_verified_at),
         permission: user.permission,
+        disabled: Boolean(user.disabled_at),
       },
     },
     { headers: { "Cache-Control": "no-store" } },

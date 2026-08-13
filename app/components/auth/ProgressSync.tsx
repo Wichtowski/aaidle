@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { apiClient } from "../../../lib/api/client";
 import { useLocalProgress, useLocalProgressReady } from "../../../lib/storage/use-local-progress";
-import { updateProgress } from "../../../lib/storage/local-progress-store";
+import { getSnapshot, replaceProgress, startCloudProgress } from "../../../lib/storage/local-progress-store";
+import { mergeCloudProgress } from "../../../lib/domain/players/cloud-progress";
 import { useAuth } from "./useAuth";
 
 export function ProgressSync() {
   const { user } = useAuth();
 
-  if (!user?.emailVerified) return null;
+  if (!user || user.disabled) return null;
 
   return <AuthenticatedProgressSync key={user.id} />;
 }
@@ -18,10 +19,42 @@ function AuthenticatedProgressSync() {
   const progress = useLocalProgress();
   const ready = useLocalProgressReady();
   const lastSynced = useRef<string | null>(null);
+  const [cloudReady, setCloudReady] = useState(false);
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || cloudReady) return;
+
+    let cancelled = false;
+    let retryTimer: number | undefined;
+    void apiClient
+      .cloudProgress()
+      .then(({ progress: cloudProgress }) => {
+        if (cancelled) return;
+
+        const nextProgress = cloudProgress
+          ? mergeCloudProgress(cloudProgress, getSnapshot())
+          : getSnapshot();
+        const cloudSerialized = cloudProgress ? JSON.stringify(cloudProgress) : null;
+        const nextSerialized = JSON.stringify(nextProgress);
+
+        replaceProgress(nextProgress);
+        startCloudProgress();
+        lastSynced.current = cloudSerialized === nextSerialized ? nextSerialized : null;
+        setCloudReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+      });
+
+    return () => {
+      cancelled = true;
+      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
+    };
+  }, [cloudReady, ready, retry]);
+
+  useEffect(() => {
+    if (!ready || !cloudReady) return;
 
     const serialized = JSON.stringify(progress);
     if (serialized === lastSynced.current) return;
@@ -35,10 +68,12 @@ function AuthenticatedProgressSync() {
           if (cancelled) return;
           const syncedSerialized = JSON.stringify(synced);
           lastSynced.current = syncedSerialized;
-          if (syncedSerialized !== serialized) updateProgress(() => synced);
+          if (syncedSerialized !== serialized) replaceProgress(synced);
         })
         .catch(() => {
-          if (!cancelled) retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+          if (!cancelled) {
+            retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+          }
         });
     }, 750);
 
@@ -47,7 +82,7 @@ function AuthenticatedProgressSync() {
       window.clearTimeout(syncTimer);
       if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
-  }, [progress, ready, retry]);
+  }, [cloudReady, progress, ready, retry]);
 
   return null;
 }

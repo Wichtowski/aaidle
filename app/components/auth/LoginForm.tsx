@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaGithub, FaGoogle } from "react-icons/fa6";
+import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa6";
 import { ApiError, apiClient } from "../../../lib/api/client";
 import { ActivationPrompt } from "./ActivationPrompt";
 import { useAuth } from "./useAuth";
@@ -16,10 +16,11 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
   const [localActivationUrl, setLocalActivationUrl] = useState<string | null>(null);
-  const [signedInUnverifiedEmail, setSignedInUnverifiedEmail] = useState<string | null>(null);
   const [signInErrorCode, setSignInErrorCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const canRequestEmail = Boolean(email.trim());
@@ -71,11 +72,7 @@ export function LoginForm() {
       }
       const { user: signedInUser } = await apiClient.signInWithPassword(email, password);
       setAuthenticatedUser(signedInUser);
-      if (!signedInUser.emailVerified) {
-        setSignedInUnverifiedEmail(signedInUser.email);
-        return;
-      }
-      window.location.assign("/classic");
+      window.location.assign("/profile");
     } catch (error) {
       if (mode === "sign-in") setSignInErrorCode(error instanceof ApiError ? error.code ?? "UNKNOWN" : "UNKNOWN");
       setToast({ message: error instanceof Error ? error.message : "Could not sign in.", variant: "error" });
@@ -87,8 +84,8 @@ export function LoginForm() {
   return (
     <div className="auth-card">
       <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
-      {((user && !user.emailVerified && user.email) || signedInUnverifiedEmail) && (
-        <ActivationPrompt email={signedInUnverifiedEmail ?? user?.email ?? ""} />
+      {user && !user.emailVerified && user.email && (
+        <ActivationPrompt email={user.email} />
       )}
       <div className="auth-card__providers">
         <a className="button" href="/api/v1/auth/oauth/github">
@@ -115,29 +112,49 @@ export function LoginForm() {
         </label>
         <label className="auth-field">
           Password
-          <input
-            autoComplete={mode === "register" ? "new-password" : "current-password"}
-            minLength={mode === "register" ? 12 : undefined}
-            onChange={(event) => {
-              setPassword(event.target.value);
-              setSignInErrorCode(null);
-            }}
-            required
-            type="password"
-            value={password}
-          />
+          <span className="password-input">
+            <input
+              autoComplete={mode === "register" ? "new-password" : "current-password"}
+              minLength={mode === "register" ? 12 : undefined}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setSignInErrorCode(null);
+              }}
+              required
+              type={passwordVisible ? "text" : "password"}
+              value={password}
+            />
+            <button
+              aria-label={passwordVisible ? "Hide password" : "Show password"}
+              className="password-input__toggle"
+              onClick={() => setPasswordVisible((visible) => !visible)}
+              type="button"
+            >
+              {passwordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+            </button>
+          </span>
         </label>
         {mode === "register" && (
           <label className="auth-field">
             Retype password
-            <input
-              autoComplete="new-password"
-              minLength={12}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              required
-              type="password"
-              value={confirmPassword}
-            />
+            <span className="password-input">
+              <input
+                autoComplete="new-password"
+                minLength={12}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                required
+                type={confirmPasswordVisible ? "text" : "password"}
+                value={confirmPassword}
+              />
+              <button
+                aria-label={confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"}
+                className="password-input__toggle"
+                onClick={() => setConfirmPasswordVisible((visible) => !visible)}
+                type="button"
+              >
+                {confirmPasswordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+              </button>
+            </span>
           </label>
         )}
         <button className="button button--primary" disabled={busy} type="submit">

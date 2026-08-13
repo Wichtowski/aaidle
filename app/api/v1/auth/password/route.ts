@@ -31,6 +31,7 @@ export async function POST(request: Request) {
           displayName: user.display_name,
           emailVerified: Boolean(user.email_verified_at),
           permission: user.permission,
+          disabled: false,
         },
       },
       {
@@ -48,6 +49,9 @@ export async function POST(request: Request) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "INVALID_CREDENTIALS") {
       return authError(code, "Email or password is incorrect.", 401);
+    }
+    if (code === "ACCOUNT_DISABLED") {
+      return authError(code, "This account has been disabled. Contact support for help.", 403);
     }
     if (code === "AUTH_NOT_CONFIGURED") {
       return authError(code, "Account sign-in is not configured yet.", 503);

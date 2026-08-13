@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { canManageUsers } from "@/lib/auth/permissions";
+import { canManageAdministrators, canManageUsers } from "@/lib/auth/permissions";
 import { apiClient, type AdminUserDetail, type AdminUserSummary } from "@/lib/api/client";
+import { AdminProgressRecord } from "../components/admin/AdminProgressRecord";
 import { useAuth } from "../components/auth/useAuth";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
 
@@ -33,10 +34,12 @@ export default function AdminPage() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [updatingUser, setUpdatingUser] = useState(false);
   const detailRequestId = useRef(0);
 
   useEffect(() => {
-    if (!loading && (!user || !canManageUsers(user.permission))) router.replace("/");
+    if (!loading && user?.disabled) router.replace("/account-disabled");
+    else if (!loading && (!user || !canManageUsers(user.permission))) router.replace("/");
   }, [loading, router, user]);
 
   useEffect(() => {
@@ -54,7 +57,9 @@ export default function AdminPage() {
         if (response.page !== page) setPage(response.page);
       })
       .catch((requestError: unknown) => {
-        if (active) setError(requestError instanceof Error ? requestError.message : "Could not load users.");
+        if (active) {
+          setError(requestError instanceof Error ? requestError.message : "Could not load users.");
+        }
       })
       .finally(() => {
         if (active) setLoadingUsers(false);
@@ -77,7 +82,9 @@ export default function AdminPage() {
       .catch((requestError: unknown) => {
         if (detailRequestId.current !== requestId) return;
         setSelectedUser(null);
-        setError(requestError instanceof Error ? requestError.message : "Could not load user data.");
+        setError(
+          requestError instanceof Error ? requestError.message : "Could not load user data.",
+        );
       })
       .finally(() => {
         if (detailRequestId.current === requestId) setLoadingDetail(false);
@@ -92,7 +99,29 @@ export default function AdminPage() {
     setQuery(queryInput.trim());
   };
 
-  if (loading || !user || !canManageUsers(user.permission)) return null;
+  const updateSelectedUser = (update: {
+    permission?: "user" | "developer";
+    disabled?: boolean;
+    disabledReason?: string;
+  }) => {
+    if (!selectedUser) return;
+    setUpdatingUser(true);
+    setError(null);
+    void apiClient
+      .updateAdminUser(selectedUser.id, update)
+      .then(({ user: updatedUser }) => {
+        setSelectedUser(updatedUser);
+        setUsers((items) => items.map((item) => (item.id === updatedUser.id ? updatedUser : item)));
+      })
+      .catch((requestError: unknown) => {
+        setError(
+          requestError instanceof Error ? requestError.message : "Could not update this account.",
+        );
+      })
+      .finally(() => setUpdatingUser(false));
+  };
+
+  if (loading || !user || user.disabled || !canManageUsers(user.permission)) return null;
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -101,7 +130,10 @@ export default function AdminPage() {
       <SiteNavbar />
       <p className="eyebrow">Restricted area</p>
       <h1>Admin</h1>
-      <p className="lede">Inspect registered accounts and their synced game data. Authentication secrets are never shown here.</p>
+      <p className="lede">
+        Inspect registered accounts and their synced game data. Authentication secrets are never
+        shown here.
+      </p>
 
       <section className="admin-workspace" aria-label="User administration">
         <div className="admin-users-panel">
@@ -121,82 +153,292 @@ export default function AdminPage() {
                 type="search"
                 value={queryInput}
               />
-              <button className="button" type="submit">Search</button>
+              <button className="button" type="submit">
+                Search
+              </button>
             </div>
           </form>
-          {error && <p className="notice" role="alert">{error}</p>}
+          {error && (
+            <p className="notice" role="alert">
+              {error}
+            </p>
+          )}
           <div className="admin-user-list" aria-busy={loadingUsers}>
             {loadingUsers && <p className="admin-empty">Loading users...</p>}
-            {!loadingUsers && users.length === 0 && <p className="admin-empty">No users match this search.</p>}
-            {!loadingUsers && users.map((item) => (
-              <button
-                aria-pressed={selectedUser?.id === item.id}
-                className="admin-user-row"
-                key={item.id}
-                onClick={() => selectUser(item.id)}
-                type="button"
-              >
-                <span>
-                  <strong>{userName(item)}</strong>
-                  {item.displayName && <small>{item.email}</small>}
-                </span>
-                <span className="admin-user-row__meta">
-                  <small>{item.emailVerifiedAt ? "Verified" : "Unverified"}</small>
-                  <small>{item.completionCount} completions</small>
-                </span>
-              </button>
-            ))}
+            {!loadingUsers && users.length === 0 && (
+              <p className="admin-empty">No users match this search.</p>
+            )}
+            {!loadingUsers &&
+              users.map((item) => (
+                <button
+                  aria-pressed={selectedUser?.id === item.id}
+                  className="admin-user-row"
+                  key={item.id}
+                  onClick={() => selectUser(item.id)}
+                  type="button"
+                >
+                  <span>
+                    <strong>{userName(item)}</strong>
+                    {item.displayName && <small>{item.email}</small>}
+                  </span>
+                  <span className="admin-user-row__meta">
+                    <small>{item.emailVerifiedAt ? "Verified" : "Unverified"}</small>
+                    <small>
+                      {item.disabledAt
+                        ? "Disabled"
+                        : item.permission === "developer"
+                          ? "Admin"
+                          : "Player"}
+                    </small>
+                    <small>{item.completionCount} completions</small>
+                  </span>
+                </button>
+              ))}
           </div>
           {total > 0 && (
             <div className="admin-pagination">
-              <button className="button" disabled={page === 1 || loadingUsers} onClick={() => setPage(page - 1)} type="button">Previous</button>
-              <span>Page {page} of {totalPages}</span>
-              <button className="button" disabled={page === totalPages || loadingUsers} onClick={() => setPage(page + 1)} type="button">Next</button>
+              <button
+                className="button"
+                disabled={page === 1 || loadingUsers}
+                onClick={() => setPage(page - 1)}
+                type="button"
+              >
+                Previous
+              </button>
+              <span>
+                Page {page} of {totalPages}
+              </span>
+              <button
+                className="button"
+                disabled={page === totalPages || loadingUsers}
+                onClick={() => setPage(page + 1)}
+                type="button"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
 
         <aside className="admin-detail-panel" aria-live="polite">
           {loadingDetail && <p className="admin-empty">Loading user data...</p>}
-          {!loadingDetail && !selectedUser && <p className="admin-empty">Choose an account to see its stored progress and completed challenges.</p>}
-          {!loadingDetail && selectedUser && <UserDetail user={selectedUser} />}
+          {!loadingDetail && !selectedUser && (
+            <p className="admin-empty">
+              Choose an account to see its stored progress and completed challenges.
+            </p>
+          )}
+          {!loadingDetail && selectedUser && (
+            <UserDetail
+              canManageAccount={canManageAdministrators(user.permission)}
+              currentUserId={user.id}
+              onUpdate={updateSelectedUser}
+              updating={updatingUser}
+              user={selectedUser}
+            />
+          )}
         </aside>
       </section>
+      {canManageAdministrators(user.permission) && <HardcoreSoundtrackSettings />}
+
     </main>
   );
 }
 
-function UserDetail({ user }: { user: AdminUserDetail }) {
+function HardcoreSoundtrackSettings() {
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    void apiClient
+      .hardcoreSoundtrackSetting()
+      .then((response) => {
+        if (active) setUrl(response.url);
+      })
+      .catch((requestError: unknown) => {
+        if (active) {
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : "Could not load the soundtrack setting.",
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const save = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true);
+    setSaved(false);
+    setError(null);
+    void apiClient
+      .updateHardcoreSoundtrack(url)
+      .then((response) => {
+        setUrl(response.url);
+        setSaved(true);
+      })
+      .catch((requestError: unknown) => {
+        setError(
+          requestError instanceof Error ? requestError.message : "Could not update the soundtrack.",
+        );
+      })
+      .finally(() => setSaving(false));
+  };
+
+  return (
+    <section className="admin-soundtrack-settings" aria-labelledby="admin-soundtrack-title">
+      <div>
+        <p className="eyebrow">Superadmin setting</p>
+        <h2 id="admin-soundtrack-title">Hardcore soundtrack</h2>
+        <p>Use a public HTTPS SoundCloud track URL. Leave it empty to disable the player.</p>
+      </div>
+      <form onSubmit={save}>
+        <label htmlFor="hardcore-soundtrack-url">SoundCloud URL</label>
+        <div>
+          <input
+            disabled={loading || saving}
+            id="hardcore-soundtrack-url"
+            onChange={(event) => setUrl(event.target.value)}
+            placeholder="https://soundcloud.com/artist/track"
+            type="url"
+            value={url}
+          />
+          <button className="button" disabled={loading || saving} type="submit">
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </div>
+        {error && (
+          <p className="notice" role="alert">
+            {error}
+          </p>
+        )}
+        {saved && <p className="admin-soundtrack-settings__saved">Soundtrack setting saved.</p>}
+      </form>
+    </section>
+  );
+}
+
+function UserDetail({
+  user,
+  currentUserId,
+  canManageAccount,
+  onUpdate,
+  updating,
+}: {
+  user: AdminUserDetail;
+  currentUserId: string;
+  canManageAccount: boolean;
+  onUpdate: (update: {
+    permission?: "user" | "developer";
+    disabled?: boolean;
+    disabledReason?: string;
+  }) => void;
+  updating: boolean;
+}) {
+  const [disabledReason, setDisabledReason] = useState("");
+  const [permission, setPermission] = useState<"user" | "developer">(
+    user.permission === "developer" ? "developer" : "user",
+  );
+  const [gameHistoryPage, setGameHistoryPage] = useState(1);
+
+  useEffect(() => {
+    setPermission(user.permission === "developer" ? "developer" : "user");
+    setDisabledReason("");
+    setGameHistoryPage(1);
+  }, [user.id, user.permission, user.disabledAt]);
+
+  const canChangeUser =
+    canManageAccount && user.id !== currentUserId && user.permission !== "superadmin";
+  const gameHistoryPageSize = 3;
+  const gameHistoryTotalPages = Math.max(
+    1,
+    Math.ceil(user.completions.length / gameHistoryPageSize),
+  );
+  const visibleGameHistoryPage = Math.min(gameHistoryPage, gameHistoryTotalPages);
+  const visibleCompletions = user.completions.slice(
+    (visibleGameHistoryPage - 1) * gameHistoryPageSize,
+    visibleGameHistoryPage * gameHistoryPageSize,
+  );
+
   return (
     <>
       <p className="eyebrow">Account record</p>
       <h2>{userName(user)}</h2>
       {user.displayName && <p className="admin-email">{user.email}</p>}
-      <dl className="admin-facts">
-        <div><dt>Account created</dt><dd>{formatDate(user.createdAt)}</dd></div>
-        <div><dt>Email status</dt><dd>{user.emailVerifiedAt ? `Verified ${formatDate(user.emailVerifiedAt)}` : "Unverified"}</dd></div>
-        <div><dt>Last session activity</dt><dd>{formatDate(user.lastSeenAt)}</dd></div>
-        <div><dt>Progress last synced</dt><dd>{formatDate(user.progressUpdatedAt)}</dd></div>
-      </dl>
-
-      <section className="admin-detail-section" aria-labelledby="admin-completions-title">
-        <div className="admin-panel-heading">
-          <div>
-            <p className="eyebrow">Game history</p>
-            <h3 id="admin-completions-title">{user.completionCount} completions</h3>
+      {canChangeUser && (
+        <section
+          className="admin-detail-section admin-account-controls"
+          aria-labelledby="admin-account-access-title"
+        >
+          <div className="admin-panel-heading">
+            <div>
+              <p className="eyebrow">Superadmin tools</p>
+              <h3 id="admin-account-access-title">Account access</h3>
+            </div>
           </div>
-        </div>
-        {user.completions.length ? (
-          <ol className="admin-completions">
-            {user.completions.map((completion) => (
-              <li key={completion.challengeId}>
-                <span><strong>{completion.challengeDate}</strong><small>{completion.mode}</small></span>
-                <span><strong>{completion.answerModelName}</strong><small>{formatDate(completion.completedAt)}</small></span>
-              </li>
-            ))}
-          </ol>
-        ) : <p className="admin-empty">No account-linked challenge completions yet.</p>}
-      </section>
+          <label htmlFor="admin-user-permission">Role</label>
+          <div className="admin-control-row">
+            <select
+              id="admin-user-permission"
+              disabled={updating}
+              onChange={(event) => setPermission(event.target.value as "user" | "developer")}
+              value={permission}
+            >
+              <option value="user">Player</option>
+              <option value="developer">Administrator</option>
+            </select>
+            <button
+              className="button"
+              disabled={updating || permission === user.permission}
+              onClick={() => onUpdate({ permission })}
+              type="button"
+            >
+              Save role
+            </button>
+          </div>
+          {user.disabledAt ? (
+            <button
+              className="button"
+              disabled={updating}
+              onClick={() => onUpdate({ disabled: false })}
+              type="button"
+            >
+              Re-enable account
+            </button>
+          ) : (
+            <div className="admin-disable-form">
+              <label htmlFor="admin-disable-reason">Reason for disabling</label>
+              <textarea
+                id="admin-disable-reason"
+                disabled={updating}
+                maxLength={500}
+                onChange={(event) => setDisabledReason(event.target.value)}
+                placeholder="Explain why this account is being disabled"
+                value={disabledReason}
+              />
+              <button
+                className="button button--danger-solid"
+                disabled={updating || !disabledReason.trim()}
+                onClick={() => onUpdate({ disabled: true, disabledReason: disabledReason.trim() })}
+                type="button"
+              >
+                Disable account
+              </button>
+            </div>
+          )}
+        </section>
+      )}
 
       <section className="admin-detail-section" aria-labelledby="admin-progress-title">
         <div className="admin-panel-heading">
@@ -205,7 +447,108 @@ function UserDetail({ user }: { user: AdminUserDetail }) {
             <h3 id="admin-progress-title">Progress record</h3>
           </div>
         </div>
-        {user.progress ? <pre className="admin-progress">{JSON.stringify(user.progress, null, 2)}</pre> : <p className="admin-empty">No progress has been synced from this account.</p>}
+        {user.progress ? (
+          <AdminProgressRecord
+            progress={user.progress}
+            trajectoryReferenceModels={user.trajectoryReferenceModels}
+            trajectoryTargets={user.trajectoryTargets}
+          />
+        ) : (
+          <p className="admin-empty">No progress has been synced from this account.</p>
+        )}
+      </section>
+
+      <section className="admin-detail-section" aria-labelledby="admin-account-facts-title">
+        <div className="admin-panel-heading">
+          <div>
+            <p className="eyebrow">Account record</p>
+            <h3 id="admin-account-facts-title">Account details</h3>
+          </div>
+        </div>
+        <dl className="admin-facts">
+          <div>
+            <dt>Account created</dt>
+            <dd>{formatDate(user.createdAt)}</dd>
+          </div>
+          <div>
+            <dt>Email status</dt>
+            <dd>
+              {user.emailVerifiedAt ? `Verified ${formatDate(user.emailVerifiedAt)}` : "Unverified"}
+            </dd>
+          </div>
+          <div>
+            <dt>Last session activity</dt>
+            <dd>{formatDate(user.lastSeenAt)}</dd>
+          </div>
+          <div>
+            <dt>Progress last synced</dt>
+            <dd>{formatDate(user.progressUpdatedAt)}</dd>
+          </div>
+          <div>
+            <dt>Sign-in provider</dt>
+            <dd>{user.signInProviders.length ? user.signInProviders.join(", ") : "None"}</dd>
+          </div>
+          <div>
+            <dt>Account access</dt>
+            <dd>{user.disabledAt ? `Disabled ${formatDate(user.disabledAt)}` : "Active"}</dd>
+          </div>
+        </dl>
+        {user.disabledAt && user.disabledReason && (
+          <p className="admin-account-note">
+            <strong>Disable reason:</strong> {user.disabledReason}
+            {user.disabledByEmail && ` Set by ${user.disabledByEmail}.`}
+          </p>
+        )}
+      </section>
+
+      <section className="admin-detail-section" aria-labelledby="admin-completions-title">
+        <div className="admin-panel-heading">
+          <div>
+            <p className="eyebrow">Game history</p>
+            <h3 id="admin-completions-title">{user.completionCount} completions</h3>
+          </div>
+        </div>
+        {visibleCompletions.length ? (
+          <ol className="admin-completions">
+            {visibleCompletions.map((completion) => (
+              <li key={completion.challengeId}>
+                <span>
+                  <strong>{completion.challengeDate}</strong>
+                  <small>{completion.mode}</small>
+                </span>
+                <span>
+                  <strong>{completion.answerModelName}</strong>
+                  <small>{formatDate(completion.completedAt)}</small>
+                </span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="admin-empty">No account-linked challenge completions yet.</p>
+        )}
+        {gameHistoryTotalPages > 1 && (
+          <div className="admin-pagination admin-pagination--compact">
+            <button
+              className="button"
+              disabled={visibleGameHistoryPage === 1}
+              onClick={() => setGameHistoryPage(visibleGameHistoryPage - 1)}
+              type="button"
+            >
+              Previous
+            </button>
+            <span>
+              Page {visibleGameHistoryPage} of {gameHistoryTotalPages}
+            </span>
+            <button
+              className="button"
+              disabled={visibleGameHistoryPage === gameHistoryTotalPages}
+              onClick={() => setGameHistoryPage(visibleGameHistoryPage + 1)}
+              type="button"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </section>
     </>
   );

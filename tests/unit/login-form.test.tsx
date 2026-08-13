@@ -24,6 +24,19 @@ function renderLoginForm() {
 }
 
 describe("LoginForm", () => {
+  it("shows and hides the password with the eye toggle", () => {
+    renderLoginForm();
+
+    const password = screen.getByLabelText("Password", { exact: true });
+    expect(password.getAttribute("type")).toBe("password");
+
+    fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+    expect(password.getAttribute("type")).toBe("text");
+
+    fireEvent.click(screen.getByRole("button", { name: "Hide password" }));
+    expect(password.getAttribute("type")).toBe("password");
+  });
+
   it("shows password recovery only after a failed sign-in", async () => {
     renderLoginForm();
     expect(screen.queryByRole("button", { name: "Forgot password?" })).toBeNull();
@@ -42,7 +55,7 @@ describe("LoginForm", () => {
     expect(screen.queryByRole("button", { name: "Send activation email" })).toBeNull();
   });
 
-  it("offers activation after signing in to an unverified account", async () => {
+  it("accepts an unverified account for sign-in", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -60,8 +73,7 @@ describe("LoginForm", () => {
     fireEvent.change(screen.getByLabelText("Password", { exact: true }), { target: { value: "password" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
-    await waitFor(() => screen.getByRole("button", { name: "Send activation email" }));
-    expect(screen.getByText("To use all account features, activate the email address for player@example.com.")).toBeTruthy();
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
   });
 
   it("shows the rate-limit response in an error toast", async () => {

@@ -8,6 +8,7 @@ import { SiteNavbar } from "../ui/SiteNavbar";
 import { HowToPlayDialog } from "./HowToPlayDialog";
 import { useLocalProgress } from "../../../lib/storage/use-local-progress";
 import { updateProgress } from "../../../lib/storage/local-progress-store";
+import { useAuth } from "../auth/useAuth";
 import { applySolvedStreak } from "../../../lib/domain/players/streak-service";
 import {
   classicDifficultyCookieMaxAge,
@@ -25,6 +26,7 @@ import {
 import type { ClassicComparison } from "../../../lib/domain/guesses/comparison-types";
 import { ClassicGameControls } from "./ClassicGameControls";
 import { HardcoreAtmosphere } from "./HardcoreAtmosphere";
+import { HardcoreSoundtrack } from "./HardcoreSoundtrack";
 import { RitualGateDialog } from "./RitualGateDialog";
 import {
   hasCompletedChallengeRitual,
@@ -32,7 +34,9 @@ import {
 } from "../../../lib/domain/games/classic/hardcore-unlock";
 
 const GameCompletedDialog = lazy(() =>
-  import("./GameCompletedDialog").then(({ GameCompletedDialog }) => ({ default: GameCompletedDialog })),
+  import("./GameCompletedDialog").then(({ GameCompletedDialog }) => ({
+    default: GameCompletedDialog,
+  })),
 );
 
 type SavedGuess = {
@@ -79,7 +83,27 @@ const coveredComparison: ClassicComparison = {
   weightAvailability: "unknown",
   release: "unknown",
   contextWindowTokens: "unknown",
-  supportedLanguages: "unknown", toolUse: "unknown", multimodal: "unknown", visionTasks: "unknown", architecture: "unknown", trainingDatasets: "unknown", license: "unknown", nlpTasks: "unknown", detectionTypes: "unknown", realTimeCapable: "unknown", algorithmTypes: "unknown", learningParadigms: "unknown", objectives: "unknown", featureTypes: "unknown", frameworks: "unknown", operationTypes: "unknown", kernelBased: "unknown", kernelSizes: "unknown", linearity: "unknown", requiresTraining: "unknown", outputTypes: "unknown",
+  supportedLanguages: "unknown",
+  toolUse: "unknown",
+  multimodal: "unknown",
+  visionTasks: "unknown",
+  architecture: "unknown",
+  trainingDatasets: "unknown",
+  license: "unknown",
+  nlpTasks: "unknown",
+  detectionTypes: "unknown",
+  realTimeCapable: "unknown",
+  algorithmTypes: "unknown",
+  learningParadigms: "unknown",
+  objectives: "unknown",
+  featureTypes: "unknown",
+  frameworks: "unknown",
+  operationTypes: "unknown",
+  kernelBased: "unknown",
+  kernelSizes: "unknown",
+  linearity: "unknown",
+  requiresTraining: "unknown",
+  outputTypes: "unknown",
 };
 
 const coveredModel = (model: PublicModelIndex): ComparableModel => ({
@@ -104,17 +128,22 @@ export function ClassicGame({
   category,
   difficulty,
   initialGame,
+  hasHardcoreAccess,
 }: {
   category: ClassicCategory;
   difficulty: ClassicDifficulty;
-  initialGame: GamePayload;
+  initialGame: GamePayload | null;
+  hasHardcoreAccess: boolean;
 }) {
+  const { user } = useAuth();
   const progress = useLocalProgress();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
-  const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(initialGame.challenge);
-  const [models, setModels] = useState<PublicModelIndex[]>(initialGame.models);
-  const [globalCompletionCount, setGlobalCompletionCount] = useState(initialGame.globalCompletionCount);
+  const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(initialGame?.challenge ?? null);
+  const [models, setModels] = useState<PublicModelIndex[]>(initialGame?.models ?? []);
+  const [globalCompletionCount, setGlobalCompletionCount] = useState(
+    initialGame?.globalCompletionCount ?? 0,
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoadingGame, setIsLoadingGame] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -128,9 +157,12 @@ export function ClassicGame({
   const completionGameKey = useRef<string | null>(null);
   const ritualCompletionGameKey = useRef<string | null>(null);
   const loadedDifficultyRef = useRef(difficulty);
-  const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>({ [difficulty]: initialGame });
+  const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>(
+    initialGame ? { [difficulty]: initialGame } : {},
+  );
 
   useEffect(() => {
+    if (category === "hardcore" && !hasHardcoreAccess) return;
     const cachedGame = gameCache.current[selectedDifficulty];
 
     if (cachedGame) {
@@ -168,7 +200,7 @@ export function ClassicGame({
       });
 
     return () => controller.abort();
-  }, [category, selectedDifficulty]);
+  }, [category, hasHardcoreAccess, selectedDifficulty]);
 
   const key = challenge
     ? `${classicChallengeMode(category, loadedDifficulty)}:${challenge.date}`
@@ -212,16 +244,17 @@ export function ClassicGame({
     : 0;
   const showCategoryRitualNotice = Boolean(
     category !== "hardcore" &&
-      loadedDifficulty === "challenge" &&
-      game?.status === "solved" &&
-      solvedChallengeCount > 0 &&
-      !hasCompletedChallengeRitual(progress, challenge?.date ?? ""),
+    loadedDifficulty === "challenge" &&
+    game?.status === "solved" &&
+    solvedChallengeCount > 0 &&
+    !hasCompletedChallengeRitual(progress, challenge?.date ?? ""),
   );
   const ritualGateActive = Boolean(
     challenge &&
-      category !== "hardcore" &&
-      !progress.preferences.hardcoreUnlocked &&
-      hasCompletedChallengeRitual(progress, challenge.date),
+    category !== "hardcore" &&
+    (ritualCompletionGameKey.current === key ||
+      (!hasHardcoreAccess &&
+        hasCompletedChallengeRitual(progress, challenge.date))),
   );
 
   const setDifficultyPreference = (nextDifficulty: ClassicDifficulty) => {
@@ -286,7 +319,9 @@ export function ClassicGame({
 
     try {
       const payload = await apiClient.submitClassicGuess(challenge.id, model.id, attemptNumber);
-      if (payload.globalCompletionCount !== null) setGlobalCompletionCount(payload.globalCompletionCount);
+      if (payload.globalCompletionCount !== null) {
+        setGlobalCompletionCount(payload.globalCompletionCount);
+      }
 
       const entry: SavedGuess = {
         requestId,
@@ -306,7 +341,7 @@ export function ClassicGame({
 
       if (entry.isCorrect) completionGameKey.current = key;
 
-      updateProgress((state) => {
+      const nextProgress = updateProgress((state) => {
         const old = state.games[key];
         const games = {
           ...state.games,
@@ -325,15 +360,13 @@ export function ClassicGame({
         if (
           entry.isCorrect &&
           loadedDifficulty === "challenge" &&
-          !state.preferences.hardcoreUnlocked &&
           hasCompletedChallengeRitual(nextState, challenge.date)
         ) {
           ritualCompletionGameKey.current = key;
         }
 
         return {
-          ...state,
-          games,
+          ...nextState,
           stats: entry.isCorrect
             ? (() => {
                 const current = state.stats.classic;
@@ -363,6 +396,28 @@ export function ClassicGame({
             : state.stats,
         };
       });
+      if (
+        entry.isCorrect &&
+        loadedDifficulty === "challenge" &&
+        hasCompletedChallengeRitual(nextProgress, challenge.date) &&
+        user
+      ) {
+        void apiClient
+          .enableHardcoreAccess(nextProgress)
+          .then(() => {
+            updateProgress((state) => ({
+              ...state,
+              preferences: { ...state.preferences, hardcoreUnlocked: true },
+            }));
+          })
+          .catch((accessError: unknown) => {
+            setError(
+              accessError instanceof Error
+                ? accessError.message
+                : "Could not unlock Hardcore access.",
+            );
+          });
+      }
       setPendingGuess(null);
     } catch (e) {
       setPendingGuess(null);
@@ -374,14 +429,14 @@ export function ClassicGame({
 
   if (error && !challenge) return <p className="notice">{error}</p>;
 
-  if (category === "hardcore" && !progress.preferences.hardcoreUnlocked) {
+  if (category === "hardcore" && !hasHardcoreAccess) {
     return (
       <main className="page game-page game-page--locked">
         <SiteNavbar />
         <section className="hardcore-lock" aria-labelledby="hardcore-lock-title">
           <p className="eyebrow">Sealed</p>
           <h1 id="hardcore-lock-title">Nothing answers.</h1>
-          <p>The catalogue is quieter than it should be.</p>
+          <p>{user ? "Complete the Inner Circle ritual to enter." : "Sign in to enter the Inner Circle."}</p>
         </section>
       </main>
     );
@@ -392,8 +447,26 @@ export function ClassicGame({
       {category === "hardcore" && <HardcoreAtmosphere />}
       <SiteNavbar hardcore={category === "hardcore"} />
 
-      <ClassicGameControls category={category} date={challenge?.date ?? null} expiresAt={challenge?.expiresAt ?? null} models={models} difficulty={selectedDifficulty} loading={isLoadingGame} busy={busy} canGuess={game?.status !== "solved"} completedCount={globalCompletionCount} guessed={guessed} onDifficultyChange={selectDifficulty} onPick={pick} />
-      {error && <p role="alert" className="notice">{error}</p>}
+      <ClassicGameControls
+        category={category}
+        date={challenge?.date ?? null}
+        expiresAt={challenge?.expiresAt ?? null}
+        models={models}
+        difficulty={selectedDifficulty}
+        loading={isLoadingGame}
+        busy={busy}
+        canGuess={game?.status !== "solved"}
+        completedCount={globalCompletionCount}
+        guessed={guessed}
+        onDifficultyChange={selectDifficulty}
+        onPick={pick}
+      />
+      {category === "hardcore" && <HardcoreSoundtrack />}
+      {error && (
+        <p role="alert" className="notice">
+          {error}
+        </p>
+      )}
 
       {challenge && (
         <GuessBoard
@@ -440,27 +513,30 @@ export function ClassicGame({
 
       <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
       {ritualGateReady && <RitualGateDialog />}
-      {challenge && game?.status === "solved" && showCompletion && ritualCompletionGameKey.current !== key && (
-        <Suspense fallback={null}>
-          <GameCompletedDialog
-            date={challenge.date}
-            category={category}
-            difficulty={loadedDifficulty}
-            guesses={guesses}
-            ritualNotice={
-              showCategoryRitualNotice
-                ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
-                : undefined
-            }
-            onClose={() => setShowCompletion(false)}
-            stats={{
-              currentStreak: progress.stats.classic.currentStreak,
-              bestStreak: progress.stats.classic.bestStreak,
-              gamesPlayed: progress.stats.classic.gamesPlayed,
-            }}
-          />
-        </Suspense>
-      )}
+      {challenge &&
+        game?.status === "solved" &&
+        showCompletion &&
+        ritualCompletionGameKey.current !== key && (
+          <Suspense fallback={null}>
+            <GameCompletedDialog
+              date={challenge.date}
+              category={category}
+              difficulty={loadedDifficulty}
+              guesses={guesses}
+              ritualNotice={
+                showCategoryRitualNotice
+                  ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
+                  : undefined
+              }
+              onClose={() => setShowCompletion(false)}
+              stats={{
+                currentStreak: progress.stats.classic.currentStreak,
+                bestStreak: progress.stats.classic.bestStreak,
+                gamesPlayed: progress.stats.classic.gamesPlayed,
+              }}
+            />
+          </Suspense>
+        )}
     </main>
   );
 }

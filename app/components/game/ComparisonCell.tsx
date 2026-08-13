@@ -7,6 +7,7 @@ export function ComparisonCell({
   revealed = true,
   animate = false,
   hardcore = false,
+  heading,
   tooltip,
 }: {
   status: string;
@@ -15,6 +16,7 @@ export function ComparisonCell({
   revealed?: boolean;
   animate?: boolean;
   hardcore?: boolean;
+  heading?: string;
   tooltip?: string;
 }) {
   const displayStatus = hardcore && status !== "correct" ? "incorrect" : status;
@@ -37,7 +39,7 @@ export function ComparisonCell({
       className="comparison-card"
       role="cell"
       style={{ "--flip-delay": `${delay}ms` } as CSSProperties}
-      aria-label={label}
+      aria-label={heading ? `${heading}: ${label}` : label}
     >
       <div
         className={`comparison-card__inner${
@@ -54,6 +56,7 @@ export function ComparisonCell({
         <div
           className={`comparison comparison--${displayStatus} comparison-card__face comparison-card__face--result`}
         >
+          {heading && <span className="comparison-card__heading">{heading}</span>}
           {DirectionIcon ? (
             <div className="comparison-card__directional-value">
               <div className="comparison-card__value">{children ?? "N/A"}</div>

@@ -53,4 +53,19 @@ describe("comparison engine", () => {
     expect(compareClassicModels(base, { ...base, id: "b", provider: "Anthropic" }).provider).toBe(
       "incorrect",
     ));
+  it("compares language-model architecture in the shared architecture column", () => {
+    const gpt = {
+      ...base,
+      categoryDetails: {
+        "language-model": {
+          supportedLanguages: ["english"],
+          architecture: ["generative-pre-trained-transformer"],
+          toolUse: true,
+          multimodal: true,
+        },
+      },
+    };
+
+    expect(compareClassicModels(gpt, { ...gpt, id: "b" }).architecture).toBe("correct");
+  });
 });

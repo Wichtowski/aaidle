@@ -97,7 +97,12 @@ export function canonicalClassicChallengeMode(mode: string): ClassicChallengeMod
 export type ReasoningSupport = "native" | "optional" | "no" | "unknown";
 export type WeightAvailability = "open" | "closed" | "restricted" | "unknown" | "not-applicable";
 export type CategoryDetails = Partial<{
-  "language-model": { supportedLanguages: string[]; toolUse: boolean | null; multimodal: boolean };
+  "language-model": {
+    supportedLanguages: string[];
+    architecture?: string[];
+    toolUse: boolean | null;
+    multimodal: boolean;
+  };
   "computer-vision": { visionTasks: string[]; architecture: string[]; trainingDatasets: string[]; license: string | null };
   nlp: { nlpTasks: string[]; supportedLanguages: string[]; architecture: string[]; trainingDatasets: string[] };
   "object-detection": { detectionTypes: string[]; architecture: string[]; trainingDatasets: string[]; realTimeCapable: boolean | null };

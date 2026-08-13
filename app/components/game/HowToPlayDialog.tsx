@@ -71,7 +71,7 @@ export function HowToPlayDialog({
         <h3 className="how-to-play-modal__section-title">{hardcore ? "Rules of the pit" : "Useful details"}</h3>
         <ul className="how-to-play-modal__details">
           <li>
-            {hardcore ? "Categories reveal only a strict yes or no. The pit deals only in certainty." : "Bold text inside categories, input, output, and use cases marks the exact overlap."}
+            {hardcore ? "Categories show the guessed model's real values, but only exact matches are blessed." : "Bold text inside categories, input, output, and use cases marks the exact overlap."}
           </li>
           <li>{hardcore ? "Release, context, and every other clue offer no directional mercy." : "Release compares both year and quarter, so arrows help narrow the date precisely."}</li>
           <li>

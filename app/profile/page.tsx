@@ -21,6 +21,7 @@ import {
   solvedChallengeCategoriesForDate,
 } from "../../lib/domain/games/classic/hardcore-unlock";
 import { updateProgress } from "../../lib/storage/local-progress-store";
+import { apiClient } from "../../lib/api/client";
 
 const historyPageSize = 3;
 const ritualHints = [
@@ -71,8 +72,9 @@ export default function Profile() {
   const today = new Date().toISOString().slice(0, 10);
   const ritualCategories = solvedChallengeCategoriesForDate(progress, today);
   const ritualComplete = hasCompletedChallengeRitual(progress, today);
-  const hellAwake = ritualComplete && !progress.preferences.hardcoreUnlocked;
-  const hellModeEnabled = progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
+  const canSeeInnerCircle = Boolean(user);
+  const hellAwake = canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked;
+  const hellModeEnabled = canSeeInnerCircle && progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
   const [category, setCategory] = useState<ClassicCategory>("llm");
@@ -105,11 +107,20 @@ export default function Profile() {
   const page = Math.min(historyPage, totalPages);
   const historyGames = categoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
   const enterInnerCircle = () => {
-    updateProgress((state) => ({
-      ...state,
-      preferences: { ...state.preferences, hardcoreUnlocked: true },
-    }));
-    router.push("/classic/hardcore");
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    void apiClient
+      .enableHardcoreAccess(progress)
+      .then(() => {
+        updateProgress((state) => ({
+          ...state,
+          preferences: { ...state.preferences, hardcoreUnlocked: true },
+        }));
+        router.push("/classic/hardcore");
+      });
   };
   const toggleHellMode = () => {
     updateProgress((state) => ({
@@ -129,7 +140,7 @@ export default function Profile() {
       <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
       <h1>{hellActive ? "The infernal" : "Profile"}</h1>
       {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
-      {!ritualComplete && (
+      {canSeeInnerCircle && !ritualComplete && (
         <section className="hell-meter" aria-labelledby="hell-meter-title">
           <div className="stats-section__heading">
             <div>
@@ -146,7 +157,7 @@ export default function Profile() {
           />
         </section>
       )}
-      {ritualComplete && !progress.preferences.hardcoreUnlocked && (
+      {canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete" open>
           <summary>
             <span>
@@ -167,7 +178,11 @@ export default function Profile() {
       )}
       <div className="classic-category-nav" role="tablist" aria-label="Classic category statistics">
         {classicCategories
-          .filter((item) => item !== "hardcore" || progress.preferences.hardcoreUnlocked)
+          .filter(
+            (item) =>
+              item !== "hardcore" ||
+              Boolean(user && progress.preferences.hardcoreUnlocked),
+          )
           .map((item) => (
           <button aria-selected={category === item} onClick={() => { setCategory(item); setHistoryPage(1); }} role="tab" type="button" key={item}>
             {classicCategoryDetails[item].label}
@@ -281,7 +296,7 @@ export default function Profile() {
           <p className="stats-empty">Play a game and your guesses will appear here.</p>
         )}
       </section>
-      {ritualComplete && progress.preferences.hardcoreUnlocked && (
+      {canSeeInnerCircle && ritualComplete && progress.preferences.hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete">
           <summary>
             <span>
@@ -300,7 +315,7 @@ export default function Profile() {
           </div>
         </details>
       )}
-      {progress.preferences.hardcoreUnlocked && (
+      {canSeeInnerCircle && progress.preferences.hardcoreUnlocked && (
         <section className="hell-mode-control" aria-labelledby="hell-mode-title">
           <div className="hell-mode-control__copy">
             <p className="eyebrow">Inner circle</p>

@@ -57,6 +57,7 @@ export const localProgressSchema = z.object({
     hasSeenClassicPrivacy: z.boolean().default(false),
     hardcoreUnlocked: z.boolean().default(false),
     hellMode: z.boolean().default(false),
+    hasAutoplayedHardcoreSoundtrack: z.boolean().default(false),
   }),
 });
 export type LocalProgress = z.infer<typeof localProgressSchema>;

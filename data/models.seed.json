@@ -38,10 +38,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -80,10 +88,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -123,7 +139,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -166,7 +187,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -209,7 +235,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -252,7 +283,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -298,7 +334,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -344,7 +385,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -385,7 +431,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -427,7 +478,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -467,7 +523,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -507,7 +568,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -550,7 +616,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -592,7 +663,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -634,7 +710,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -676,7 +757,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -717,7 +803,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -759,7 +850,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -863,7 +959,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -904,7 +1005,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -947,7 +1053,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -990,7 +1101,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -1032,7 +1148,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -1072,7 +1193,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1175,10 +1301,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1220,7 +1354,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -1260,7 +1399,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -1301,7 +1445,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -1344,7 +1493,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -1389,7 +1543,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -1430,7 +1589,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1470,7 +1634,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -1510,7 +1679,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -1551,7 +1725,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1592,7 +1771,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1633,7 +1817,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1674,7 +1863,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1712,7 +1906,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -1754,10 +1953,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1795,10 +2002,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": false
+        "multimodal": false,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1835,10 +2050,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": false
+        "multimodal": false,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1878,7 +2101,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -1921,7 +2149,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -1963,7 +2196,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2004,7 +2242,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2044,7 +2287,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2085,7 +2333,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2130,7 +2383,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2169,7 +2427,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -2209,7 +2472,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2249,7 +2517,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2289,7 +2562,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2327,7 +2605,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2367,7 +2650,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": false
@@ -2409,7 +2697,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -2448,7 +2741,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2487,7 +2785,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2526,7 +2829,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2568,7 +2876,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -2606,7 +2919,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2648,7 +2966,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -2688,7 +3011,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2726,7 +3054,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2765,7 +3098,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2806,7 +3144,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2846,7 +3189,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2886,7 +3234,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -2952,7 +3305,7 @@
       "research",
       "mathematics"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -2960,7 +3313,15 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "generative-pre-trained-transformer"
         ],
         "toolUse": null,
         "multimodal": true
@@ -2992,7 +3353,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3000,10 +3361,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3033,7 +3402,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3041,10 +3410,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3073,7 +3450,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
@@ -3081,10 +3458,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3113,7 +3498,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-03-05",
     "reasoningSupport": "native",
@@ -3121,10 +3506,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3153,7 +3546,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
@@ -3161,10 +3554,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3194,7 +3595,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
@@ -3202,10 +3603,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3234,7 +3643,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-04-23",
     "reasoningSupport": "native",
@@ -3242,10 +3651,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3274,7 +3691,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3282,10 +3699,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3314,7 +3739,7 @@
       "general",
       "coding"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3322,10 +3747,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3355,7 +3788,7 @@
       "classification",
       "general"
     ],
-    "weightAvailability": "open",
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2026-07-09",
     "reasoningSupport": "native",
@@ -3363,10 +3796,18 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
-        "multimodal": true
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3407,7 +3848,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3450,7 +3896,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3493,7 +3944,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3536,7 +3992,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3579,7 +4040,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3619,7 +4085,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3659,7 +4130,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3698,7 +4174,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3737,7 +4218,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3778,7 +4264,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3819,7 +4310,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3863,7 +4359,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": true,
         "multimodal": true
@@ -3913,7 +4414,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3951,7 +4457,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -3994,7 +4505,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": true
@@ -4046,7 +4562,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": null,
         "multimodal": false
@@ -4390,7 +4911,12 @@
           "translation"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder-decoder"
@@ -4447,7 +4973,12 @@
           "translation"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder-decoder"
@@ -5125,7 +5656,12 @@
           "question-answering"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder-decoder"
@@ -5182,7 +5718,12 @@
           "question-answering"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder-decoder"
@@ -5402,7 +5943,12 @@
           "retrieval"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "unknown"
@@ -6937,14 +7483,22 @@
           "english"
         ],
         "toolUse": null,
-        "multimodal": false
+        "multimodal": false,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       },
       "nlp": {
         "nlpTasks": [
           "text-generation"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "decoder-only"
@@ -7001,7 +7555,12 @@
           "embeddings"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -7047,7 +7606,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": false,
         "multimodal": false
@@ -7059,7 +7623,12 @@
           "embeddings"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -7115,7 +7684,12 @@
           "question-answering"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -7165,7 +7739,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": false,
         "multimodal": false
@@ -7177,7 +7756,12 @@
           "embeddings"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -7237,7 +7821,12 @@
           "multilingual-nlp"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -9024,7 +9613,12 @@
           "text-generation"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "decoder-only"
@@ -9082,7 +9676,12 @@
           "multilingual-nlp"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -9126,7 +9725,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": false,
         "multimodal": false
@@ -9137,7 +9741,12 @@
           "text-generation"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder-decoder"
@@ -9182,7 +9791,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": false,
         "multimodal": false
@@ -9194,7 +9808,12 @@
           "question-answering"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -9239,7 +9858,12 @@
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "toolUse": false,
         "multimodal": false
@@ -9251,7 +9875,12 @@
           "question-answering"
         ],
         "supportedLanguages": [
-          "unknown"
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
         ],
         "architecture": [
           "encoder"
@@ -9733,7 +10362,14 @@
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -9775,7 +10411,14 @@
     "contextWindowTokens": 256000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -9822,7 +10465,14 @@
     "contextWindowTokens": 256000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -9869,7 +10519,14 @@
     "contextWindowTokens": 256000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -9915,7 +10572,14 @@
     "contextWindowTokens": 256000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -9961,7 +10625,14 @@
     "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -10003,9 +10674,19 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
-        "multimodal": false
+        "multimodal": false,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -10045,9 +10726,19 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
-        "multimodal": false
+        "multimodal": false,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -10087,7 +10778,14 @@
     "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -10185,7 +10883,14 @@
           "retrieval",
           "semantic-search"
         ],
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "architecture": [
           "encoder",
           "xlm-roberta"
@@ -10287,7 +10992,14 @@
           "semantic-similarity",
           "clustering"
         ],
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "architecture": [
           "encoder",
           "minilm"
@@ -10388,7 +11100,14 @@
           "retrieval",
           "classification"
         ],
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "architecture": [
           "encoder"
         ],
@@ -10820,7 +11539,14 @@
           "question-answering",
           "embeddings"
         ],
-        "supportedLanguages": [],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "architecture": [
           "encoder",
           "deberta"
@@ -13041,20 +13767,20 @@
     "releaseDate": "1960-01-01",
     "categoryDetails": {
       "filters": {
-      "operationTypes": [
-        "smoothing"
-      ],
-      "kernelBased": true,
-      "kernelSizes": [
-        "3x3",
-        "5x5",
-        "7x7"
-      ],
-      "linearity": "linear",
-      "requiresTraining": false,
-      "outputTypes": [
-        "blurred-image"
-      ],
+        "operationTypes": [
+          "smoothing"
+        ],
+        "kernelBased": true,
+        "kernelSizes": [
+          "3x3",
+          "5x5",
+          "7x7"
+        ],
+        "linearity": "linear",
+        "requiresTraining": false,
+        "outputTypes": [
+          "blurred-image"
+        ],
         "frameworks": [
           "opencv",
           "scipy"

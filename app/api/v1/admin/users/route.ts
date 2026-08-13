@@ -1,7 +1,7 @@
 import { sessionCookieName } from "@/lib/auth/auth-config";
 import { cookieValue } from "@/lib/auth/auth-http";
 import { authError } from "@/lib/auth/auth-response";
-import { userForSession } from "@/lib/auth/auth-service";
+import { isAccountDisabled, userForSession } from "@/lib/auth/auth-service";
 import { canManageUsers } from "@/lib/auth/permissions";
 import { database } from "@/lib/db/client";
 
@@ -14,10 +14,21 @@ type UserSummaryRow = {
   email_verified_at: number | null;
   created_at: number;
   updated_at: number;
+  permission: "user" | "developer" | "superadmin";
+  disabled_at: number | null;
+  disabled_reason: string | null;
+  identity_providers: string | null;
   last_seen_at: number | null;
   progress_updated_at: number | null;
   completion_count: number;
 };
+
+function signInProviders(user: Pick<UserSummaryRow, "identity_providers"> & { password_hash?: string | null }) {
+  return [
+    ...(user.password_hash ? ["password"] : []),
+    ...(user.identity_providers?.split(",").filter(Boolean) ?? []),
+  ];
+}
 
 function escapeLikeQuery(query: string) {
   return query.replace(/[\\%_]/g, "\\$&");
@@ -26,6 +37,7 @@ function escapeLikeQuery(query: string) {
 async function adminForRequest(request: Request) {
   const user = await userForSession(cookieValue(request, sessionCookieName));
   if (!user) throw new Error("UNAUTHENTICATED");
+  if (isAccountDisabled(user)) throw new Error("FORBIDDEN");
   if (!canManageUsers(user.permission)) throw new Error("FORBIDDEN");
   return user;
 }
@@ -52,6 +64,11 @@ export async function GET(request: Request) {
         u.email_verified_at,
         u.created_at,
         u.updated_at,
+        u.permission,
+        u.disabled_at,
+        u.disabled_reason,
+        u.password_hash,
+        (SELECT GROUP_CONCAT(i.provider, ',') FROM user_identities i WHERE i.user_id=u.id) AS identity_providers,
         (SELECT MAX(s.last_seen_at) FROM user_sessions s WHERE s.user_id=u.id) AS last_seen_at,
         p.updated_at AS progress_updated_at,
         (SELECT COUNT(*) FROM user_challenge_completions c WHERE c.user_id=u.id) AS completion_count
@@ -73,6 +90,10 @@ export async function GET(request: Request) {
           emailVerifiedAt: user.email_verified_at,
           createdAt: user.created_at,
           updatedAt: user.updated_at,
+          permission: user.permission,
+          disabledAt: user.disabled_at,
+          disabledReason: user.disabled_reason,
+          signInProviders: signInProviders(user),
           lastSeenAt: user.last_seen_at,
           progressUpdatedAt: user.progress_updated_at,
           completionCount: user.completion_count,

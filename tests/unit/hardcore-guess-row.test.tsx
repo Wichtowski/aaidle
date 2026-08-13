@@ -5,7 +5,7 @@ import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { GuessRow } from "../../app/components/game/GuessRow";
 import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import { classicColumnsByCategory } from "../../lib/domain/guesses/comparison-types";
+import { classicColumns, classicColumnsByCategory } from "../../lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../lib/domain/models/model-types";
 
 const model: ComparableModel = {
@@ -40,9 +40,38 @@ const comparison: ClassicComparison = {
   contextWindowTokens: "unknown",
 };
 
+const hardcoreExcludedColumns = [
+  "provider",
+  "country",
+  "family",
+  "reasoningSupport",
+  "visionTasks",
+  "license",
+  "detectionTypes",
+  "realTimeCapable",
+  "algorithmTypes",
+  "learningParadigms",
+  "objectives",
+  "featureTypes",
+  "frameworks",
+  "operationTypes",
+  "kernelBased",
+  "kernelSizes",
+  "linearity",
+  "outputTypes",
+];
+
 describe("Hardcore GuessRow", () => {
-  it("does not expose the family field", () => {
-    expect(classicColumnsByCategory.hardcore).not.toContain("family");
+  it("excludes only the specified Hardcore clues", () => {
+    for (const column of hardcoreExcludedColumns) {
+      expect(classicColumnsByCategory.hardcore).not.toContain(column);
+    }
+  });
+
+  it("includes every category-specific clue column", () => {
+    expect(classicColumnsByCategory.hardcore).toEqual(
+      classicColumns.filter((column) => !hardcoreExcludedColumns.includes(column)),
+    );
   });
 
   it("only renders green or red clues without highlighted overlaps", () => {
@@ -63,11 +92,25 @@ describe("Hardcore GuessRow", () => {
       }),
     );
 
-    expect(container.querySelectorAll(".comparison--correct, .comparison--incorrect")).toHaveLength(7);
+    expect(container.querySelectorAll(".comparison--correct, .comparison--incorrect")).toHaveLength(
+      classicColumnsByCategory.hardcore.length,
+    );
     expect(container.querySelector(".comparison--partial, .comparison--higher, .comparison--unknown")).toBeNull();
     expect(container.querySelector(".matched-value")).toBeNull();
-    const categoryCardText = container.querySelectorAll(".comparison-card__value")[1]?.textContent;
-    expect(categoryCardText).toBe("No");
+    const categoryColumn = classicColumnsByCategory.hardcore.indexOf("categories");
+    const categoryCardText = container.querySelectorAll(".comparison-card__value")[categoryColumn]?.textContent;
+    expect(categoryCardText).toBe("Chat, Coding");
+    expect(
+      container.querySelectorAll(".comparison-card__value")[categoryColumn]?.getAttribute("data-tooltip"),
+    ).toBe(
+      "Chat, Coding",
+    );
+
+    const toolUseColumn = classicColumnsByCategory.hardcore.indexOf("toolUse");
+    const toolUseCard = container.querySelectorAll(".comparison-card")[toolUseColumn];
+    expect(toolUseCard?.querySelector(".comparison--incorrect .comparison-card__value")?.textContent).toBe(
+      "N/A",
+    );
   });
 
   it("reserves overlap emphasis for partial matches in Normal only", () => {

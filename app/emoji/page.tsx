@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { FaArrowLeft, FaHourglassHalf } from "react-icons/fa6";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
 import { emojiGame } from "../../lib/domain/games/emoji/definition";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { sessionCookieName } from "@/lib/auth/auth-config";
+import { userForSession } from "@/lib/auth/auth-service";
 
 export const metadata: Metadata = {
   title: "Emoji game coming soon",
@@ -10,7 +14,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function EmojiPage() {
+export default async function EmojiPage() {
+  const session = (await cookies()).get(sessionCookieName)?.value ?? null;
+  const user = await userForSession(session);
+  if (user?.disabled_at) redirect("/account-disabled");
   return (
     <main className="page game-placeholder-page">
       <SiteNavbar />
