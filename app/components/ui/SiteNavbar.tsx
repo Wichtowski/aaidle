@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { canManageUsers } from "@/lib/auth/permissions";
 import { useAuth } from "../auth/useAuth";
 import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
 
@@ -19,6 +20,7 @@ export function SiteNavbar({ children, hardcore = false }: { children?: ReactNod
       <div className="site-navbar__actions">
         {children}
         <Link href="/profile">{labels.profile}</Link>
+        {user && canManageUsers(user.permission) && <Link href="/admin">Admin</Link>}
         <Link href="/privacy/v1">{labels.privacy}</Link>
         <Link href="/credits">{labels.credits}</Link>
         <a href="https://github.com/Wichtowski/aaidle/issues/new" rel="noreferrer" target="_blank">

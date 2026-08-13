@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { isIP } from "node:net";
 import { applicationOrigin, cookieAttributes, requiredAuthSecret } from "./auth-config";
 import { randomToken } from "./auth-crypto";
 
@@ -20,13 +21,14 @@ export function clearCookie(name: string): string {
 
 export function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== applicationOrigin()) throw new Error("INVALID_ORIGIN");
+  if (origin !== applicationOrigin()) throw new Error("INVALID_ORIGIN");
 }
 
 export function rateLimitSubject(request: Request, normalizedEmail: string): string {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const clientIp = request.headers.get("x-aaidle-client-ip")?.trim() ?? "unknown";
+  const trustedClientIp = isIP(clientIp) ? clientIp : "unknown";
   return createHmac("sha256", requiredAuthSecret())
-    .update(`${forwarded}:${normalizedEmail}`)
+    .update(`${trustedClientIp}:${normalizedEmail}`)
     .digest("base64url");
 }
 

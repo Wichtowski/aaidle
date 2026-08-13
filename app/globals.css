@@ -810,12 +810,247 @@ body.hell-mode .game-placeholder__status {
 .prose {
   max-width: 850px;
 }
+.profile-page {
+  max-width: 960px;
+}
+.profile-page > :not(.site-navbar) {
+  max-width: 850px;
+  margin-inline: auto;
+}
 .prose h1 {
   font-size: 65px;
 }
 .prose h2 {
   margin-top: 45px;
   font-size: 30px;
+}
+.admin-page {
+  max-width: 1440px;
+}
+.admin-page > .eyebrow {
+  margin-top: 58px;
+}
+.admin-page > h1 {
+  margin: 10px 0 18px;
+  font-size: clamp(48px, 7vw, 74px);
+  letter-spacing: -0.07em;
+}
+.admin-workspace {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 1px;
+  margin-top: 44px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+.admin-users-panel,
+.admin-detail-panel {
+  min-height: 620px;
+  padding: 26px;
+  background: var(--panel);
+}
+.admin-panel-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-panel-heading .eyebrow {
+  margin: 0 0 4px;
+}
+.admin-panel-heading h2,
+.admin-panel-heading h3 {
+  margin: 0;
+  letter-spacing: -0.05em;
+}
+.admin-panel-heading h2 {
+  font-size: 31px;
+}
+.admin-panel-heading h3 {
+  font-size: 23px;
+}
+.admin-search {
+  margin: 24px 0 16px;
+}
+.admin-search label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.admin-search > div {
+  display: flex;
+  gap: 8px;
+}
+.admin-search input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 11px 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+.admin-search .button,
+.admin-pagination .button {
+  padding: 10px 13px;
+  font-size: 13px;
+}
+.admin-user-list {
+  border-top: 1px solid var(--line);
+}
+.admin-user-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 15px 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.admin-user-row:hover,
+.admin-user-row[aria-pressed="true"] {
+  color: var(--accent);
+}
+.admin-user-row strong,
+.admin-user-row small {
+  display: block;
+}
+.admin-user-row strong {
+  overflow: hidden;
+  max-width: 240px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-user-row small,
+.admin-email,
+.admin-user-row__meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+.admin-user-row__meta {
+  flex: none;
+  text-align: right;
+}
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.admin-detail-panel > h2 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -0.06em;
+}
+.admin-email {
+  margin: 5px 0 24px;
+}
+.admin-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 24px 0 0;
+  background: var(--line);
+}
+.admin-facts div {
+  padding: 14px;
+  background: var(--paper);
+}
+.admin-facts dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.admin-facts dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.admin-detail-section {
+  margin-top: 37px;
+}
+.admin-completions {
+  margin: 15px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.admin-completions li {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.admin-completions span:last-child {
+  text-align: right;
+}
+.admin-completions strong,
+.admin-completions small {
+  display: block;
+}
+.admin-completions small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.admin-progress {
+  overflow: auto;
+  max-height: 520px;
+  margin: 15px 0 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: #17202c;
+  color: #e4ece5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.admin-empty {
+  color: var(--muted);
+  line-height: 1.5;
+}
+@media (max-width: 850px) {
+  .admin-workspace {
+    grid-template-columns: 1fr;
+  }
+  .admin-users-panel,
+  .admin-detail-panel {
+    min-height: auto;
+  }
+}
+@media (max-width: 520px) {
+  .admin-page > .eyebrow {
+    margin-top: 38px;
+  }
+  .admin-users-panel,
+  .admin-detail-panel {
+    padding: 20px;
+  }
+  .admin-facts {
+    grid-template-columns: 1fr;
+  }
+  .admin-user-row {
+    align-items: start;
+  }
+  .admin-user-row strong {
+    max-width: 190px;
+  }
 }
 .stat-grid {
   display: grid;
@@ -1650,7 +1885,7 @@ body.hell-mode .game-placeholder__status {
   justify-content: flex-end;
 }
 .game-page {
-  max-width: 1180px;
+  max-width: 1250px;
 }
 .game-page--hardcore {
   isolation: isolate;
@@ -1773,7 +2008,7 @@ body.hell-mode .game-placeholder__status {
   height: 180px;
   overflow: hidden;
   pointer-events: none;
-  background: url("/hardcore-fire.gif") bottom left / 100% 180px no-repeat;
+  background: url("/hardcore-fire.webp") bottom left / 100% 180px no-repeat;
   filter: blur(0.35px);
 }
 .game-intro {

@@ -30,6 +30,7 @@ export async function POST(request: Request) {
           email: user.email,
           displayName: user.display_name,
           emailVerified: Boolean(user.email_verified_at),
+          permission: user.permission,
         },
       },
       {

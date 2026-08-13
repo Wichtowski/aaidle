@@ -174,6 +174,7 @@ export const users = sqliteTable(
     displayName: text("display_name"),
     passwordHash: text("password_hash"),
     emailVerifiedAt: integer("email_verified_at"),
+    permission: text("permission", { enum: ["user", "developer", "superadmin"] }).notNull().default("user"),
     ...timestamps,
   },
 );
@@ -243,6 +244,12 @@ export const userChallengeCompletions = sqliteTable(
     index("user_challenge_completions_challenge_idx").on(t.challengeId),
   ],
 );
+export const challengeCompletionCounts = sqliteTable("challenge_completion_counts", {
+  challengeId: text("challenge_id")
+    .primaryKey()
+    .references(() => dailyChallenges.id),
+  completionCount: integer("completion_count").notNull().default(0),
+});
 export const playerModeStats = sqliteTable(
   "player_mode_stats",
   {

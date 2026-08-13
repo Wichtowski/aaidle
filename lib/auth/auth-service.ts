@@ -1,6 +1,7 @@
 import { database } from "@/lib/db/client";
 import { hashPassword, randomToken, tokenHash, verifyPassword } from "./auth-crypto";
 import { sessionMaxAgeSeconds } from "./auth-config";
+import type { UserPermission } from "./permissions";
 
 type UserRow = {
   id: string;
@@ -9,9 +10,12 @@ type UserRow = {
   display_name: string | null;
   password_hash: string | null;
   email_verified_at: number | null;
+  permission: UserPermission;
 };
 
-export type AuthenticatedUser = Pick<UserRow, "id" | "email" | "display_name" | "email_verified_at">;
+type SessionUser = Pick<UserRow, "id" | "email" | "display_name" | "email_verified_at" | "permission">;
+
+export type AuthenticatedUser = SessionUser;
 
 const sessionLifetimeMs = sessionMaxAgeSeconds * 1_000;
 const emailTokenLifetimes: Record<AuthEmailTokenPurpose, number> = {
@@ -27,7 +31,7 @@ export const normalizeEmail = (email: string) => email.trim().toLocaleLowerCase(
 async function userByEmail(email: string): Promise<UserRow | null> {
   return database()
     .prepare(
-      "SELECT id, email, email_normalized, display_name, password_hash, email_verified_at FROM users WHERE email_normalized=?",
+      "SELECT id, email, email_normalized, display_name, password_hash, email_verified_at, permission FROM users WHERE email_normalized=?",
     )
     .bind(normalizeEmail(email))
     .first<UserRow>();
@@ -52,6 +56,7 @@ async function createUser({
     display_name: displayName,
     password_hash: passwordHash,
     email_verified_at: emailVerifiedAt,
+    permission: "user",
   };
   await database()
     .prepare(
@@ -84,28 +89,33 @@ export async function consumeRateLimit({
 }): Promise<boolean> {
   const DB = database();
   const now = Date.now();
-  const current = await DB.prepare(
-    "SELECT window_started_at, count FROM auth_rate_limits WHERE scope=? AND subject_hash=?",
+  const windowStartThreshold = now - windowMs;
+  const consumed = await DB.prepare(
+    `INSERT INTO auth_rate_limits (scope, subject_hash, window_started_at, count)
+     VALUES (?, ?, ?, 1)
+     ON CONFLICT(scope, subject_hash) DO UPDATE SET
+       window_started_at=CASE
+         WHEN auth_rate_limits.window_started_at <= ? THEN excluded.window_started_at
+         ELSE auth_rate_limits.window_started_at
+       END,
+       count=CASE
+         WHEN auth_rate_limits.window_started_at <= ? THEN 1
+         ELSE auth_rate_limits.count + 1
+       END
+     WHERE auth_rate_limits.window_started_at <= ? OR auth_rate_limits.count < ?
+     RETURNING count`,
   )
-    .bind(scope, subjectHash)
-    .first<{ window_started_at: number; count: number }>();
-
-  if (!current || now - current.window_started_at >= windowMs) {
-    await DB.prepare(
-      "INSERT INTO auth_rate_limits (scope, subject_hash, window_started_at, count) VALUES (?, ?, ?, 1) ON CONFLICT(scope, subject_hash) DO UPDATE SET window_started_at=excluded.window_started_at, count=excluded.count",
+    .bind(
+      scope,
+      subjectHash,
+      now,
+      windowStartThreshold,
+      windowStartThreshold,
+      windowStartThreshold,
+      limit,
     )
-      .bind(scope, subjectHash, now)
-      .run();
-    return true;
-  }
-
-  if (current.count >= limit) return false;
-  await DB.prepare(
-    "UPDATE auth_rate_limits SET count=count + 1 WHERE scope=? AND subject_hash=?",
-  )
-    .bind(scope, subjectHash)
-    .run();
-  return true;
+    .first<{ count: number }>();
+  return consumed !== null;
 }
 
 export async function registerWithPassword({ email, password }: { email: string; password: string }) {
@@ -225,10 +235,10 @@ export async function userForSession(token: string | null): Promise<Authenticate
   const now = Date.now();
   const user = await database()
     .prepare(
-      "SELECT u.id, u.email, u.display_name, u.email_verified_at FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?",
+      "SELECT u.id, u.email, u.display_name, u.email_verified_at, u.permission FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?",
     )
     .bind(tokenHash(token), now)
-    .first<AuthenticatedUser>();
+    .first<SessionUser>();
   if (user) {
     await database()
       .prepare("UPDATE user_sessions SET last_seen_at=? WHERE token_hash=?")
@@ -251,7 +261,7 @@ export async function findOrCreateOauthUser({
 }): Promise<UserRow> {
   const DB = database();
   const existingIdentity = await DB.prepare(
-    "SELECT u.id, u.email, u.email_normalized, u.display_name, u.password_hash, u.email_verified_at FROM user_identities i JOIN users u ON u.id=i.user_id WHERE i.provider=? AND i.provider_user_id=?",
+    "SELECT u.id, u.email, u.email_normalized, u.display_name, u.password_hash, u.email_verified_at, u.permission FROM user_identities i JOIN users u ON u.id=i.user_id WHERE i.provider=? AND i.provider_user_id=?",
   )
     .bind(provider, providerUserId)
     .first<UserRow>();

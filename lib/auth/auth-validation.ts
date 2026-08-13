@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readRequestText } from "@/lib/validation/request-body";
 
 const email = z.email().transform((value) => value.trim().toLocaleLowerCase("en-US"));
 
@@ -17,7 +18,6 @@ export const passwordResetCompletionSchema = z.object({
 });
 
 export async function parseAuthJson<T>(request: Request, schema: z.ZodType<T>): Promise<T> {
-  const body = await request.text();
-  if (body.length > 4_096) throw new Error("BODY_TOO_LARGE");
+  const body = await readRequestText(request, 4_096);
   return schema.parse(JSON.parse(body));
 }

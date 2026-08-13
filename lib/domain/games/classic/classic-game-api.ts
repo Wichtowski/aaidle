@@ -50,7 +50,9 @@ export async function classicGameData(category: ClassicCategory, difficulty: Cla
 export async function classicGameResponse(category: ClassicCategory, difficulty: ClassicDifficulty): Promise<Response> {
   try {
     return Response.json(await classicGameData(category, difficulty), {
-      headers: { "Cache-Control": "no-store" },
+      headers: {
+        "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=900",
+      },
     });
   } catch (error) {
     console.error("Classic game generation failed", error);

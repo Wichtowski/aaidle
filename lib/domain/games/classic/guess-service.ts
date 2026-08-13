@@ -67,7 +67,7 @@ export async function submitClassicGuess(input: {
 
 export async function globalClassicCompletionCount(challengeId: string): Promise<number> {
   const count = await database()
-    .prepare("SELECT COUNT(*) AS count FROM user_challenge_completions WHERE challenge_id=?")
+    .prepare("SELECT completion_count AS count FROM challenge_completion_counts WHERE challenge_id=?")
     .bind(challengeId)
     .first<{ count: number }>();
   return count?.count ?? 0;

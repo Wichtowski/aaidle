@@ -32,7 +32,9 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
-    if (code === "ACCOUNT_EXISTS") return authError(code, "An account with this email already exists.", 409);
+    if (code === "ACCOUNT_EXISTS") {
+      return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+    }
     if (code === "AUTH_NOT_CONFIGURED") {
       return authError(code, "Account sign-in is not configured yet.", 503);
     }

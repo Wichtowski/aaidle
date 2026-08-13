@@ -58,6 +58,12 @@ The production environment also needs these secrets before account sign-in is en
 - `AAIDLE_GOOGLE_CLIENT_SECRET`
 - `AAIDLE_RESEND_API_KEY`
 
+## Admin access
+
+User permissions are stored in SQLite as `user`, `developer`, or `superadmin`.
+`developer` and `superadmin` accounts can inspect registered users, synced progress, and challenge completions at `/admin`.
+Passwords, sessions, and authentication tokens are never exposed in the dashboard.
+
 Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v1/auth/oauth/<provider>/callback`.
 Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling email/password accounts.
 

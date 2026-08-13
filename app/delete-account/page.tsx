@@ -9,19 +9,11 @@ export default function DeleteAccountPage() {
   const [error, setError] = useState<string | null>(null);
 
   const deleteAccount = async () => {
-    const token = new URLSearchParams(window.location.search).get("token");
-    if (!token) {
-      setError("This deletion link is invalid or has expired.");
-      return;
-    }
-
     setDeleting(true);
     setError(null);
     try {
       const response = await fetch("/api/v1/auth/account-deletion/complete", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
       });
       if (!response.ok) {
         const payload = (await response.json()) as { error?: { message?: string } };

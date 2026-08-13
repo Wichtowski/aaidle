@@ -36,6 +36,10 @@ export default function CreditsPage() {
             <dt>First production classic solved by</dt>
             <dd><a href="https://www.linkedin.com/in/marcinkorcz/" target="_blank" rel="noopener noreferrer">Marcin Korcz</a></dd>
           </div>
+          <div>
+            <dt>Linear & Non-Linear Presentation</dt>
+            <dd><a href="https://www.linkedin.com/in/łukasz-waligóra-82b1b615b/" target="_blank" rel="noopener noreferrer">Łukasz Waligóra</a></dd>
+          </div>
         </dl>
       </section>
     </main>

@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 import { AgentRequestError, agentTask, parseAgentRequest } from "@/lib/agent/aaidle-game-agent";
 import { classicGameData } from "@/lib/domain/games/classic/classic-game-api";
 import { submitClassicGuess } from "@/lib/domain/games/classic/guess-service";
+import { readRequestText } from "@/lib/validation/request-body";
 
 const maxRequestSize = 16_384;
 const supportedA2AVersion = "0.3";
@@ -33,10 +34,7 @@ export async function POST(request: Request) {
       return jsonRpcError(null, -32600, `A2A version ${requestedVersion} is not supported.`);
     }
 
-    const body = await request.text();
-    if (body.length > maxRequestSize) {
-      return jsonRpcError(null, -32600, "Request payload is too large.");
-    }
+    const body = await readRequestText(request, maxRequestSize);
 
     const rawRequest = JSON.parse(body) as unknown;
     requestId = requestIdFrom(rawRequest);
@@ -60,6 +58,9 @@ export async function POST(request: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
+    if (error instanceof Error && error.message === "BODY_TOO_LARGE") {
+      return jsonRpcError(requestId, -32600, "Request payload is too large.");
+    }
     if (error instanceof SyntaxError) return jsonRpcError(requestId, -32700, "Invalid JSON payload.");
     if (error instanceof ZodError || error instanceof AgentRequestError) {
       return jsonRpcError(requestId, -32602, "Invalid request parameters.");

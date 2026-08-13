@@ -44,7 +44,7 @@ jobs:
       DEPLOY_PATH: ${{ secrets.AAIDLE_DEPLOY_PATH }}
       RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.release_tag }}
       - name: Create production environment file
@@ -73,7 +73,7 @@ jobs:
             printf 'AAIDLE_VERSION=%s\n' "$RELEASE_TAG"
           } > aaidle.env
       - name: Copy runtime configuration to VPS
-        uses: appleboy/scp-action@v1.0.0
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
         with:
           host: ${{ secrets.AAIDLE_VPS_HOST }}
           username: ${{ secrets.AAIDLE_VPS_USER }}
@@ -81,7 +81,7 @@ jobs:
           source: compose.prod.yml,aaidle.env
           target: /tmp
       - name: Deploy approved release
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17 # v1.2.0
         with:
           host: ${{ secrets.AAIDLE_VPS_HOST }}
           username: ${{ secrets.AAIDLE_VPS_USER }}

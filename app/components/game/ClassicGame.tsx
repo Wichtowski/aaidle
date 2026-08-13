@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { apiClient, type ClassicGamePayload } from "../../../lib/api/client";
 import { GuessBoard } from "./GuessBoard";
 import { SiteNavbar } from "../ui/SiteNavbar";
-import { GameCompletedDialog } from "./GameCompletedDialog";
 import { HowToPlayDialog } from "./HowToPlayDialog";
 import { useLocalProgress } from "../../../lib/storage/use-local-progress";
 import { updateProgress } from "../../../lib/storage/local-progress-store";
@@ -31,6 +30,10 @@ import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
 } from "../../../lib/domain/games/classic/hardcore-unlock";
+
+const GameCompletedDialog = lazy(() =>
+  import("./GameCompletedDialog").then(({ GameCompletedDialog }) => ({ default: GameCompletedDialog })),
+);
 
 type SavedGuess = {
   requestId: string;
@@ -438,23 +441,25 @@ export function ClassicGame({
       <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
       {ritualGateReady && <RitualGateDialog />}
       {challenge && game?.status === "solved" && showCompletion && ritualCompletionGameKey.current !== key && (
-        <GameCompletedDialog
-          date={challenge.date}
-          category={category}
-          difficulty={loadedDifficulty}
-          guesses={guesses}
-          ritualNotice={
-            showCategoryRitualNotice
-              ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
-              : undefined
-          }
-          onClose={() => setShowCompletion(false)}
-          stats={{
-            currentStreak: progress.stats.classic.currentStreak,
-            bestStreak: progress.stats.classic.bestStreak,
-            gamesPlayed: progress.stats.classic.gamesPlayed,
-          }}
-        />
+        <Suspense fallback={null}>
+          <GameCompletedDialog
+            date={challenge.date}
+            category={category}
+            difficulty={loadedDifficulty}
+            guesses={guesses}
+            ritualNotice={
+              showCategoryRitualNotice
+                ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
+                : undefined
+            }
+            onClose={() => setShowCompletion(false)}
+            stats={{
+              currentStreak: progress.stats.classic.currentStreak,
+              bestStreak: progress.stats.classic.bestStreak,
+              gamesPlayed: progress.stats.classic.gamesPlayed,
+            }}
+          />
+        </Suspense>
       )}
     </main>
   );

@@ -4,6 +4,7 @@ import { authError } from "@/lib/auth/auth-response";
 import { userForSession } from "@/lib/auth/auth-service";
 import { database } from "@/lib/db/client";
 import { mergeCloudProgress, parseCloudProgress } from "@/lib/domain/players/cloud-progress";
+import { readRequestText } from "@/lib/validation/request-body";
 
 const maxProgressBytes = 1_000_000;
 
@@ -37,8 +38,7 @@ export async function PUT(request: Request) {
   try {
     assertSameOrigin(request);
     const user = await verifiedUser(request);
-    const body = await request.text();
-    if (body.length > maxProgressBytes) throw new Error("BODY_TOO_LARGE");
+    const body = await readRequestText(request, maxProgressBytes);
     const incoming = parseCloudProgress(JSON.parse(body));
     const DB = database();
     const record = await DB.prepare("SELECT progress_json FROM user_progress WHERE user_id=?")

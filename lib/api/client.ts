@@ -2,12 +2,37 @@ import type { PublicDailyChallengeDto } from "../domain/challenges/challenge-typ
 import type { ClassicComparison } from "../domain/guesses/comparison-types";
 import type { ComparableModel, ClassicCategory, ClassicDifficulty, PublicModelIndex } from "../domain/models/model-types";
 import type { LocalProgress } from "../storage/local-progress-schema";
+import type { UserPermission } from "../auth/permissions";
 
 export type AuthUser = {
   id: string;
   email: string;
   displayName: string | null;
   emailVerified: boolean;
+  permission: UserPermission;
+};
+
+export type AdminUserSummary = {
+  id: string;
+  email: string;
+  displayName: string | null;
+  emailVerifiedAt: number | null;
+  createdAt: number;
+  updatedAt: number;
+  lastSeenAt: number | null;
+  progressUpdatedAt: number | null;
+  completionCount: number;
+};
+
+export type AdminUserDetail = AdminUserSummary & {
+  progress: unknown | null;
+  completions: Array<{
+    challengeId: string;
+    challengeDate: string;
+    mode: string;
+    answerModelName: string;
+    completedAt: number;
+  }>;
 };
 
 export type ClassicGamePayload = {
@@ -100,6 +125,21 @@ class ApiClient {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(progress),
+    });
+  }
+
+  adminUsers(page: number, query: string) {
+    const search = new URLSearchParams({ page: String(page) });
+    if (query) search.set("query", query);
+    return this.request<{ users: AdminUserSummary[]; total: number; page: number; pageSize: number }>(
+      `/api/v1/admin/users?${search}`,
+      { cache: "no-store" },
+    );
+  }
+
+  adminUser(userId: string) {
+    return this.request<{ user: AdminUserDetail }>(`/api/v1/admin/users/${encodeURIComponent(userId)}`, {
+      cache: "no-store",
     });
   }
 

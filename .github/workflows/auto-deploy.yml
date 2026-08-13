@@ -1,4 +1,4 @@
-name: Release and Deploy aAIdle
+name: Release and Deploy
 
 on:
   push:
@@ -16,15 +16,11 @@ concurrency:
   group: aaidle-production-release
   cancel-in-progress: false
 
-permissions:
-  contents: write
-  packages: write
-  pages: write
-  id-token: write
-
 jobs:
   create-release-tag:
     uses: ./.github/workflows/create-release-tag.yml
+    permissions:
+      contents: write
     with:
       bump: ${{ inputs.bump || 'auto' }}
       source_ref: ${{ github.event_name == 'push' && github.sha || 'main' }}
@@ -32,24 +28,33 @@ jobs:
   unit-tests:
     needs: create-release-tag
     uses: ./.github/workflows/unit-test.yml
+    permissions:
+      contents: read
     with:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
   docker-build:
     needs: create-release-tag
     uses: ./.github/workflows/docker-build.yml
+    permissions:
+      contents: read
+      packages: write
     with:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
   publish-release:
     needs: [create-release-tag, unit-tests, docker-build]
     uses: ./.github/workflows/publish-release.yml
+    permissions:
+      contents: write
     with:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
   deploy:
     needs: publish-release
     uses: ./.github/workflows/deploy-vps.yml
+    permissions:
+      contents: read
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}
     secrets: inherit
@@ -57,6 +62,9 @@ jobs:
   production-e2e:
     needs: [deploy, publish-release]
     uses: ./.github/workflows/production-e2e.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}
-    secrets: inherit
