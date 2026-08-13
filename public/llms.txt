@@ -1,0 +1,36 @@
+# aAIdle
+
+> aAIdle is a daily AI model deduction game.
+
+Agents can retrieve today's Classic game, evaluate guesses, and use the returned comparison clues to solve the game.
+The daily answer is never included in the game payload.
+Use the returned candidate model IDs exactly when submitting guesses.
+Each guess response includes `isCorrect` and field-by-field comparison results.
+The game resets at midnight UTC, and the challenge payload includes its `expiresAt` time.
+
+## Agent integration
+
+- [A2A agent card](https://aaidle.com/.well-known/agent-card.json): Discover the A2A JSON-RPC interface and supported game skills
+- [OpenAPI contract](https://aaidle.com/openapi.json): Machine-readable contract for the direct REST and A2A endpoints
+
+## How to play through an agent
+
+1. Send an A2A `SendMessage` request to `https://aaidle.com/api/v1/agent/a2a`.
+2. Set `jsonrpc` to `2.0`, provide an `id`, and include a `ROLE_USER` message with an `application/json` data part.
+3. Retrieve a game with `{"operation":"get_game","category":"llm","difficulty":"normal"}`.
+4. The completed task artifact contains `aaidle.game.v1`, including `challenge.id` and the eligible `models` list.
+5. Evaluate a model with `{"operation":"submit_guess","challengeId":"<challenge id>","guessedModelId":"<model id>","attemptNumber":1}`.
+6. The completed task artifact contains `aaidle.guess-result.v1` with `guess.comparison` and `guess.isCorrect`.
+
+Use `normal` or `challenge` with `llm`, `cv`, `nlp`, `object-detection`, `classical-ml`, or `filters`.
+Use `hardcore` only with the `hardcore` category.
+
+## Direct REST API
+
+- [Current Classic game](https://aaidle.com/api/v1/games/classic/llm/normal): Direct endpoint for today's normal LLM game
+- [Classic game routes](https://aaidle.com/openapi.json): Direct game retrieval and guess-submission endpoint definitions
+
+## Optional
+
+- [Homepage](https://aaidle.com): Human-facing aAIdle game
+- [Privacy policy](https://aaidle.com/privacy/v1): Cookie and data-use information

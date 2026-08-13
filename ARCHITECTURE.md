@@ -30,6 +30,8 @@ Public guessed model + comparison response
 - The full catalog is loaded once into server memory from `data/models.seed.json`; only an intentionally public autocomplete projection is sent to browsers.
 - `daily_challenges.answer_model_id` is not selected into the public challenge DTO, model autocomplete response, RSC props, or local storage.
 - The client owns UI progress in the versioned, Zod-validated external localStorage store. It is SSR-safe and synchronizes `storage` events between tabs.
+- After email activation, the local progress cache is merged into an account-owned database record and subsequent local changes are synchronized automatically.
+- `user_challenge_completions` records one server-confirmed completion per verified account and daily challenge for public completion totals.
 - `guess_events.request_id` provides retry idempotency; `(challenge_id, player_id, guessed_model_id)` prevents duplicate models and aggregate double-counting.
 - Anonymous `crypto.randomUUID()` player IDs have no IP, device, or location data associated with them.
 

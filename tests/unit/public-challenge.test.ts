@@ -6,7 +6,7 @@ describe("publicChallenge", () => {
     const response = publicChallenge({
       id: "challenge-1",
       challengeDate: "2026-08-11",
-      mode: "classic:normal",
+      mode: "classic:llm:normal",
       answerModelId: "secret-answer-model-id",
       selectionVersion: 1,
       generatedAt: 0,

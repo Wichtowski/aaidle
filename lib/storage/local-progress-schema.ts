@@ -17,7 +17,7 @@ export const localProgressSchema = z.object({
     z.object({
       challengeId: z.string(),
       challengeDate: z.string(),
-      mode: z.enum(["classic", "classic:normal", "classic:challenge", "classic:hardcore"]),
+      mode: z.string(),
       status: z.enum(["in-progress", "solved"]),
       guesses: z.array(
         z.object({
@@ -55,6 +55,8 @@ export const localProgressSchema = z.object({
     reducedMotion: z.boolean(),
     highContrast: z.boolean(),
     hasSeenClassicPrivacy: z.boolean().default(false),
+    hardcoreUnlocked: z.boolean().default(false),
+    hellMode: z.boolean().default(false),
   }),
 });
 export type LocalProgress = z.infer<typeof localProgressSchema>;

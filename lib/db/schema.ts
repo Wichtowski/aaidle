@@ -174,6 +174,7 @@ export const users = sqliteTable(
     displayName: text("display_name"),
     passwordHash: text("password_hash"),
     emailVerifiedAt: integer("email_verified_at"),
+    permission: text("permission", { enum: ["user", "developer", "superadmin"] }).notNull().default("user"),
     ...timestamps,
   },
 );
@@ -184,7 +185,7 @@ export const userIdentities = sqliteTable(
     providerUserId: text("provider_user_id").notNull(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     createdAt: integer("created_at").notNull(),
   },
   (t) => [primaryKey({ columns: [t.provider, t.providerUserId] })],
@@ -195,7 +196,7 @@ export const userSessions = sqliteTable(
     id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     tokenHash: text("token_hash").notNull().unique(),
     expiresAt: integer("expires_at").notNull(),
     createdAt: integer("created_at").notNull(),
@@ -203,6 +204,52 @@ export const userSessions = sqliteTable(
   },
   (t) => [index("user_sessions_user_idx").on(t.userId), index("user_sessions_expires_idx").on(t.expiresAt)],
 );
+export const authEmailTokens = sqliteTable(
+  "auth_email_tokens",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull().unique(),
+    purpose: text("purpose", { enum: ["email-verification", "password-reset", "account-deletion"] }).notNull(),
+    expiresAt: integer("expires_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    index("auth_email_tokens_user_purpose_idx").on(t.userId, t.purpose),
+    index("auth_email_tokens_expires_idx").on(t.expiresAt),
+  ],
+);
+export const userProgress = sqliteTable("user_progress", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  progressJson: text("progress_json").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+export const userChallengeCompletions = sqliteTable(
+  "user_challenge_completions",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    challengeId: text("challenge_id")
+      .notNull()
+      .references(() => dailyChallenges.id),
+    completedAt: integer("completed_at").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.challengeId] }),
+    index("user_challenge_completions_challenge_idx").on(t.challengeId),
+  ],
+);
+export const challengeCompletionCounts = sqliteTable("challenge_completion_counts", {
+  challengeId: text("challenge_id")
+    .primaryKey()
+    .references(() => dailyChallenges.id),
+  completionCount: integer("completion_count").notNull().default(0),
+});
 export const playerModeStats = sqliteTable(
   "player_mode_stats",
   {

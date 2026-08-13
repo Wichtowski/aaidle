@@ -1,4 +1,4 @@
-name: Create aAidle Release Tag
+name: Create Release Tag
 
 on:
   workflow_call:
@@ -19,11 +19,13 @@ on:
 jobs:
   create-tag:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       tag: ${{ steps.version.outputs.tag }}
     steps:
       - name: Check out release commit
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.source_ref }}
           fetch-depth: 0

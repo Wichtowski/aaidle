@@ -1,4 +1,11 @@
 import { SiteNavbar } from "../components/ui/SiteNavbar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Credits",
+  description: "Meet the people behind aAIdle, the daily AI model guessing game.",
+  alternates: { canonical: "/credits" },
+};
 
 export default function CreditsPage() {
   return (
@@ -8,7 +15,7 @@ export default function CreditsPage() {
         <p className="eyebrow">The people behind the game</p>
         <h1>Credits</h1>
         <p className="credits__lede">
-          Some games make a prompt the destination. aAidle begins somewhere wider.
+          Some games make a prompt the destination. aAIdle begins somewhere wider.
         </p>
         <p>
           In an early conversation about the idea, Michał suggested looking beyond prompts.
@@ -24,6 +31,14 @@ export default function CreditsPage() {
           <div>
             <dt>First game played by</dt>
             <dd><a href="https://www.linkedin.com/in/wojciech-piszczek/" target="_blank" rel="noopener noreferrer">Wojciech Piszczek</a></dd>
+          </div>
+          <div>
+            <dt>First production classic solved by</dt>
+            <dd><a href="https://www.linkedin.com/in/marcinkorcz/" target="_blank" rel="noopener noreferrer">Marcin Korcz</a></dd>
+          </div>
+          <div>
+            <dt>Linear & Non-Linear Presentation</dt>
+            <dd><a href="https://www.linkedin.com/in/łukasz-waligóra-82b1b615b/" target="_blank" rel="noopener noreferrer">Łukasz Waligóra</a></dd>
           </div>
         </dl>
       </section>

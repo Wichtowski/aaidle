@@ -7,6 +7,7 @@ export function ComparisonCell({
   revealed = true,
   animate = false,
   hardcore = false,
+  tooltip,
 }: {
   status: string;
   children: ReactNode;
@@ -14,6 +15,7 @@ export function ComparisonCell({
   revealed?: boolean;
   animate?: boolean;
   hardcore?: boolean;
+  tooltip?: string;
 }) {
   const displayStatus = hardcore && status !== "correct" ? "incorrect" : status;
   const label =
@@ -26,7 +28,7 @@ export function ComparisonCell({
           : displayStatus === "lower"
             ? "Target is lower"
             : displayStatus === "unknown"
-              ? "Unknown"
+              ? "Not applicable"
               : "Does not match";
   const DirectionIcon =
     displayStatus === "higher" ? FaArrowUp : displayStatus === "lower" ? FaArrowDown : null;
@@ -52,8 +54,25 @@ export function ComparisonCell({
         <div
           className={`comparison comparison--${displayStatus} comparison-card__face comparison-card__face--result`}
         >
-          {DirectionIcon && <DirectionIcon aria-hidden focusable="false" />}
-          <div className="comparison-card__value">{children ?? "Unknown"}</div>
+          {DirectionIcon ? (
+            <div className="comparison-card__directional-value">
+              <div className="comparison-card__value">{children ?? "N/A"}</div>
+              <DirectionIcon
+                aria-hidden
+                className="comparison-card__direction"
+                focusable="false"
+              />
+            </div>
+          ) : (
+            <div
+              aria-label={tooltip}
+              className="comparison-card__value"
+              data-tooltip={tooltip}
+              tabIndex={tooltip ? 0 : undefined}
+            >
+              {children ?? "N/A"}
+            </div>
+          )}
         </div>
       </div>
     </div>

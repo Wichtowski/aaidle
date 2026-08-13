@@ -1,8 +1,12 @@
-const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = process.env.NODE_ENV === "production";
 
 export const sessionCookieName = "aaidle_session";
 export const oauthStateCookieName = "aaidle_oauth_state";
+export const passwordResetCookieName = "aaidle_password_reset";
+export const accountDeletionCookieName = "aaidle_account_deletion";
 export const sessionMaxAgeSeconds = 60 * 60 * 24 * 30;
+export const passwordResetMaxAgeSeconds = 15 * 60;
+export const accountDeletionMaxAgeSeconds = 5 * 60;
 
 export function applicationOrigin(): string {
   const configured = process.env.APP_ORIGIN;

@@ -14,6 +14,8 @@ pnpm db:seed
 pnpm dev
 ```
 
+When `RESEND_API_KEY` is not configured locally, account activation links are shown in the browser instead of being sent by email.
+
 Run all required checks with:
 
 ```bash
@@ -46,7 +48,7 @@ Repository secrets:
 
 ## Accounts
 
-Accounts support GitHub and Google OAuth, plus email/password sign-in.
+Accounts support GitHub and Google OAuth, plus email/password sign-in with email activation and password reset.
 The production environment also needs these secrets before account sign-in is enabled:
 
 - `AAIDLE_AUTH_SECRET`
@@ -54,8 +56,16 @@ The production environment also needs these secrets before account sign-in is en
 - `AAIDLE_GITHUB_CLIENT_SECRET`
 - `AAIDLE_GOOGLE_CLIENT_ID`
 - `AAIDLE_GOOGLE_CLIENT_SECRET`
+- `AAIDLE_RESEND_API_KEY`
+
+## Admin access
+
+User permissions are stored in SQLite as `user`, `developer`, or `superadmin`.
+`developer` and `superadmin` accounts can inspect registered users, synced progress, and challenge completions at `/admin`.
+Passwords, sessions, and authentication tokens are never exposed in the dashboard.
 
 Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v1/auth/oauth/<provider>/callback`.
+Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling email/password accounts.
 
 ## Model catalog
 

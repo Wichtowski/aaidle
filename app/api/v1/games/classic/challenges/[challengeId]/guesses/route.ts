@@ -1,5 +1,8 @@
 import { submitClassicGuess } from "../../../../../../../../lib/domain/games/classic/guess-service";
 import { errorResponse, parseJson } from "../../../../../../../../lib/validation/api";
+import { sessionCookieName } from "@/lib/auth/auth-config";
+import { cookieValue } from "@/lib/auth/auth-http";
+import { userForSession } from "@/lib/auth/auth-service";
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ challengeId: string }> },
@@ -7,7 +10,12 @@ export async function POST(
   try {
     const body = await parseJson(request);
     const { challengeId } = await params;
-    return Response.json(await submitClassicGuess({ ...body, challengeId }), {
+    const user = await userForSession(cookieValue(request, sessionCookieName));
+    return Response.json(await submitClassicGuess({
+      ...body,
+      challengeId,
+      completedByUserId: user?.email_verified_at ? user.id : null,
+    }), {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {

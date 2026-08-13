@@ -1,8 +1,12 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
-const data = JSON.parse(
-  readFileSync(new URL("../data/models.seed.json", import.meta.url), "utf8"),
-);
+const input = process.argv[2];
+const source = input
+  ? new URL(`file://${resolve(input)}`)
+  : new URL("../data/models.seed.json", import.meta.url);
+
+const data = JSON.parse(readFileSync(source, "utf8"));
 
 const MODEL_CLASSES = new Set([
   "decoder_llm",
@@ -15,6 +19,7 @@ const MODEL_CLASSES = new Set([
   "image_generation",
   "classical_ml",
   "neural_network",
+  "image_processing",
 ]);
 
 const ENTITY_TYPES = new Set([
@@ -24,16 +29,68 @@ const ENTITY_TYPES = new Set([
   "algorithm",
 ]);
 
+const WEIGHT_AVAILABILITY = new Set([
+  "open",
+  "closed",
+  "restricted",
+  "unknown",
+  "not-applicable",
+]);
+
 const REASONING_SUPPORT = new Set(["no", "optional", "native"]);
-const LOCAL_EXECUTION = new Set(["no", "limited", "yes"]);
 
-const POOL = Object.freeze({
-  NORMAL: 0,
-  CHALLENGE: 1,
-  HARDCORE: 2,
-});
+const FOCUSED_CATEGORIES = new Set([
+  "language-model",
+  "computer-vision",
+  "nlp",
+  "object-detection",
+  "classical-ml",
+  "filters",
+]);
 
-const REQUIRED_FIELDS = [
+const CATEGORY_DETAIL_KEYS = {
+  "language-model": new Set([
+    "supportedLanguages",
+    "toolUse",
+    "multimodal",
+  ]),
+  "computer-vision": new Set([
+    "visionTasks",
+    "architecture",
+    "trainingDatasets",
+    "license",
+  ]),
+  nlp: new Set([
+    "nlpTasks",
+    "supportedLanguages",
+    "architecture",
+    "trainingDatasets",
+  ]),
+  "object-detection": new Set([
+    "detectionTypes",
+    "architecture",
+    "trainingDatasets",
+    "realTimeCapable",
+  ]),
+  "classical-ml": new Set([
+    "algorithmTypes",
+    "learningParadigms",
+    "objectives",
+    "featureTypes",
+    "frameworks",
+  ]),
+  filters: new Set([
+    "operationTypes",
+    "kernelBased",
+    "kernelSizes",
+    "linearity",
+    "requiresTraining",
+    "outputTypes",
+    "frameworks",
+  ]),
+};
+
+const REQUIRED_GENERAL_FIELDS = [
   "id",
   "name",
   "modelClass",
@@ -46,16 +103,14 @@ const REQUIRED_FIELDS = [
   "inputModalities",
   "outputModalities",
   "useCases",
-  "reasoningSupport",
-  "openWeights",
-  "localExecution",
-  "contextWindowTokens",
+  "weightAvailability",
   "country",
   "releaseDate",
+  "categoryDetails",
 ];
 
 const ids = new Set();
-const normalizedNames = new Map();
+const names = new Set();
 const guessTerms = new Map();
 
 function fail(message) {
@@ -74,8 +129,14 @@ function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function isValidIsoDate(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+function isKebabCase(value) {
+  return /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(value);
+}
+
+function isIsoDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
 
   const parsed = new Date(`${value}T00:00:00.000Z`);
 
@@ -85,90 +146,322 @@ function isValidIsoDate(value) {
   );
 }
 
-function validateNullableString(value, field, modelId) {
+function validateNullableString(value, field, id) {
   assert(
     value === null || isNonEmptyString(value),
-    `${field} must be a non-empty string or null: ${modelId}`,
+    `${field} must be a non-empty string or null: ${id}`,
   );
 }
 
-function validateStringArray(value, field, modelId) {
-  assert(Array.isArray(value), `${field} must be an array: ${modelId}`);
-  assert(value.length > 0, `${field} cannot be empty: ${modelId}`);
+function validateSlugArray(value, field, id, { allowEmpty = false } = {}) {
+  assert(Array.isArray(value), `${field} must be an array: ${id}`);
+
+  if (!allowEmpty) {
+    assert(value.length > 0, `${field} cannot be empty: ${id}`);
+  }
+
+  const normalized = [];
 
   for (const item of value) {
     assert(
       isNonEmptyString(item),
-      `${field} must contain only non-empty strings: ${modelId}`,
+      `${field} contains a non-string/empty value: ${id}`,
     );
+    assert(
+      isKebabCase(item),
+      `${field} must contain kebab-case slugs; got "${item}": ${id}`,
+    );
+    normalized.push(normalize(item));
   }
-
-  const normalized = value.map(normalize);
 
   assert(
     new Set(normalized).size === normalized.length,
-    `Duplicate value in ${field}: ${modelId}`,
+    `Duplicate value in ${field}: ${id}`,
   );
 }
 
-function registerGuessTerm(term, modelId, source) {
+function validateStringArray(value, field, id, { allowEmpty = false } = {}) {
+  assert(Array.isArray(value), `${field} must be an array: ${id}`);
+
+  if (!allowEmpty) {
+    assert(value.length > 0, `${field} cannot be empty: ${id}`);
+  }
+
+  const normalized = [];
+
+  for (const item of value) {
+    assert(
+      isNonEmptyString(item),
+      `${field} contains a non-string/empty value: ${id}`,
+    );
+    normalized.push(normalize(item));
+  }
+
+  assert(
+    new Set(normalized).size === normalized.length,
+    `Duplicate value in ${field}: ${id}`,
+  );
+}
+
+function validateNullableBoolean(value, field, id) {
+  assert(
+    value === null || typeof value === "boolean",
+    `${field} must be boolean or null: ${id}`,
+  );
+}
+
+function validateDetailShape(category, detail, id) {
+  assert(
+    detail && typeof detail === "object" && !Array.isArray(detail),
+    `categoryDetails.${category} must be an object: ${id}`,
+  );
+
+  const expected = CATEGORY_DETAIL_KEYS[category];
+  const actual = Object.keys(detail);
+
+  assert(
+    actual.length === expected.size &&
+      actual.every((key) => expected.has(key)),
+    `categoryDetails.${category} has invalid keys: ${id}`,
+  );
+
+  switch (category) {
+    case "language-model":
+      validateSlugArray(
+        detail.supportedLanguages,
+        "categoryDetails.language-model.supportedLanguages",
+        id,
+        { allowEmpty: true },
+      );
+      validateNullableBoolean(
+        detail.toolUse,
+        "categoryDetails.language-model.toolUse",
+        id,
+      );
+      assert(
+        typeof detail.multimodal === "boolean",
+        `categoryDetails.language-model.multimodal must be boolean: ${id}`,
+      );
+      break;
+
+    case "computer-vision":
+      validateSlugArray(
+        detail.visionTasks,
+        "categoryDetails.computer-vision.visionTasks",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.architecture,
+        "categoryDetails.computer-vision.architecture",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.trainingDatasets,
+        "categoryDetails.computer-vision.trainingDatasets",
+        id,
+        { allowEmpty: true },
+      );
+      validateNullableString(
+        detail.license,
+        "categoryDetails.computer-vision.license",
+        id,
+      );
+      if (detail.license !== null) {
+        assert(
+          isKebabCase(detail.license),
+          `CV license must be a kebab-case slug: ${id}`,
+        );
+      }
+      break;
+
+    case "nlp":
+      validateSlugArray(
+        detail.nlpTasks,
+        "categoryDetails.nlp.nlpTasks",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.supportedLanguages,
+        "categoryDetails.nlp.supportedLanguages",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.architecture,
+        "categoryDetails.nlp.architecture",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.trainingDatasets,
+        "categoryDetails.nlp.trainingDatasets",
+        id,
+        { allowEmpty: true },
+      );
+      break;
+
+    case "object-detection":
+      validateSlugArray(
+        detail.detectionTypes,
+        "categoryDetails.object-detection.detectionTypes",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.architecture,
+        "categoryDetails.object-detection.architecture",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.trainingDatasets,
+        "categoryDetails.object-detection.trainingDatasets",
+        id,
+        { allowEmpty: true },
+      );
+      validateNullableBoolean(
+        detail.realTimeCapable,
+        "categoryDetails.object-detection.realTimeCapable",
+        id,
+      );
+      break;
+
+    case "classical-ml":
+      validateSlugArray(
+        detail.algorithmTypes,
+        "categoryDetails.classical-ml.algorithmTypes",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.learningParadigms,
+        "categoryDetails.classical-ml.learningParadigms",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.objectives,
+        "categoryDetails.classical-ml.objectives",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.featureTypes,
+        "categoryDetails.classical-ml.featureTypes",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.frameworks,
+        "categoryDetails.classical-ml.frameworks",
+        id,
+        { allowEmpty: true },
+      );
+      break;
+
+    case "filters":
+      validateSlugArray(
+        detail.operationTypes,
+        "categoryDetails.filters.operationTypes",
+        id,
+        { allowEmpty: true },
+      );
+      assert(
+        typeof detail.kernelBased === "boolean",
+        `categoryDetails.filters.kernelBased must be boolean: ${id}`,
+      );
+      validateSlugArray(
+        detail.kernelSizes,
+        "categoryDetails.filters.kernelSizes",
+        id,
+        { allowEmpty: true },
+      );
+      assert(
+        ["linear", "non-linear", "mixed"].includes(detail.linearity),
+        `categoryDetails.filters.linearity is invalid: ${id}`,
+      );
+      assert(
+        typeof detail.requiresTraining === "boolean",
+        `categoryDetails.filters.requiresTraining must be boolean: ${id}`,
+      );
+      validateSlugArray(
+        detail.outputTypes,
+        "categoryDetails.filters.outputTypes",
+        id,
+        { allowEmpty: true },
+      );
+      validateSlugArray(
+        detail.frameworks,
+        "categoryDetails.filters.frameworks",
+        id,
+        { allowEmpty: true },
+      );
+      break;
+  }
+}
+
+function registerGuessTerm(term, modelId, sourceName) {
   const normalized = normalize(term);
   const existing = guessTerms.get(normalized);
 
   if (existing && existing.modelId !== modelId) {
     fail(
-      `Ambiguous guess term "${term}": ${modelId} (${source}) conflicts with ` +
-        `${existing.modelId} (${existing.source})`,
+      `Ambiguous guess term "${term}": ${modelId} (${sourceName}) conflicts ` +
+        `with ${existing.modelId} (${existing.sourceName})`,
     );
   }
 
-  guessTerms.set(normalized, { modelId, source });
+  guessTerms.set(normalized, { modelId, sourceName });
 }
 
-assert(Array.isArray(data), "models.seed.json must contain an array");
-assert(data.length >= 30, "At least 30 models are required");
+assert(Array.isArray(data), "Seed must be a JSON array");
+assert(data.length >= 30, "At least 30 catalogue entries are required");
 
 for (const model of data) {
   assert(
     model && typeof model === "object" && !Array.isArray(model),
-    "Invalid model entry",
+    "Invalid catalogue entry",
   );
 
-  // Keep a stable shape for every entry. A field may be null when it is
-  // genuinely not applicable, but it should never silently disappear.
-  for (const field of REQUIRED_FIELDS) {
+  for (const field of REQUIRED_GENERAL_FIELDS) {
     assert(
       Object.hasOwn(model, field),
       `Missing required field "${field}": ${model.id ?? "<unknown>"}`,
     );
   }
 
+  // Removed fields must stay removed.
   assert(
-    typeof model.id === "string" &&
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(model.id),
-    `Invalid model id: ${String(model.id)}`,
+    !Object.hasOwn(model, "localExecution"),
+    `localExecution is deprecated: ${model.id}`,
+  );
+  assert(
+    !Object.hasOwn(model, "openWeights"),
+    `openWeights is deprecated; use weightAvailability: ${model.id}`,
   );
 
-  assert(isNonEmptyString(model.name), `Invalid model name: ${model.id}`);
+  // Identity
+  assert(
+    typeof model.id === "string" && isKebabCase(model.id),
+    `Invalid id: ${String(model.id)}`,
+  );
+  assert(isNonEmptyString(model.name), `Invalid name: ${model.id}`);
 
-  assert(!ids.has(model.id), `Duplicate model id: ${model.id}`);
+  assert(!ids.has(model.id), `Duplicate id: ${model.id}`);
   ids.add(model.id);
 
   const normalizedName = normalize(model.name);
-  const existingName = normalizedNames.get(normalizedName);
+  assert(!names.has(normalizedName), `Duplicate name: ${model.name}`);
+  names.add(normalizedName);
 
-  assert(
-    !existingName,
-    `Duplicate model name: ${model.name} (${model.id} / ${existingName})`,
-  );
-
-  normalizedNames.set(normalizedName, model.id);
-
+  // Internal classification — kept deliberately even though it is not a board clue.
   assert(
     MODEL_CLASSES.has(model.modelClass),
     `Invalid modelClass "${model.modelClass}": ${model.id}`,
   );
-
   assert(
     ENTITY_TYPES.has(model.entityType),
     `Invalid entityType "${model.entityType}": ${model.id}`,
@@ -176,116 +469,128 @@ for (const model of data) {
 
   assert(
     Number.isInteger(model.minPool) &&
-      model.minPool >= POOL.NORMAL &&
-      model.minPool <= POOL.HARDCORE,
+      model.minPool >= 0 &&
+      model.minPool <= 2,
     `minPool must be 0, 1, or 2: ${model.id}`,
   );
 
-  // Normal remains intentionally focused on recognizable generative LLMs.
-  if (model.minPool === POOL.NORMAL) {
-    assert(
-      ["decoder_llm", "multimodal"].includes(model.modelClass),
-      `Normal model must be decoder_llm or multimodal: ${model.id}`,
-    );
-
-    assert(
-      ["trained_model", "model_family"].includes(model.entityType),
-      `Normal model cannot be a generic architecture/algorithm: ${model.id}`,
-    );
-  }
-
+  // General game/provenance metadata
   validateNullableString(model.provider, "provider", model.id);
-
   assert(isNonEmptyString(model.family), `Invalid family: ${model.id}`);
-
+  validateStringArray(model.aliases, "aliases", model.id);
+  validateSlugArray(model.categories, "categories", model.id);
+  validateSlugArray(model.inputModalities, "inputModalities", model.id);
+  validateSlugArray(model.outputModalities, "outputModalities", model.id);
+  validateSlugArray(model.useCases, "useCases", model.id);
   validateNullableString(model.country, "country", model.id);
 
   assert(
-    model.releaseDate === null ||
-      (typeof model.releaseDate === "string" &&
-        isValidIsoDate(model.releaseDate)),
+    WEIGHT_AVAILABILITY.has(model.weightAvailability),
+    `Invalid weightAvailability "${model.weightAvailability}": ${model.id}`,
+  );
+
+  assert(
+    model.releaseDate === null || isIsoDate(model.releaseDate),
     `releaseDate must be YYYY-MM-DD or null: ${model.id}`,
   );
 
-  // Concrete released models should have provenance.
-  if (model.entityType === "trained_model") {
-    assert(model.provider !== null, `trained_model requires provider: ${model.id}`);
-    assert(model.country !== null, `trained_model requires country: ${model.id}`);
+  // Optional semantic fields
+  if (Object.hasOwn(model, "reasoningSupport")) {
+    assert(
+      REASONING_SUPPORT.has(model.reasoningSupport),
+      `Invalid reasoningSupport "${model.reasoningSupport}": ${model.id}`,
+    );
+    assert(
+      model.categories.includes("language-model") &&
+        (model.reasoningSupport === "no" || ["decoder_llm", "multimodal"].includes(model.modelClass)),
+      `native/optional reasoning only belongs on generative language models: ${model.id}`,
+    );
   }
 
-  validateStringArray(model.aliases, "aliases", model.id);
-  validateStringArray(model.categories, "categories", model.id);
-  validateStringArray(model.inputModalities, "inputModalities", model.id);
-  validateStringArray(model.outputModalities, "outputModalities", model.id);
-  validateStringArray(model.useCases, "useCases", model.id);
-
-  assert(
-    REASONING_SUPPORT.has(model.reasoningSupport),
-    `Invalid reasoningSupport "${model.reasoningSupport}": ${model.id}`,
-  );
-
-  assert(
-    model.openWeights === null || typeof model.openWeights === "boolean",
-    `openWeights must be boolean or null: ${model.id}`,
-  );
-
-  assert(
-    LOCAL_EXECUTION.has(model.localExecution),
-    `Invalid localExecution "${model.localExecution}": ${model.id}`,
-  );
-
-  assert(
-    model.contextWindowTokens === null ||
-      (Number.isInteger(model.contextWindowTokens) &&
-        model.contextWindowTokens > 0),
-    `contextWindowTokens must be a positive integer or null: ${model.id}`,
-  );
-
-  // Normal models are language models, so these fields are meaningful there.
-  if (model.minPool === POOL.NORMAL) {
-    assert(
-      model.categories.includes("language-model"),
-      `Normal model must include language-model category: ${model.id}`,
-    );
-
-    assert(
-      model.outputModalities.includes("text"),
-      `Normal model must output text: ${model.id}`,
-    );
-
+  if (Object.hasOwn(model, "contextWindowTokens")) {
     assert(
       Number.isInteger(model.contextWindowTokens) &&
         model.contextWindowTokens > 0,
-      `Normal model requires contextWindowTokens: ${model.id}`,
+      `contextWindowTokens must be a positive integer: ${model.id}`,
+    );
+    assert(
+      model.categories.includes("language-model") ||
+        model.categories.includes("nlp"),
+      `contextWindowTokens only belongs on language-model/nlp entries: ${model.id}`,
     );
   }
 
-  registerGuessTerm(model.name, model.id, "name");
+  // categoryDetails must exactly follow focused category membership.
+  assert(
+    model.categoryDetails &&
+      typeof model.categoryDetails === "object" &&
+      !Array.isArray(model.categoryDetails),
+    `categoryDetails must be an object: ${model.id}`,
+  );
 
+  for (const key of Object.keys(model.categoryDetails)) {
+    assert(
+      FOCUSED_CATEGORIES.has(key),
+      `Unsupported categoryDetails key "${key}": ${model.id}`,
+    );
+    assert(
+      model.categories.includes(key),
+      `categoryDetails.${key} exists but categories does not include ${key}: ${model.id}`,
+    );
+    validateDetailShape(key, model.categoryDetails[key], model.id);
+  }
+
+  for (const category of FOCUSED_CATEGORIES) {
+    if (model.categories.includes(category)) {
+      assert(
+        Object.hasOwn(model.categoryDetails, category),
+        `Missing categoryDetails.${category}: ${model.id}`,
+      );
+    }
+  }
+
+  // Cross-check a few semantics with internal classification.
+  if (model.categories.includes("classical-ml")) {
+    assert(
+      ["classical_ml", "neural_network"].includes(model.modelClass),
+      `classical-ml category requires modelClass=classical_ml or neural_network: ${model.id}`,
+    );
+  }
+
+  if (model.categories.includes("filters")) {
+    assert(
+      model.modelClass === "image_processing",
+      `filters category requires modelClass=image_processing: ${model.id}`,
+    );
+    assert(
+      model.weightAvailability === "not-applicable",
+      `filters category requires weightAvailability=not-applicable: ${model.id}`,
+    );
+  }
+
+  if (model.categories.includes("object-detection")) {
+    assert(
+      model.categories.includes("computer-vision"),
+      `object-detection must also include computer-vision: ${model.id}`,
+    );
+  }
+
+  // Guess input collisions
+  registerGuessTerm(model.name, model.id, "name");
   for (const alias of model.aliases) {
     registerGuessTerm(alias, model.id, "alias");
   }
 }
 
 const poolCounts = {
-  normal: data.filter((model) => model.minPool <= POOL.NORMAL).length,
-  challenge: data.filter((model) => model.minPool <= POOL.CHALLENGE).length,
-  hardcore: data.filter((model) => model.minPool <= POOL.HARDCORE).length,
+  normal: data.filter((m) => m.minPool <= 0).length,
+  challenge: data.filter((m) => m.minPool <= 1).length,
+  hardcore: data.filter((m) => m.minPool <= 2).length,
 };
 
 assert(
-  poolCounts.normal < poolCounts.challenge,
-  `Challenge pool should be larger than Normal (${poolCounts.normal} vs ${poolCounts.challenge})`,
-);
-
-assert(
-  poolCounts.challenge < poolCounts.hardcore,
-  `Hardcore pool should be larger than Challenge (${poolCounts.challenge} vs ${poolCounts.hardcore})`,
-);
-
-assert(
   poolCounts.hardcore === data.length,
-  `Hardcore must contain the complete catalog (${poolCounts.hardcore}/${data.length})`,
+  `Hardcore must include the entire catalogue`,
 );
 
 console.log(

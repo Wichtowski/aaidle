@@ -1,7 +1,14 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { FaArrowLeft, FaHourglassHalf } from "react-icons/fa6";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
 import { emojiGame } from "../../lib/domain/games/emoji/definition";
+
+export const metadata: Metadata = {
+  title: "Emoji game coming soon",
+  description: "The aAIdle Emoji game is in development.",
+  robots: { index: false, follow: true },
+};
 
 export default function EmojiPage() {
   return (
@@ -22,7 +29,7 @@ export default function EmojiPage() {
             </div>
           ))}
         </dl>
-        <Link className="button" href="/classic">
+        <Link className="button game-placeholder__classic-link" href="/classic">
           <FaArrowLeft aria-hidden focusable="false" /> Play Classic while you wait
         </Link>
       </section>

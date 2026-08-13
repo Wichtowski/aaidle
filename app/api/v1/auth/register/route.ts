@@ -1,7 +1,11 @@
-import { sessionCookieName, sessionMaxAgeSeconds } from "@/lib/auth/auth-config";
-import { assertSameOrigin, rateLimitSubject, setCookie } from "@/lib/auth/auth-http";
+import { sendAuthEmail } from "@/lib/auth/auth-email";
+import { assertSameOrigin, rateLimitSubject } from "@/lib/auth/auth-http";
 import { authError } from "@/lib/auth/auth-response";
-import { consumeRateLimit, createSession, registerWithPassword } from "@/lib/auth/auth-service";
+import {
+  consumeRateLimit,
+  createEmailVerificationToken,
+  registerWithPassword,
+} from "@/lib/auth/auth-service";
 import { parseAuthJson, passwordRegistrationSchema } from "@/lib/auth/auth-validation";
 
 export async function POST(request: Request) {
@@ -17,25 +21,25 @@ export async function POST(request: Request) {
     if (!allowed) return authError("RATE_LIMITED", "Try again later.", 429);
 
     const user = await registerWithPassword({ email, password });
+    const delivery = await sendAuthEmail({
+      email: user.email,
+      purpose: "email-verification",
+      token: await createEmailVerificationToken(user.id),
+    });
     return Response.json(
-      { user: { id: user.id, email: user.email, displayName: user.display_name } },
-      {
-        status: 201,
-        headers: {
-          "Cache-Control": "no-store",
-          "Set-Cookie": setCookie(
-            sessionCookieName,
-            await createSession(user.id),
-            sessionMaxAgeSeconds,
-          ),
-        },
-      },
+      { accepted: true, activationUrl: delivery.localUrl },
+      { status: 202, headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
-    if (code === "ACCOUNT_EXISTS") return authError(code, "An account with this email already exists.", 409);
+    if (code === "ACCOUNT_EXISTS") {
+      return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+    }
     if (code === "AUTH_NOT_CONFIGURED") {
       return authError(code, "Account sign-in is not configured yet.", 503);
+    }
+    if (code === "EMAIL_DELIVERY_NOT_CONFIGURED" || code === "EMAIL_DELIVERY_FAILED") {
+      return authError(code, "We could not send the activation email. Try again later.", 503);
     }
     return authError("INVALID_REQUEST", "Use a valid email and a password of at least 12 characters.", 400);
   }
