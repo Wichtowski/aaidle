@@ -6,6 +6,7 @@ import {
 } from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
 import { hasHardcoreAccess } from "./hardcore-access";
+import { createTrajectoryAccessToken } from "./trajectory-access";
 
 export async function submitClassicGuess(input: {
   guessedModelId: string;
@@ -64,6 +65,9 @@ export async function submitClassicGuess(input: {
       matchingOutputModalities: matches(guessed.outputModalities, answer.outputModalities),
       matchingUseCases: matches(guessed.useCases, answer.useCases),
     },
+    trajectoryAccessToken: isCorrect
+      ? createTrajectoryAccessToken({ challengeId: input.challengeId, answerModelId: answer.id })
+      : null,
     globalCompletionCount,
     playerStats: null,
   };

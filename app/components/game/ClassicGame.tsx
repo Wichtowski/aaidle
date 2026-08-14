@@ -47,6 +47,7 @@ type SavedGuess = {
   attemptNumber: number;
   isCorrect: boolean;
   sameGuessCount: number;
+  trajectoryAccessToken?: string;
   matchingCategories: string[];
   matchingInputModalities: string[];
   matchingOutputModalities: string[];
@@ -331,6 +332,7 @@ export function ClassicGame({
         attemptNumber,
         isCorrect: payload.guess.isCorrect,
         sameGuessCount: payload.guess.sameGuessCount,
+        trajectoryAccessToken: payload.trajectoryAccessToken ?? undefined,
         matchingCategories: payload.guess.matchingCategories,
         matchingInputModalities: payload.guess.matchingInputModalities,
         matchingOutputModalities: payload.guess.matchingOutputModalities,
@@ -502,6 +504,13 @@ export function ClassicGame({
           ]}
         />
       )}
+      {game?.status === "solved" && ritualCompletionGameKey.current !== key && (
+        <div className="game-completion-action">
+          <button className="button" onClick={() => setShowCompletion(true)} type="button">
+            Show winning guess
+          </button>
+        </div>
+      )}
 
       <button
         aria-label="How to play"
@@ -520,6 +529,7 @@ export function ClassicGame({
           <Suspense fallback={null}>
             <GameCompletedDialog
               date={challenge.date}
+              challengeId={challenge.id}
               category={category}
               difficulty={loadedDifficulty}
               guesses={guesses}

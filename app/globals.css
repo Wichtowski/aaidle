@@ -667,6 +667,14 @@ body.hell-mode .game-placeholder__status {
   font-weight: 700;
   text-align: right;
 }
+.game-completion-action {
+  display: flex;
+  justify-content: center;
+  margin: 26px 0 0;
+}
+.game-completion-action .button {
+  margin: 0;
+}
 .autocomplete {
   position: relative;
   max-width: 610px;
@@ -3130,7 +3138,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   place-items: center;
   padding: 20px;
   background: #17202c99;
-  overflow: visible;
+  overflow: auto;
 }
 .completed-modal--hardcore {
   background: #0d090dd9;
@@ -3138,8 +3146,9 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .completed {
   position: relative;
   z-index: 2;
-  width: min(560px, 100%);
+  width: min(800px, 100%);
   max-width: none;
+  min-height: min(760px, calc(100dvh - 40px));
   margin: 0;
   padding: 32px;
   background: var(--panel);
@@ -3377,12 +3386,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   width: 100%;
   height: auto;
   margin-top: 10px;
-  touch-action: none;
-  cursor: grab;
-  user-select: none;
-}
-.completed-trajectory svg:active {
-  cursor: grabbing;
+  color: #3f8069;
 }
 .completed-trajectory rect {
   fill: #f7f4ed;
@@ -3392,6 +3396,15 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   stroke: #dcd5c7;
   stroke-width: 1;
 }
+.completed-trajectory__grid text {
+  fill: #776f62;
+  font-size: 9px;
+  font-weight: 700;
+  text-anchor: end;
+}
+.completed-trajectory__area {
+  fill: url(#completion-trajectory-fill);
+}
 .completed-trajectory__path {
   fill: none;
   stroke: #3f8069;
@@ -3399,31 +3412,57 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.completed-trajectory__destination {
-  stroke: #d85a2d;
-  stroke-dasharray: 4 3;
-  stroke-width: 1.5;
-}
 .completed-trajectory__point circle {
   stroke: #fffdf8;
   stroke-width: 2;
+  fill: #3f8069;
 }
-.completed-trajectory__point text {
+.completed-trajectory__point > text:not(.completed-trajectory__point-label) {
+  alignment-baseline: central;
+  dominant-baseline: central;
   fill: #fffdf8;
   font-size: 7px;
   font-weight: 900;
   pointer-events: none;
 }
-.completed-trajectory__point--guess circle {
-  fill: #3f8069;
-}
 .completed-trajectory__point--answer circle {
   fill: #d85a2d;
+}
+.completed-trajectory__star {
+  fill: #fffdf8;
+}
+.completed-trajectory__point-label {
+  fill: #276552;
+  font-size: 10px;
+  font-weight: 900;
+}
+.completed-trajectory__point--answer .completed-trajectory__point-label {
+  fill: #b9411c;
+}
+.completed-trajectory__attempt-label {
+  fill: #776f62;
+  font-size: 10px;
+  font-weight: 700;
 }
 .completed-trajectory__axis-label {
   fill: #776f62;
   font-size: 9px;
   font-weight: 700;
+}
+.completed-trajectory__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 18px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.completed-trajectory__metrics span {
+  display: inline-flex;
+  gap: 4px;
+}
+.completed-trajectory__metrics strong {
+  color: var(--ink);
 }
 .completed-trajectory__legend {
   display: flex;
@@ -3450,6 +3489,113 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .completed-trajectory__legend i[data-kind="answer"] {
   background: #d85a2d;
 }
+.completed-model-space {
+  margin-top: 26px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.completed-model-space h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.completed-model-space > div > p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.completed-model-space svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 12px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+.completed-model-space svg:active {
+  cursor: grabbing;
+}
+.completed-model-space rect {
+  fill: #f7f4ed;
+  stroke: #ded7ca;
+}
+.completed-model-space__grid line {
+  stroke: #dcd5c7;
+  stroke-width: 1;
+}
+.completed-model-space__cube line {
+  fill: none;
+  stroke: #8b8172;
+  stroke-width: 1.5;
+}
+.completed-model-space__references circle {
+  fill: #958d82;
+  opacity: 0.42;
+}
+.completed-model-space__path {
+  fill: none;
+  stroke: #3f8069;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.completed-model-space__destination {
+  stroke: #d85a2d;
+  stroke-dasharray: 4 3;
+  stroke-width: 1.5;
+}
+.completed-model-space__point circle {
+  fill: #3f8069;
+  stroke: #fffdf8;
+  stroke-width: 2;
+}
+.completed-model-space__point text {
+  alignment-baseline: central;
+  dominant-baseline: central;
+  fill: #fffdf8;
+  font-size: 7px;
+  font-weight: 900;
+  pointer-events: none;
+}
+.completed-model-space__point--answer circle {
+  fill: #d85a2d;
+}
+.completed-model-space__star {
+  fill: #fffdf8;
+}
+.completed-model-space__axis-label {
+  fill: #776f62;
+  font-size: 9px;
+  font-weight: 700;
+}
+.completed-model-space__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.completed-model-space__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.completed-model-space__legend i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.completed-model-space__legend i[data-kind="guess"] {
+  background: #3f8069;
+}
+.completed-model-space__legend i[data-kind="answer"] {
+  background: #d85a2d;
+}
+.completed-model-space__legend i[data-kind="reference"] {
+  background: #958d82;
+}
 .completed--hardcore .completed-trajectory {
   border-color: #69372f;
 }
@@ -3464,7 +3610,38 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .completed--hardcore .completed-trajectory__grid line {
   stroke: #69372f;
 }
-.completed--hardcore .completed-trajectory__axis-label {
+.completed--hardcore .completed-trajectory svg {
+  color: #df745f;
+}
+.completed--hardcore .completed-trajectory__axis-label,
+.completed--hardcore .completed-trajectory__attempt-label,
+.completed--hardcore .completed-trajectory__grid text {
+  fill: #d8b9af;
+}
+.completed--hardcore .completed-trajectory__point-label {
+  fill: #ffd1c4;
+}
+.completed--hardcore .completed-trajectory__metrics strong {
+  color: #f7eee8;
+}
+.completed--hardcore .completed-model-space {
+  border-color: #69372f;
+}
+.completed--hardcore .completed-model-space > div > p,
+.completed--hardcore .completed-model-space__legend {
+  color: #d8b9af;
+}
+.completed--hardcore .completed-model-space rect {
+  fill: #241116;
+  stroke: #69372f;
+}
+.completed--hardcore .completed-model-space__grid line {
+  stroke: #69372f;
+}
+.completed--hardcore .completed-model-space__cube line {
+  stroke: #9d5249;
+}
+.completed--hardcore .completed-model-space__axis-label {
   fill: #d8b9af;
 }
 .completed__copy {

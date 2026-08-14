@@ -65,6 +65,7 @@ export type ClassicGuessPayload = {
     model: ComparableModel;
     comparison: ClassicComparison;
   };
+  trajectoryAccessToken: string | null;
   globalCompletionCount: number | null;
 };
 
@@ -245,6 +246,18 @@ class ApiClient {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ guessedModelId, attemptNumber }),
+      },
+    );
+  }
+
+  classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {
+    return this.request<{ models: ComparableModel[] }>(
+      `/api/v1/games/classic/challenges/${challengeId}/trajectory`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trajectoryAccessToken }),
+        signal,
       },
     );
   }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import rawModels from "../../data/models.seed.json";
 import { classicColumnsByCategory } from "../../lib/domain/guesses/comparison-types";
+import { compareClassicModels } from "../../lib/domain/guesses/comparison-engine";
 import { focusedClassicCategories } from "../../lib/domain/models/model-types";
 import {
   eligibleModelIdsByDifficulty,
@@ -60,6 +61,18 @@ describe("Classic model pools", () => {
       "frameworks",
       "outputModalities",
     ]);
+  });
+
+  it("distinguishes morphological operations that otherwise share every Filters clue", () => {
+    const erosion = catalogModel("erosion");
+    const dilation = catalogModel("dilation");
+    const topHat = catalogModel("top-hat");
+    const blackHat = catalogModel("black-hat");
+
+    expect(erosion?.categoryDetails?.filters?.operationTypes).toEqual(["morphology", "erosion"]);
+    expect(dilation?.categoryDetails?.filters?.operationTypes).toEqual(["morphology", "dilation"]);
+    expect(compareClassicModels(erosion!, dilation!).operationTypes).toBe("partial");
+    expect(compareClassicModels(topHat!, blackHat!).operationTypes).toBe("partial");
   });
 
   it("makes Image Processing the sixth category needed to unlock Hardcore", () => {

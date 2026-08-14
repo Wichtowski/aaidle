@@ -13160,7 +13160,8 @@
     "categoryDetails": {
       "filters": {
         "operationTypes": [
-          "morphology"
+          "morphology",
+          "erosion"
         ],
         "kernelBased": true,
         "kernelSizes": [
@@ -13209,7 +13210,8 @@
     "categoryDetails": {
       "filters": {
         "operationTypes": [
-          "morphology"
+          "morphology",
+          "dilation"
         ],
         "kernelBased": true,
         "kernelSizes": [
@@ -14023,7 +14025,8 @@
       "filters": {
         "operationTypes": [
           "morphology",
-          "contrast-enhancement"
+          "contrast-enhancement",
+          "white-top-hat"
         ],
         "kernelBased": true,
         "kernelSizes": [
@@ -14074,7 +14077,8 @@
       "filters": {
         "operationTypes": [
           "morphology",
-          "contrast-enhancement"
+          "contrast-enhancement",
+          "black-top-hat"
         ],
         "kernelBased": true,
         "kernelSizes": [

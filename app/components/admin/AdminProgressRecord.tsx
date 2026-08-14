@@ -4,6 +4,7 @@ import {
   classicCategoryFromRouteSegment,
   type ComparableModel,
 } from "@/lib/domain/models/model-types";
+import { modelSpaceAxes, modelSpacePoint } from "@/lib/domain/models/model-space";
 import { localProgressSchema } from "@/lib/storage/local-progress-schema";
 import { distribution } from "@/lib/utils/dates";
 
@@ -34,27 +35,6 @@ function asComparableModel(value: unknown): ComparableModel | null {
   return typeof model.id === "string" && typeof model.name === "string"
     ? (model as ComparableModel)
     : null;
-}
-
-function modelPoint(model: ComparableModel): Point3 {
-  const releaseYear = model.releaseYear ?? 2020;
-  const context = model.contextWindowTokens
-    ? Math.log10(Math.max(1, model.contextWindowTokens))
-    : 3;
-  const capabilityCount = [
-    model.categories?.length ?? 0,
-    model.inputModalities?.length ?? 0,
-    model.outputModalities?.length ?? 0,
-    model.useCases?.length ?? 0,
-    model.reasoningSupport === "native" ? 1 : 0,
-    model.weightAvailability === "open" ? 1 : 0,
-  ].reduce((total, value) => total + value, 0);
-
-  return {
-    x: Math.max(-1, Math.min(1, (releaseYear - 2012) / 14)),
-    y: Math.max(-1, Math.min(1, (context - 4.5) / 2.5)),
-    z: Math.max(-1, Math.min(1, (capabilityCount - 4) / 6)),
-  };
 }
 
 function project(point: Point3, azimuth: number, elevation: number) {
@@ -125,7 +105,7 @@ function GuessTrajectory({
   target,
   referenceModels,
 }: {
-  game: { guesses: Array<{ attemptNumber: number; model: unknown }> };
+  game: { mode: string; guesses: Array<{ attemptNumber: number; model: unknown }> };
   target: ComparableModel;
   referenceModels: ComparableModel[];
 }) {
@@ -135,6 +115,9 @@ function GuessTrajectory({
     y: number;
     rotation: typeof rotation;
   } | null>(null);
+  const [, categorySegment] = game.mode.split(":");
+  const category = classicCategoryFromRouteSegment(categorySegment) ?? "hardcore";
+  const axes = modelSpaceAxes(category);
   const guesses = game.guesses
     .map((guess) => ({ ...guess, model: asComparableModel(guess.model) }))
     .filter((guess): guess is { attemptNumber: number; model: ComparableModel } =>
@@ -143,12 +126,18 @@ function GuessTrajectory({
     .sort((left, right) => left.attemptNumber - right.attemptNumber);
   const points = [
     ...guesses.map((guess) => ({
+      id: guess.model.id,
       label: guess.model.name,
       kind: "guess" as const,
       number: guess.attemptNumber,
-      point: modelPoint(guess.model),
+      point: modelSpacePoint(guess.model, category, referenceModels),
     })),
-    { label: target.name, kind: "answer" as const, point: modelPoint(target) },
+    {
+      id: target.id,
+      label: target.name,
+      kind: "answer" as const,
+      point: modelSpacePoint(target, category, referenceModels),
+    },
   ];
   const projectedPoints = points.map((item) => ({
     ...item,
@@ -156,12 +145,12 @@ function GuessTrajectory({
   }));
   const linePoints = projectedPoints.filter((item) => item.kind === "guess");
   const answer = projectedPoints.find((item) => item.kind === "answer");
-  const trajectoryModelIds = new Set(points.map((item) => item.label));
+  const trajectoryModelIds = new Set(points.map((item) => item.id));
   const references = referenceModels
-    .filter((model) => !trajectoryModelIds.has(model.name))
+    .filter((model) => !trajectoryModelIds.has(model.id))
     .map((model) => ({
       model,
-      projected: project(modelPoint(model), rotation.azimuth, rotation.elevation),
+      projected: project(modelSpacePoint(model, category, referenceModels), rotation.azimuth, rotation.elevation),
     }))
     .sort((left, right) => left.projected.depth - right.projected.depth);
   const projectedCorners = cubeCorners.map((corner) =>
@@ -183,7 +172,7 @@ function GuessTrajectory({
       <div className="admin-progress__heading">
         <div>
           <h4 id="admin-progress-trajectory-title">Latest solved-game trajectory</h4>
-          <p>Drag to rotate · release year, context scale, capability breadth</p>
+          <p>Drag to rotate · {axes.map((axis) => axis.label.toLocaleLowerCase()).join(", ")}</p>
         </div>
         <span>
           {guesses.length} guesses · {references.length} references
@@ -271,7 +260,7 @@ function GuessTrajectory({
             </g>
           ))}
         <text className="admin-trajectory__axis-label" x="658" y="474">
-          Release year
+          {axes[0].label}
         </text>
         <text
           className="admin-trajectory__axis-label"
@@ -279,10 +268,10 @@ function GuessTrajectory({
           x="33"
           y="105"
         >
-          Context scale
+          {axes[1].label}
         </text>
         <text className="admin-trajectory__axis-label" x="590" y="33">
-          Capability breadth
+          {axes[2].label}
         </text>
       </svg>
       <div className="admin-trajectory__legend">

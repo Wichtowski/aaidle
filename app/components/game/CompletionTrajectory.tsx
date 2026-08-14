@@ -1,149 +1,153 @@
-"use client";
+import {
+  classicColumnsForGame,
+  type ClassicComparison,
+} from "../../../lib/domain/guesses/comparison-types";
+import type {
+  ClassicCategory,
+  ClassicDifficulty,
+  ComparableModel,
+} from "../../../lib/domain/models/model-types";
 
-import { useState, type PointerEvent } from "react";
-import type { ComparableModel } from "../../../lib/domain/models/model-types";
+type TrajectoryGuess = {
+  attemptNumber: number;
+  comparison: ClassicComparison;
+  isCorrect: boolean;
+  model: ComparableModel;
+};
 
-type Point3 = { x: number; y: number; z: number };
+const scoreByStatus: Record<string, number> = {
+  correct: 1,
+  partial: 0.55,
+  higher: 0.4,
+  lower: 0.4,
+  incorrect: 0,
+};
 
-function modelPoint(model: ComparableModel): Point3 {
-  const releaseYear = model.releaseYear ?? 2020;
-  const context = model.contextWindowTokens
-    ? Math.log10(Math.max(1, model.contextWindowTokens))
-    : 3;
-  const capabilityCount = [
-    model.categories?.length ?? 0,
-    model.inputModalities?.length ?? 0,
-    model.outputModalities?.length ?? 0,
-    model.useCases?.length ?? 0,
-    model.reasoningSupport === "native" ? 1 : 0,
-    model.weightAvailability === "open" ? 1 : 0,
-  ].reduce((total, value) => total + value, 0);
+function clueAlignment(
+  guess: TrajectoryGuess,
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+) {
+  if (guess.isCorrect) return 100;
 
-  return {
-    x: Math.max(-1, Math.min(1, (releaseYear - 2012) / 14)),
-    y: Math.max(-1, Math.min(1, (context - 4.5) / 2.5)),
-    z: Math.max(-1, Math.min(1, (capabilityCount - 4) / 6)),
-  };
-}
+  const statuses = classicColumnsForGame(category, difficulty)
+    .map((column) => guess.comparison[column])
+    .filter((status) => status !== undefined && status !== "unknown");
 
-function project(point: Point3, azimuth: number, elevation: number) {
-  const rotatedX = point.x * Math.cos(azimuth) - point.z * Math.sin(azimuth);
-  const rotatedZ = point.x * Math.sin(azimuth) + point.z * Math.cos(azimuth);
-  const rotatedY = point.y * Math.cos(elevation) - rotatedZ * Math.sin(elevation);
+  if (!statuses.length) return 0;
 
-  return {
-    x: 240 + rotatedX * 150,
-    y: 160 - rotatedY * 116,
-    depth: point.y * Math.sin(elevation) + rotatedZ * Math.cos(elevation),
-  };
+  return Math.round(
+    (statuses.reduce((score, status) => score + (scoreByStatus[status] ?? 0), 0) /
+      statuses.length) *
+      100,
+  );
 }
 
 export function CompletionTrajectory({
+  category,
+  difficulty,
   guesses,
-  answer,
 }: {
-  guesses: Array<{ attemptNumber: number; model: ComparableModel }>;
-  answer: ComparableModel;
+  category: ClassicCategory;
+  difficulty: ClassicDifficulty;
+  guesses: TrajectoryGuess[];
 }) {
-  const [rotation, setRotation] = useState({ azimuth: -0.65, elevation: 0.35 });
-  const [dragStart, setDragStart] = useState<{
-    x: number;
-    y: number;
-    rotation: typeof rotation;
-  } | null>(null);
-  const pathGuesses = guesses.filter((guess) => guess.model.id !== answer.id);
-  const points = [
-    ...pathGuesses.map((guess) => ({
-      label: guess.model.name,
-      kind: "guess" as const,
-      number: guess.attemptNumber,
-      point: modelPoint(guess.model),
-    })),
-    { label: answer.name, kind: "answer" as const, point: modelPoint(answer) },
-  ];
-  const projectedPoints = points.map((point) => ({
-    ...point,
-    projected: project(point.point, rotation.azimuth, rotation.elevation),
-  }));
-  const linePoints = projectedPoints.filter((point) => point.kind === "guess");
-  const answerPoint = projectedPoints.find((point) => point.kind === "answer");
-  const drag = (event: PointerEvent<SVGSVGElement>) => {
-    if (!dragStart) return;
-    setRotation({
-      azimuth: dragStart.rotation.azimuth + (event.clientX - dragStart.x) / 120,
-      elevation: Math.max(
-        -1.1,
-        Math.min(1.1, dragStart.rotation.elevation + (event.clientY - dragStart.y) / 160),
-      ),
-    });
-  };
+  const width = 720;
+  const height = 370;
+  const plot = { left: 58, right: 28, top: 30, bottom: 58 };
+  const plotWidth = width - plot.left - plot.right;
+  const plotHeight = height - plot.top - plot.bottom;
+  const points = guesses.map((guess, index) => {
+    const alignment = clueAlignment(guess, category, difficulty);
+    const x =
+      guesses.length === 1
+        ? plot.left + plotWidth / 2
+        : plot.left + (plotWidth * index) / (guesses.length - 1);
+    const y = plot.top + ((100 - alignment) / 100) * plotHeight;
+
+    return { ...guess, alignment, x, y };
+  });
+  const path = points.map((point) => `${point.x},${point.y}`).join(" ");
+  const bestPriorAlignment = Math.max(0, ...points.filter((point) => !point.isCorrect).map((point) => point.alignment));
+  const answer = guesses.find((guess) => guess.isCorrect)?.model;
 
   return (
     <section className="completed-trajectory" aria-labelledby="completed-trajectory-title">
       <div>
-        <h3 id="completed-trajectory-title">Your trajectory</h3>
-        <p>Drag to rotate · release year, context scale, capability breadth</p>
+        <h3 id="completed-trajectory-title">Your guessing trajectory</h3>
+        <p>Each point measures how closely that guess matched the answer’s revealed clues.</p>
+      </div>
+      <div className="completed-trajectory__metrics" aria-label="Trajectory summary">
+        <span><strong>{bestPriorAlignment}%</strong> best match before winning</span>
+        {answer && <span><strong>100%</strong> final answer: {answer.name}</span>}
       </div>
       <svg
-        aria-label={`Three-dimensional guess trajectory toward ${answer.name}`}
-        onPointerCancel={() => setDragStart(null)}
-        onPointerDown={(event) => {
-          event.currentTarget.setPointerCapture(event.pointerId);
-          setDragStart({ x: event.clientX, y: event.clientY, rotation });
-        }}
-        onPointerMove={drag}
-        onPointerUp={() => setDragStart(null)}
+        aria-label={`Your clue-alignment trajectory across ${guesses.length} guesses`}
         role="img"
-        viewBox="0 0 480 320"
+        viewBox={`0 0 ${width} ${height}`}
       >
-        <rect height="292" width="452" x="14" y="14" />
-        {[64, 112, 160, 208, 256].map((coordinate) => (
-          <g className="completed-trajectory__grid" key={coordinate}>
-            <line x1="24" x2="456" y1={coordinate} y2={coordinate} />
-            <line x1={coordinate + 16} x2={coordinate + 16} y1="24" y2="296" />
+        <defs>
+          <linearGradient id="completion-trajectory-fill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.24" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <rect height={plotHeight} width={plotWidth} x={plot.left} y={plot.top} />
+        {[0, 25, 50, 75, 100].map((value) => {
+          const y = plot.top + ((100 - value) / 100) * plotHeight;
+          return (
+            <g className="completed-trajectory__grid" key={value}>
+              <line x1={plot.left} x2={width - plot.right} y1={y} y2={y} />
+              <text x={plot.left - 10} y={y + 4}>{value}%</text>
+            </g>
+          );
+        })}
+        {points.length > 1 && (
+          <polygon
+            className="completed-trajectory__area"
+            points={`${plot.left},${plot.top + plotHeight} ${path} ${width - plot.right},${plot.top + plotHeight}`}
+          />
+        )}
+        {points.length > 1 && <polyline className="completed-trajectory__path" points={path} />}
+        {points.map((point) => (
+          <g
+            className={`completed-trajectory__point${point.isCorrect ? " completed-trajectory__point--answer" : ""}`}
+            key={point.attemptNumber}
+            transform={`translate(${point.x} ${point.y})`}
+          >
+            <title>
+              {point.isCorrect
+                ? `Winning guess: ${point.model.name}, 100% clue alignment`
+                : `Guess ${point.attemptNumber}: ${point.model.name}, ${point.alignment}% clue alignment`}
+            </title>
+            <circle r={point.isCorrect ? 10 : 7} />
+            {point.isCorrect ? (
+              <path
+                aria-hidden="true"
+                className="completed-trajectory__star"
+                d="M0 -5.4 1.6 -1.8 5.5 -1.7 2.4 .7 3.3 4.7 0 2.7 -3.3 4.7 -2.4 .7 -5.5 -1.7 -1.6 -1.8Z"
+              />
+            ) : (
+              <text alignmentBaseline="central" dominantBaseline="central" textAnchor="middle">
+                {point.attemptNumber}
+              </text>
+            )}
+            <text className="completed-trajectory__point-label" textAnchor="middle" y="-15">
+              {point.alignment}%
+            </text>
           </g>
         ))}
-        {linePoints.length > 1 && (
-          <polyline
-            className="completed-trajectory__path"
-            points={linePoints.map((point) => `${point.projected.x},${point.projected.y}`).join(" ")}
-          />
-        )}
-        {linePoints.at(-1) && answerPoint && (
-          <line
-            className="completed-trajectory__destination"
-            x1={linePoints.at(-1)?.projected.x}
-            x2={answerPoint.projected.x}
-            y1={linePoints.at(-1)?.projected.y}
-            y2={answerPoint.projected.y}
-          />
-        )}
-        {projectedPoints
-          .sort((left, right) => left.projected.depth - right.projected.depth)
-          .map((point) => (
-            <g
-              className={`completed-trajectory__point completed-trajectory__point--${point.kind}`}
-              key={`${point.kind}:${point.label}`}
-              transform={`translate(${point.projected.x} ${point.projected.y})`}
-            >
-              <title>
-                {point.kind === "answer"
-                  ? `Answer: ${point.label}`
-                  : `Guess ${point.number}: ${point.label}`}
-              </title>
-              <circle r={point.kind === "answer" ? 8 : 6} />
-              <text dy="4" textAnchor="middle">
-                {point.kind === "answer" ? "★" : point.number}
-              </text>
-            </g>
-          ))}
-        <text className="completed-trajectory__axis-label" x="380" y="292">Release year</text>
-        <text className="completed-trajectory__axis-label" transform="rotate(-90 30 116)" x="30" y="116">Context scale</text>
-        <text className="completed-trajectory__axis-label" x="330" y="34">Capability breadth</text>
+        {points.map((point) => (
+          <text className="completed-trajectory__attempt-label" key={point.attemptNumber} textAnchor="middle" x={point.x} y={height - 25}>
+            {point.isCorrect ? "Win" : `Guess ${point.attemptNumber}`}
+          </text>
+        ))}
+        <text className="completed-trajectory__axis-label" x={width / 2} textAnchor="middle" y={height - 7}>Your attempts</text>
+        <text className="completed-trajectory__axis-label" transform="rotate(-90 15 185)" x="15" textAnchor="middle" y="185">Clue alignment</text>
       </svg>
       <div className="completed-trajectory__legend">
-        <span><i data-kind="guess" /> Guess path</span>
-        <span><i data-kind="answer" /> Answer · {answer.name}</span>
+        <span><i data-kind="guess" /> Your guesses</span>
+        <span><i data-kind="answer" /> Winning guess</span>
       </div>
     </section>
   );

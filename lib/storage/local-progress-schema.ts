@@ -28,6 +28,7 @@ export const localProgressSchema = z.object({
           attemptNumber: z.number(),
           isCorrect: z.boolean(),
           sameGuessCount: z.number(),
+          trajectoryAccessToken: z.string().optional(),
           matchingCategories: z.array(z.string()).default([]),
           matchingInputModalities: z.array(z.string()).default([]),
           matchingOutputModalities: z.array(z.string()).default([]),

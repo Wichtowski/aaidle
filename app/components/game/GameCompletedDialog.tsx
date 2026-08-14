@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FaXmark } from "react-icons/fa6";
 import { CelebrationPhysics } from "./CelebrationPhysics";
 import { ShareResultButton, type ShareGuess } from "./ShareResultButton";
 import type { ClassicCategory, ComparableModel } from "../../../lib/domain/models/model-types";
 import { CompletionTrajectory } from "./CompletionTrajectory";
+import { ModelSpaceTrajectory } from "./ModelSpaceTrajectory";
+import { apiClient } from "../../../lib/api/client";
 
 function resultMessage(guessCount: number) {
   if (guessCount === 1) return "One guess. Either genius or delightfully suspicious.";
@@ -42,6 +44,7 @@ const ledgerEcho: Record<LedgerCorruption, string> = {
 
 export function GameCompletedDialog({
   date,
+  challengeId,
   category,
   difficulty,
   guesses,
@@ -50,6 +53,7 @@ export function GameCompletedDialog({
   stats,
 }: {
   date: string;
+  challengeId: string;
   category: ClassicCategory;
   difficulty: "normal" | "challenge" | "hardcore";
   guesses: Array<
@@ -57,6 +61,7 @@ export function GameCompletedDialog({
       attemptNumber: number;
       isCorrect: boolean;
       model: ComparableModel;
+      trajectoryAccessToken?: string;
     }
   >;
   onClose: () => void;
@@ -64,10 +69,26 @@ export function GameCompletedDialog({
   stats: { currentStreak: number; bestStreak: number; gamesPlayed: number } | null;
 }) {
   const [open, setOpen] = useState(true);
+  const [referenceModels, setReferenceModels] = useState<ComparableModel[] | null>(null);
   const modalRef = useRef<HTMLElement>(null);
   const corruption = ledgerCorruption(guesses.length);
   const isHardcore = difficulty === "hardcore";
-  const answer = guesses.find((guess) => guess.isCorrect)?.model;
+  const trajectoryAccessToken = guesses.find((guess) => guess.isCorrect)?.trajectoryAccessToken;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    void apiClient
+      .classicTrajectory(challengeId, trajectoryAccessToken, controller.signal)
+      .then(({ models }) => {
+        if (!controller.signal.aborted) setReferenceModels(models);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setReferenceModels([]);
+      });
+
+    return () => controller.abort();
+  }, [challengeId, trajectoryAccessToken]);
 
   if (!open) return null;
 
@@ -122,7 +143,14 @@ export function GameCompletedDialog({
             <span>{isHardcore ? "Escapes" : "Solved games"}</span>
           </div>
         </div>
-        {answer && <CompletionTrajectory answer={answer} guesses={guesses} />}
+        <CompletionTrajectory category={category} difficulty={difficulty} guesses={guesses} />
+        {referenceModels && referenceModels.length > 0 && (
+          <ModelSpaceTrajectory
+            category={category}
+            guesses={guesses}
+            referenceModels={referenceModels}
+          />
+        )}
         <div className="completed__actions">
           <ShareResultButton
             date={date}
