@@ -30,12 +30,12 @@ export function RitualGateDialog() {
         <h2 id="ritual-gate-title">Something has noticed you.</h2>
         <p id="ritual-gate-description" className="completed__message">
           {user
-            ? "Your account can now carry this victory into Hardcore."
-            : "Sign in or create an account to enter Hardcore and keep this victory."}
+            ? "Your profile is ready for the final step into Hardcore."
+            : "Sign in or create an account to keep this victory and enter the Inner Circle."}
         </p>
         <div className="completed__actions">
-          <Link className="button button--inner-circle" href={user ? "/classic/hardcore" : "/login"} ref={enterLinkRef}>
-            {user ? "Enter the inner circle" : "Sign in to enter"}
+          <Link className="button button--inner-circle" href={user ? "/profile" : "/login"} ref={enterLinkRef}>
+            {user ? "Continue to profile" : "Sign in to continue"}
           </Link>
         </div>
       </section>

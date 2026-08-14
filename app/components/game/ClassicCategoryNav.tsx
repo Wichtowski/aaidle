@@ -11,8 +11,9 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
       {classicCategories
         .filter(
           (item) =>
-            item !== "hardcore" ||
-            Boolean(user && progress.preferences.hardcoreUnlocked),
+            progress.preferences.innerCircleActive
+              ? item === "hardcore"
+              : item !== "hardcore" || Boolean(user && progress.preferences.hardcoreUnlocked),
         )
         .map((item) => (
           <Link aria-current={item === category ? "page" : undefined} href={`/classic/${classicCategoryDetails[item].routeSegment}`} key={item} prefetch>

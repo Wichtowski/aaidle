@@ -56,9 +56,19 @@ export const localProgressSchema = z.object({
     reducedMotion: z.boolean(),
     highContrast: z.boolean(),
     hasSeenClassicPrivacy: z.boolean().default(false),
+    hasSeenClassicHowToPlay: z.boolean().optional(),
     hardcoreUnlocked: z.boolean().default(false),
+    innerCircleActive: z.boolean().default(false),
     hellMode: z.boolean().default(false),
     hasAutoplayedHardcoreSoundtrack: z.boolean().default(false),
   }),
-});
+}).transform((progress) => ({
+  ...progress,
+  preferences: {
+    ...progress.preferences,
+    hasSeenClassicHowToPlay:
+      progress.preferences.hasSeenClassicHowToPlay ??
+      progress.preferences.hasSeenClassicPrivacy,
+  },
+}));
 export type LocalProgress = z.infer<typeof localProgressSchema>;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FaArrowRight, FaHourglassHalf } from "react-icons/fa6";
+import { FaArrowRight, FaHourglassHalf, FaImage, FaTimeline } from "react-icons/fa6";
 import { SiteNavbar } from "./components/ui/SiteNavbar";
 import { emojiGame } from "../lib/domain/games/emoji/definition";
 
@@ -72,6 +72,22 @@ export default function Home() {
             <p>{emojiGame.summary}</p>
             <strong>View game details</strong>
           </Link>
+          <article className="game-mode-card game-mode-card--in-progress">
+            <span>
+              <FaTimeline aria-hidden focusable="false" /> In progress
+            </span>
+            <h3>Timeline</h3>
+            <p>Arrange a limited set of AI models in the correct release order.</p>
+            <strong>Coming soon</strong>
+          </article>
+          <article className="game-mode-card game-mode-card--in-progress">
+            <span>
+              <FaImage aria-hidden focusable="false" /> In progress
+            </span>
+            <h3>Logo</h3>
+            <p>Identify a model from a distorted, zoomed-in logo that clears with each guess.</p>
+            <strong>Coming soon</strong>
+          </article>
         </div>
       </section>
       <section className="home-grid">

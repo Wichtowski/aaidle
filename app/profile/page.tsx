@@ -72,7 +72,12 @@ export default function Profile() {
   const today = new Date().toISOString().slice(0, 10);
   const ritualCategories = solvedChallengeCategoriesForDate(progress, today);
   const ritualComplete = hasCompletedChallengeRitual(progress, today);
+  const hasCompletedHardcore = Object.values(progress.games).some(
+    (game) =>
+      game.mode === classicChallengeMode("hardcore", "hardcore") && game.status === "solved",
+  );
   const canSeeInnerCircle = Boolean(user);
+  const showRitualChallenge = canSeeInnerCircle && !hasCompletedHardcore;
   const hellAwake = canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked;
   const hellModeEnabled = canSeeInnerCircle && progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
@@ -103,6 +108,7 @@ export default function Profile() {
   const stats = { currentStreak, bestStreak, gamesPlayed: solved.length, gamesWon: solved.length, guessDistribution };
   const distributionValues = Object.entries(stats.guessDistribution);
   const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
+  const totalWins = distributionValues.reduce((total, [, value]) => total + value, 0);
   const totalPages = Math.max(1, Math.ceil(categoryHistory.length / historyPageSize));
   const page = Math.min(historyPage, totalPages);
   const historyGames = categoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
@@ -112,21 +118,37 @@ export default function Profile() {
       return;
     }
 
+    const nextProgress = {
+      ...progress,
+      preferences: {
+        ...progress.preferences,
+        hardcoreUnlocked: true,
+        innerCircleActive: true,
+      },
+    };
+
     void apiClient
-      .enableHardcoreAccess(progress)
-      .then(() => {
-        updateProgress((state) => ({
-          ...state,
-          preferences: { ...state.preferences, hardcoreUnlocked: true },
-        }));
+      .enableHardcoreAccess(nextProgress)
+      .then(() => apiClient.syncProgress(nextProgress))
+      .then(({ progress: syncedProgress }) => {
+        updateProgress(() => syncedProgress);
         router.push("/classic/hardcore");
       });
   };
   const toggleHellMode = () => {
-    updateProgress((state) => ({
-      ...state,
-      preferences: { ...state.preferences, hellMode: !state.preferences.hellMode },
-    }));
+    const hellMode = !progress.preferences.hellMode;
+    const nextProgress = {
+      ...progress,
+      preferences: { ...progress.preferences, hellMode },
+    };
+    window.localStorage.setItem("aaidle:hell-mode:v1", hellMode ? "1" : "0");
+    document.cookie = [
+      `aaidle_hell_mode=${hellMode ? "1" : "0"}`,
+      "Path=/",
+      "Max-Age=31536000",
+      "SameSite=Lax",
+    ].join("; ");
+    updateProgress(() => nextProgress);
   };
 
   useEffect(() => {
@@ -140,7 +162,7 @@ export default function Profile() {
       <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
       <h1>{hellActive ? "The infernal" : "Profile"}</h1>
       {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
-      {canSeeInnerCircle && !ritualComplete && (
+      {showRitualChallenge && !ritualComplete && (
         <section className="hell-meter" aria-labelledby="hell-meter-title">
           <div className="stats-section__heading">
             <div>
@@ -157,7 +179,7 @@ export default function Profile() {
           />
         </section>
       )}
-      {canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked && (
+      {showRitualChallenge && ritualComplete && !progress.preferences.hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete" open>
           <summary>
             <span>
@@ -214,14 +236,14 @@ export default function Profile() {
         </div>
         <div className="distribution" aria-label="Win distribution by number of guesses">
           {distributionValues.map(([attempts, value]) => {
-            const width = value ? Math.max(7, (value / largestBucket) * 100) : 0;
+            const width = totalWins ? (value / totalWins) * 100 : 0;
             const isHot = value > 0 && value === largestBucket;
             return (
               <div className="distribution__row" data-hot={isHot || undefined} key={attempts}>
                 <span className="distribution__label">{attempts}</span>
                 <div
                   aria-label={`${value} wins in ${attempts} guesses`}
-                  aria-valuemax={largestBucket}
+                  aria-valuemax={totalWins}
                   aria-valuemin={0}
                   aria-valuenow={value}
                   className="distribution__track"
@@ -296,7 +318,7 @@ export default function Profile() {
           <p className="stats-empty">Play a game and your guesses will appear here.</p>
         )}
       </section>
-      {canSeeInnerCircle && ritualComplete && progress.preferences.hardcoreUnlocked && (
+      {showRitualChallenge && ritualComplete && progress.preferences.hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete">
           <summary>
             <span>

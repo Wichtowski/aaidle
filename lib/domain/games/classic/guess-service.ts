@@ -5,7 +5,7 @@ import {
   type ClassicChallengeMode,
 } from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
-import { hasHardcoreAccess } from "./hardcore-access";
+import { hasHardcoreAccess, leaveInnerCircle } from "./hardcore-access";
 import { createTrajectoryAccessToken } from "./trajectory-access";
 
 export async function submitClassicGuess(input: {
@@ -50,6 +50,7 @@ export async function submitClassicGuess(input: {
     )
       .bind(input.completedByUserId, input.challengeId, Date.now())
       .run();
+    if (category === "hardcore") await leaveInnerCircle(input.completedByUserId);
     globalCompletionCount = await globalClassicCompletionCount(input.challengeId);
   }
 

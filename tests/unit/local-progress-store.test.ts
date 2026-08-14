@@ -39,6 +39,7 @@ describe("local progress storage", () => {
     const store = await import("../../lib/storage/local-progress-store");
     const progress = store.freshProgress();
     progress.preferences.hardcoreUnlocked = true;
+    progress.preferences.hellMode = true;
     progress.preferences.hasAutoplayedHardcoreSoundtrack = true;
 
     store.updateProgress(() => progress);
@@ -47,6 +48,19 @@ describe("local progress storage", () => {
 
     const resetProgress = store.readProgress();
     expect(resetProgress.preferences.hardcoreUnlocked).toBe(true);
+    expect(resetProgress.preferences.hellMode).toBe(true);
     expect(resetProgress.preferences.hasAutoplayedHardcoreSoundtrack).toBe(true);
+  });
+
+  it("migrates the previous Classic modal preference without showing it again", async () => {
+    const store = await import("../../lib/storage/local-progress-store");
+    const previousProgress = store.freshProgress();
+    previousProgress.preferences.hasSeenClassicPrivacy = true;
+    delete (previousProgress.preferences as Partial<typeof previousProgress.preferences>)
+      .hasSeenClassicHowToPlay;
+
+    window.localStorage.setItem(store.progressKey, JSON.stringify(previousProgress));
+
+    expect(store.readProgress().preferences.hasSeenClassicHowToPlay).toBe(true);
   });
 });

@@ -8,7 +8,7 @@ import { classicDifficultyCookieName } from "../../../lib/domain/games/classic/d
 import { classicGameData } from "../../../lib/domain/games/classic/classic-game-api";
 import { sessionCookieName } from "@/lib/auth/auth-config";
 import { userForSession } from "@/lib/auth/auth-service";
-import { hasHardcoreAccess } from "@/lib/domain/games/classic/hardcore-access";
+import { hasHardcoreAccess, isInnerCircleActive } from "@/lib/domain/games/classic/hardcore-access";
 
 type ClassicCategoryPageProps = { params: Promise<{ category: string }> };
 
@@ -38,6 +38,9 @@ export default async function ClassicCategoryPage({ params }: ClassicCategoryPag
   const { category: routeSegment } = await params;
   const category = classicCategoryFromRouteSegment(routeSegment);
   if (!category) notFound();
+  if (user && category !== "hardcore" && (await isInnerCircleActive(user.id))) {
+    redirect("/classic/hardcore");
+  }
   if (category === "hardcore" && !user) redirect("/login");
   const savedDifficulty = cookieStore.get(classicDifficultyCookieName)?.value;
   const difficulty = category === "hardcore" ? "hardcore" : isClassicDifficulty(savedDifficulty) && savedDifficulty !== "hardcore" ? savedDifficulty : "normal";

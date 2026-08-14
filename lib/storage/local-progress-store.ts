@@ -10,11 +10,12 @@ const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}
 
 type InnerCirclePreferences = Pick<
   LocalProgress["preferences"],
-  "hardcoreUnlocked" | "hasAutoplayedHardcoreSoundtrack"
+  "hardcoreUnlocked" | "hellMode" | "hasAutoplayedHardcoreSoundtrack"
 >;
 
 const emptyInnerCirclePreferences: InnerCirclePreferences = {
   hardcoreUnlocked: false,
+  hellMode: false,
   hasAutoplayedHardcoreSoundtrack: false,
 };
 
@@ -27,6 +28,7 @@ function readInnerCirclePreferences(): InnerCirclePreferences {
     const preferences = value as Partial<InnerCirclePreferences>;
     return {
       hardcoreUnlocked: preferences.hardcoreUnlocked === true,
+      hellMode: preferences.hellMode === true,
       hasAutoplayedHardcoreSoundtrack:
         preferences.hasAutoplayedHardcoreSoundtrack === true,
     };
@@ -40,6 +42,7 @@ function saveInnerCirclePreferences(progress: LocalProgress) {
 
   const preferences = {
     hardcoreUnlocked: progress.preferences.hardcoreUnlocked,
+    hellMode: progress.preferences.hellMode,
     hasAutoplayedHardcoreSoundtrack:
       progress.preferences.hasAutoplayedHardcoreSoundtrack,
   };
@@ -81,7 +84,9 @@ export const freshProgress = (): LocalProgress => {
       reducedMotion: false,
       highContrast: false,
       hasSeenClassicPrivacy: false,
+      hasSeenClassicHowToPlay: false,
       hardcoreUnlocked: innerCircle.hardcoreUnlocked,
+      innerCircleActive: false,
       hellMode: false,
       hasAutoplayedHardcoreSoundtrack:
         innerCircle.hasAutoplayedHardcoreSoundtrack,
@@ -109,7 +114,9 @@ const serverSnapshot: LocalProgress = {
     reducedMotion: false,
     highContrast: false,
     hasSeenClassicPrivacy: false,
+    hasSeenClassicHowToPlay: false,
     hardcoreUnlocked: false,
+    innerCircleActive: false,
     hellMode: false,
     hasAutoplayedHardcoreSoundtrack: false,
   },
@@ -164,6 +171,7 @@ function reconcileInnerCirclePreferences(progress: LocalProgress): LocalProgress
     ...progress.preferences,
     hardcoreUnlocked:
       progress.preferences.hardcoreUnlocked || innerCircle.hardcoreUnlocked,
+    hellMode: progress.preferences.hellMode || innerCircle.hellMode,
     hasAutoplayedHardcoreSoundtrack:
       progress.preferences.hasAutoplayedHardcoreSoundtrack ||
       innerCircle.hasAutoplayedHardcoreSoundtrack,

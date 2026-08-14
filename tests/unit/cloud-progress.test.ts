@@ -60,4 +60,13 @@ describe("cloud progress", () => {
 
     expect(merged.preferences.hardcoreUnlocked).toBe(true);
   });
+
+  it("syncs the active Inner Circle lock so a Hardcore win can release it", () => {
+    const inactive = freshProgress();
+    const active = freshProgress();
+    active.preferences.innerCircleActive = true;
+
+    expect(mergeCloudProgress(inactive, active).preferences.innerCircleActive).toBe(true);
+    expect(mergeCloudProgress(active, inactive).preferences.innerCircleActive).toBe(false);
+  });
 });

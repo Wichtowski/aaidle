@@ -1,6 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { apiClient, type ClassicGamePayload } from "../../../lib/api/client";
 import { GuessBoard } from "./GuessBoard";
@@ -136,6 +137,7 @@ export function ClassicGame({
   initialGame: GamePayload | null;
   hasHardcoreAccess: boolean;
 }) {
+  const router = useRouter();
   const { user } = useAuth();
   const progress = useLocalProgress();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
@@ -151,12 +153,11 @@ export function ClassicGame({
   const [pendingGuess, setPendingGuess] = useState<PendingGuess | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [ritualGateReady, setRitualGateReady] = useState(false);
+  const [showRitualGate, setShowRitualGate] = useState(false);
   const [progressReady, setProgressReady] = useState(false);
   const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
   const animatedGameKey = useRef<string | null>(null);
   const completionGameKey = useRef<string | null>(null);
-  const ritualCompletionGameKey = useRef<string | null>(null);
   const loadedDifficultyRef = useRef(difficulty);
   const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>(
     initialGame ? { [difficulty]: initialGame } : {},
@@ -207,6 +208,7 @@ export function ClassicGame({
     ? `${classicChallengeMode(category, loadedDifficulty)}:${challenge.date}`
     : "";
   const game = key ? progress.games[key] : undefined;
+  const innerCircleActive = progress.preferences.innerCircleActive;
   const guesses = (game?.guesses ?? []) as SavedGuess[];
   const guessed = new Set([
     ...guesses.map((guess) => guess.modelId),
@@ -225,17 +227,21 @@ export function ClassicGame({
   }, [guesses, key, progressReady]);
 
   useEffect(() => {
-    if (progressReady && challenge && !progress.preferences.hasSeenClassicPrivacy) {
+    if (progressReady && challenge && !progress.preferences.hasSeenClassicHowToPlay) {
       setShowHowToPlay(true);
     }
-  }, [challenge, progress.preferences.hasSeenClassicPrivacy, progressReady]);
+  }, [challenge, progress.preferences.hasSeenClassicHowToPlay, progressReady]);
+
+  useEffect(() => {
+    if (innerCircleActive && category !== "hardcore") router.replace("/classic/hardcore");
+  }, [category, innerCircleActive, router]);
 
   const closeHowToPlay = () => {
     setShowHowToPlay(false);
-    if (!progress.preferences.hasSeenClassicPrivacy) {
+    if (!progress.preferences.hasSeenClassicHowToPlay) {
       updateProgress((state) => ({
         ...state,
-        preferences: { ...state.preferences, hasSeenClassicPrivacy: true },
+        preferences: { ...state.preferences, hasSeenClassicHowToPlay: true },
       }));
     }
   };
@@ -250,12 +256,13 @@ export function ClassicGame({
     solvedChallengeCount > 0 &&
     !hasCompletedChallengeRitual(progress, challenge?.date ?? ""),
   );
-  const ritualGateActive = Boolean(
+  const canEnterInnerCircle = Boolean(
     challenge &&
     category !== "hardcore" &&
-    (ritualCompletionGameKey.current === key ||
-      (!hasHardcoreAccess &&
-        hasCompletedChallengeRitual(progress, challenge.date))),
+    loadedDifficulty === "challenge" &&
+    game?.status === "solved" &&
+    !progress.preferences.hardcoreUnlocked &&
+    hasCompletedChallengeRitual(progress, challenge.date),
   );
 
   const setDifficultyPreference = (nextDifficulty: ClassicDifficulty) => {
@@ -271,6 +278,7 @@ export function ClassicGame({
     if (nextDifficulty === selectedDifficulty) return;
     completionGameKey.current = null;
     setShowCompletion(false);
+    setShowRitualGate(false);
     setDifficultyPreference(nextDifficulty);
     setIsLoadingGame(true);
     setSelectedDifficulty(nextDifficulty);
@@ -278,7 +286,6 @@ export function ClassicGame({
 
   useEffect(() => {
     if (
-      ritualCompletionGameKey.current === key ||
       completionGameKey.current !== key ||
       game?.status !== "solved" ||
       !game.completedAt
@@ -296,17 +303,6 @@ export function ClassicGame({
 
     return () => window.clearTimeout(timer);
   }, [game?.completedAt, game?.status]);
-
-  useEffect(() => {
-    if (!ritualGateActive) {
-      setRitualGateReady(false);
-      return;
-    }
-
-    const delay = ritualCompletionGameKey.current === key ? 2_900 : 0;
-    const timer = window.setTimeout(() => setRitualGateReady(true), delay);
-    return () => window.clearTimeout(timer);
-  }, [key, ritualGateActive]);
 
   const pick = async (model: PublicModelIndex) => {
     if (!challenge || busy || guessed.has(model.id) || game?.status === "solved") return;
@@ -343,7 +339,7 @@ export function ClassicGame({
 
       if (entry.isCorrect) completionGameKey.current = key;
 
-      const nextProgress = updateProgress((state) => {
+      updateProgress((state) => {
         const old = state.games[key];
         const games = {
           ...state.games,
@@ -359,16 +355,12 @@ export function ClassicGame({
         };
         const nextState = { ...state, games };
 
-        if (
-          entry.isCorrect &&
-          loadedDifficulty === "challenge" &&
-          hasCompletedChallengeRitual(nextState, challenge.date)
-        ) {
-          ritualCompletionGameKey.current = key;
-        }
-
         return {
           ...nextState,
+          preferences:
+            entry.isCorrect && category === "hardcore"
+              ? { ...nextState.preferences, innerCircleActive: false }
+              : nextState.preferences,
           stats: entry.isCorrect
             ? (() => {
                 const current = state.stats.classic;
@@ -398,28 +390,6 @@ export function ClassicGame({
             : state.stats,
         };
       });
-      if (
-        entry.isCorrect &&
-        loadedDifficulty === "challenge" &&
-        hasCompletedChallengeRitual(nextProgress, challenge.date) &&
-        user
-      ) {
-        void apiClient
-          .enableHardcoreAccess(nextProgress)
-          .then(() => {
-            updateProgress((state) => ({
-              ...state,
-              preferences: { ...state.preferences, hardcoreUnlocked: true },
-            }));
-          })
-          .catch((accessError: unknown) => {
-            setError(
-              accessError instanceof Error
-                ? accessError.message
-                : "Could not unlock Hardcore access.",
-            );
-          });
-      }
       setPendingGuess(null);
     } catch (e) {
       setPendingGuess(null);
@@ -427,6 +397,11 @@ export function ClassicGame({
     } finally {
       setBusy(false);
     }
+  };
+
+  const closeCompletion = () => {
+    setShowCompletion(false);
+    if (canEnterInnerCircle) setShowRitualGate(true);
   };
 
   if (error && !challenge) return <p className="notice">{error}</p>;
@@ -504,7 +479,7 @@ export function ClassicGame({
           ]}
         />
       )}
-      {game?.status === "solved" && ritualCompletionGameKey.current !== key && (
+      {game?.status === "solved" && (
         <div className="game-completion-action">
           <button className="button" onClick={() => setShowCompletion(true)} type="button">
             Show winning guess
@@ -521,11 +496,11 @@ export function ClassicGame({
       </button>
 
       <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
-      {ritualGateReady && <RitualGateDialog />}
+      {showRitualGate && <RitualGateDialog />}
       {challenge &&
         game?.status === "solved" &&
         showCompletion &&
-        ritualCompletionGameKey.current !== key && (
+        (
           <Suspense fallback={null}>
             <GameCompletedDialog
               date={challenge.date}
@@ -538,7 +513,7 @@ export function ClassicGame({
                   ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
                   : undefined
               }
-              onClose={() => setShowCompletion(false)}
+              onClose={closeCompletion}
               stats={{
                 currentStreak: progress.stats.classic.currentStreak,
                 bestStreak: progress.stats.classic.bestStreak,
