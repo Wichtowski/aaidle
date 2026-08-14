@@ -18,6 +18,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:reload": "node scripts/reload-database.mjs",
     "db:validate-seed": "node scripts/validate-model-data.mjs",
+    "emoji:validate": "node scripts/validate-emoji-game-data.mjs",
     "db:seed": "node scripts/seed.mjs",
     "dev:create-superadmin": "node scripts/create-local-superadmin.mjs",
     "dev:today-challenges": "node scripts/show-todays-challenges.mjs",

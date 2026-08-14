@@ -64,13 +64,13 @@ export default function Home() {
               Play Classic <FaArrowRight aria-hidden focusable="false" />
             </strong>
           </Link>
-          <Link className="game-mode-card game-mode-card--in-progress" href="/emoji">
-            <span>
-              <FaHourglassHalf aria-hidden focusable="false" /> In progress
-            </span>
+          <Link className="game-mode-card" href="/emoji">
+            <span>Available now</span>
             <h3>{emojiGame.name}</h3>
             <p>{emojiGame.summary}</p>
-            <strong>View game details</strong>
+            <strong>
+              Play Emoji <FaArrowRight aria-hidden focusable="false" />
+            </strong>
           </Link>
           <article className="game-mode-card game-mode-card--in-progress">
             <span>

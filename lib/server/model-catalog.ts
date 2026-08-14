@@ -96,6 +96,40 @@ export const eligibleModelIdsByDifficulty: Record<ClassicDifficulty, string[]> =
   hardcore: models.filter((model) => model.minPool <= 2).map((model) => model.id),
 };
 
+const familySlug = (value: string) =>
+  value
+    .toLocaleLowerCase("en-US")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+const catalogFamilyId = (model: CatalogModel) =>
+  model.family ? `${familySlug(model.provider ?? "Unknown")}-${familySlug(model.family)}` : null;
+
+export type PublicModelFamily = {
+  id: string;
+  name: string;
+  providerName: string;
+  representativeModelId: string;
+};
+
+export function publicModelFamilies(familyIds: readonly string[]): PublicModelFamily[] {
+  const requested = new Set(familyIds);
+  const byFamily = new Map<string, PublicModelFamily>();
+
+  for (const model of models) {
+    const id = catalogFamilyId(model);
+    if (!id || !requested.has(id) || byFamily.has(id)) continue;
+    byFamily.set(id, {
+      id,
+      name: model.family ?? "Unknown",
+      providerName: model.provider ?? "Unknown",
+      representativeModelId: model.id,
+    });
+  }
+
+  return familyIds.map((id) => byFamily.get(id)).filter((family): family is PublicModelFamily => Boolean(family));
+}
+
 const isInCategory = (model: CatalogModel, category: ClassicCategory) =>
   category === "hardcore" ||
   model.categories?.some(

@@ -69,6 +69,33 @@ export type ClassicGuessPayload = {
   globalCompletionCount: number | null;
 };
 
+export type EmojiGamePayload = {
+  challenge: {
+    id: string;
+    date: string;
+    mode: "emoji";
+    expiresAt: string;
+    initialEmoji: string[];
+    maximumEmoji: number;
+  };
+  families: Array<{
+    id: string;
+    name: string;
+    providerName: string;
+    representativeModelId: string;
+  }>;
+  globalCompletionCount: number;
+};
+
+export type EmojiGuessPayload = {
+  guess: {
+    family: { id: string; name: string; providerName: string };
+    isCorrect: boolean;
+    attemptNumber: number;
+  };
+  globalCompletionCount: number | null;
+};
+
 type ApiErrorPayload = { error?: { code?: string; message?: string } };
 
 export class ApiError extends Error {
@@ -211,6 +238,14 @@ class ApiClient {
     );
   }
 
+  removeAdminGameGuess(userId: string, gameKey: string, requestId: string) {
+    return this.request<{ user: AdminUserDetail }>(`/api/v1/admin/users/${encodeURIComponent(userId)}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameKey, requestId }),
+    });
+  }
+
   hardcoreSoundtrackSetting() {
     return this.request<{ url: string }>("/api/v1/admin/settings/hardcore-soundtrack", {
       cache: "no-store",
@@ -247,6 +282,28 @@ class ApiClient {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ guessedModelId, attemptNumber }),
       },
+    );
+  }
+
+  emojiGame(signal?: AbortSignal) {
+    return this.request<EmojiGamePayload>("/api/v1/games/emoji", { signal });
+  }
+
+  submitEmojiGuess(challengeId: string, guessedFamilyId: string, attemptNumber: number) {
+    return this.request<EmojiGuessPayload>(
+      `/api/v1/games/emoji/challenges/${challengeId}/guesses`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guessedFamilyId, attemptNumber }),
+      },
+    );
+  }
+
+  emojiHints(challengeId: string, count: number) {
+    return this.request<{ emoji: string[] }>(
+      `/api/v1/games/emoji/challenges/${challengeId}/hints?count=${count}`,
+      { cache: "no-store" },
     );
   }
 

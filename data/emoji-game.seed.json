@@ -1,0 +1,202 @@
+[
+  {
+    "familyId": "openai-gpt",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "generation", "emojiCandidates": ["✨", "🌱"] },
+          { "concept": "training", "emojiCandidates": ["🎓", "📚"] },
+          { "concept": "transformation", "emojiCandidates": ["🔄", "⚙️"] },
+          { "concept": "conversation", "emojiCandidates": ["💬", "🗣️"] },
+          { "concept": "intelligence", "emojiCandidates": ["🧠", "💡"] },
+          { "concept": "creation", "emojiCandidates": ["✍️", "🛠️"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "pretraining", "emojiCandidates": ["📖", "🏫"] },
+          { "concept": "generative", "emojiCandidates": ["✨", "🎨"] },
+          { "concept": "transformer", "emojiCandidates": ["🔀", "⚙️"] },
+          { "concept": "chat", "emojiCandidates": ["💬", "🗨️"] },
+          { "concept": "writing", "emojiCandidates": ["✍️", "📝"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧠", "💭"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "anthropic-claude",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "humanity", "emojiCandidates": ["🧑", "🤝"] },
+          { "concept": "helpfulness", "emojiCandidates": ["🛟", "🙋"] },
+          { "concept": "safety", "emojiCandidates": ["🛡️", "⚖️"] },
+          { "concept": "writing", "emojiCandidates": ["✍️", "📝"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧠", "💭"] },
+          { "concept": "conversation", "emojiCandidates": ["💬", "🗣️"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "assistant", "emojiCandidates": ["🤝", "🧭"] },
+          { "concept": "constitution", "emojiCandidates": ["📜", "⚖️"] },
+          { "concept": "care", "emojiCandidates": ["🫶", "🛟"] },
+          { "concept": "analysis", "emojiCandidates": ["🔍", "🧠"] },
+          { "concept": "language", "emojiCandidates": ["🗣️", "🔤"] },
+          { "concept": "knowledge", "emojiCandidates": ["📚", "💡"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "google-gemini",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "twins", "emojiCandidates": ["♊", "👯"] },
+          { "concept": "multimodality", "emojiCandidates": ["🖼️", "🎵"] },
+          { "concept": "search", "emojiCandidates": ["🔎", "🌐"] },
+          { "concept": "stars", "emojiCandidates": ["🌟", "🌌"] },
+          { "concept": "conversation", "emojiCandidates": ["💬", "🗣️"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧠", "🧩"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "constellation", "emojiCandidates": ["🌌", "✨"] },
+          { "concept": "pair", "emojiCandidates": ["👯", "🪞"] },
+          { "concept": "vision", "emojiCandidates": ["👁️", "🖼️"] },
+          { "concept": "audio", "emojiCandidates": ["🎵", "🎙️"] },
+          { "concept": "discovery", "emojiCandidates": ["🔍", "🧭"] },
+          { "concept": "thinking", "emojiCandidates": ["🧩", "💭"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "meta-llama",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "llama", "emojiCandidates": ["🦙", "🐫"] },
+          { "concept": "open", "emojiCandidates": ["🔓", "🌍"] },
+          { "concept": "community", "emojiCandidates": ["🤝", "👥"] },
+          { "concept": "mountains", "emojiCandidates": ["⛰️", "🏔️"] },
+          { "concept": "language", "emojiCandidates": ["🗣️", "🔤"] },
+          { "concept": "coding", "emojiCandidates": ["💻", "🧩"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "andes", "emojiCandidates": ["🏔️", "⛰️"] },
+          { "concept": "pack", "emojiCandidates": ["👥", "🤝"] },
+          { "concept": "weights", "emojiCandidates": ["⚖️", "📦"] },
+          { "concept": "local", "emojiCandidates": ["🏠", "💻"] },
+          { "concept": "instruction", "emojiCandidates": ["📜", "🧭"] },
+          { "concept": "chat", "emojiCandidates": ["💬", "🗨️"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "mistral-ai-mistral",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "strong-wind", "emojiCandidates": ["🌬️", "💨"] },
+          { "concept": "france", "emojiCandidates": ["🇫🇷", "🗼"] },
+          { "concept": "speed", "emojiCandidates": ["⚡", "🏎️"] },
+          { "concept": "open", "emojiCandidates": ["🔓", "🌍"] },
+          { "concept": "coding", "emojiCandidates": ["💻", "🧩"] },
+          { "concept": "language", "emojiCandidates": ["🗣️", "🔤"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "gust", "emojiCandidates": ["💨", "🍃"] },
+          { "concept": "europe", "emojiCandidates": ["🇪🇺", "🗼"] },
+          { "concept": "efficient", "emojiCandidates": ["⚡", "🪶"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧠", "🧩"] },
+          { "concept": "assistant", "emojiCandidates": ["🤝", "🛟"] },
+          { "concept": "creation", "emojiCandidates": ["✍️", "🛠️"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "deepseek-deepseek",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "depth", "emojiCandidates": ["🌊", "🕳️"] },
+          { "concept": "search", "emojiCandidates": ["🔎", "🧭"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧠", "🧩"] },
+          { "concept": "coding", "emojiCandidates": ["💻", "⌨️"] },
+          { "concept": "discovery", "emojiCandidates": ["🔍", "💡"] },
+          { "concept": "open", "emojiCandidates": ["🔓", "🌍"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "dive", "emojiCandidates": ["🤿", "🌊"] },
+          { "concept": "investigation", "emojiCandidates": ["🔍", "🕵️"] },
+          { "concept": "thinking", "emojiCandidates": ["💭", "🧠"] },
+          { "concept": "mathematics", "emojiCandidates": ["➗", "📐"] },
+          { "concept": "programming", "emojiCandidates": ["💻", "⚙️"] },
+          { "concept": "answer", "emojiCandidates": ["💡", "✅"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "xai-grok",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "understanding", "emojiCandidates": ["💡", "🧠"] },
+          { "concept": "space", "emojiCandidates": ["🚀", "🌌"] },
+          { "concept": "real-time", "emojiCandidates": ["⚡", "📡"] },
+          { "concept": "curiosity", "emojiCandidates": ["🔍", "🕵️"] },
+          { "concept": "humor", "emojiCandidates": ["😄", "🎭"] },
+          { "concept": "conversation", "emojiCandidates": ["💬", "🗣️"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "wit", "emojiCandidates": ["🎭", "😏"] },
+          { "concept": "comprehension", "emojiCandidates": ["🧠", "🧩"] },
+          { "concept": "social-feed", "emojiCandidates": ["📣", "🌐"] },
+          { "concept": "rocket", "emojiCandidates": ["🚀", "🛰️"] },
+          { "concept": "news", "emojiCandidates": ["📰", "📡"] },
+          { "concept": "research", "emojiCandidates": ["🔎", "🔍"] }
+        ]
+      }
+    ]
+  },
+  {
+    "familyId": "alibaba-qwen",
+    "variants": [
+      {
+        "slots": [
+          { "concept": "thousand-questions", "emojiCandidates": ["❓", "💭"] },
+          { "concept": "language", "emojiCandidates": ["🗣️", "🔤"] },
+          { "concept": "china", "emojiCandidates": ["🇨🇳", "🏮"] },
+          { "concept": "open", "emojiCandidates": ["🔓", "🌍"] },
+          { "concept": "coding", "emojiCandidates": ["💻", "⌨️"] },
+          { "concept": "multimodality", "emojiCandidates": ["🖼️", "🎵"] }
+        ]
+      },
+      {
+        "slots": [
+          { "concept": "question", "emojiCandidates": ["❓", "🗨️"] },
+          { "concept": "eastern-wisdom", "emojiCandidates": ["🏮", "📜"] },
+          { "concept": "cloud", "emojiCandidates": ["☁️", "🌐"] },
+          { "concept": "tools", "emojiCandidates": ["🛠️", "⚙️"] },
+          { "concept": "vision", "emojiCandidates": ["👁️", "🖼️"] },
+          { "concept": "reasoning", "emojiCandidates": ["🧩", "🧠"] }
+        ]
+      }
+    ]
+  }
+]

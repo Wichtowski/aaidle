@@ -1,45 +1,20 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { FaArrowLeft, FaHourglassHalf } from "react-icons/fa6";
-import { SiteNavbar } from "../components/ui/SiteNavbar";
-import { emojiGame } from "../../lib/domain/games/emoji/definition";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { EmojiGame } from "../components/game/EmojiGame";
 import { sessionCookieName } from "@/lib/auth/auth-config";
 import { userForSession } from "@/lib/auth/auth-service";
+import { emojiGameData } from "@/lib/domain/games/emoji/emoji-game-service";
 
 export const metadata: Metadata = {
-  title: "Emoji game coming soon",
-  description: "The aAIdle Emoji game is in development.",
-  robots: { index: false, follow: true },
+  title: "Emoji",
+  description: "Decode today’s AI model family from progressive emoji clues.",
+  alternates: { canonical: "/emoji" },
 };
 
 export default async function EmojiPage() {
   const session = (await cookies()).get(sessionCookieName)?.value ?? null;
   const user = await userForSession(session);
   if (user?.disabled_at) redirect("/account-disabled");
-  return (
-    <main className="page game-placeholder-page">
-      <SiteNavbar />
-      <section className="game-placeholder">
-        <p className="eyebrow">{emojiGame.name} game</p>
-        <div className="game-placeholder__status">
-          <FaHourglassHalf aria-hidden focusable="false" /> In progress
-        </div>
-        <h1>Emoji is on its way.</h1>
-        <p className="lede">{emojiGame.summary}</p>
-        <dl>
-          {emojiGame.details.map(([label, value]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-        <Link className="button game-placeholder__classic-link" href="/classic">
-          <FaArrowLeft aria-hidden focusable="false" /> Play Classic while you wait
-        </Link>
-      </section>
-    </main>
-  );
+  return <EmojiGame initialGame={await emojiGameData()} />;
 }

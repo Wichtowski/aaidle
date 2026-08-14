@@ -38,6 +38,7 @@ const comparison: ClassicComparison = {
   localExecution: "incorrect",
   release: "higher",
   contextWindowTokens: "unknown",
+  toolUse: "correct",
 };
 
 const hardcoreExcludedColumns = [
@@ -108,7 +109,7 @@ describe("Hardcore GuessRow", () => {
 
     const toolUseColumn = classicColumnsByCategory.hardcore.indexOf("toolUse");
     const toolUseCard = container.querySelectorAll(".comparison-card")[toolUseColumn];
-    expect(toolUseCard?.querySelector(".comparison--incorrect .comparison-card__value")?.textContent).toBe(
+    expect(toolUseCard?.querySelector(".comparison--correct .comparison-card__value")?.textContent).toBe(
       "N/A",
     );
   });

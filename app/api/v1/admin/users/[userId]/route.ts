@@ -11,6 +11,7 @@ import {
   isClassicDifficulty,
 } from "@/lib/domain/models/model-types";
 import { localProgressSchema } from "@/lib/storage/local-progress-schema";
+import { parseCloudProgress } from "@/lib/domain/players/cloud-progress";
 import { readRequestText } from "@/lib/validation/request-body";
 
 type UserDetailRow = {
@@ -60,6 +61,10 @@ const updateUserSchema = z
       });
     }
   });
+
+const removeGuessSchema = z
+  .object({ gameKey: z.string().min(1).max(300), requestId: z.string().uuid() })
+  .strict();
 
 function parseProgress(progressJson: string | null): unknown | null {
   if (!progressJson) return null;
@@ -262,5 +267,54 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
       return authError(code, "This request must come from the application.", 403);
     }
     return authError("INVALID_REQUEST", "Could not update this account.", 400);
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ userId: string }> }) {
+  try {
+    assertSameOrigin(request);
+    const admin = await adminForRequest(request);
+    if (!canManageAdministrators(admin.permission)) throw new Error("FORBIDDEN");
+    const { userId } = await params;
+    if (userId === admin.id) throw new Error("SELF_UPDATE");
+    const { gameKey, requestId } = removeGuessSchema.parse(JSON.parse(await readRequestText(request, 4_096)));
+    const DB = database();
+    const record = await DB.prepare("SELECT progress_json FROM user_progress WHERE user_id=?")
+      .bind(userId)
+      .first<{ progress_json: string }>();
+    if (!record) throw new Error("PROGRESS_NOT_FOUND");
+    const progress = localProgressSchema.parse(JSON.parse(record.progress_json));
+    const game = progress.games[gameKey];
+    if (!game) throw new Error("GAME_NOT_FOUND");
+    const guesses = game.guesses.filter((guess) => guess.requestId !== requestId);
+    if (guesses.length === game.guesses.length) throw new Error("GUESS_NOT_FOUND");
+    const solved = guesses.some((guess) => guess.isCorrect);
+    const nextProgress = parseCloudProgress({
+      ...progress,
+      games: {
+        ...progress.games,
+        [gameKey]: { ...game, guesses, status: solved ? "solved" : "in-progress", completedAt: solved ? game.completedAt : null },
+      },
+    });
+    await DB.prepare("UPDATE user_progress SET progress_json=?, updated_at=? WHERE user_id=?")
+      .bind(JSON.stringify(nextProgress), Date.now(), userId)
+      .run();
+    if (!solved) {
+      await DB.prepare("DELETE FROM user_challenge_completions WHERE user_id=? AND challenge_id=?")
+        .bind(userId, game.challengeId)
+        .run();
+    }
+    const user = await userDetail(userId);
+    return Response.json({ user }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INVALID_REQUEST";
+    if (code === "UNAUTHENTICATED") return authError(code, "Sign in to access admin tools.", 401);
+    if (code === "FORBIDDEN") return authError(code, "Only a super administrator can remove saved guesses.", 403);
+    if (code === "SELF_UPDATE") return authError(code, "You cannot remove guesses from your own account.", 400);
+    if (code === "PROGRESS_NOT_FOUND" || code === "GAME_NOT_FOUND" || code === "GUESS_NOT_FOUND") {
+      return authError(code, "The saved guess was not found.", 404);
+    }
+    if (code === "INVALID_ORIGIN") return authError(code, "This request must come from the application.", 403);
+    return authError("INVALID_REQUEST", "Could not remove the saved guess.", 400);
   }
 }

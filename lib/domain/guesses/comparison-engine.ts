@@ -14,17 +14,18 @@ const normalized = (value: string) =>
     .replace(/[\s_-]+/g, "-");
 const unknown = (value: string | null) => value != null && normalized(value) === "unknown";
 export function compareScalar(a: string | null, b: string | null): ScalarComparison {
-  if (a == null || b == null) return "unknown";
+  if (a == null || b == null) return a == null && b == null ? "correct" : "unknown";
   if (unknown(a) || unknown(b)) return unknown(a) && unknown(b) ? "correct" : "unknown";
 
   return normalized(a) === normalized(b) ? "correct" : "incorrect";
 }
 export function compareNullableBoolean(a: boolean | null, b: boolean | null): ScalarComparison {
-  return a == null || b == null ? "unknown" : a === b ? "correct" : "incorrect";
+  if (a == null || b == null) return a == null && b == null ? "correct" : "unknown";
+  return a === b ? "correct" : "incorrect";
 }
 export const compareEnum = compareScalar;
 export function compareSets(a: string[] | null, b: string[] | null): SetComparison {
-  if (!a?.length || !b?.length) return "unknown";
+  if (!a?.length || !b?.length) return !a?.length && !b?.length ? "correct" : "unknown";
   if (a.some(unknown) || b.some(unknown)) {
     return a.every(unknown) && b.every(unknown) ? "correct" : "unknown";
   }
@@ -35,13 +36,8 @@ export function compareSets(a: string[] | null, b: string[] | null): SetComparis
   return [...left].some((value) => right.has(value)) ? "partial" : "incorrect";
 }
 export function compareNumber(guess: number | null, answer: number | null): NumberComparison {
-  return guess == null || answer == null
-    ? "unknown"
-    : guess === answer
-      ? "correct"
-      : answer > guess
-        ? "higher"
-        : "lower";
+  if (guess == null || answer == null) return guess == null && answer == null ? "correct" : "unknown";
+  return guess === answer ? "correct" : answer > guess ? "higher" : "lower";
 }
 export const compareYear = compareNumber;
 const releaseQuarter = (model: ComparableModel) => {

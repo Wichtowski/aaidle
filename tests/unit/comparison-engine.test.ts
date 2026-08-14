@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   compareClassicModels,
+  compareNumber,
   compareNullableBoolean,
   compareScalar,
   compareSets,
@@ -30,6 +31,13 @@ describe("comparison engine", () => {
   it("returns partial and unknown correctly", () => {
     expect(compareSets(["coding"], ["coding", "vision"])).toBe("partial");
     expect(compareSets(null, ["coding"])).toBe("unknown");
+  });
+  it("treats mutual N/A values as a match", () => {
+    expect(compareScalar(null, null)).toBe("correct");
+    expect(compareSets(null, null)).toBe("correct");
+    expect(compareSets([], [])).toBe("correct");
+    expect(compareNullableBoolean(null, null)).toBe("correct");
+    expect(compareNumber(null, null)).toBe("correct");
   });
   it("treats unknown metadata as neutral and undisclosed metadata as a concrete value", () => {
     expect(compareSets(["undisclosed"], ["unknown"])).toBe("unknown");
