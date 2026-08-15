@@ -11,8 +11,8 @@ export default tseslint.config(
     files: ["app/**/*.{ts,tsx}", "lib/**/*.{ts,tsx}"],
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
-      "curly": ["error", "multi-line"],
-      "eqeqeq": ["error", "always", { null: "ignore" }],
+      curly: ["error", "multi-line"],
+      eqeqeq: ["error", "always", { null: "ignore" }],
       "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },

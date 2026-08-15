@@ -23,7 +23,9 @@ type UserSummaryRow = {
   completion_count: number;
 };
 
-function signInProviders(user: Pick<UserSummaryRow, "identity_providers"> & { password_hash?: string | null }) {
+function signInProviders(
+  user: Pick<UserSummaryRow, "identity_providers"> & { password_hash?: string | null },
+) {
   return [
     ...(user.password_hash ? ["password"] : []),
     ...(user.identity_providers?.split(",").filter(Boolean) ?? []),
@@ -107,7 +109,8 @@ export async function GET(request: Request) {
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "UNAUTHENTICATED") return authError(code, "Sign in to access admin tools.", 401);
-    if (code === "FORBIDDEN") return authError(code, "You do not have permission to access admin tools.", 403);
+    if (code === "FORBIDDEN")
+      return authError(code, "You do not have permission to access admin tools.", 403);
     return authError("INVALID_REQUEST", "Could not load users.", 400);
   }
 }

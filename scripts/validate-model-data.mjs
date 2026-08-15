@@ -22,20 +22,9 @@ const MODEL_CLASSES = new Set([
   "image_processing",
 ]);
 
-const ENTITY_TYPES = new Set([
-  "trained_model",
-  "model_family",
-  "architecture",
-  "algorithm",
-]);
+const ENTITY_TYPES = new Set(["trained_model", "model_family", "architecture", "algorithm"]);
 
-const WEIGHT_AVAILABILITY = new Set([
-  "open",
-  "closed",
-  "restricted",
-  "unknown",
-  "not-applicable",
-]);
+const WEIGHT_AVAILABILITY = new Set(["open", "closed", "restricted", "unknown", "not-applicable"]);
 
 const REASONING_SUPPORT = new Set(["no", "optional", "native"]);
 
@@ -49,24 +38,9 @@ const FOCUSED_CATEGORIES = new Set([
 ]);
 
 const CATEGORY_DETAIL_KEYS = {
-  "language-model": new Set([
-    "supportedLanguages",
-    "architecture",
-    "toolUse",
-    "multimodal",
-  ]),
-  "computer-vision": new Set([
-    "visionTasks",
-    "architecture",
-    "trainingDatasets",
-    "license",
-  ]),
-  nlp: new Set([
-    "nlpTasks",
-    "supportedLanguages",
-    "architecture",
-    "trainingDatasets",
-  ]),
+  "language-model": new Set(["supportedLanguages", "architecture", "toolUse", "multimodal"]),
+  "computer-vision": new Set(["visionTasks", "architecture", "trainingDatasets", "license"]),
+  nlp: new Set(["nlpTasks", "supportedLanguages", "architecture", "trainingDatasets"]),
   "object-detection": new Set([
     "detectionTypes",
     "architecture",
@@ -141,10 +115,7 @@ function isIsoDate(value) {
 
   const parsed = new Date(`${value}T00:00:00.000Z`);
 
-  return (
-    !Number.isNaN(parsed.getTime()) &&
-    parsed.toISOString().slice(0, 10) === value
-  );
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 function validateNullableString(value, field, id) {
@@ -164,21 +135,12 @@ function validateSlugArray(value, field, id, { allowEmpty = false } = {}) {
   const normalized = [];
 
   for (const item of value) {
-    assert(
-      isNonEmptyString(item),
-      `${field} contains a non-string/empty value: ${id}`,
-    );
-    assert(
-      isKebabCase(item),
-      `${field} must contain kebab-case slugs; got "${item}": ${id}`,
-    );
+    assert(isNonEmptyString(item), `${field} contains a non-string/empty value: ${id}`);
+    assert(isKebabCase(item), `${field} must contain kebab-case slugs; got "${item}": ${id}`);
     normalized.push(normalize(item));
   }
 
-  assert(
-    new Set(normalized).size === normalized.length,
-    `Duplicate value in ${field}: ${id}`,
-  );
+  assert(new Set(normalized).size === normalized.length, `Duplicate value in ${field}: ${id}`);
 }
 
 function validateStringArray(value, field, id, { allowEmpty = false } = {}) {
@@ -191,24 +153,15 @@ function validateStringArray(value, field, id, { allowEmpty = false } = {}) {
   const normalized = [];
 
   for (const item of value) {
-    assert(
-      isNonEmptyString(item),
-      `${field} contains a non-string/empty value: ${id}`,
-    );
+    assert(isNonEmptyString(item), `${field} contains a non-string/empty value: ${id}`);
     normalized.push(normalize(item));
   }
 
-  assert(
-    new Set(normalized).size === normalized.length,
-    `Duplicate value in ${field}: ${id}`,
-  );
+  assert(new Set(normalized).size === normalized.length, `Duplicate value in ${field}: ${id}`);
 }
 
 function validateNullableBoolean(value, field, id) {
-  assert(
-    value === null || typeof value === "boolean",
-    `${field} must be boolean or null: ${id}`,
-  );
+  assert(value === null || typeof value === "boolean", `${field} must be boolean or null: ${id}`);
 }
 
 function validateDetailShape(category, detail, id) {
@@ -236,18 +189,11 @@ function validateDetailShape(category, detail, id) {
         { allowEmpty: true },
       );
       if (detail.architecture !== undefined) {
-        validateSlugArray(
-          detail.architecture,
-          "categoryDetails.language-model.architecture",
-          id,
-          { allowEmpty: true },
-        );
+        validateSlugArray(detail.architecture, "categoryDetails.language-model.architecture", id, {
+          allowEmpty: true,
+        });
       }
-      validateNullableBoolean(
-        detail.toolUse,
-        "categoryDetails.language-model.toolUse",
-        id,
-      );
+      validateNullableBoolean(detail.toolUse, "categoryDetails.language-model.toolUse", id);
       assert(
         typeof detail.multimodal === "boolean",
         `categoryDetails.language-model.multimodal must be boolean: ${id}`,
@@ -255,62 +201,35 @@ function validateDetailShape(category, detail, id) {
       break;
 
     case "computer-vision":
-      validateSlugArray(
-        detail.visionTasks,
-        "categoryDetails.computer-vision.visionTasks",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.architecture,
-        "categoryDetails.computer-vision.architecture",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.visionTasks, "categoryDetails.computer-vision.visionTasks", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.architecture, "categoryDetails.computer-vision.architecture", id, {
+        allowEmpty: true,
+      });
       validateSlugArray(
         detail.trainingDatasets,
         "categoryDetails.computer-vision.trainingDatasets",
         id,
         { allowEmpty: true },
       );
-      validateNullableString(
-        detail.license,
-        "categoryDetails.computer-vision.license",
-        id,
-      );
+      validateNullableString(detail.license, "categoryDetails.computer-vision.license", id);
       if (detail.license !== null) {
-        assert(
-          isKebabCase(detail.license),
-          `CV license must be a kebab-case slug: ${id}`,
-        );
+        assert(isKebabCase(detail.license), `CV license must be a kebab-case slug: ${id}`);
       }
       break;
 
     case "nlp":
-      validateSlugArray(
-        detail.nlpTasks,
-        "categoryDetails.nlp.nlpTasks",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.supportedLanguages,
-        "categoryDetails.nlp.supportedLanguages",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.architecture,
-        "categoryDetails.nlp.architecture",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.trainingDatasets,
-        "categoryDetails.nlp.trainingDatasets",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.nlpTasks, "categoryDetails.nlp.nlpTasks", id, { allowEmpty: true });
+      validateSlugArray(detail.supportedLanguages, "categoryDetails.nlp.supportedLanguages", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.architecture, "categoryDetails.nlp.architecture", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.trainingDatasets, "categoryDetails.nlp.trainingDatasets", id, {
+        allowEmpty: true,
+      });
       break;
 
     case "object-detection":
@@ -320,12 +239,9 @@ function validateDetailShape(category, detail, id) {
         id,
         { allowEmpty: true },
       );
-      validateSlugArray(
-        detail.architecture,
-        "categoryDetails.object-detection.architecture",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.architecture, "categoryDetails.object-detection.architecture", id, {
+        allowEmpty: true,
+      });
       validateSlugArray(
         detail.trainingDatasets,
         "categoryDetails.object-detection.trainingDatasets",
@@ -340,55 +256,37 @@ function validateDetailShape(category, detail, id) {
       break;
 
     case "classical-ml":
-      validateSlugArray(
-        detail.algorithmTypes,
-        "categoryDetails.classical-ml.algorithmTypes",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.algorithmTypes, "categoryDetails.classical-ml.algorithmTypes", id, {
+        allowEmpty: true,
+      });
       validateSlugArray(
         detail.learningParadigms,
         "categoryDetails.classical-ml.learningParadigms",
         id,
         { allowEmpty: true },
       );
-      validateSlugArray(
-        detail.objectives,
-        "categoryDetails.classical-ml.objectives",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.featureTypes,
-        "categoryDetails.classical-ml.featureTypes",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.frameworks,
-        "categoryDetails.classical-ml.frameworks",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.objectives, "categoryDetails.classical-ml.objectives", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.featureTypes, "categoryDetails.classical-ml.featureTypes", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.frameworks, "categoryDetails.classical-ml.frameworks", id, {
+        allowEmpty: true,
+      });
       break;
 
     case "filters":
-      validateSlugArray(
-        detail.operationTypes,
-        "categoryDetails.filters.operationTypes",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.operationTypes, "categoryDetails.filters.operationTypes", id, {
+        allowEmpty: true,
+      });
       assert(
         typeof detail.kernelBased === "boolean",
         `categoryDetails.filters.kernelBased must be boolean: ${id}`,
       );
-      validateSlugArray(
-        detail.kernelSizes,
-        "categoryDetails.filters.kernelSizes",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.kernelSizes, "categoryDetails.filters.kernelSizes", id, {
+        allowEmpty: true,
+      });
       assert(
         ["linear", "non-linear", "mixed"].includes(detail.linearity),
         `categoryDetails.filters.linearity is invalid: ${id}`,
@@ -397,18 +295,12 @@ function validateDetailShape(category, detail, id) {
         typeof detail.requiresTraining === "boolean",
         `categoryDetails.filters.requiresTraining must be boolean: ${id}`,
       );
-      validateSlugArray(
-        detail.outputTypes,
-        "categoryDetails.filters.outputTypes",
-        id,
-        { allowEmpty: true },
-      );
-      validateSlugArray(
-        detail.frameworks,
-        "categoryDetails.filters.frameworks",
-        id,
-        { allowEmpty: true },
-      );
+      validateSlugArray(detail.outputTypes, "categoryDetails.filters.outputTypes", id, {
+        allowEmpty: true,
+      });
+      validateSlugArray(detail.frameworks, "categoryDetails.filters.frameworks", id, {
+        allowEmpty: true,
+      });
       break;
   }
 }
@@ -431,10 +323,7 @@ assert(Array.isArray(data), "Seed must be a JSON array");
 assert(data.length >= 30, "At least 30 catalogue entries are required");
 
 for (const model of data) {
-  assert(
-    model && typeof model === "object" && !Array.isArray(model),
-    "Invalid catalogue entry",
-  );
+  assert(model && typeof model === "object" && !Array.isArray(model), "Invalid catalogue entry");
 
   for (const field of REQUIRED_GENERAL_FIELDS) {
     assert(
@@ -444,20 +333,14 @@ for (const model of data) {
   }
 
   // Removed fields must stay removed.
-  assert(
-    !Object.hasOwn(model, "localExecution"),
-    `localExecution is deprecated: ${model.id}`,
-  );
+  assert(!Object.hasOwn(model, "localExecution"), `localExecution is deprecated: ${model.id}`);
   assert(
     !Object.hasOwn(model, "openWeights"),
     `openWeights is deprecated; use weightAvailability: ${model.id}`,
   );
 
   // Identity
-  assert(
-    typeof model.id === "string" && isKebabCase(model.id),
-    `Invalid id: ${String(model.id)}`,
-  );
+  assert(typeof model.id === "string" && isKebabCase(model.id), `Invalid id: ${String(model.id)}`);
   assert(isNonEmptyString(model.name), `Invalid name: ${model.id}`);
 
   assert(!ids.has(model.id), `Duplicate id: ${model.id}`);
@@ -478,9 +361,7 @@ for (const model of data) {
   );
 
   assert(
-    Number.isInteger(model.minPool) &&
-      model.minPool >= 0 &&
-      model.minPool <= 2,
+    Number.isInteger(model.minPool) && model.minPool >= 0 && model.minPool <= 2,
     `minPool must be 0, 1, or 2: ${model.id}`,
   );
 
@@ -512,20 +393,19 @@ for (const model of data) {
     );
     assert(
       model.categories.includes("language-model") &&
-        (model.reasoningSupport === "no" || ["decoder_llm", "multimodal"].includes(model.modelClass)),
+        (model.reasoningSupport === "no" ||
+          ["decoder_llm", "multimodal"].includes(model.modelClass)),
       `native/optional reasoning only belongs on generative language models: ${model.id}`,
     );
   }
 
   if (Object.hasOwn(model, "contextWindowTokens")) {
     assert(
-      Number.isInteger(model.contextWindowTokens) &&
-        model.contextWindowTokens > 0,
+      Number.isInteger(model.contextWindowTokens) && model.contextWindowTokens > 0,
       `contextWindowTokens must be a positive integer: ${model.id}`,
     );
     assert(
-      model.categories.includes("language-model") ||
-        model.categories.includes("nlp"),
+      model.categories.includes("language-model") || model.categories.includes("nlp"),
       `contextWindowTokens only belongs on language-model/nlp entries: ${model.id}`,
     );
   }
@@ -539,10 +419,7 @@ for (const model of data) {
   );
 
   for (const key of Object.keys(model.categoryDetails)) {
-    assert(
-      FOCUSED_CATEGORIES.has(key),
-      `Unsupported categoryDetails key "${key}": ${model.id}`,
-    );
+    assert(FOCUSED_CATEGORIES.has(key), `Unsupported categoryDetails key "${key}": ${model.id}`);
     assert(
       model.categories.includes(key),
       `categoryDetails.${key} exists but categories does not include ${key}: ${model.id}`,
@@ -598,10 +475,7 @@ const poolCounts = {
   hardcore: data.filter((m) => m.minPool <= 2).length,
 };
 
-assert(
-  poolCounts.hardcore === data.length,
-  `Hardcore must include the entire catalogue`,
-);
+assert(poolCounts.hardcore === data.length, `Hardcore must include the entire catalogue`);
 
 console.log(
   `Validated ${data.length} entries. ` +

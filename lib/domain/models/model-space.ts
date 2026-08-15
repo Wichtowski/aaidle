@@ -35,32 +35,76 @@ export function modelSpaceAxes(category: ClassicCategory): readonly ModelSpaceAx
     case "cv":
       return [
         { label: "Release year", value: releaseYear },
-        { label: "Vision-task breadth", value: (model) => count(model.categoryDetails?.["computer-vision"]?.visionTasks) + count(model.useCases) },
-        { label: "Architecture & data breadth", value: (model) => count(model.categoryDetails?.["computer-vision"]?.architecture) + count(model.categoryDetails?.["computer-vision"]?.trainingDatasets) },
+        {
+          label: "Vision-task breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["computer-vision"]?.visionTasks) + count(model.useCases),
+        },
+        {
+          label: "Architecture & data breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["computer-vision"]?.architecture) +
+            count(model.categoryDetails?.["computer-vision"]?.trainingDatasets),
+        },
       ];
     case "nlp":
       return [
         { label: "Release year", value: releaseYear },
-        { label: "Language & task breadth", value: (model) => count(model.categoryDetails?.nlp?.supportedLanguages) + count(model.categoryDetails?.nlp?.nlpTasks) },
-        { label: "Architecture & data breadth", value: (model) => count(model.categoryDetails?.nlp?.architecture) + count(model.categoryDetails?.nlp?.trainingDatasets) },
+        {
+          label: "Language & task breadth",
+          value: (model) =>
+            count(model.categoryDetails?.nlp?.supportedLanguages) +
+            count(model.categoryDetails?.nlp?.nlpTasks),
+        },
+        {
+          label: "Architecture & data breadth",
+          value: (model) =>
+            count(model.categoryDetails?.nlp?.architecture) +
+            count(model.categoryDetails?.nlp?.trainingDatasets),
+        },
       ];
     case "object-detection":
       return [
         { label: "Release year", value: releaseYear },
-        { label: "Detection breadth", value: (model) => count(model.categoryDetails?.["object-detection"]?.detectionTypes) + count(model.useCases) },
-        { label: "Architecture & data breadth", value: (model) => count(model.categoryDetails?.["object-detection"]?.architecture) + count(model.categoryDetails?.["object-detection"]?.trainingDatasets) },
+        {
+          label: "Detection breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["object-detection"]?.detectionTypes) +
+            count(model.useCases),
+        },
+        {
+          label: "Architecture & data breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["object-detection"]?.architecture) +
+            count(model.categoryDetails?.["object-detection"]?.trainingDatasets),
+        },
       ];
     case "classical-ml":
       return [
         { label: "Release year", value: releaseYear },
-        { label: "Algorithm breadth", value: (model) => count(model.categoryDetails?.["classical-ml"]?.algorithmTypes) + count(model.categoryDetails?.["classical-ml"]?.learningParadigms) },
-        { label: "Objective & feature breadth", value: (model) => count(model.categoryDetails?.["classical-ml"]?.objectives) + count(model.categoryDetails?.["classical-ml"]?.featureTypes) },
+        {
+          label: "Algorithm breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["classical-ml"]?.algorithmTypes) +
+            count(model.categoryDetails?.["classical-ml"]?.learningParadigms),
+        },
+        {
+          label: "Objective & feature breadth",
+          value: (model) =>
+            count(model.categoryDetails?.["classical-ml"]?.objectives) +
+            count(model.categoryDetails?.["classical-ml"]?.featureTypes),
+        },
       ];
     case "filters":
       return [
         { label: "Release year", value: releaseYear },
         { label: "Kernel scale", value: kernelScale },
-        { label: "Operation & output breadth", value: (model) => count(model.categoryDetails?.filters?.operationTypes) + count(model.categoryDetails?.filters?.outputTypes) },
+        {
+          label: "Operation & output breadth",
+          value: (model) =>
+            count(model.categoryDetails?.filters?.operationTypes) +
+            count(model.categoryDetails?.filters?.outputTypes),
+        },
       ];
     case "hardcore":
       return [

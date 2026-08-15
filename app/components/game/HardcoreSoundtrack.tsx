@@ -14,7 +14,9 @@ type SoundCloudWidget = {
 };
 
 type SoundCloudWidgetApi = {
-  Widget: ((element: HTMLIFrameElement) => SoundCloudWidget) & { Events: { READY: string; PLAY: string } };
+  Widget: ((element: HTMLIFrameElement) => SoundCloudWidget) & {
+    Events: { READY: string; PLAY: string };
+  };
 };
 
 declare global {

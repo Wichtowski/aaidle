@@ -6,7 +6,8 @@ import { emojiGame } from "../lib/domain/games/emoji/definition";
 
 export const metadata: Metadata = {
   title: "Daily AI Model Guessing Game",
-  description: "Play today’s AI model guessing game. Use clues about providers, capabilities, context windows, and more to identify the model.",
+  description:
+    "Play today’s AI model guessing game. Use clues about providers, capabilities, context windows, and more to identify the model.",
   alternates: { canonical: "/" },
   openGraph: {
     url: "/",
@@ -19,7 +20,8 @@ const gameSchema = {
   "@context": "https://schema.org",
   "@type": "VideoGame",
   name: "aAIdle",
-  description: "A daily AI model guessing game where players compare clues to identify the featured model.",
+  description:
+    "A daily AI model guessing game where players compare clues to identify the featured model.",
   url: "https://aaidle.com",
   applicationCategory: "Game",
   genre: ["Puzzle", "Educational"],
@@ -64,13 +66,13 @@ export default function Home() {
               Play Classic <FaArrowRight aria-hidden focusable="false" />
             </strong>
           </Link>
-          <Link className="game-mode-card game-mode-card--in-progress" href="/emoji">
-            <span>
-              <FaHourglassHalf aria-hidden focusable="false" /> In progress
-            </span>
+          <Link className="game-mode-card" href="/emoji">
+            <span>Available now</span>
             <h3>{emojiGame.name}</h3>
             <p>{emojiGame.summary}</p>
-            <strong>View game details</strong>
+            <strong>
+              Play Emoji <FaArrowRight aria-hidden focusable="false" />
+            </strong>
           </Link>
           <article className="game-mode-card game-mode-card--in-progress">
             <span>

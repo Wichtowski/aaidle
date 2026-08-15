@@ -41,8 +41,7 @@ export async function isInnerCircleActive(userId: string) {
 
 export async function leaveInnerCircle(userId: string) {
   const DB = database();
-  const progressRecord = await DB
-    .prepare("SELECT progress_json FROM user_progress WHERE user_id=?")
+  const progressRecord = await DB.prepare("SELECT progress_json FROM user_progress WHERE user_id=?")
     .bind(userId)
     .first<{ progress_json: string }>();
   if (!progressRecord) return;
@@ -54,8 +53,7 @@ export async function leaveInnerCircle(userId: string) {
       ...progress.data,
       preferences: { ...progress.data.preferences, innerCircleActive: false },
     };
-    await DB
-      .prepare("UPDATE user_progress SET progress_json=?, updated_at=? WHERE user_id=?")
+    await DB.prepare("UPDATE user_progress SET progress_json=?, updated_at=? WHERE user_id=?")
       .bind(JSON.stringify(nextProgress), Date.now(), userId)
       .run();
   } catch {
@@ -65,9 +63,7 @@ export async function leaveInnerCircle(userId: string) {
 
 export async function grantHardcoreAccess(userId: string) {
   await database()
-    .prepare(
-      "INSERT OR IGNORE INTO user_hardcore_access (user_id, unlocked_at) VALUES (?, ?)",
-    )
+    .prepare("INSERT OR IGNORE INTO user_hardcore_access (user_id, unlocked_at) VALUES (?, ?)")
     .bind(userId, Date.now())
     .run();
 }

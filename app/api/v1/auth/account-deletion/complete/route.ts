@@ -12,7 +12,8 @@ export async function POST(request: Request) {
     }
 
     const deleted = await deleteAccountWithToken(token);
-    if (!deleted) return authError("INVALID_TOKEN", "This deletion link is invalid or has expired.", 400);
+    if (!deleted)
+      return authError("INVALID_TOKEN", "This deletion link is invalid or has expired.", 400);
 
     const headers = new Headers({ "Cache-Control": "no-store" });
     headers.append("Set-Cookie", clearCookie(accountDeletionCookieName));

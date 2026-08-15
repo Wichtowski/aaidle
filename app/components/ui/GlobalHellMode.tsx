@@ -18,9 +18,8 @@ export function GlobalHellMode() {
   const progress = useLocalProgress();
   const ready = useLocalProgressReady();
   const [appearanceEnabled, setAppearanceEnabled] = useState<boolean | null>(null);
-  const enabled = appearanceEnabled ?? (
-    progress.preferences.hardcoreUnlocked && progress.preferences.hellMode
-  );
+  const enabled =
+    appearanceEnabled ?? (progress.preferences.hardcoreUnlocked && progress.preferences.hellMode);
 
   useLayoutEffect(() => {
     setAppearanceEnabled(savedHellMode());

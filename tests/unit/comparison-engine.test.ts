@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   compareClassicModels,
+  compareNumber,
   compareNullableBoolean,
   compareScalar,
   compareSets,
@@ -31,6 +32,13 @@ describe("comparison engine", () => {
     expect(compareSets(["coding"], ["coding", "vision"])).toBe("partial");
     expect(compareSets(null, ["coding"])).toBe("unknown");
   });
+  it("treats mutual N/A values as a match", () => {
+    expect(compareScalar(null, null)).toBe("correct");
+    expect(compareSets(null, null)).toBe("correct");
+    expect(compareSets([], [])).toBe("correct");
+    expect(compareNullableBoolean(null, null)).toBe("correct");
+    expect(compareNumber(null, null)).toBe("correct");
+  });
   it("treats unknown metadata as neutral and undisclosed metadata as a concrete value", () => {
     expect(compareSets(["undisclosed"], ["unknown"])).toBe("unknown");
     expect(compareSets(["undisclosed"], ["imagenet"])).toBe("incorrect");
@@ -44,7 +52,13 @@ describe("comparison engine", () => {
     expect(compareNullableBoolean(null, false)).toBe("unknown");
   });
   it("reports release direction by year and quarter", () => {
-    const answer = { ...base, id: "b", releaseYear: 2024, releaseDate: "2024-10-01", contextWindowTokens: 64000 };
+    const answer = {
+      ...base,
+      id: "b",
+      releaseYear: 2024,
+      releaseDate: "2024-10-01",
+      contextWindowTokens: 64000,
+    };
     const result = compareClassicModels(base, answer);
     expect(result.release).toBe("higher");
     expect(result.contextWindowTokens).toBe("lower");

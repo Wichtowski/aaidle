@@ -17,7 +17,10 @@ type PublicClassicGame = PublicClassicGameBase & {
 let cachedDate: string | null = null;
 const gamePayloads = new Map<string, Promise<PublicClassicGameBase>>();
 
-export async function classicGameData(category: ClassicCategory, difficulty: ClassicDifficulty): Promise<PublicClassicGame> {
+export async function classicGameData(
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+): Promise<PublicClassicGame> {
   const date = utcDate();
   if (cachedDate !== date) {
     cachedDate = date;
@@ -40,14 +43,20 @@ export async function classicGameData(category: ClassicCategory, difficulty: Cla
 
   try {
     const game = await payload;
-    return { ...game, globalCompletionCount: await globalClassicCompletionCount(game.challenge.id) };
+    return {
+      ...game,
+      globalCompletionCount: await globalClassicCompletionCount(game.challenge.id),
+    };
   } catch (error) {
     gamePayloads.delete(key);
     throw error;
   }
 }
 
-export async function classicGameResponse(category: ClassicCategory, difficulty: ClassicDifficulty): Promise<Response> {
+export async function classicGameResponse(
+  category: ClassicCategory,
+  difficulty: ClassicDifficulty,
+): Promise<Response> {
   try {
     return Response.json(await classicGameData(category, difficulty), {
       headers: {

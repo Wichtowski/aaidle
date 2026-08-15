@@ -90,8 +90,13 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
     toolUse: language?.toolUse,
     multimodal: language?.multimodal,
     visionTasks: vision?.visionTasks,
-    architecture: language?.architecture ?? vision?.architecture ?? nlp?.architecture ?? detection?.architecture,
-    trainingDatasets: vision?.trainingDatasets ?? nlp?.trainingDatasets ?? detection?.trainingDatasets,
+    architecture:
+      language?.architecture ??
+      vision?.architecture ??
+      nlp?.architecture ??
+      detection?.architecture,
+    trainingDatasets:
+      vision?.trainingDatasets ?? nlp?.trainingDatasets ?? detection?.trainingDatasets,
     license: vision?.license,
     nlpTasks: nlp?.nlpTasks,
     detectionTypes: detection?.detectionTypes,
@@ -233,13 +238,43 @@ export function GuessRow({
       ),
     },
     reasoningSupport: { status: comparison.reasoningSupport, value: label(model.reasoningSupport) },
-    weightAvailability: { status: comparison.weightAvailability, value: label(model.weightAvailability) },
+    weightAvailability: {
+      status: comparison.weightAvailability,
+      value: label(model.weightAvailability),
+    },
     release: { status: comparison.release, value: yq(model) },
     contextWindowTokens: {
       status: comparison.contextWindowTokens,
       value: contextWindow(model.contextWindowTokens),
     },
-    ...Object.fromEntries(["supportedLanguages", "toolUse", "multimodal", "visionTasks", "architecture", "trainingDatasets", "license", "nlpTasks", "detectionTypes", "realTimeCapable", "algorithmTypes", "learningParadigms", "objectives", "featureTypes", "frameworks", "operationTypes", "kernelBased", "kernelSizes", "linearity", "requiresTraining", "outputTypes"].map((field) => [field, { status: comparison[field] ?? "unknown", value: categoryValue(model, field) }])),
+    ...Object.fromEntries(
+      [
+        "supportedLanguages",
+        "toolUse",
+        "multimodal",
+        "visionTasks",
+        "architecture",
+        "trainingDatasets",
+        "license",
+        "nlpTasks",
+        "detectionTypes",
+        "realTimeCapable",
+        "algorithmTypes",
+        "learningParadigms",
+        "objectives",
+        "featureTypes",
+        "frameworks",
+        "operationTypes",
+        "kernelBased",
+        "kernelSizes",
+        "linearity",
+        "requiresTraining",
+        "outputTypes",
+      ].map((field) => [
+        field,
+        { status: comparison[field] ?? "unknown", value: categoryValue(model, field) },
+      ]),
+    ),
   };
 
   if (hardcore) {
@@ -282,18 +317,18 @@ export function GuessRow({
           {columns.map((column, index) => {
             const field = fields[column];
             return (
-            <ComparisonCell
-              animate={animate}
-              delay={index * 125}
-              key={column}
-              revealed={revealed}
-              status={field.status}
-              hardcore={hardcore}
-              heading={classicColumnHeadings[column]}
-              tooltip={field.tooltip}
-            >
-              {field.value}
-            </ComparisonCell>
+              <ComparisonCell
+                animate={animate}
+                delay={index * 125}
+                key={column}
+                revealed={revealed}
+                status={field.status}
+                hardcore={hardcore}
+                heading={classicColumnHeadings[column]}
+                tooltip={field.tooltip}
+              >
+                {field.value}
+              </ComparisonCell>
             );
           })}
         </div>

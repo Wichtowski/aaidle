@@ -68,7 +68,10 @@ export function CompletionTrajectory({
     return { ...guess, alignment, x, y };
   });
   const path = points.map((point) => `${point.x},${point.y}`).join(" ");
-  const bestPriorAlignment = Math.max(0, ...points.filter((point) => !point.isCorrect).map((point) => point.alignment));
+  const bestPriorAlignment = Math.max(
+    0,
+    ...points.filter((point) => !point.isCorrect).map((point) => point.alignment),
+  );
   const answer = guesses.find((guess) => guess.isCorrect)?.model;
 
   return (
@@ -78,8 +81,14 @@ export function CompletionTrajectory({
         <p>Each point measures how closely that guess matched the answer’s revealed clues.</p>
       </div>
       <div className="completed-trajectory__metrics" aria-label="Trajectory summary">
-        <span><strong>{bestPriorAlignment}%</strong> best match before winning</span>
-        {answer && <span><strong>100%</strong> final answer: {answer.name}</span>}
+        <span>
+          <strong>{bestPriorAlignment}%</strong> best match before winning
+        </span>
+        {answer && (
+          <span>
+            <strong>100%</strong> final answer: {answer.name}
+          </span>
+        )}
       </div>
       <svg
         aria-label={`Your clue-alignment trajectory across ${guesses.length} guesses`}
@@ -98,7 +107,9 @@ export function CompletionTrajectory({
           return (
             <g className="completed-trajectory__grid" key={value}>
               <line x1={plot.left} x2={width - plot.right} y1={y} y2={y} />
-              <text x={plot.left - 10} y={y + 4}>{value}%</text>
+              <text x={plot.left - 10} y={y + 4}>
+                {value}%
+              </text>
             </g>
           );
         })}
@@ -138,16 +149,41 @@ export function CompletionTrajectory({
           </g>
         ))}
         {points.map((point) => (
-          <text className="completed-trajectory__attempt-label" key={point.attemptNumber} textAnchor="middle" x={point.x} y={height - 25}>
+          <text
+            className="completed-trajectory__attempt-label"
+            key={point.attemptNumber}
+            textAnchor="middle"
+            x={point.x}
+            y={height - 25}
+          >
             {point.isCorrect ? "Win" : `Guess ${point.attemptNumber}`}
           </text>
         ))}
-        <text className="completed-trajectory__axis-label" x={width / 2} textAnchor="middle" y={height - 7}>Your attempts</text>
-        <text className="completed-trajectory__axis-label" transform="rotate(-90 15 185)" x="15" textAnchor="middle" y="185">Clue alignment</text>
+        <text
+          className="completed-trajectory__axis-label"
+          x={width / 2}
+          textAnchor="middle"
+          y={height - 7}
+        >
+          Your attempts
+        </text>
+        <text
+          className="completed-trajectory__axis-label"
+          transform="rotate(-90 15 185)"
+          x="15"
+          textAnchor="middle"
+          y="185"
+        >
+          Clue alignment
+        </text>
       </svg>
       <div className="completed-trajectory__legend">
-        <span><i data-kind="guess" /> Your guesses</span>
-        <span><i data-kind="answer" /> Winning guess</span>
+        <span>
+          <i data-kind="guess" /> Your guesses
+        </span>
+        <span>
+          <i data-kind="answer" /> Winning guess
+        </span>
       </div>
     </section>
   );

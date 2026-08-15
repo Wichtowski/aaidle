@@ -14,7 +14,9 @@ export default function LoginPage() {
       <section className="login">
         <p className="eyebrow">Your aAIdle account</p>
         <h1>Keep your progress.</h1>
-        <p className="lede">Create your aAIdle profile for account features and future game modes.</p>
+        <p className="lede">
+          Create your aAIdle profile for account features and future game modes.
+        </p>
         <LoginForm />
       </section>
     </main>

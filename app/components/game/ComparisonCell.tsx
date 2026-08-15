@@ -60,11 +60,7 @@ export function ComparisonCell({
           {DirectionIcon ? (
             <div className="comparison-card__directional-value">
               <div className="comparison-card__value">{children ?? "N/A"}</div>
-              <DirectionIcon
-                aria-hidden
-                className="comparison-card__direction"
-                focusable="false"
-              />
+              <DirectionIcon aria-hidden className="comparison-card__direction" focusable="false" />
             </div>
           ) : (
             <div

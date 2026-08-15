@@ -33,7 +33,10 @@ export async function POST(request: Request) {
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "ACCOUNT_EXISTS") {
-      return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+      return Response.json(
+        { accepted: true },
+        { status: 202, headers: { "Cache-Control": "no-store" } },
+      );
     }
     if (code === "AUTH_NOT_CONFIGURED") {
       return authError(code, "Account sign-in is not configured yet.", 503);
@@ -41,6 +44,10 @@ export async function POST(request: Request) {
     if (code === "EMAIL_DELIVERY_NOT_CONFIGURED" || code === "EMAIL_DELIVERY_FAILED") {
       return authError(code, "We could not send the activation email. Try again later.", 503);
     }
-    return authError("INVALID_REQUEST", "Use a valid email and a password of at least 12 characters.", 400);
+    return authError(
+      "INVALID_REQUEST",
+      "Use a valid email and a password of at least 12 characters.",
+      400,
+    );
   }
 }

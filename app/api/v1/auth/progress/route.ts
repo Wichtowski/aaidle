@@ -27,10 +27,7 @@ export async function GET(request: Request) {
     if (progress?.preferences.hardcoreUnlocked) {
       await grantHardcoreAccess(user.id);
     }
-    return Response.json(
-      { progress },
-      { headers: { "Cache-Control": "no-store" } },
-    );
+    return Response.json({ progress }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "UNAUTHENTICATED") return authError(code, "Sign in to sync your progress.", 401);

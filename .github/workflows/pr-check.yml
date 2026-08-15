@@ -47,7 +47,7 @@ jobs:
           PR_BRANCH: ${{ github.head_ref }}
         run: |
           set -euo pipefail
-          pnpm format
+          pnpm format --fix
           if git diff --quiet; then
             echo "formatted=false" >> "$GITHUB_OUTPUT"
             exit 0

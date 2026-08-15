@@ -35,6 +35,7 @@ export default function AdminPage() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatingUser, setUpdatingUser] = useState(false);
+  const [removingGuessId, setRemovingGuessId] = useState<string | null>(null);
   const detailRequestId = useRef(0);
 
   useEffect(() => {
@@ -119,6 +120,23 @@ export default function AdminPage() {
         );
       })
       .finally(() => setUpdatingUser(false));
+  };
+
+  const removeSelectedUserGuess = (gameKey: string, requestId: string) => {
+    if (!selectedUser) return;
+    setRemovingGuessId(requestId);
+    setError(null);
+    void apiClient
+      .removeAdminGameGuess(selectedUser.id, gameKey, requestId)
+      .then(({ user: updatedUser }) => setSelectedUser(updatedUser))
+      .catch((requestError: unknown) => {
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : "Could not remove the saved guess.",
+        );
+      })
+      .finally(() => setRemovingGuessId(null));
   };
 
   if (loading || !user || user.disabled || !canManageUsers(user.permission)) return null;
@@ -232,6 +250,10 @@ export default function AdminPage() {
               canManageAccount={canManageAdministrators(user.permission)}
               currentUserId={user.id}
               onUpdate={updateSelectedUser}
+              onRemoveGuess={
+                canManageAdministrators(user.permission) ? removeSelectedUserGuess : undefined
+              }
+              removingGuessId={removingGuessId}
               updating={updatingUser}
               user={selectedUser}
             />
@@ -239,7 +261,6 @@ export default function AdminPage() {
         </aside>
       </section>
       {canManageAdministrators(user.permission) && <HardcoreSoundtrackSettings />}
-
     </main>
   );
 }
@@ -334,6 +355,8 @@ function UserDetail({
   currentUserId,
   canManageAccount,
   onUpdate,
+  onRemoveGuess,
+  removingGuessId,
   updating,
 }: {
   user: AdminUserDetail;
@@ -344,6 +367,8 @@ function UserDetail({
     disabled?: boolean;
     disabledReason?: string;
   }) => void;
+  onRemoveGuess?: (gameKey: string, requestId: string) => void;
+  removingGuessId: string | null;
   updating: boolean;
 }) {
   const [disabledReason, setDisabledReason] = useState("");
@@ -452,6 +477,8 @@ function UserDetail({
             progress={user.progress}
             trajectoryReferenceModels={user.trajectoryReferenceModels}
             trajectoryTargets={user.trajectoryTargets}
+            onRemoveGuess={onRemoveGuess}
+            removingGuessId={removingGuessId}
           />
         ) : (
           <p className="admin-empty">No progress has been synced from this account.</p>

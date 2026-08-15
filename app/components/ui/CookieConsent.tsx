@@ -50,13 +50,13 @@ export function CookieConsent() {
         <p className="eyebrow">Your privacy</p>
         <h2 id="cookie-consent-title">Cookies, with no escape hatch</h2>
         <p id="cookie-consent-description">
-          We use essential cookies to keep the site working, remember this choice, and keep signed-in
-          sessions secure. Your game progress stays in your browser&apos;s local storage. We do not use
-          advertising or third-party tracking cookies.
+          We use essential cookies to keep the site working, remember this choice, and keep
+          signed-in sessions secure. Your game progress stays in your browser&apos;s local storage.
+          We do not use advertising or third-party tracking cookies.
         </p>
         <p>
-          Choose how you want to proceed. You can find the full, less exciting version in our Cookies
-          &amp; Privacy page after making your choice.
+          Choose how you want to proceed. You can find the full, less exciting version in our
+          Cookies &amp; Privacy page after making your choice.
         </p>
         <div className="cookie-consent__actions">
           <button className="button" onClick={() => choose("essential")}>

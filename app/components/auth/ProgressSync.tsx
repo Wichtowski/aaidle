@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { apiClient } from "../../../lib/api/client";
 import { useLocalProgress, useLocalProgressReady } from "../../../lib/storage/use-local-progress";
-import { getSnapshot, replaceProgress, startCloudProgress } from "../../../lib/storage/local-progress-store";
+import {
+  getSnapshot,
+  replaceProgress,
+  startCloudProgress,
+} from "../../../lib/storage/local-progress-store";
 import { mergeCloudProgress } from "../../../lib/domain/players/cloud-progress";
 import { useAuth } from "./useAuth";
 
@@ -44,7 +48,8 @@ function AuthenticatedProgressSync() {
         setCloudReady(true);
       })
       .catch(() => {
-        if (!cancelled) retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+        if (!cancelled)
+          retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
       });
 
     return () => {

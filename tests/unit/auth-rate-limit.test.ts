@@ -10,7 +10,8 @@ afterEach(() => {
   if (originalDatabasePath === undefined) delete process.env.DATABASE_PATH;
   else process.env.DATABASE_PATH = originalDatabasePath;
   vi.resetModules();
-  for (const directory of temporaryDirectories.splice(0)) rmSync(directory, { force: true, recursive: true });
+  for (const directory of temporaryDirectories.splice(0))
+    rmSync(directory, { force: true, recursive: true });
 });
 
 describe("authentication rate limits", () => {

@@ -27,9 +27,12 @@ export function LoginForm() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has("activated")) setToast({ message: "Your account is active. You can now sign in.", variant: "success" });
-    if (params.get("error") === "activation") setToast({ message: "That activation link is invalid or expired.", variant: "error" });
-    if (params.get("error") === "reset-link") setToast({ message: "That password reset link is invalid or expired.", variant: "error" });
+    if (params.has("activated"))
+      setToast({ message: "Your account is active. You can now sign in.", variant: "success" });
+    if (params.get("error") === "activation")
+      setToast({ message: "That activation link is invalid or expired.", variant: "error" });
+    if (params.get("error") === "reset-link")
+      setToast({ message: "That password reset link is invalid or expired.", variant: "error" });
   }, []);
 
   const sendEmailRequest = async (
@@ -46,7 +49,10 @@ export function LoginForm() {
       if (activationUrl) setNotice("Activate your local account to complete registration.");
       else setToast({ message: successMessage, variant: "success" });
     } catch (error) {
-      setToast({ message: error instanceof Error ? error.message : "Could not send the email.", variant: "error" });
+      setToast({
+        message: error instanceof Error ? error.message : "Could not send the email.",
+        variant: "error",
+      });
     } finally {
       setBusy(false);
     }
@@ -67,15 +73,20 @@ export function LoginForm() {
         const { activationUrl } = await apiClient.register(email, password);
         setLocalActivationUrl(activationUrl ?? null);
         if (activationUrl) setNotice("Activate your local account to complete registration.");
-        else setToast({ message: "Check your inbox to activate your account.", variant: "success" });
+        else
+          setToast({ message: "Check your inbox to activate your account.", variant: "success" });
         return;
       }
       const { user: signedInUser } = await apiClient.signInWithPassword(email, password);
       setAuthenticatedUser(signedInUser);
       window.location.assign("/profile");
     } catch (error) {
-      if (mode === "sign-in") setSignInErrorCode(error instanceof ApiError ? error.code ?? "UNKNOWN" : "UNKNOWN");
-      setToast({ message: error instanceof Error ? error.message : "Could not sign in.", variant: "error" });
+      if (mode === "sign-in")
+        setSignInErrorCode(error instanceof ApiError ? (error.code ?? "UNKNOWN") : "UNKNOWN");
+      setToast({
+        message: error instanceof Error ? error.message : "Could not sign in.",
+        variant: "error",
+      });
     } finally {
       setBusy(false);
     }
@@ -83,10 +94,12 @@ export function LoginForm() {
 
   return (
     <div className="auth-card">
-      <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
-      {user && !user.emailVerified && user.email && (
-        <ActivationPrompt email={user.email} />
-      )}
+      <Toast
+        message={toast?.message ?? null}
+        variant={toast?.variant}
+        onDismiss={() => setToast(null)}
+      />
+      {user && !user.emailVerified && user.email && <ActivationPrompt email={user.email} />}
       <div className="auth-card__providers">
         <a className="button" href="/api/v1/auth/oauth/github">
           <FaGithub aria-hidden="true" /> Continue with GitHub
@@ -147,12 +160,18 @@ export function LoginForm() {
                 value={confirmPassword}
               />
               <button
-                aria-label={confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"}
+                aria-label={
+                  confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"
+                }
                 className="password-input__toggle"
                 onClick={() => setConfirmPasswordVisible((visible) => !visible)}
                 type="button"
               >
-                {confirmPasswordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+                {confirmPasswordVisible ? (
+                  <FaEyeSlash aria-hidden="true" />
+                ) : (
+                  <FaEye aria-hidden="true" />
+                )}
               </button>
             </span>
           </label>
@@ -194,7 +213,11 @@ export function LoginForm() {
       >
         {mode === "sign-in" ? "Need an account? Create one" : "Already have an account? Sign in"}
       </button>
-      {notice && <p aria-live="polite" className="auth-card__notice">{notice}</p>}
+      {notice && (
+        <p aria-live="polite" className="auth-card__notice">
+          {notice}
+        </p>
+      )}
       {localActivationUrl && (
         <a className="auth-card__local-link" href={localActivationUrl}>
           Activate local account

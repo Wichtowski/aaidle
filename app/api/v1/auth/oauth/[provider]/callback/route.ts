@@ -1,4 +1,9 @@
-import { applicationOrigin, oauthStateCookieName, sessionCookieName, sessionMaxAgeSeconds } from "@/lib/auth/auth-config";
+import {
+  applicationOrigin,
+  oauthStateCookieName,
+  sessionCookieName,
+  sessionMaxAgeSeconds,
+} from "@/lib/auth/auth-config";
 import { clearCookie, cookieValue, isValidOauthState, setCookie } from "@/lib/auth/auth-http";
 import { findOrCreateOauthUser, createSession, isAccountDisabled } from "@/lib/auth/auth-service";
 import { oauthIdentity, oauthProviders, type OAuthProvider } from "@/lib/auth/oauth-service";
@@ -9,7 +14,8 @@ const isProvider = (value: string): value is OAuthProvider =>
 const redirect = (path: string, session?: string) => {
   const headers = new Headers({ Location: `${applicationOrigin()}${path}` });
   headers.append("Set-Cookie", clearCookie(oauthStateCookieName));
-  if (session) headers.append("Set-Cookie", setCookie(sessionCookieName, session, sessionMaxAgeSeconds));
+  if (session)
+    headers.append("Set-Cookie", setCookie(sessionCookieName, session, sessionMaxAgeSeconds));
   return new Response(null, { status: 303, headers });
 };
 

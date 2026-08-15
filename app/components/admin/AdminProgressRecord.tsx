@@ -22,6 +22,11 @@ function formatMode(mode: string) {
   return `${classicCategoryDetails[category].label} · ${difficulty}`;
 }
 
+function gameModeName(mode: string) {
+  const [game] = mode.split(":");
+  return game ? `${game.slice(0, 1).toUpperCase()}${game.slice(1)}` : "Unknown";
+}
+
 function formatTimestamp(value: string) {
   const timestamp = new Date(value);
   return Number.isNaN(timestamp.getTime()) ? "Unknown time" : dateTime.format(timestamp);
@@ -150,7 +155,11 @@ function GuessTrajectory({
     .filter((model) => !trajectoryModelIds.has(model.id))
     .map((model) => ({
       model,
-      projected: project(modelSpacePoint(model, category, referenceModels), rotation.azimuth, rotation.elevation),
+      projected: project(
+        modelSpacePoint(model, category, referenceModels),
+        rotation.azimuth,
+        rotation.elevation,
+      ),
     }))
     .sort((left, right) => left.projected.depth - right.projected.depth);
   const projectedCorners = cubeCorners.map((corner) =>
@@ -296,12 +305,18 @@ export function AdminProgressRecord({
   progress,
   trajectoryTargets,
   trajectoryReferenceModels,
+  onRemoveGuess,
+  removingGuessId,
 }: {
   progress: unknown;
   trajectoryTargets: Record<string, ComparableModel>;
   trajectoryReferenceModels: ComparableModel[];
+  onRemoveGuess?: (gameKey: string, requestId: string) => void;
+  removingGuessId?: string | null;
 }) {
   const [recentGamesPage, setRecentGamesPage] = useState(1);
+  const [selectedGameMode, setSelectedGameMode] = useState<string | null>(null);
+  const [selectedGameKey, setSelectedGameKey] = useState<string | null>(null);
   const parsedProgress = localProgressSchema.safeParse(progress);
 
   if (!parsedProgress.success) {
@@ -313,11 +328,13 @@ export function AdminProgressRecord({
     );
   }
 
-  const games = Object.values(parsedProgress.data.games).sort(
-    (left, right) =>
-      right.challengeDate.localeCompare(left.challengeDate) ||
-      right.startedAt.localeCompare(left.startedAt),
-  );
+  const games = Object.entries(parsedProgress.data.games)
+    .map(([gameKey, game]) => ({ ...game, gameKey }))
+    .sort(
+      (left, right) =>
+        right.challengeDate.localeCompare(left.challengeDate) ||
+        right.startedAt.localeCompare(left.startedAt),
+    );
   const solvedGames = games.filter((game) => game.status === "solved");
   const inProgressGames = games.filter((game) => game.status === "in-progress");
   const totalGuesses = games.reduce((total, game) => total + game.guesses.length, 0);
@@ -339,13 +356,20 @@ export function AdminProgressRecord({
     parsedProgress.data.preferences.reducedMotion && "Reduced motion",
   ].filter((value): value is string => Boolean(value));
   const latestSolvedGame = solvedGames.find((game) => trajectoryTargets[game.challengeId]);
+  const gameModes = [...new Set(games.map((game) => game.mode.split(":")[0]))];
+  const activeGameMode = gameModes.includes(selectedGameMode ?? "")
+    ? selectedGameMode!
+    : (gameModes[0] ?? null);
+  const gamesForMode = games.filter((game) => game.mode.split(":")[0] === activeGameMode);
   const recentGamesPageSize = 5;
-  const recentGamesTotalPages = Math.max(1, Math.ceil(games.length / recentGamesPageSize));
+  const recentGamesTotalPages = Math.max(1, Math.ceil(gamesForMode.length / recentGamesPageSize));
   const visibleRecentGamesPage = Math.min(recentGamesPage, recentGamesTotalPages);
-  const visibleGames = games.slice(
+  const visibleGames = gamesForMode.slice(
     (visibleRecentGamesPage - 1) * recentGamesPageSize,
     visibleRecentGamesPage * recentGamesPageSize,
   );
+  const selectedGame =
+    visibleGames.find((game) => game.gameKey === selectedGameKey) ?? visibleGames[0] ?? null;
 
   return (
     <div className="admin-progress">
@@ -421,24 +445,83 @@ export function AdminProgressRecord({
           <span>{games.length} total</span>
         </div>
         {games.length ? (
-          <ol className="admin-progress__games">
-            {visibleGames.map((game) => (
-              <li key={`${game.mode}:${game.challengeId}`}>
-                <div>
-                  <strong>{game.challengeDate}</strong>
-                  <span>{formatMode(game.mode)}</span>
+          <>
+            <div aria-label="Game modes" className="admin-progress__game-tabs" role="tablist">
+              {gameModes.map((mode) => (
+                <button
+                  aria-controls="admin-game-dates"
+                  aria-selected={activeGameMode === mode}
+                  id={`admin-game-tab-${mode}`}
+                  key={mode}
+                  onClick={() => {
+                    setSelectedGameMode(mode);
+                    setSelectedGameKey(null);
+                    setRecentGamesPage(1);
+                  }}
+                  role="tab"
+                  type="button"
+                >
+                  <strong>{gameModeName(mode)}</strong>
+                  <span>
+                    {games.filter((game) => game.mode.split(":")[0] === mode).length} saved
+                  </span>
+                </button>
+              ))}
+            </div>
+            {selectedGame && (
+              <section
+                aria-labelledby={`admin-game-tab-${activeGameMode}`}
+                className="admin-progress__game-detail"
+                id="admin-game-dates"
+                role="tabpanel"
+              >
+                <div className="admin-progress__date-tabs" aria-label="Saved dates">
+                  {visibleGames.map((game) => (
+                    <button
+                      aria-current={game.gameKey === selectedGame.gameKey ? "page" : undefined}
+                      key={game.gameKey}
+                      onClick={() => setSelectedGameKey(game.gameKey)}
+                      type="button"
+                    >
+                      {game.challengeDate}
+                    </button>
+                  ))}
                 </div>
                 <div>
-                  <strong data-status={game.status}>
-                    {game.status === "solved" ? "Solved" : "In progress"}
+                  <strong data-status={selectedGame.status}>
+                    {selectedGame.status === "solved" ? "Solved" : "In progress"}
                   </strong>
                   <span>
-                    {game.guesses.length} guesses · Started {formatTimestamp(game.startedAt)}
+                    {selectedGame.guesses.length} guesses · Started{" "}
+                    {formatTimestamp(selectedGame.startedAt)}
                   </span>
                 </div>
-              </li>
-            ))}
-          </ol>
+                {selectedGame.guesses.length ? (
+                  <ol className="admin-progress__guess-list">
+                    {selectedGame.guesses.map((guess) => (
+                      <li key={guess.requestId}>
+                        <span>
+                          {guess.attemptNumber}. {guess.modelName}
+                        </span>
+                        {onRemoveGuess && (
+                          <button
+                            className="button button--danger-solid"
+                            disabled={removingGuessId === guess.requestId}
+                            onClick={() => onRemoveGuess(selectedGame.gameKey, guess.requestId)}
+                            type="button"
+                          >
+                            {removingGuessId === guess.requestId ? "Removing..." : "Remove guess"}
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="admin-empty">No saved guesses for this game.</p>
+                )}
+              </section>
+            )}
+          </>
         ) : (
           <p className="admin-empty">No games have been saved in this progress record.</p>
         )}

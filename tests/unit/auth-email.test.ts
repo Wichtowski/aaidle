@@ -31,7 +31,8 @@ describe("authentication email links", () => {
         token: "activation-token",
       }),
     ).resolves.toEqual({
-      localUrl: "http://localhost:3000/api/v1/auth/email-verification/verify?token=activation-token",
+      localUrl:
+        "http://localhost:3000/api/v1/auth/email-verification/verify?token=activation-token",
     });
   });
 });

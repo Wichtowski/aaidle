@@ -17,7 +17,14 @@ function renderLoginForm() {
   return render(
     createElement(
       AuthContext.Provider,
-      { value: { loading: false, user: null, setAuthenticatedUser: () => {}, signOut: async () => {} } },
+      {
+        value: {
+          loading: false,
+          user: null,
+          setAuthenticatedUser: () => {},
+          signOut: async () => {},
+        },
+      },
       createElement(LoginForm),
     ),
   );
@@ -47,7 +54,9 @@ describe("LoginForm", () => {
       json: async () => ({ error: { code: "INVALID_CREDENTIALS", message: "Sign-in failed." } }),
     });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "player@example.com" } });
-    fireEvent.change(screen.getByLabelText("Password", { exact: true }), { target: { value: "password" } });
+    fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
+      target: { value: "password" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => screen.getByRole("button", { name: "Forgot password?" }));
@@ -70,7 +79,9 @@ describe("LoginForm", () => {
     });
     renderLoginForm();
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "player@example.com" } });
-    fireEvent.change(screen.getByLabelText("Password", { exact: true }), { target: { value: "password" } });
+    fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
+      target: { value: "password" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
@@ -89,7 +100,9 @@ describe("LoginForm", () => {
     });
     renderLoginForm();
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "player@example.com" } });
-    fireEvent.change(screen.getByLabelText("Password", { exact: true }), { target: { value: "password" } });
+    fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
+      target: { value: "password" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => {

@@ -17,7 +17,13 @@ type UserRow = {
 
 type SessionUser = Pick<
   UserRow,
-  "id" | "email" | "display_name" | "email_verified_at" | "permission" | "disabled_at" | "disabled_reason"
+  | "id"
+  | "email"
+  | "display_name"
+  | "email_verified_at"
+  | "permission"
+  | "disabled_at"
+  | "disabled_reason"
 >;
 
 export type AuthenticatedUser = SessionUser;
@@ -125,7 +131,13 @@ export async function consumeRateLimit({
   return consumed !== null;
 }
 
-export async function registerWithPassword({ email, password }: { email: string; password: string }) {
+export async function registerWithPassword({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
   const normalizedEmail = normalizeEmail(email);
   if (await userByEmail(normalizedEmail)) throw new Error("ACCOUNT_EXISTS");
   const user = await createUser({
@@ -135,7 +147,10 @@ export async function registerWithPassword({ email, password }: { email: string;
   return user;
 }
 
-async function createAuthEmailToken(userId: string, purpose: AuthEmailTokenPurpose): Promise<string> {
+async function createAuthEmailToken(
+  userId: string,
+  purpose: AuthEmailTokenPurpose,
+): Promise<string> {
   const token = randomToken();
   const now = Date.now();
   const DB = database();
@@ -145,7 +160,14 @@ async function createAuthEmailToken(userId: string, purpose: AuthEmailTokenPurpo
   await DB.prepare(
     "INSERT INTO auth_email_tokens (id, user_id, token_hash, purpose, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)",
   )
-    .bind(crypto.randomUUID(), userId, tokenHash(token), purpose, now + emailTokenLifetimes[purpose], now)
+    .bind(
+      crypto.randomUUID(),
+      userId,
+      tokenHash(token),
+      purpose,
+      now + emailTokenLifetimes[purpose],
+      now,
+    )
     .run();
   return token;
 }
@@ -169,7 +191,10 @@ export function createAccountDeletionToken(userId: string): Promise<string> {
   return createAuthEmailToken(userId, "account-deletion");
 }
 
-async function consumeAuthEmailToken(token: string, purpose: AuthEmailTokenPurpose): Promise<string | null> {
+async function consumeAuthEmailToken(
+  token: string,
+  purpose: AuthEmailTokenPurpose,
+): Promise<string | null> {
   const record = await database()
     .prepare(
       "DELETE FROM auth_email_tokens WHERE token_hash=? AND purpose=? AND expires_at>? RETURNING user_id",
@@ -184,13 +209,21 @@ export async function verifyEmailAddress(token: string): Promise<boolean> {
   if (!userId) return false;
   const now = Date.now();
   await database()
-    .prepare("UPDATE users SET email_verified_at=COALESCE(email_verified_at, ?), updated_at=? WHERE id=?")
+    .prepare(
+      "UPDATE users SET email_verified_at=COALESCE(email_verified_at, ?), updated_at=? WHERE id=?",
+    )
     .bind(now, now, userId)
     .run();
   return true;
 }
 
-export async function resetPasswordWithToken({ token, password }: { token: string; password: string }) {
+export async function resetPasswordWithToken({
+  token,
+  password,
+}: {
+  token: string;
+  password: string;
+}) {
   const userId = await consumeAuthEmailToken(token, "password-reset");
   if (!userId) return null;
   const now = Date.now();
@@ -212,7 +245,13 @@ export async function deleteAccountWithToken(token: string): Promise<boolean> {
   return Boolean(result);
 }
 
-export async function authenticateWithPassword({ email, password }: { email: string; password: string }) {
+export async function authenticateWithPassword({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
   const user = await userByEmail(email);
   if (!user?.password_hash || !(await verifyPassword(password, user.password_hash))) {
     throw new Error("INVALID_CREDENTIALS");
@@ -240,7 +279,10 @@ export async function createSession(userId: string): Promise<string> {
 
 export async function deleteSession(token: string | null) {
   if (!token) return;
-  await database().prepare("DELETE FROM user_sessions WHERE token_hash=?").bind(tokenHash(token)).run();
+  await database()
+    .prepare("DELETE FROM user_sessions WHERE token_hash=?")
+    .bind(tokenHash(token))
+    .run();
 }
 
 export async function userForSession(token: string | null): Promise<AuthenticatedUser | null> {

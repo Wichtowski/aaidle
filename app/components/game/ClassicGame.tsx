@@ -142,7 +142,9 @@ export function ClassicGame({
   const progress = useLocalProgress();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
-  const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(initialGame?.challenge ?? null);
+  const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(
+    initialGame?.challenge ?? null,
+  );
   const [models, setModels] = useState<PublicModelIndex[]>(initialGame?.models ?? []);
   const [globalCompletionCount, setGlobalCompletionCount] = useState(
     initialGame?.globalCompletionCount ?? 0,
@@ -285,11 +287,7 @@ export function ClassicGame({
   };
 
   useEffect(() => {
-    if (
-      completionGameKey.current !== key ||
-      game?.status !== "solved" ||
-      !game.completedAt
-    ) {
+    if (completionGameKey.current !== key || game?.status !== "solved" || !game.completedAt) {
       setShowCompletion(false);
       return;
     }
@@ -413,7 +411,11 @@ export function ClassicGame({
         <section className="hardcore-lock" aria-labelledby="hardcore-lock-title">
           <p className="eyebrow">Sealed</p>
           <h1 id="hardcore-lock-title">Nothing answers.</h1>
-          <p>{user ? "Complete the Inner Circle ritual to enter." : "Sign in to enter the Inner Circle."}</p>
+          <p>
+            {user
+              ? "Complete the Inner Circle ritual to enter."
+              : "Sign in to enter the Inner Circle."}
+          </p>
         </section>
       </main>
     );
@@ -497,31 +499,28 @@ export function ClassicGame({
 
       <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
       {showRitualGate && <RitualGateDialog />}
-      {challenge &&
-        game?.status === "solved" &&
-        showCompletion &&
-        (
-          <Suspense fallback={null}>
-            <GameCompletedDialog
-              date={challenge.date}
-              challengeId={challenge.id}
-              category={category}
-              difficulty={loadedDifficulty}
-              guesses={guesses}
-              ritualNotice={
-                showCategoryRitualNotice
-                  ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
-                  : undefined
-              }
-              onClose={closeCompletion}
-              stats={{
-                currentStreak: progress.stats.classic.currentStreak,
-                bestStreak: progress.stats.classic.bestStreak,
-                gamesPlayed: progress.stats.classic.gamesPlayed,
-              }}
-            />
-          </Suspense>
-        )}
+      {challenge && game?.status === "solved" && showCompletion && (
+        <Suspense fallback={null}>
+          <GameCompletedDialog
+            date={challenge.date}
+            challengeId={challenge.id}
+            category={category}
+            difficulty={loadedDifficulty}
+            guesses={guesses}
+            ritualNotice={
+              showCategoryRitualNotice
+                ? `${categoryRitualNotices[category as Exclude<ClassicCategory, "hardcore">]} The ledger recorded ${solvedChallengeCount}/${focusedClassicCategories.length} seals today. Check your profile.`
+                : undefined
+            }
+            onClose={closeCompletion}
+            stats={{
+              currentStreak: progress.stats.classic.currentStreak,
+              bestStreak: progress.stats.classic.bestStreak,
+              gamesPlayed: progress.stats.classic.gamesPlayed,
+            }}
+          />
+        </Suspense>
+      )}
     </main>
   );
 }

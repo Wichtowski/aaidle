@@ -40,7 +40,11 @@ export async function sendAuthEmail({
     : isDeletion
       ? "Confirm deletion of your aAIdle account"
       : "Reset your aAIdle password";
-  const action = isVerification ? "Activate account" : isDeletion ? "Delete account" : "Reset password";
+  const action = isVerification
+    ? "Activate account"
+    : isDeletion
+      ? "Delete account"
+      : "Reset password";
   const expiry = isVerification ? "30 minutes" : isDeletion ? "5 minutes" : "15 minutes";
   const warning = isDeletion ? " This permanently deletes your account and cannot be undone." : "";
   const apiKey = resendApiKey();

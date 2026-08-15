@@ -21,7 +21,9 @@ export default function DeleteAccountPage() {
       }
       window.location.assign("/?account-deleted=true");
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Could not delete the account.");
+      setError(
+        requestError instanceof Error ? requestError.message : "Could not delete the account.",
+      );
       setDeleting(false);
     }
   };
@@ -33,11 +35,25 @@ export default function DeleteAccountPage() {
         <FaTriangleExclamation aria-hidden="true" />
         <p className="eyebrow">Final confirmation</p>
         <h1 id="delete-account-title">Delete your account?</h1>
-        <p>This permanently deletes your account, linked identities, active sessions, and unused authentication links. This cannot be undone.</p>
-        {error && <p className="notice" role="alert">{error}</p>}
+        <p>
+          This permanently deletes your account, linked identities, active sessions, and unused
+          authentication links. This cannot be undone.
+        </p>
+        {error && (
+          <p className="notice" role="alert">
+            {error}
+          </p>
+        )}
         <div className="danger-modal__actions">
-          <a className="button" href="/profile">Cancel</a>
-          <button className="button button--danger-solid" disabled={deleting} onClick={deleteAccount} type="button">
+          <a className="button" href="/profile">
+            Cancel
+          </a>
+          <button
+            className="button button--danger-solid"
+            disabled={deleting}
+            onClick={deleteAccount}
+            type="button"
+          >
             {deleting ? "Deleting…" : "Permanently delete account"}
           </button>
         </div>

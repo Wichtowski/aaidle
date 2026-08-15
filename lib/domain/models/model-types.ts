@@ -1,25 +1,43 @@
 export const classicDifficulties = ["normal", "challenge", "hardcore"] as const;
 export type ClassicDifficulty = (typeof classicDifficulties)[number];
-export const classicCategories = ["llm", "cv", "nlp", "object-detection", "classical-ml", "filters", "hardcore"] as const;
+export const classicCategories = [
+  "llm",
+  "cv",
+  "nlp",
+  "object-detection",
+  "classical-ml",
+  "filters",
+  "hardcore",
+] as const;
 export type ClassicCategory = (typeof classicCategories)[number];
-export const focusedClassicCategories = classicCategories.filter((category) => category !== "hardcore") as Exclude<
-  ClassicCategory,
-  "hardcore"
->[];
+export const focusedClassicCategories = classicCategories.filter(
+  (category) => category !== "hardcore",
+) as Exclude<ClassicCategory, "hardcore">[];
 
-export const classicCategoryDetails: Record<ClassicCategory, { label: string; catalogCategory?: string; routeSegment: string }> = {
+export const classicCategoryDetails: Record<
+  ClassicCategory,
+  { label: string; catalogCategory?: string; routeSegment: string }
+> = {
   llm: { label: "LLM", catalogCategory: "language-model", routeSegment: "llm" },
   cv: { label: "CV", catalogCategory: "computer-vision", routeSegment: "cv" },
   nlp: { label: "NLP", catalogCategory: "nlp", routeSegment: "nlp" },
   "object-detection": { label: "OD", catalogCategory: "object-detection", routeSegment: "od" },
-  "classical-ml": { label: "Classical ML", catalogCategory: "classical-ml", routeSegment: "classical-ml" },
+  "classical-ml": {
+    label: "Classical ML",
+    catalogCategory: "classical-ml",
+    routeSegment: "classical-ml",
+  },
   filters: { label: "Filters", catalogCategory: "filters", routeSegment: "filters" },
   hardcore: { label: "Hardcore", routeSegment: "hardcore" },
 };
 
-export function classicCategoryFromRouteSegment(value: string | null | undefined): ClassicCategory | undefined {
+export function classicCategoryFromRouteSegment(
+  value: string | null | undefined,
+): ClassicCategory | undefined {
   if (value === "image-processing") return "filters";
-  return classicCategories.find((category) => classicCategoryDetails[category].routeSegment === value);
+  return classicCategories.find(
+    (category) => classicCategoryDetails[category].routeSegment === value,
+  );
 }
 
 export function isClassicCategory(value: string | null | undefined): value is ClassicCategory {
@@ -47,9 +65,9 @@ const classicChallengeCategorySegments = {
   hardcore: "hardcore",
 } as const satisfies Record<ClassicCategory, string>;
 
-type ClassicChallengeCategorySegment =
-  (typeof classicChallengeCategorySegments)[ClassicCategory];
-export type ClassicChallengeMode = `classic:${ClassicChallengeCategorySegment}:${ClassicDifficulty}`;
+type ClassicChallengeCategorySegment = (typeof classicChallengeCategorySegments)[ClassicCategory];
+export type ClassicChallengeMode =
+  `classic:${ClassicChallengeCategorySegment}:${ClassicDifficulty}`;
 
 export const challengeModes = [
   "classic",
@@ -72,12 +90,11 @@ export function classicChallengeMode(
 export function classicModeFromChallengeMode(mode: string) {
   const [, segment, difficulty] = mode.split(":");
   const category =
-    (Object.entries(classicChallengeCategorySegments).find(([, value]) => value === segment)?.[0] as
-      | ClassicCategory
-      | undefined) ??
+    (Object.entries(classicChallengeCategorySegments).find(
+      ([, value]) => value === segment,
+    )?.[0] as ClassicCategory | undefined) ??
     ({ "object-detection": "object-detection", "image-processing": "filters" }[segment] as
-      | ClassicCategory
-      | undefined);
+      ClassicCategory | undefined);
 
   if (!category || !isClassicDifficulty(difficulty)) {
     throw new Error(`Invalid Classic challenge mode: ${mode}`);
@@ -103,10 +120,31 @@ export type CategoryDetails = Partial<{
     toolUse: boolean | null;
     multimodal: boolean;
   };
-  "computer-vision": { visionTasks: string[]; architecture: string[]; trainingDatasets: string[]; license: string | null };
-  nlp: { nlpTasks: string[]; supportedLanguages: string[]; architecture: string[]; trainingDatasets: string[] };
-  "object-detection": { detectionTypes: string[]; architecture: string[]; trainingDatasets: string[]; realTimeCapable: boolean | null };
-  "classical-ml": { algorithmTypes: string[]; learningParadigms: string[]; objectives: string[]; featureTypes: string[]; frameworks: string[] };
+  "computer-vision": {
+    visionTasks: string[];
+    architecture: string[];
+    trainingDatasets: string[];
+    license: string | null;
+  };
+  nlp: {
+    nlpTasks: string[];
+    supportedLanguages: string[];
+    architecture: string[];
+    trainingDatasets: string[];
+  };
+  "object-detection": {
+    detectionTypes: string[];
+    architecture: string[];
+    trainingDatasets: string[];
+    realTimeCapable: boolean | null;
+  };
+  "classical-ml": {
+    algorithmTypes: string[];
+    learningParadigms: string[];
+    objectives: string[];
+    featureTypes: string[];
+    frameworks: string[];
+  };
   filters: {
     operationTypes: string[];
     kernelBased: boolean;

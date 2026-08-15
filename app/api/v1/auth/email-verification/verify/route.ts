@@ -7,5 +7,7 @@ const redirect = (path: string) =>
 export async function GET(request: Request) {
   const token = new URL(request.url).searchParams.get("token");
   if (!token || token.length > 128) return redirect("/login?error=activation");
-  return redirect((await verifyEmailAddress(token)) ? "/login?activated=1" : "/login?error=activation");
+  return redirect(
+    (await verifyEmailAddress(token)) ? "/login?activated=1" : "/login?error=activation",
+  );
 }

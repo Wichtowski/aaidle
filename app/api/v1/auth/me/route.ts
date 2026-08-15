@@ -5,10 +5,7 @@ import { userForSession } from "@/lib/auth/auth-service";
 export async function GET(request: Request) {
   const user = await userForSession(cookieValue(request, sessionCookieName));
   if (!user) {
-    return Response.json(
-      { user: null },
-      { headers: { "Cache-Control": "no-store" } },
-    );
+    return Response.json({ user: null }, { headers: { "Cache-Control": "no-store" } });
   }
   return Response.json(
     {

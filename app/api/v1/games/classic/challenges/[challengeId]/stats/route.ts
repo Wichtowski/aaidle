@@ -1,7 +1,10 @@
 import { database } from "../../../../../../../../lib/db/client";
 import { errorResponse } from "../../../../../../../../lib/validation/api";
 import { disabledGameAccessResponse } from "@/lib/auth/game-access";
-export async function GET(request: Request, { params }: { params: Promise<{ challengeId: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ challengeId: string }> },
+) {
   const disabledResponse = await disabledGameAccessResponse(request);
   if (disabledResponse) return disabledResponse;
   const { challengeId } = await params;
