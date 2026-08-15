@@ -3,7 +3,8 @@ const openApiDocument = {
   info: {
     title: "aAIdle Game API",
     version: "1.0.0",
-    description: "A public, unauthenticated API for retrieving and playing the current aAIdle Classic game.",
+    description:
+      "A public, unauthenticated API for retrieving and playing the current aAIdle Classic game.",
   },
   servers: [{ url: "https://aaidle.com" }],
   paths: {
@@ -16,7 +17,10 @@ const openApiDocument = {
             name: "category",
             in: "path",
             required: true,
-            schema: { type: "string", enum: ["llm", "cv", "nlp", "object-detection", "classical-ml", "filters", "hardcore"] },
+            schema: {
+              type: "string",
+              enum: ["llm", "cv", "nlp", "object-detection", "classical-ml", "filters", "hardcore"],
+            },
           },
           {
             name: "difficulty",
@@ -28,7 +32,9 @@ const openApiDocument = {
         responses: {
           "200": {
             description: "The active game and its eligible model index.",
-            content: { "application/json": { schema: { $ref: "#/components/schemas/ClassicGame" } } },
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/ClassicGame" } },
+            },
           },
           "404": { description: "Unsupported category and difficulty combination." },
           "503": { description: "The daily challenge is temporarily unavailable." },
@@ -49,12 +55,16 @@ const openApiDocument = {
         ],
         requestBody: {
           required: true,
-          content: { "application/json": { schema: { $ref: "#/components/schemas/GuessRequest" } } },
+          content: {
+            "application/json": { schema: { $ref: "#/components/schemas/GuessRequest" } },
+          },
         },
         responses: {
           "200": {
             description: "The evaluated guess and its comparison clues.",
-            content: { "application/json": { schema: { $ref: "#/components/schemas/GuessResult" } } },
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/GuessResult" } },
+            },
           },
           "400": { description: "Invalid or unavailable model." },
           "404": { description: "Unknown challenge or model." },
@@ -66,7 +76,8 @@ const openApiDocument = {
       post: {
         operationId: "sendA2AClassicGameMessage",
         summary: "Use the aAIdle A2A JSON-RPC interface",
-        description: "Use SendMessage with a structured application/json data part. Supported operations are get_game and submit_guess.",
+        description:
+          "Use SendMessage with a structured application/json data part. Supported operations are get_game and submit_guess.",
         requestBody: {
           required: true,
           content: { "application/json": { schema: { $ref: "#/components/schemas/A2ARequest" } } },
@@ -74,7 +85,9 @@ const openApiDocument = {
         responses: {
           "200": {
             description: "A completed A2A task containing one application/json artifact.",
-            content: { "application/json": { schema: { $ref: "#/components/schemas/A2AResponse" } } },
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/A2AResponse" } },
+            },
           },
         },
       },
@@ -191,7 +204,18 @@ const openApiDocument = {
             required: ["operation", "category", "difficulty"],
             properties: {
               operation: { const: "get_game" },
-              category: { type: "string", enum: ["llm", "cv", "nlp", "object-detection", "classical-ml", "filters", "hardcore"] },
+              category: {
+                type: "string",
+                enum: [
+                  "llm",
+                  "cv",
+                  "nlp",
+                  "object-detection",
+                  "classical-ml",
+                  "filters",
+                  "hardcore",
+                ],
+              },
               difficulty: { type: "string", enum: ["normal", "challenge", "hardcore"] },
             },
           },
@@ -223,8 +247,14 @@ const openApiDocument = {
                 properties: {
                   id: { type: "string", format: "uuid" },
                   contextId: { type: "string", format: "uuid" },
-                  status: { type: "object", properties: { state: { const: "TASK_STATE_COMPLETED" } } },
-                  artifacts: { type: "array", items: { type: "object", additionalProperties: true } },
+                  status: {
+                    type: "object",
+                    properties: { state: { const: "TASK_STATE_COMPLETED" } },
+                  },
+                  artifacts: {
+                    type: "array",
+                    items: { type: "object", additionalProperties: true },
+                  },
                 },
               },
             },

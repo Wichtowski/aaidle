@@ -44,5 +44,8 @@ export function isValidOauthState(provider: string, state: string, cookie: strin
   const [cookieProvider, cookieState, signature] = cookie?.split(".") ?? [];
   if (cookieProvider !== provider || cookieState !== state || !signature) return false;
   const expected = stateSignature(provider, state);
-  return signature.length === expected.length && timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+  return (
+    signature.length === expected.length &&
+    timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+  );
 }

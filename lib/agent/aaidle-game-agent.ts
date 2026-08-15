@@ -29,7 +29,10 @@ const guessCommandSchema = z.object({
   attemptNumber: z.number().int().min(1).max(100),
 });
 
-const agentCommandSchema = z.discriminatedUnion("operation", [gameCommandSchema, guessCommandSchema]);
+const agentCommandSchema = z.discriminatedUnion("operation", [
+  gameCommandSchema,
+  guessCommandSchema,
+]);
 
 const agentRequestSchema = z.object({
   jsonrpc: z.literal("2.0"),
@@ -78,11 +81,7 @@ export function parseAgentRequest(input: unknown): AgentRequest {
   };
 }
 
-export function agentTask(input: {
-  contextId: string;
-  data: unknown;
-  name: string;
-}) {
+export function agentTask(input: { contextId: string; data: unknown; name: string }) {
   return {
     id: crypto.randomUUID(),
     contextId: input.contextId,

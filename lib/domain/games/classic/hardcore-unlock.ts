@@ -13,5 +13,7 @@ export function solvedChallengeCategoriesForDate(progress: LocalProgress, date: 
 }
 
 export function hasCompletedChallengeRitual(progress: LocalProgress, date: string) {
-  return solvedChallengeCategoriesForDate(progress, date).length === focusedClassicCategories.length;
+  return (
+    solvedChallengeCategoriesForDate(progress, date).length === focusedClassicCategories.length
+  );
 }

@@ -40,14 +40,28 @@ type RitualContentProps = {
   onEnterInnerCircle: () => void;
 };
 
-function RitualContent({ hellAwake, ritualCategories, ritualComplete, onEnterInnerCircle }: RitualContentProps) {
+function RitualContent({
+  hellAwake,
+  ritualCategories,
+  ritualComplete,
+  onEnterInnerCircle,
+}: RitualContentProps) {
   return (
     <>
-      <div className="hell-meter__steps" aria-label={`${ritualCategories.length} of ${focusedClassicCategories.length} Challenge categories solved today`}>
-        {classicCategories.filter((item) => item !== "hardcore").map((item) => {
-          const complete = ritualCategories.includes(item);
-          return <span className={complete ? "is-complete" : undefined} key={item}>{complete ? "✦" : "○"} {classicCategoryDetails[item].label}</span>;
-        })}
+      <div
+        className="hell-meter__steps"
+        aria-label={`${ritualCategories.length} of ${focusedClassicCategories.length} Challenge categories solved today`}
+      >
+        {classicCategories
+          .filter((item) => item !== "hardcore")
+          .map((item) => {
+            const complete = ritualCategories.includes(item);
+            return (
+              <span className={complete ? "is-complete" : undefined} key={item}>
+                {complete ? "✦" : "○"} {classicCategoryDetails[item].label}
+              </span>
+            );
+          })}
       </div>
       <p>
         {hellAwake
@@ -79,7 +93,8 @@ export default function Profile() {
   const canSeeInnerCircle = Boolean(user);
   const showRitualChallenge = canSeeInnerCircle && !hasCompletedHardcore;
   const hellAwake = canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked;
-  const hellModeEnabled = canSeeInnerCircle && progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
+  const hellModeEnabled =
+    canSeeInnerCircle && progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
   const [category, setCategory] = useState<ClassicCategory>("llm");
@@ -99,13 +114,25 @@ export default function Profile() {
   let bestStreak = 0;
   let runningStreak = 0;
   for (let index = 0; index < dates.length; index += 1) {
-    if (index === 0 || new Date(`${dates[index - 1]}T00:00:00Z`).getTime() - new Date(`${dates[index]}T00:00:00Z`).getTime() === 86_400_000) runningStreak += 1;
+    if (
+      index === 0 ||
+      new Date(`${dates[index - 1]}T00:00:00Z`).getTime() -
+        new Date(`${dates[index]}T00:00:00Z`).getTime() ===
+        86_400_000
+    )
+      runningStreak += 1;
     else runningStreak = 1;
     if (index === 0) currentStreak = runningStreak;
     else if (currentStreak === index) currentStreak = runningStreak;
     bestStreak = Math.max(bestStreak, runningStreak);
   }
-  const stats = { currentStreak, bestStreak, gamesPlayed: solved.length, gamesWon: solved.length, guessDistribution };
+  const stats = {
+    currentStreak,
+    bestStreak,
+    gamesPlayed: solved.length,
+    gamesWon: solved.length,
+    guessDistribution,
+  };
   const distributionValues = Object.entries(stats.guessDistribution);
   const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
   const totalWins = distributionValues.reduce((total, [, value]) => total + value, 0);
@@ -167,9 +194,13 @@ export default function Profile() {
           <div className="stats-section__heading">
             <div>
               <p className="eyebrow">Challenge ritual · {today}</p>
-              <h2 id="hell-meter-title">{hellActive ? "Something is brewing" : "A quiet disturbance"}</h2>
+              <h2 id="hell-meter-title">
+                {hellActive ? "Something is brewing" : "A quiet disturbance"}
+              </h2>
             </div>
-            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
+            <span>
+              {ritualCategories.length}/{focusedClassicCategories.length}
+            </span>
           </div>
           <RitualContent
             hellAwake={hellAwake}
@@ -186,7 +217,9 @@ export default function Profile() {
               <span className="eyebrow">Challenge ritual · {today}</span>
               <strong>Something is brewing</strong>
             </span>
-            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
+            <span>
+              {ritualCategories.length}/{focusedClassicCategories.length}
+            </span>
           </summary>
           <div className="hell-meter__content">
             <RitualContent
@@ -201,14 +234,21 @@ export default function Profile() {
       <div className="classic-category-nav" role="tablist" aria-label="Classic category statistics">
         {classicCategories
           .filter(
-            (item) =>
-              item !== "hardcore" ||
-              Boolean(user && progress.preferences.hardcoreUnlocked),
+            (item) => item !== "hardcore" || Boolean(user && progress.preferences.hardcoreUnlocked),
           )
           .map((item) => (
-          <button aria-selected={category === item} onClick={() => { setCategory(item); setHistoryPage(1); }} role="tab" type="button" key={item}>
-            {classicCategoryDetails[item].label}
-          </button>
+            <button
+              aria-selected={category === item}
+              onClick={() => {
+                setCategory(item);
+                setHistoryPage(1);
+              }}
+              role="tab"
+              type="button"
+              key={item}
+            >
+              {classicCategoryDetails[item].label}
+            </button>
           ))}
       </div>
       <div className="stat-grid">
@@ -325,7 +365,9 @@ export default function Profile() {
               <span className="eyebrow">Challenge ritual · {today}</span>
               <strong>The six seals are broken</strong>
             </span>
-            <span>{ritualCategories.length}/{focusedClassicCategories.length}</span>
+            <span>
+              {ritualCategories.length}/{focusedClassicCategories.length}
+            </span>
           </summary>
           <div className="hell-meter__content">
             <RitualContent

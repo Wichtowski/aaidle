@@ -1,9 +1,6 @@
 import { database } from "../../../db/client";
 import { catalogModel, isModelEligibleForClassic } from "../../../server/model-catalog";
-import {
-  classicModeFromChallengeMode,
-  type ClassicChallengeMode,
-} from "../../models/model-types";
+import { classicModeFromChallengeMode, type ClassicChallengeMode } from "../../models/model-types";
 import { compareClassicModels } from "../../guesses/comparison-engine";
 import { hasHardcoreAccess, leaveInnerCircle } from "./hardcore-access";
 import { createTrajectoryAccessToken } from "./trajectory-access";
@@ -23,7 +20,10 @@ export async function submitClassicGuess(input: {
   if (!challenge) throw new Error("CHALLENGE_NOT_FOUND");
 
   const { category, difficulty } = classicModeFromChallengeMode(challenge.mode);
-  if (category === "hardcore" && (!input.completedByUserId || !(await hasHardcoreAccess(input.completedByUserId)))) {
+  if (
+    category === "hardcore" &&
+    (!input.completedByUserId || !(await hasHardcoreAccess(input.completedByUserId)))
+  ) {
     throw new Error("HARDCORE_LOCKED");
   }
   if (!isModelEligibleForClassic(input.guessedModelId, category, difficulty)) {
@@ -76,7 +76,9 @@ export async function submitClassicGuess(input: {
 
 export async function globalClassicCompletionCount(challengeId: string): Promise<number> {
   const count = await database()
-    .prepare("SELECT completion_count AS count FROM challenge_completion_counts WHERE challenge_id=?")
+    .prepare(
+      "SELECT completion_count AS count FROM challenge_completion_counts WHERE challenge_id=?",
+    )
     .bind(challengeId)
     .first<{ count: number }>();
   return count?.count ?? 0;

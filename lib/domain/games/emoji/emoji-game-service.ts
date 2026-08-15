@@ -51,7 +51,8 @@ async function createDailyEmojiChallenge(date: string): Promise<EmojiDailyChalle
 
   const puzzle = generateEmojiPuzzle({ date, challengeSeed: challengeSeed(date) });
   const representative = publicModelFamilies([puzzle.familyId])[0];
-  if (!representative) throw new Error(`Emoji family is missing from the catalog: ${puzzle.familyId}`);
+  if (!representative)
+    throw new Error(`Emoji family is missing from the catalog: ${puzzle.familyId}`);
 
   const challenge: EmojiDailyChallenge = {
     id: crypto.randomUUID(),
@@ -129,7 +130,9 @@ export async function emojiHints(challengeId: string, count: number): Promise<{ 
 
 export async function globalEmojiCompletionCount(challengeId: string): Promise<number> {
   const completion = await database()
-    .prepare("SELECT completion_count AS count FROM challenge_completion_counts WHERE challenge_id=?")
+    .prepare(
+      "SELECT completion_count AS count FROM challenge_completion_counts WHERE challenge_id=?",
+    )
     .bind(challengeId)
     .first<{ count: number }>();
   return completion?.count ?? 0;
@@ -170,7 +173,12 @@ export async function emojiGameResponse(): Promise<Response> {
   } catch (error) {
     console.error("Emoji game generation failed", error);
     return Response.json(
-      { error: { code: "CHALLENGE_UNAVAILABLE", message: "Today’s Emoji challenge is unavailable." } },
+      {
+        error: {
+          code: "CHALLENGE_UNAVAILABLE",
+          message: "Today’s Emoji challenge is unavailable.",
+        },
+      },
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
   }

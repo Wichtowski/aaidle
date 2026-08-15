@@ -49,10 +49,31 @@ async function createDailyClassicChallenge(
     models: eligibleModelIdsForClassic(category, difficulty).map((id) => ({ id })),
     recentlyUsed: recent.results.map((row) => row.id),
   });
-  const challenge: DailyChallenge = { id: crypto.randomUUID(), challengeDate: date, mode, answerModelId: selected.id, selectionVersion: 3, generatedAt: Date.now(), generationSource: "lazy" };
-  await DB.prepare("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (challenge_date, mode) DO NOTHING")
-    .bind(challenge.id, challenge.challengeDate, challenge.mode, challenge.answerModelId, challenge.selectionVersion, challenge.generatedAt, challenge.generationSource).run();
-  return (await DB.prepare(`${challengeSql} WHERE challenge_date=? AND mode=?`).bind(date, mode).first<DailyChallenge>())!;
+  const challenge: DailyChallenge = {
+    id: crypto.randomUUID(),
+    challengeDate: date,
+    mode,
+    answerModelId: selected.id,
+    selectionVersion: 3,
+    generatedAt: Date.now(),
+    generationSource: "lazy",
+  };
+  await DB.prepare(
+    "INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (challenge_date, mode) DO NOTHING",
+  )
+    .bind(
+      challenge.id,
+      challenge.challengeDate,
+      challenge.mode,
+      challenge.answerModelId,
+      challenge.selectionVersion,
+      challenge.generatedAt,
+      challenge.generationSource,
+    )
+    .run();
+  return (await DB.prepare(`${challengeSql} WHERE challenge_date=? AND mode=?`)
+    .bind(date, mode)
+    .first<DailyChallenge>())!;
 }
 
 export async function ensureDailyChallenge({

@@ -130,7 +130,11 @@ export default function AdminPage() {
       .removeAdminGameGuess(selectedUser.id, gameKey, requestId)
       .then(({ user: updatedUser }) => setSelectedUser(updatedUser))
       .catch((requestError: unknown) => {
-        setError(requestError instanceof Error ? requestError.message : "Could not remove the saved guess.");
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : "Could not remove the saved guess.",
+        );
       })
       .finally(() => setRemovingGuessId(null));
   };
@@ -246,7 +250,9 @@ export default function AdminPage() {
               canManageAccount={canManageAdministrators(user.permission)}
               currentUserId={user.id}
               onUpdate={updateSelectedUser}
-              onRemoveGuess={canManageAdministrators(user.permission) ? removeSelectedUserGuess : undefined}
+              onRemoveGuess={
+                canManageAdministrators(user.permission) ? removeSelectedUserGuess : undefined
+              }
               removingGuessId={removingGuessId}
               updating={updatingUser}
               user={selectedUser}
@@ -255,7 +261,6 @@ export default function AdminPage() {
         </aside>
       </section>
       {canManageAdministrators(user.permission) && <HardcoreSoundtrackSettings />}
-
     </main>
   );
 }

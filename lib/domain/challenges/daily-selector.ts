@@ -63,9 +63,7 @@ export async function selectDistinctClassicDailyModels({
   const selected = {} as Record<ClassicDifficulty, SelectableModel>;
 
   for (const difficulty of classicDifficulties) {
-    const candidates = modelsByDifficulty[difficulty].filter(
-      (model) => !selectedIds.has(model.id),
-    );
+    const candidates = modelsByDifficulty[difficulty].filter((model) => !selectedIds.has(model.id));
     const answer = await selectDailyModel({
       date,
       mode: classicChallengeMode("hardcore", difficulty),

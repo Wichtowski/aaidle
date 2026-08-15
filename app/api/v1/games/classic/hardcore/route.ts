@@ -14,7 +14,11 @@ export async function GET(request: Request) {
     return errorResponse("UNAUTHENTICATED", "Sign in to enter Hardcore.", 401);
   }
   if (!(await hasHardcoreAccess(user.id))) {
-    return errorResponse("HARDCORE_LOCKED", "Complete the Inner Circle ritual to access Hardcore.", 403);
+    return errorResponse(
+      "HARDCORE_LOCKED",
+      "Complete the Inner Circle ritual to access Hardcore.",
+      403,
+    );
   }
   return classicGameResponse("hardcore", "hardcore");
 }

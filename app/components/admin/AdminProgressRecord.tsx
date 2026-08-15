@@ -155,7 +155,11 @@ function GuessTrajectory({
     .filter((model) => !trajectoryModelIds.has(model.id))
     .map((model) => ({
       model,
-      projected: project(modelSpacePoint(model, category, referenceModels), rotation.azimuth, rotation.elevation),
+      projected: project(
+        modelSpacePoint(model, category, referenceModels),
+        rotation.azimuth,
+        rotation.elevation,
+      ),
     }))
     .sort((left, right) => left.projected.depth - right.projected.depth);
   const projectedCorners = cubeCorners.map((corner) =>
@@ -324,11 +328,13 @@ export function AdminProgressRecord({
     );
   }
 
-  const games = Object.entries(parsedProgress.data.games).map(([gameKey, game]) => ({ ...game, gameKey })).sort(
-    (left, right) =>
-      right.challengeDate.localeCompare(left.challengeDate) ||
-      right.startedAt.localeCompare(left.startedAt),
-  );
+  const games = Object.entries(parsedProgress.data.games)
+    .map(([gameKey, game]) => ({ ...game, gameKey }))
+    .sort(
+      (left, right) =>
+        right.challengeDate.localeCompare(left.challengeDate) ||
+        right.startedAt.localeCompare(left.startedAt),
+    );
   const solvedGames = games.filter((game) => game.status === "solved");
   const inProgressGames = games.filter((game) => game.status === "in-progress");
   const totalGuesses = games.reduce((total, game) => total + game.guesses.length, 0);
@@ -456,7 +462,9 @@ export function AdminProgressRecord({
                   type="button"
                 >
                   <strong>{gameModeName(mode)}</strong>
-                  <span>{games.filter((game) => game.mode.split(":")[0] === mode).length} saved</span>
+                  <span>
+                    {games.filter((game) => game.mode.split(":")[0] === mode).length} saved
+                  </span>
                 </button>
               ))}
             </div>
@@ -484,14 +492,17 @@ export function AdminProgressRecord({
                     {selectedGame.status === "solved" ? "Solved" : "In progress"}
                   </strong>
                   <span>
-                    {selectedGame.guesses.length} guesses · Started {formatTimestamp(selectedGame.startedAt)}
+                    {selectedGame.guesses.length} guesses · Started{" "}
+                    {formatTimestamp(selectedGame.startedAt)}
                   </span>
                 </div>
                 {selectedGame.guesses.length ? (
                   <ol className="admin-progress__guess-list">
                     {selectedGame.guesses.map((guess) => (
                       <li key={guess.requestId}>
-                        <span>{guess.attemptNumber}. {guess.modelName}</span>
+                        <span>
+                          {guess.attemptNumber}. {guess.modelName}
+                        </span>
                         {onRemoveGuess && (
                           <button
                             className="button button--danger-solid"

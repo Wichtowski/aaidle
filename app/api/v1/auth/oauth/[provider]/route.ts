@@ -1,6 +1,10 @@
 import { oauthStateCookieName } from "@/lib/auth/auth-config";
 import { createOauthState, setCookie } from "@/lib/auth/auth-http";
-import { oauthAuthorizationUrl, oauthProviders, type OAuthProvider } from "@/lib/auth/oauth-service";
+import {
+  oauthAuthorizationUrl,
+  oauthProviders,
+  type OAuthProvider,
+} from "@/lib/auth/oauth-service";
 
 const isProvider = (value: string): value is OAuthProvider =>
   oauthProviders.includes(value as OAuthProvider);

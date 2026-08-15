@@ -35,7 +35,12 @@ describe("aAIdle game agent protocol", () => {
         params: {
           message: {
             ...getGameRequest.params.message,
-            parts: [{ mediaType: "application/json", data: { operation: "get_game", category: "hardcore", difficulty: "normal" } }],
+            parts: [
+              {
+                mediaType: "application/json",
+                data: { operation: "get_game", category: "hardcore", difficulty: "normal" },
+              },
+            ],
           },
         },
       }),
@@ -49,7 +54,12 @@ describe("aAIdle game agent protocol", () => {
         params: {
           message: {
             ...getGameRequest.params.message,
-            parts: [{ mediaType: "application/json", data: { operation: "get_game", category: "hardcore", difficulty: "hardcore" } }],
+            parts: [
+              {
+                mediaType: "application/json",
+                data: { operation: "get_game", category: "hardcore", difficulty: "hardcore" },
+              },
+            ],
           },
         },
       }),
@@ -66,7 +76,12 @@ describe("aAIdle game agent protocol", () => {
     expect(task).toMatchObject({
       contextId: "1f5f7a08-0dbe-447e-94ae-f401388243bb",
       status: { state: "TASK_STATE_COMPLETED" },
-      artifacts: [{ name: "daily-classic-game", parts: [{ mediaType: "application/json", data: { kind: "aaidle.game.v1" } }] }],
+      artifacts: [
+        {
+          name: "daily-classic-game",
+          parts: [{ mediaType: "application/json", data: { kind: "aaidle.game.v1" } }],
+        },
+      ],
     });
     expect(task.id).toMatch(/^[0-9a-f-]{36}$/i);
     expect(task.artifacts[0].artifactId).toMatch(/^[0-9a-f-]{36}$/i);

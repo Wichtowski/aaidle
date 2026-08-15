@@ -6,7 +6,8 @@ import { emojiGame } from "../lib/domain/games/emoji/definition";
 
 export const metadata: Metadata = {
   title: "Daily AI Model Guessing Game",
-  description: "Play today’s AI model guessing game. Use clues about providers, capabilities, context windows, and more to identify the model.",
+  description:
+    "Play today’s AI model guessing game. Use clues about providers, capabilities, context windows, and more to identify the model.",
   alternates: { canonical: "/" },
   openGraph: {
     url: "/",
@@ -19,7 +20,8 @@ const gameSchema = {
   "@context": "https://schema.org",
   "@type": "VideoGame",
   name: "aAIdle",
-  description: "A daily AI model guessing game where players compare clues to identify the featured model.",
+  description:
+    "A daily AI model guessing game where players compare clues to identify the featured model.",
   url: "https://aaidle.com",
   applicationCategory: "Game",
   genre: ["Puzzle", "Educational"],

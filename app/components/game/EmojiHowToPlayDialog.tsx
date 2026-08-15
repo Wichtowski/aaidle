@@ -16,12 +16,19 @@ export function EmojiHowToPlayDialog({ open, onClose }: { open: boolean; onClose
       }}
     >
       <section className="how-to-play-modal__content">
-        <button aria-label="Close how to play" className="how-to-play-modal__close" onClick={onClose}>
+        <button
+          aria-label="Close how to play"
+          className="how-to-play-modal__close"
+          onClick={onClose}
+        >
           <FaXmark aria-hidden focusable="false" />
         </button>
         <p className="eyebrow">Emoji rules</p>
         <h2 id="emoji-how-to-play-title">Decode the family.</h2>
-        <p>One AI model family is hidden each day. The answer is a family such as GPT or Claude, never a specific model version.</p>
+        <p>
+          One AI model family is hidden each day. The answer is a family such as GPT or Claude,
+          never a specific model version.
+        </p>
 
         <h3>Read the rebus</h3>
         <ul>
@@ -29,7 +36,8 @@ export function EmojiHowToPlayDialog({ open, onClose }: { open: boolean; onClose
             <FaLightbulb aria-hidden /> Start with two emoji. They can be intentionally ambiguous.
           </li>
           <li className="how-to-play-modal__item--partial">
-            <FaPen aria-hidden /> Type one family name per guess. Family names are not displayed as choices.
+            <FaPen aria-hidden /> Type one family name per guess. Family names are not displayed as
+            choices.
           </li>
           <li className="how-to-play-modal__item--incorrect">
             <FaXmark aria-hidden /> Each wrong guess unlocks the next emoji, up to six clues.

@@ -18,7 +18,10 @@ export async function POST(request: Request) {
 
     const token = await createPasswordResetToken(email);
     if (token) await sendAuthEmail({ email, purpose: "password-reset", token });
-    return Response.json({ accepted: true }, { status: 202, headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { accepted: true },
+      { status: 202, headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "EMAIL_DELIVERY_NOT_CONFIGURED" || code === "EMAIL_DELIVERY_FAILED") {

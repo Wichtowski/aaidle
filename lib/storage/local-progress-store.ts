@@ -29,8 +29,7 @@ function readInnerCirclePreferences(): InnerCirclePreferences {
     return {
       hardcoreUnlocked: preferences.hardcoreUnlocked === true,
       hellMode: preferences.hellMode === true,
-      hasAutoplayedHardcoreSoundtrack:
-        preferences.hasAutoplayedHardcoreSoundtrack === true,
+      hasAutoplayedHardcoreSoundtrack: preferences.hasAutoplayedHardcoreSoundtrack === true,
     };
   } catch {
     return emptyInnerCirclePreferences;
@@ -43,8 +42,7 @@ function saveInnerCirclePreferences(progress: LocalProgress) {
   const preferences = {
     hardcoreUnlocked: progress.preferences.hardcoreUnlocked,
     hellMode: progress.preferences.hellMode,
-    hasAutoplayedHardcoreSoundtrack:
-      progress.preferences.hasAutoplayedHardcoreSoundtrack,
+    hasAutoplayedHardcoreSoundtrack: progress.preferences.hasAutoplayedHardcoreSoundtrack,
   };
   if (preferences.hardcoreUnlocked || preferences.hasAutoplayedHardcoreSoundtrack) {
     window.localStorage.setItem(innerCircleKey, JSON.stringify(preferences));
@@ -88,8 +86,7 @@ export const freshProgress = (): LocalProgress => {
       hardcoreUnlocked: innerCircle.hardcoreUnlocked,
       innerCircleActive: false,
       hellMode: false,
-      hasAutoplayedHardcoreSoundtrack:
-        innerCircle.hasAutoplayedHardcoreSoundtrack,
+      hasAutoplayedHardcoreSoundtrack: innerCircle.hasAutoplayedHardcoreSoundtrack,
     },
   };
 };
@@ -169,8 +166,7 @@ function reconcileInnerCirclePreferences(progress: LocalProgress): LocalProgress
   const innerCircle = readInnerCirclePreferences();
   const preferences = {
     ...progress.preferences,
-    hardcoreUnlocked:
-      progress.preferences.hardcoreUnlocked || innerCircle.hardcoreUnlocked,
+    hardcoreUnlocked: progress.preferences.hardcoreUnlocked || innerCircle.hardcoreUnlocked,
     hellMode: progress.preferences.hellMode || innerCircle.hellMode,
     hasAutoplayedHardcoreSoundtrack:
       progress.preferences.hasAutoplayedHardcoreSoundtrack ||

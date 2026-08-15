@@ -89,7 +89,9 @@ describe("GuessBoard", () => {
     rerender(createElement(GuessBoard, { category: "llm", difficulty: "challenge", guesses: [] }));
     expect(within(container).queryByRole("columnheader", { name: "Country" })).toBeNull();
 
-    rerender(createElement(GuessBoard, { category: "hardcore", difficulty: "hardcore", guesses: [] }));
+    rerender(
+      createElement(GuessBoard, { category: "hardcore", difficulty: "hardcore", guesses: [] }),
+    );
     expect(within(container).queryByRole("columnheader", { name: "Country" })).toBeNull();
   });
 

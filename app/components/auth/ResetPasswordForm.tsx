@@ -31,7 +31,10 @@ export function ResetPasswordForm() {
       if (!response.ok) throw new Error(payload.error?.message ?? "Could not reset your password.");
       window.location.assign("/classic");
     } catch (error) {
-      setToast({ message: error instanceof Error ? error.message : "Could not reset your password.", variant: "error" });
+      setToast({
+        message: error instanceof Error ? error.message : "Could not reset your password.",
+        variant: "error",
+      });
     } finally {
       setBusy(false);
     }
@@ -39,7 +42,11 @@ export function ResetPasswordForm() {
 
   return (
     <form className="auth-card auth-card__password" onSubmit={submit}>
-      <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={() => setToast(null)} />
+      <Toast
+        message={toast?.message ?? null}
+        variant={toast?.variant}
+        onDismiss={() => setToast(null)}
+      />
       <label className="auth-field">
         New password
         <span className="password-input">
@@ -78,11 +85,19 @@ export function ResetPasswordForm() {
             onClick={() => setConfirmPasswordVisible((visible) => !visible)}
             type="button"
           >
-            {confirmPasswordVisible ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+            {confirmPasswordVisible ? (
+              <FaEyeSlash aria-hidden="true" />
+            ) : (
+              <FaEye aria-hidden="true" />
+            )}
           </button>
         </span>
       </label>
-      <button className="button button--primary" disabled={busy || !password || !confirmPassword} type="submit">
+      <button
+        className="button button--primary"
+        disabled={busy || !password || !confirmPassword}
+        type="submit"
+      >
         Set new password
       </button>
     </form>

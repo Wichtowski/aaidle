@@ -14,5 +14,8 @@ const redirect = (path: string, cookie?: string) => {
 export async function GET(request: Request) {
   const token = new URL(request.url).searchParams.get("token");
   if (!token || token.length > 128) return redirect("/login?error=reset-link");
-  return redirect("/reset-password", setCookie(passwordResetCookieName, token, passwordResetMaxAgeSeconds));
+  return redirect(
+    "/reset-password",
+    setCookie(passwordResetCookieName, token, passwordResetMaxAgeSeconds),
+  );
 }

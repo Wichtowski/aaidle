@@ -16,7 +16,8 @@ export const metadata: Metadata = {
     default: "aAIdle | Daily AI Model Guessing Game",
     template: "%s | aAIdle",
   },
-  description: "Play a new daily AI model guessing game. Compare model clues, make your guess, and build your streak.",
+  description:
+    "Play a new daily AI model guessing game. Compare model clues, make your guess, and build your streak.",
   applicationName: "aAIdle",
   category: "games",
   alternates: { canonical: "/" },
@@ -37,7 +38,9 @@ export const metadata: Metadata = {
     url: "/",
     title: "aAIdle | Daily AI Model Guessing Game",
     description: "Can you identify today’s AI model? Compare the clues and make your guess.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "aAIdle daily AI model game" }],
+    images: [
+      { url: "/opengraph-image", width: 1200, height: 630, alt: "aAIdle daily AI model game" },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -99,8 +102,8 @@ async function hasPersistedHellMode() {
     const progress = localProgressSchema.safeParse(JSON.parse(record.progress_json));
     return Boolean(
       progress.success &&
-        progress.data.preferences.hardcoreUnlocked &&
-        progress.data.preferences.hellMode,
+      progress.data.preferences.hardcoreUnlocked &&
+      progress.data.preferences.hellMode,
     );
   } catch {
     return false;

@@ -14,13 +14,16 @@ export async function POST(
     const body = await parseJson(request);
     const { challengeId } = await params;
     const user = await userForSession(cookieValue(request, sessionCookieName));
-    return Response.json(await submitClassicGuess({
-      ...body,
-      challengeId,
-      completedByUserId: user?.id ?? null,
-    }), {
-      headers: { "Cache-Control": "no-store" },
-    });
+    return Response.json(
+      await submitClassicGuess({
+        ...body,
+        challengeId,
+        completedByUserId: user?.id ?? null,
+      }),
+      {
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "DUPLICATE_GUESS") {

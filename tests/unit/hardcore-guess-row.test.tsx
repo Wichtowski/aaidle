@@ -5,7 +5,10 @@ import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { GuessRow } from "../../app/components/game/GuessRow";
 import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import { classicColumns, classicColumnsByCategory } from "../../lib/domain/guesses/comparison-types";
+import {
+  classicColumns,
+  classicColumnsByCategory,
+} from "../../lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../lib/domain/models/model-types";
 
 const model: ComparableModel = {
@@ -96,22 +99,25 @@ describe("Hardcore GuessRow", () => {
     expect(container.querySelectorAll(".comparison--correct, .comparison--incorrect")).toHaveLength(
       classicColumnsByCategory.hardcore.length,
     );
-    expect(container.querySelector(".comparison--partial, .comparison--higher, .comparison--unknown")).toBeNull();
+    expect(
+      container.querySelector(".comparison--partial, .comparison--higher, .comparison--unknown"),
+    ).toBeNull();
     expect(container.querySelector(".matched-value")).toBeNull();
     const categoryColumn = classicColumnsByCategory.hardcore.indexOf("categories");
-    const categoryCardText = container.querySelectorAll(".comparison-card__value")[categoryColumn]?.textContent;
+    const categoryCardText =
+      container.querySelectorAll(".comparison-card__value")[categoryColumn]?.textContent;
     expect(categoryCardText).toBe("Chat, Coding");
     expect(
-      container.querySelectorAll(".comparison-card__value")[categoryColumn]?.getAttribute("data-tooltip"),
-    ).toBe(
-      "Chat, Coding",
-    );
+      container
+        .querySelectorAll(".comparison-card__value")
+        [categoryColumn]?.getAttribute("data-tooltip"),
+    ).toBe("Chat, Coding");
 
     const toolUseColumn = classicColumnsByCategory.hardcore.indexOf("toolUse");
     const toolUseCard = container.querySelectorAll(".comparison-card")[toolUseColumn];
-    expect(toolUseCard?.querySelector(".comparison--correct .comparison-card__value")?.textContent).toBe(
-      "N/A",
-    );
+    expect(
+      toolUseCard?.querySelector(".comparison--correct .comparison-card__value")?.textContent,
+    ).toBe("N/A");
   });
 
   it("reserves overlap emphasis for partial matches in Normal only", () => {
@@ -129,7 +135,9 @@ describe("Hardcore GuessRow", () => {
       hardcore: false,
       columns: ["inputModalities"] as const,
     };
-    const { container, rerender } = render(createElement(GuessRow, { ...props, difficulty: "normal" }));
+    const { container, rerender } = render(
+      createElement(GuessRow, { ...props, difficulty: "normal" }),
+    );
 
     expect(container.querySelector(".matched-value")?.textContent).toBe("Text");
 

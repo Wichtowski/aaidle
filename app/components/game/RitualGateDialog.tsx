@@ -34,7 +34,11 @@ export function RitualGateDialog() {
             : "Sign in or create an account to keep this victory and enter the Inner Circle."}
         </p>
         <div className="completed__actions">
-          <Link className="button button--inner-circle" href={user ? "/profile" : "/login"} ref={enterLinkRef}>
+          <Link
+            className="button button--inner-circle"
+            href={user ? "/profile" : "/login"}
+            ref={enterLinkRef}
+          >
             {user ? "Continue to profile" : "Sign in to continue"}
           </Link>
         </div>

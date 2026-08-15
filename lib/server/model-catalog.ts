@@ -127,7 +127,9 @@ export function publicModelFamilies(familyIds: readonly string[]): PublicModelFa
     });
   }
 
-  return familyIds.map((id) => byFamily.get(id)).filter((family): family is PublicModelFamily => Boolean(family));
+  return familyIds
+    .map((id) => byFamily.get(id))
+    .filter((family): family is PublicModelFamily => Boolean(family));
 }
 
 const isInCategory = (model: CatalogModel, category: ClassicCategory) =>

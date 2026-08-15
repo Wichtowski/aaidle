@@ -24,7 +24,9 @@ export async function POST(
     const { challengeId } = await params;
     const body = requestSchema.parse(JSON.parse(await readRequestText(request, 8_000)));
     const challenge = await database()
-      .prepare("SELECT answer_model_id, mode FROM daily_challenges WHERE id=? AND mode LIKE 'classic:%'")
+      .prepare(
+        "SELECT answer_model_id, mode FROM daily_challenges WHERE id=? AND mode LIKE 'classic:%'",
+      )
       .bind(challengeId)
       .first<{ answer_model_id: string; mode: string }>();
     if (!challenge) return errorResponse("CHALLENGE_NOT_FOUND", "Challenge not found.", 404);
@@ -36,12 +38,18 @@ export async function POST(
           .bind(user.id, challengeId)
           .first()
       : null;
-    const hasAccess = Boolean(completion) || hasTrajectoryAccess(body.trajectoryAccessToken, {
-      challengeId,
-      answerModelId: challenge.answer_model_id,
-    });
+    const hasAccess =
+      Boolean(completion) ||
+      hasTrajectoryAccess(body.trajectoryAccessToken, {
+        challengeId,
+        answerModelId: challenge.answer_model_id,
+      });
     if (!hasAccess) {
-      return errorResponse("TRAJECTORY_LOCKED", "Solve this challenge to view its model-space trajectory.", 403);
+      return errorResponse(
+        "TRAJECTORY_LOCKED",
+        "Solve this challenge to view its model-space trajectory.",
+        403,
+      );
     }
 
     const { category, difficulty } = classicModeFromChallengeMode(challenge.mode);

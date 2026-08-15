@@ -28,7 +28,9 @@ function storageKey(challenge: EmojiGamePayload["challenge"]) {
 function readStoredGame(challenge: EmojiGamePayload["challenge"]): StoredEmojiGame {
   if (typeof window === "undefined") return { guesses: [], solved: false };
   try {
-    const value = JSON.parse(window.localStorage.getItem(storageKey(challenge)) ?? "null") as StoredEmojiGame | null;
+    const value = JSON.parse(
+      window.localStorage.getItem(storageKey(challenge)) ?? "null",
+    ) as StoredEmojiGame | null;
     if (!value || !Array.isArray(value.guesses)) return { guesses: [], solved: false };
     return {
       guesses: value.guesses,
@@ -107,7 +109,9 @@ export function EmojiGame({ initialGame }: { initialGame: EmojiGamePayload }) {
         setShowCompletion(true);
       }
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Your guess could not be submitted.");
+      setError(
+        submitError instanceof Error ? submitError.message : "Your guess could not be submitted.",
+      );
     } finally {
       setBusy(false);
     }
@@ -131,28 +135,45 @@ export function EmojiGame({ initialGame }: { initialGame: EmojiGamePayload }) {
         description="Start with two clues. Each wrong guess uncovers the next one."
         expiresAt={game.challenge.expiresAt}
         eyebrow={<>Emoji · {game.challenge.date}</>}
-        input={!solved && (
-          <FamilyAutocomplete
-            disabled={busy}
-            excluded={guessedIds}
-            families={game.families}
-            onPick={(family) => void guess(family)}
-          />
-        )}
+        input={
+          !solved && (
+            <FamilyAutocomplete
+              disabled={busy}
+              excluded={guessedIds}
+              families={game.families}
+              onPick={(family) => void guess(family)}
+            />
+          )
+        }
         onExpiry={refreshGame}
-        status={busy && <p aria-live="polite" className="attempts">Checking…</p>}
+        status={
+          busy && (
+            <p aria-live="polite" className="attempts">
+              Checking…
+            </p>
+          )
+        }
         title="Which AI family is this?"
         titleId="emoji-game-title"
       />
-      {error && <p className="notice" role="alert">{error}</p>}
+      {error && (
+        <p className="notice" role="alert">
+          {error}
+        </p>
+      )}
 
       <section className="emoji-game" aria-label="Emoji clues and guesses">
         <ol className="emoji-game__clues" aria-label="Emoji clues">
           {clueSlots.map((slot) => {
             const revealed = slot < revealCount;
             return (
-              <li className={revealed ? "emoji-game__clue" : "emoji-game__clue emoji-game__clue--hidden"} key={slot}>
-                {revealed ? emoji[slot] ?? "…" : "?"}
+              <li
+                className={
+                  revealed ? "emoji-game__clue" : "emoji-game__clue emoji-game__clue--hidden"
+                }
+                key={slot}
+              >
+                {revealed ? (emoji[slot] ?? "…") : "?"}
               </li>
             );
           })}
@@ -163,7 +184,14 @@ export function EmojiGame({ initialGame }: { initialGame: EmojiGamePayload }) {
             <h2 id="emoji-history-title">Your guesses</h2>
             <ol>
               {guesses.map((entry, index) => (
-                <li className={entry.isCorrect ? "emoji-game__guess emoji-game__guess--correct" : "emoji-game__guess"} key={`${entry.familyId}:${index}`}>
+                <li
+                  className={
+                    entry.isCorrect
+                      ? "emoji-game__guess emoji-game__guess--correct"
+                      : "emoji-game__guess"
+                  }
+                  key={`${entry.familyId}:${index}`}
+                >
                   <span>{index + 1}</span>
                   <strong>{entry.familyName}</strong>
                   <em>{entry.isCorrect ? "Correct" : "Not this family"}</em>
@@ -173,7 +201,12 @@ export function EmojiGame({ initialGame }: { initialGame: EmojiGamePayload }) {
           </section>
         )}
       </section>
-      <button aria-label="Emoji game rules" className="game-help__button game-help__button--floating" onClick={() => setShowRules(true)} type="button">
+      <button
+        aria-label="Emoji game rules"
+        className="game-help__button game-help__button--floating"
+        onClick={() => setShowRules(true)}
+        type="button"
+      >
         <FaCircleQuestion aria-hidden focusable="false" />
       </button>
       <EmojiHowToPlayDialog open={showRules} onClose={() => setShowRules(false)} />

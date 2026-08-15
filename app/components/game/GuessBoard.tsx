@@ -32,9 +32,7 @@ type BoardGuess = {
 };
 
 const autoCollapsedGuessIds = (requestIds: string[]) =>
-  requestIds.length > compactAfterGuessCount
-    ? new Set(requestIds.slice(0, -1))
-    : new Set<string>();
+  requestIds.length > compactAfterGuessCount ? new Set(requestIds.slice(0, -1)) : new Set<string>();
 
 export function GuessBoard({
   guesses,

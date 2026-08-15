@@ -270,14 +270,19 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ userId: string }> }) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ userId: string }> },
+) {
   try {
     assertSameOrigin(request);
     const admin = await adminForRequest(request);
     if (!canManageAdministrators(admin.permission)) throw new Error("FORBIDDEN");
     const { userId } = await params;
     if (userId === admin.id) throw new Error("SELF_UPDATE");
-    const { gameKey, requestId } = removeGuessSchema.parse(JSON.parse(await readRequestText(request, 4_096)));
+    const { gameKey, requestId } = removeGuessSchema.parse(
+      JSON.parse(await readRequestText(request, 4_096)),
+    );
     const DB = database();
     const record = await DB.prepare("SELECT progress_json FROM user_progress WHERE user_id=?")
       .bind(userId)
@@ -293,7 +298,12 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ u
       ...progress,
       games: {
         ...progress.games,
-        [gameKey]: { ...game, guesses, status: solved ? "solved" : "in-progress", completedAt: solved ? game.completedAt : null },
+        [gameKey]: {
+          ...game,
+          guesses,
+          status: solved ? "solved" : "in-progress",
+          completedAt: solved ? game.completedAt : null,
+        },
       },
     });
     await DB.prepare("UPDATE user_progress SET progress_json=?, updated_at=? WHERE user_id=?")
@@ -309,12 +319,15 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ u
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "UNAUTHENTICATED") return authError(code, "Sign in to access admin tools.", 401);
-    if (code === "FORBIDDEN") return authError(code, "Only a super administrator can remove saved guesses.", 403);
-    if (code === "SELF_UPDATE") return authError(code, "You cannot remove guesses from your own account.", 400);
+    if (code === "FORBIDDEN")
+      return authError(code, "Only a super administrator can remove saved guesses.", 403);
+    if (code === "SELF_UPDATE")
+      return authError(code, "You cannot remove guesses from your own account.", 400);
     if (code === "PROGRESS_NOT_FOUND" || code === "GAME_NOT_FOUND" || code === "GUESS_NOT_FOUND") {
       return authError(code, "The saved guess was not found.", 404);
     }
-    if (code === "INVALID_ORIGIN") return authError(code, "This request must come from the application.", 403);
+    if (code === "INVALID_ORIGIN")
+      return authError(code, "This request must come from the application.", 403);
     return authError("INVALID_REQUEST", "Could not remove the saved guess.", 400);
   }
 }

@@ -239,11 +239,14 @@ class ApiClient {
   }
 
   removeAdminGameGuess(userId: string, gameKey: string, requestId: string) {
-    return this.request<{ user: AdminUserDetail }>(`/api/v1/admin/users/${encodeURIComponent(userId)}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ gameKey, requestId }),
-    });
+    return this.request<{ user: AdminUserDetail }>(
+      `/api/v1/admin/users/${encodeURIComponent(userId)}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameKey, requestId }),
+      },
+    );
   }
 
   hardcoreSoundtrackSetting() {

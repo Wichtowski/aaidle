@@ -40,7 +40,11 @@ export async function submitEmojiGuess(input: {
 
   return {
     guess: {
-      family: { id: guessedFamily.id, name: guessedFamily.name, providerName: guessedFamily.providerName },
+      family: {
+        id: guessedFamily.id,
+        name: guessedFamily.name,
+        providerName: guessedFamily.providerName,
+      },
       isCorrect,
       attemptNumber: input.attemptNumber,
     },

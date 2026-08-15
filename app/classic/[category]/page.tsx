@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { ClassicGame } from "../../components/game/ClassicGame";
-import { classicCategoryDetails, classicCategoryFromRouteSegment, isClassicDifficulty } from "../../../lib/domain/models/model-types";
+import {
+  classicCategoryDetails,
+  classicCategoryFromRouteSegment,
+  isClassicDifficulty,
+} from "../../../lib/domain/models/model-types";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -25,7 +29,11 @@ export async function generateMetadata({ params }: ClassicCategoryPageProps): Pr
     title,
     description,
     alternates: { canonical: `/classic/${classicCategoryDetails[category].routeSegment}` },
-    openGraph: { title, description, url: `/classic/${classicCategoryDetails[category].routeSegment}` },
+    openGraph: {
+      title,
+      description,
+      url: `/classic/${classicCategoryDetails[category].routeSegment}`,
+    },
     twitter: { title, description },
   };
 }
@@ -43,10 +51,14 @@ export default async function ClassicCategoryPage({ params }: ClassicCategoryPag
   }
   if (category === "hardcore" && !user) redirect("/login");
   const savedDifficulty = cookieStore.get(classicDifficultyCookieName)?.value;
-  const difficulty = category === "hardcore" ? "hardcore" : isClassicDifficulty(savedDifficulty) && savedDifficulty !== "hardcore" ? savedDifficulty : "normal";
+  const difficulty =
+    category === "hardcore"
+      ? "hardcore"
+      : isClassicDifficulty(savedDifficulty) && savedDifficulty !== "hardcore"
+        ? savedDifficulty
+        : "normal";
   const hasHardcoreGameAccess =
-    category !== "hardcore" ||
-    Boolean(user && (await hasHardcoreAccess(user.id)));
+    category !== "hardcore" || Boolean(user && (await hasHardcoreAccess(user.id)));
   return (
     <ClassicGame
       category={category}

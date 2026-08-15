@@ -9,9 +9,10 @@ function mergeGame(current: StoredGame, incoming: StoredGame): StoredGame {
       [...current.guesses, ...incoming.guesses].map((guess) => [guess.requestId, guess]),
     ),
   ).sort((left, right) => left.attemptedAt.localeCompare(right.attemptedAt));
-  const completedAt = [current.completedAt, incoming.completedAt]
-    .filter((value): value is string => Boolean(value))
-    .sort()[0] ?? null;
+  const completedAt =
+    [current.completedAt, incoming.completedAt]
+      .filter((value): value is string => Boolean(value))
+      .sort()[0] ?? null;
 
   return {
     ...current,
@@ -49,7 +50,10 @@ export function parseCloudProgress(value: unknown): LocalProgress {
   return reconcileStats(localProgressSchema.parse(value));
 }
 
-export function mergeCloudProgress(current: LocalProgress | null, incoming: LocalProgress): LocalProgress {
+export function mergeCloudProgress(
+  current: LocalProgress | null,
+  incoming: LocalProgress,
+): LocalProgress {
   if (!current) return reconcileStats(incoming);
 
   const games = { ...current.games };

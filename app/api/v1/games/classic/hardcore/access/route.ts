@@ -13,21 +13,25 @@ export async function POST(request: Request) {
     assertSameOrigin(request);
     const user = await userForSession(cookieValue(request, sessionCookieName));
     if (!user) return authError("UNAUTHENTICATED", "Sign in to enter Hardcore.", 401);
-    if (isAccountDisabled(user)) return authError("ACCOUNT_DISABLED", "This account has been disabled.", 403);
+    if (isAccountDisabled(user))
+      return authError("ACCOUNT_DISABLED", "This account has been disabled.", 403);
 
     if (!(await hasHardcoreAccess(user.id))) {
-      const progress = localProgressSchema.parse(JSON.parse(await readRequestText(request, 1_000_000)));
+      const progress = localProgressSchema.parse(
+        JSON.parse(await readRequestText(request, 1_000_000)),
+      );
       const today = new Date().toISOString().slice(0, 10);
       if (!progress.preferences.hardcoreUnlocked && !hasCompletedChallengeRitual(progress, today)) {
-        return errorResponse("RITUAL_INCOMPLETE", "Complete all six Challenge boards today to enter Hardcore.", 403);
+        return errorResponse(
+          "RITUAL_INCOMPLETE",
+          "Complete all six Challenge boards today to enter Hardcore.",
+          403,
+        );
       }
       await grantHardcoreAccess(user.id);
     }
 
-    return Response.json(
-      { unlocked: true },
-      { headers: { "Cache-Control": "no-store" } },
-    );
+    return Response.json({ unlocked: true }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof Error && error.message === "INVALID_ORIGIN") {
       return errorResponse("INVALID_ORIGIN", "This request must come from the application.", 403);

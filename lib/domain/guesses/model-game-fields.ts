@@ -15,8 +15,7 @@ export const FOCUSED_CATEGORY = {
   FILTERS: "filters",
 } as const;
 
-export type FocusedCategory =
-  (typeof FOCUSED_CATEGORY)[keyof typeof FOCUSED_CATEGORY];
+export type FocusedCategory = (typeof FOCUSED_CATEGORY)[keyof typeof FOCUSED_CATEGORY];
 
 export const COMMON_FIELDS = [
   "provider",
@@ -130,10 +129,7 @@ const NORMAL_CATEGORY_FIELDS = {
   ],
 } as const satisfies Record<FocusedCategory, readonly string[]>;
 
-export function getBoardFields(
-  mode: GameMode,
-  category: FocusedCategory,
-): readonly string[] {
+export function getBoardFields(mode: GameMode, category: FocusedCategory): readonly string[] {
   if (mode === GAME_MODE.HARDCORE) {
     // Deliberately category-agnostic and NEVER contains country.
     return HARDCORE_FIELDS;
@@ -149,9 +145,6 @@ export function getBoardFields(
   return fields;
 }
 
-export function isEligibleForPool(
-  model: { minPool: 0 | 1 | 2 },
-  selectedPool: 0 | 1 | 2,
-): boolean {
+export function isEligibleForPool(model: { minPool: 0 | 1 | 2 }, selectedPool: 0 | 1 | 2): boolean {
   return model.minPool <= selectedPool;
 }

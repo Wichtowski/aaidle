@@ -52,16 +52,22 @@ export async function POST(request: Request) {
             ...(await submitClassicGuess(parsed.command)),
           };
 
-    const name = parsed.command.operation === "get_game" ? "daily-classic-game" : "classic-guess-result";
+    const name =
+      parsed.command.operation === "get_game" ? "daily-classic-game" : "classic-guess-result";
     return Response.json(
-      { jsonrpc: "2.0", id: requestId, result: { task: agentTask({ contextId: parsed.contextId, data, name }) } },
+      {
+        jsonrpc: "2.0",
+        id: requestId,
+        result: { task: agentTask({ contextId: parsed.contextId, data, name }) },
+      },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
     if (error instanceof Error && error.message === "BODY_TOO_LARGE") {
       return jsonRpcError(requestId, -32600, "Request payload is too large.");
     }
-    if (error instanceof SyntaxError) return jsonRpcError(requestId, -32700, "Invalid JSON payload.");
+    if (error instanceof SyntaxError)
+      return jsonRpcError(requestId, -32700, "Invalid JSON payload.");
     if (error instanceof ZodError || error instanceof AgentRequestError) {
       return jsonRpcError(requestId, -32602, "Invalid request parameters.");
     }

@@ -22,7 +22,13 @@ export function requiredAuthSecret(): string {
   return "local-development-auth-secret-not-for-production";
 }
 
-export function cookieAttributes({ maxAge, httpOnly = true }: { maxAge: number; httpOnly?: boolean }) {
+export function cookieAttributes({
+  maxAge,
+  httpOnly = true,
+}: {
+  maxAge: number;
+  httpOnly?: boolean;
+}) {
   return [
     "Path=/",
     `Max-Age=${maxAge}`,

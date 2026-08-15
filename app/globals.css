@@ -1436,8 +1436,12 @@ body.hell-mode .admin-soundtrack-settings__saved {
   gap: 10px;
   font-size: 12px;
 }
-.admin-progress__game-detail [data-status="solved"] { color: #276552; }
-.admin-progress__game-detail [data-status="in-progress"] { color: #a3571d; }
+.admin-progress__game-detail [data-status="solved"] {
+  color: #276552;
+}
+.admin-progress__game-detail [data-status="in-progress"] {
+  color: #a3571d;
+}
 .admin-progress__guess-list {
   display: grid;
   gap: 7px;
@@ -4543,7 +4547,10 @@ body::-webkit-scrollbar-thumb:hover,
   background: var(--paper);
   text-align: left;
   cursor: pointer;
-  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
 }
 .emoji-game__family:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -4609,8 +4616,17 @@ body::-webkit-scrollbar-thumb:hover,
   box-shadow: 0 24px 80px rgb(0 0 0 / 25%);
 }
 @media (max-width: 640px) {
-  .emoji-game__clues { gap: 7px; }
-  .emoji-game__clue { border-radius: 10px; }
-  .emoji-game__history, .emoji-game__solved { padding: 20px; }
-  .emoji-game__guess-form > div { display: grid; }
+  .emoji-game__clues {
+    gap: 7px;
+  }
+  .emoji-game__clue {
+    border-radius: 10px;
+  }
+  .emoji-game__history,
+  .emoji-game__solved {
+    padding: 20px;
+  }
+  .emoji-game__guess-form > div {
+    display: grid;
+  }
 }

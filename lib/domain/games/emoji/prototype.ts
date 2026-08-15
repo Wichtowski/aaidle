@@ -61,7 +61,10 @@ function seededOrder<T>(values: readonly T[], seed: string): T[] {
 }
 
 /** Resolves all slots together so overlapping candidate arrays cannot repeat an emoji. */
-export function resolveDistinctEmoji(slots: readonly EmojiClueSlot[], seed: string): string[] | null {
+export function resolveDistinctEmoji(
+  slots: readonly EmojiClueSlot[],
+  seed: string,
+): string[] | null {
   const choose = (slotIndex: number, selected: string[]): string[] | null => {
     if (slotIndex === slots.length) return selected;
 
@@ -89,11 +92,17 @@ export function generateEmojiPuzzle({
   if (pool.length === 0) throw new Error("Emoji puzzle pool cannot be empty.");
 
   const family = seededOrder(pool, `${challengeSeed}:${date}:family`)[0];
-  const variants = seededOrder(family.variants, `${challengeSeed}:${date}:${family.familyId}:variant`);
+  const variants = seededOrder(
+    family.variants,
+    `${challengeSeed}:${date}:${family.familyId}:variant`,
+  );
 
   for (const variant of variants) {
     const variantIndex = family.variants.indexOf(variant);
-    const emoji = resolveDistinctEmoji(variant.slots, `${challengeSeed}:${date}:${family.familyId}:${variantIndex}`);
+    const emoji = resolveDistinctEmoji(
+      variant.slots,
+      `${challengeSeed}:${date}:${family.familyId}:${variantIndex}`,
+    );
     if (emoji) return { familyId: family.familyId, variantIndex, emoji, logoHint: family.logoHint };
   }
 

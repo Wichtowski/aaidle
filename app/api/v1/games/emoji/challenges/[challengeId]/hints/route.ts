@@ -17,7 +17,8 @@ export async function GET(
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_REQUEST";
     if (code === "CHALLENGE_NOT_FOUND") return errorResponse(code, "Challenge not found.", 404);
-    if (code === "INVALID_HINT_COUNT") return errorResponse(code, "Hint count must be between 3 and 6.", 400);
+    if (code === "INVALID_HINT_COUNT")
+      return errorResponse(code, "Hint count must be between 3 and 6.", 400);
     return errorResponse("INVALID_REQUEST", "The hint request is invalid.", 400);
   }
 }

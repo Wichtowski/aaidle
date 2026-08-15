@@ -25,7 +25,8 @@ function assignments(slots, index = 0, selected = []) {
   if (index === slots.length) return [selected];
   const results = [];
   for (const emoji of slots[index].emojiCandidates) {
-    if (!selected.includes(emoji)) results.push(...assignments(slots, index + 1, [...selected, emoji]));
+    if (!selected.includes(emoji))
+      results.push(...assignments(slots, index + 1, [...selected, emoji]));
   }
   return results;
 }
@@ -39,7 +40,8 @@ let assignmentCount = 0;
 
 for (const puzzle of pool) {
   if (!puzzle || typeof puzzle !== "object") fail("Every Emoji pool entry must be an object.");
-  if (typeof puzzle.familyId !== "string" || !puzzle.familyId) fail("Emoji pool entry has no familyId.");
+  if (typeof puzzle.familyId !== "string" || !puzzle.familyId)
+    fail("Emoji pool entry has no familyId.");
   if (familyIds.has(puzzle.familyId)) fail(`Duplicate familyId: ${puzzle.familyId}`);
   familyIds.add(puzzle.familyId);
   if (!catalogFamilyIds.has(puzzle.familyId)) fail(`Unknown catalog familyId: ${puzzle.familyId}`);
@@ -49,8 +51,12 @@ for (const puzzle of pool) {
 
   if (puzzle.logoHint) {
     const { assetKey, revealModes } = puzzle.logoHint;
-    if (typeof assetKey !== "string" || !assetKey) fail(`${puzzle.familyId} has an invalid logo asset key.`);
-    if (!Array.isArray(revealModes) || revealModes.some((mode) => mode !== "partial" && mode !== "full")) {
+    if (typeof assetKey !== "string" || !assetKey)
+      fail(`${puzzle.familyId} has an invalid logo asset key.`);
+    if (
+      !Array.isArray(revealModes) ||
+      revealModes.some((mode) => mode !== "partial" && mode !== "full")
+    ) {
       fail(`${puzzle.familyId} has invalid logo reveal modes.`);
     }
     if (!existsSync(new URL(`../public/emoji-logos/${assetKey}.svg`, import.meta.url))) {
@@ -61,7 +67,9 @@ for (const puzzle of pool) {
   for (const [variantIndex, variant] of puzzle.variants.entries()) {
     const { slots } = variant ?? {};
     if (!Array.isArray(slots) || slots.length < MIN_SLOTS || slots.length > MAX_SLOTS) {
-      fail(`${puzzle.familyId} variant ${variantIndex} must contain ${MIN_SLOTS} to ${MAX_SLOTS} slots.`);
+      fail(
+        `${puzzle.familyId} variant ${variantIndex} must contain ${MIN_SLOTS} to ${MAX_SLOTS} slots.`,
+      );
     }
 
     for (const [slotIndex, slot] of slots.entries()) {
@@ -69,7 +77,9 @@ for (const puzzle of pool) {
         fail(`${puzzle.familyId} variant ${variantIndex} slot ${slotIndex} has no concept.`);
       }
       if (!Array.isArray(slot.emojiCandidates) || slot.emojiCandidates.length < MIN_CANDIDATES) {
-        fail(`${puzzle.familyId} variant ${variantIndex} slot ${slotIndex} needs at least ${MIN_CANDIDATES} candidates.`);
+        fail(
+          `${puzzle.familyId} variant ${variantIndex} slot ${slotIndex} needs at least ${MIN_CANDIDATES} candidates.`,
+        );
       }
       if (new Set(slot.emojiCandidates).size !== slot.emojiCandidates.length) {
         fail(`${puzzle.familyId} variant ${variantIndex} slot ${slotIndex} repeats a candidate.`);
@@ -78,7 +88,8 @@ for (const puzzle of pool) {
     }
 
     const validAssignments = assignments(slots);
-    if (validAssignments.length === 0) fail(`${puzzle.familyId} variant ${variantIndex} has no distinct emoji assignment.`);
+    if (validAssignments.length === 0)
+      fail(`${puzzle.familyId} variant ${variantIndex} has no distinct emoji assignment.`);
     assignmentCount += validAssignments.length;
     const variantId = `${puzzle.familyId}#${variantIndex}`;
     variants.push({ id: variantId, familyId: puzzle.familyId, slots });
@@ -87,7 +98,9 @@ for (const puzzle of pool) {
       const key = sequence.join("\u0000");
       const previous = sequences.get(key);
       if (previous && previous.familyId !== puzzle.familyId) {
-        fail(`Collision: ${sequence.join(" ")} belongs to both ${previous.familyId} and ${puzzle.familyId}.`);
+        fail(
+          `Collision: ${sequence.join(" ")} belongs to both ${previous.familyId} and ${puzzle.familyId}.`,
+        );
       }
       sequences.set(key, { familyId: puzzle.familyId, variantId });
     }
@@ -101,10 +114,17 @@ for (let index = 0; index < variants.length; index += 1) {
     const right = variants[compareIndex];
     if (left.familyId === right.familyId) continue;
     const sharedPositions = left.slots.reduce(
-      (count, slot, slotIndex) => count + slot.emojiCandidates.filter((emoji) => right.slots[slotIndex]?.emojiCandidates.includes(emoji)).length,
+      (count, slot, slotIndex) =>
+        count +
+        slot.emojiCandidates.filter((emoji) =>
+          right.slots[slotIndex]?.emojiCandidates.includes(emoji),
+        ).length,
       0,
     );
-    if (sharedPositions >= 4) similarPairs.push(`${left.id} ↔ ${right.id} (${sharedPositions} overlapping position candidates)`);
+    if (sharedPositions >= 4)
+      similarPairs.push(
+        `${left.id} ↔ ${right.id} (${sharedPositions} overlapping position candidates)`,
+      );
   }
 }
 
@@ -112,7 +132,13 @@ const reusedConcepts = [...concepts.entries()]
   .filter(([, count]) => count >= 3)
   .sort(([left], [right]) => left.localeCompare(right));
 
-console.log(`Emoji pilot validation passed: ${pool.length} families, ${variants.length} variants, ${assignmentCount} distinct assignments.`);
+console.log(
+  `Emoji pilot validation passed: ${pool.length} families, ${variants.length} variants, ${assignmentCount} distinct assignments.`,
+);
 console.log(`Exact cross-family sequence collisions: 0.`);
-console.log(`High-similarity variant pairs: ${similarPairs.length}${similarPairs.length ? `\n- ${similarPairs.join("\n- ")}` : ""}`);
-console.log(`Concepts used by 3+ variants: ${reusedConcepts.length}${reusedConcepts.length ? `\n- ${reusedConcepts.map(([concept, count]) => `${concept} (${count})`).join("\n- ")}` : ""}`);
+console.log(
+  `High-similarity variant pairs: ${similarPairs.length}${similarPairs.length ? `\n- ${similarPairs.join("\n- ")}` : ""}`,
+);
+console.log(
+  `Concepts used by 3+ variants: ${reusedConcepts.length}${reusedConcepts.length ? `\n- ${reusedConcepts.map(([concept, count]) => `${concept} (${count})`).join("\n- ")}` : ""}`,
+);

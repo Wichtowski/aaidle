@@ -52,7 +52,13 @@ describe("comparison engine", () => {
     expect(compareNullableBoolean(null, false)).toBe("unknown");
   });
   it("reports release direction by year and quarter", () => {
-    const answer = { ...base, id: "b", releaseYear: 2024, releaseDate: "2024-10-01", contextWindowTokens: 64000 };
+    const answer = {
+      ...base,
+      id: "b",
+      releaseYear: 2024,
+      releaseDate: "2024-10-01",
+      contextWindowTokens: 64000,
+    };
     const result = compareClassicModels(base, answer);
     expect(result.release).toBe("higher");
     expect(result.contextWindowTokens).toBe("lower");

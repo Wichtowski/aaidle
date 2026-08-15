@@ -27,7 +27,9 @@ export function FamilyAutocomplete({
     const normalizedQuery = normalize(query);
     if (!normalizedQuery) return [];
     return families.filter((family) =>
-      [family.name, family.providerName].some((value) => normalize(value).includes(normalizedQuery)),
+      [family.name, family.providerName].some((value) =>
+        normalize(value).includes(normalizedQuery),
+      ),
     );
   }, [families, query]);
 
@@ -66,14 +68,23 @@ export function FamilyAutocomplete({
       const position = available.findIndex((option) => option.index === current);
       return available[
         position === -1
-          ? direction === 1 ? 0 : available.length - 1
+          ? direction === 1
+            ? 0
+            : available.length - 1
           : (position + direction + available.length) % available.length
       ].index;
     });
   };
 
   return (
-    <form className="autocomplete" onSubmit={(event) => { event.preventDefault(); if (selected) choose(selected); }} ref={rootRef}>
+    <form
+      className="autocomplete"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (selected) choose(selected);
+      }}
+      ref={rootRef}
+    >
       <label htmlFor="family-search">Name the family</label>
       <div className="autocomplete__field">
         <input
@@ -84,16 +95,30 @@ export function FamilyAutocomplete({
           autoComplete="off"
           disabled={disabled}
           id="family-search"
-          onChange={(event) => { const value = event.target.value; setQuery(value); setOpen(Boolean(value.trim())); setActiveIndex(-1); }}
+          onChange={(event) => {
+            const value = event.target.value;
+            setQuery(value);
+            setOpen(Boolean(value.trim()));
+            setActiveIndex(-1);
+          }}
           onKeyDown={(event) => {
-            if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); if (!open && query.trim()) setOpen(true); move(event.key === "ArrowDown" ? 1 : -1); }
-            if (event.key === "Escape") { setOpen(false); setActiveIndex(-1); }
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              if (!open && query.trim()) setOpen(true);
+              move(event.key === "ArrowDown" ? 1 : -1);
+            }
+            if (event.key === "Escape") {
+              setOpen(false);
+              setActiveIndex(-1);
+            }
           }}
           placeholder="Search GPT, Claude, Gemini…"
           role="combobox"
           value={query}
         />
-        <button className="autocomplete__confirm" disabled={!canConfirm} type="submit">Guess</button>
+        <button className="autocomplete__confirm" disabled={!canConfirm} type="submit">
+          Guess
+        </button>
       </div>
       {open && results.length > 0 && (
         <ul id="family-options" role="listbox">
@@ -101,10 +126,31 @@ export function FamilyAutocomplete({
             const unavailable = excluded.has(family.id);
             const active = index === activeIndex;
             return (
-              <li aria-disabled={unavailable || disabled} aria-selected={active} id={`family-option-${index}`} key={family.id} ref={(element) => { optionRefs.current[index] = element; }} role="option">
-                <button className={active ? "is-active" : undefined} disabled={unavailable || disabled} onClick={() => choose(family)} onMouseDown={(event) => event.preventDefault()} onMouseEnter={() => { if (!unavailable) setActiveIndex(index); }} type="button">
+              <li
+                aria-disabled={unavailable || disabled}
+                aria-selected={active}
+                id={`family-option-${index}`}
+                key={family.id}
+                ref={(element) => {
+                  optionRefs.current[index] = element;
+                }}
+                role="option"
+              >
+                <button
+                  className={active ? "is-active" : undefined}
+                  disabled={unavailable || disabled}
+                  onClick={() => choose(family)}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => {
+                    if (!unavailable) setActiveIndex(index);
+                  }}
+                  type="button"
+                >
                   <strong>{family.name}</strong>
-                  <small>{family.providerName}{unavailable ? " · guessed" : ""}</small>
+                  <small>
+                    {family.providerName}
+                    {unavailable ? " · guessed" : ""}
+                  </small>
                 </button>
               </li>
             );
