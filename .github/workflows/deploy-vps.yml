@@ -18,7 +18,7 @@ on:
       AAIDLE_DAILY_SELECTION_SECRET:
         required: true
       AAIDLE_AUTH_SECRET:
-        required: false
+        required: true
       AAIDLE_GITHUB_CLIENT_ID:
         required: false
       AAIDLE_GITHUB_CLIENT_SECRET:
@@ -47,6 +47,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.release_tag }}
+      - name: Build static frontend assets
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm build
+          tar -C dist -czf aaidle-web.tar.gz .
       - name: Create production environment file
         env:
           AAIDLE_DAILY_SELECTION_SECRET: ${{ secrets.AAIDLE_DAILY_SELECTION_SECRET }}
@@ -62,14 +68,13 @@ jobs:
           image="${IMAGE_NAME,,}"
           {
             printf 'DAILY_SELECTION_SECRET=%s\n' "$AAIDLE_DAILY_SELECTION_SECRET"
-            printf 'APP_ORIGIN=%s\n' 'https://aaidle.com'
             printf 'AUTH_SECRET=%s\n' "$AAIDLE_AUTH_SECRET"
             printf 'GITHUB_CLIENT_ID=%s\n' "$AAIDLE_GITHUB_CLIENT_ID"
             printf 'GITHUB_CLIENT_SECRET=%s\n' "$AAIDLE_GITHUB_CLIENT_SECRET"
             printf 'GOOGLE_CLIENT_ID=%s\n' "$AAIDLE_GOOGLE_CLIENT_ID"
             printf 'GOOGLE_CLIENT_SECRET=%s\n' "$AAIDLE_GOOGLE_CLIENT_SECRET"
             printf 'RESEND_API_KEY=%s\n' "$AAIDLE_RESEND_API_KEY"
-            printf 'AAIDLE_IMAGE=%s\n' "$image"
+            printf 'AAIDLE_API_IMAGE=%s-api\n' "$image"
             printf 'AAIDLE_VERSION=%s\n' "$RELEASE_TAG"
           } > aaidle.env
       - name: Copy runtime configuration to VPS
@@ -78,7 +83,7 @@ jobs:
           host: ${{ secrets.AAIDLE_VPS_HOST }}
           username: ${{ secrets.AAIDLE_VPS_USER }}
           key: ${{ secrets.AAIDLE_VPS_SSH_KEY }}
-          source: compose.prod.yml,aaidle.env
+          source: compose.prod.yml,aaidle.env,aaidle-web.tar.gz
           target: /tmp
       - name: Deploy approved release
         uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17 # v1.2.0
@@ -92,17 +97,32 @@ jobs:
             set -euo pipefail
 
             runtime_dir="${DEPLOY_PATH}/runtime"
+            static_dir="/srv/aaidle/static"
+            static_releases_dir="${static_dir}/releases"
+            static_release_dir="${static_releases_dir}/${RELEASE_TAG}"
             staging_dir=$(mktemp -d "${DEPLOY_PATH}/.deploy.XXXXXX")
             trap 'rm -rf "$staging_dir"' EXIT
 
+            if [[ ! -d "$static_releases_dir" ]]; then
+              echo "Missing static release directory: $static_releases_dir" >&2
+              exit 1
+            fi
+
             mv /tmp/compose.prod.yml "$staging_dir/compose.prod.yml"
             mv /tmp/aaidle.env "$staging_dir/.env"
+            mv /tmp/aaidle-web.tar.gz "$staging_dir/aaidle-web.tar.gz"
             chmod 600 "$staging_dir/.env"
 
             cd "$staging_dir"
-            docker compose --env-file .env -f compose.prod.yml pull app
-            docker compose --env-file .env -f compose.prod.yml up -d --remove-orphans
+            docker compose --env-file .env -f compose.prod.yml pull api seed
+            docker compose --env-file .env -f compose.prod.yml up -d
             docker compose --env-file .env -f compose.prod.yml ps
+
+            rm -rf "$static_release_dir"
+            mkdir "$static_release_dir"
+            tar -xzf aaidle-web.tar.gz -C "$static_release_dir"
+            ln -s "$static_release_dir" "${static_dir}/current.next"
+            mv -Tf "${static_dir}/current.next" "${static_dir}/current"
 
 
             rm -rf "$runtime_dir"

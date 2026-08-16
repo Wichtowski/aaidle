@@ -20,9 +20,11 @@ function renderLoginForm() {
       {
         value: {
           loading: false,
+          unavailable: false,
           user: null,
           setAuthenticatedUser: () => {},
           signOut: async () => {},
+          retry: () => {},
         },
       },
       createElement(LoginForm),

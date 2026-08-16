@@ -1,7 +1,5 @@
-"use client";
-
 import { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { SiteNavbar } from "../components/ui/SiteNavbar";
 import { ActivationPrompt } from "../components/auth/ActivationPrompt";
@@ -80,7 +78,7 @@ function RitualContent({
 }
 
 export default function Profile() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const progress = useLocalProgress();
   const today = new Date().toISOString().slice(0, 10);
@@ -120,7 +118,7 @@ export default function Profile() {
         new Date(`${dates[index]}T00:00:00Z`).getTime() ===
         86_400_000
     )
-      runningStreak += 1;
+      {runningStreak += 1;}
     else runningStreak = 1;
     if (index === 0) currentStreak = runningStreak;
     else if (currentStreak === index) currentStreak = runningStreak;
@@ -141,7 +139,7 @@ export default function Profile() {
   const historyGames = categoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
   const enterInnerCircle = () => {
     if (!user) {
-      router.push("/login");
+      navigate("/login");
       return;
     }
 
@@ -155,11 +153,11 @@ export default function Profile() {
     };
 
     void apiClient
-      .enableHardcoreAccess(nextProgress)
+      .enableHardcoreAccess()
       .then(() => apiClient.syncProgress(nextProgress))
       .then(({ progress: syncedProgress }) => {
         updateProgress(() => syncedProgress);
-        router.push("/classic/hardcore");
+        navigate("/classic/hardcore");
       });
   };
   const toggleHellMode = () => {

@@ -8,9 +8,8 @@ The daily answer stays server-side.
 
 ```bash
 pnpm install
-cp .env.example .env
-pnpm db:migrate
-pnpm db:seed
+cp backend/.env.example backend/.env
+make up
 pnpm dev
 ```
 
@@ -65,7 +64,14 @@ User permissions are stored in SQLite as `user`, `developer`, or `superadmin`.
 `developer` and `superadmin` accounts can inspect registered users, synced progress, and challenge completions at `/admin`.
 Passwords, sessions, and authentication tokens are never exposed in the dashboard.
 
-Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v1/auth/oauth/<provider>/callback`.
+Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v2/auth/oauth/<provider>/callback`.
+
+## Static frontend
+
+The frontend is a Vite-built React SPA. CI deploys the `dist/` assets to the VPS, where the
+platform Caddy instance serves the SPA fallback and proxies `/api/*` to the private Rust API
+container. The frontend does not run in a production container.
+Issue reporting is intentionally disabled until the deferred Rust `/api/v2` issue-reporting endpoint exists.
 Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling email/password accounts.
 
 ## Model catalog

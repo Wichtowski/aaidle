@@ -1,8 +1,7 @@
-"use client";
-
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Toast } from "../ui/Toast";
+import { apiClient } from "../../../lib/api/client";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -22,13 +21,7 @@ export function ResetPasswordForm() {
     setBusy(true);
     setToast(null);
     try {
-      const response = await fetch("/api/v1/auth/password-reset/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const payload = (await response.json()) as { error?: { message: string } };
-      if (!response.ok) throw new Error(payload.error?.message ?? "Could not reset your password.");
+      await apiClient.completePasswordReset(password);
       window.location.assign("/classic");
     } catch (error) {
       setToast({

@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useAuth } from "../auth/useAuth";
 
@@ -36,7 +34,7 @@ export function RitualGateDialog() {
         <div className="completed__actions">
           <Link
             className="button button--inner-circle"
-            href={user ? "/profile" : "/login"}
+            to={user ? "/profile" : "/login"}
             ref={enterLinkRef}
           >
             {user ? "Continue to profile" : "Sign in to continue"}

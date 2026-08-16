@@ -1,7 +1,5 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { FaXmark } from "react-icons/fa6";
 import { CelebrationPhysics } from "./CelebrationPhysics";
 import { ShareResultButton, type ShareGuess } from "./ShareResultButton";
@@ -69,13 +67,17 @@ export function GameCompletedDialog({
   stats: { currentStreak: number; bestStreak: number; gamesPlayed: number } | null;
 }) {
   const [open, setOpen] = useState(true);
+  const [celebrationComplete, setCelebrationComplete] = useState(false);
   const [referenceModels, setReferenceModels] = useState<ComparableModel[] | null>(null);
   const modalRef = useRef<HTMLElement>(null);
   const corruption = ledgerCorruption(guesses.length);
   const isHardcore = difficulty === "hardcore";
   const trajectoryAccessToken = guesses.find((guess) => guess.isCorrect)?.trajectoryAccessToken;
+  const completeCelebration = useCallback(() => setCelebrationComplete(true), []);
 
   useEffect(() => {
+    if (!celebrationComplete) return;
+
     const controller = new AbortController();
 
     void apiClient
@@ -88,7 +90,7 @@ export function GameCompletedDialog({
       });
 
     return () => controller.abort();
-  }, [challengeId, trajectoryAccessToken]);
+  }, [celebrationComplete, challengeId, trajectoryAccessToken]);
 
   if (!open) return null;
 
@@ -107,7 +109,7 @@ export function GameCompletedDialog({
         if (event.target === event.currentTarget) close();
       }}
     >
-      <CelebrationPhysics obstacleRef={modalRef} />
+      <CelebrationPhysics obstacleRef={modalRef} onComplete={completeCelebration} />
       <section className={`completed${isHardcore ? " completed--hardcore" : ""}`} ref={modalRef}>
         <button aria-label="Close completion dialog" className="completed__close" onClick={close}>
           <FaXmark aria-hidden focusable="false" />
@@ -122,7 +124,7 @@ export function GameCompletedDialog({
             className={`completed__ritual-notice completed__ritual-notice--${corruption}`}
             data-ledger-echo={ledgerEcho[corruption]}
           >
-            <Link href="/profile">{ritualNotice}</Link>
+            <Link to="/profile">{ritualNotice}</Link>
           </p>
         )}
         <div className="completed__stats" aria-label="Your game statistics">
@@ -143,13 +145,27 @@ export function GameCompletedDialog({
             <span>{isHardcore ? "Escapes" : "Solved games"}</span>
           </div>
         </div>
-        <CompletionTrajectory category={category} difficulty={difficulty} guesses={guesses} />
-        {referenceModels && referenceModels.length > 0 && (
-          <ModelSpaceTrajectory
-            category={category}
-            guesses={guesses}
-            referenceModels={referenceModels}
-          />
+        {!celebrationComplete || referenceModels === null ? (
+          <section
+            aria-busy="true"
+            aria-live="polite"
+            className="completed-trajectory-loading"
+            role="status"
+          >
+            <span aria-hidden="true" className="completed-trajectory-loading__spinner" />
+            <span>Preparing your trajectory…</span>
+          </section>
+        ) : (
+          <>
+            <CompletionTrajectory category={category} difficulty={difficulty} guesses={guesses} />
+            {referenceModels.length > 0 && (
+              <ModelSpaceTrajectory
+                category={category}
+                guesses={guesses}
+                referenceModels={referenceModels}
+              />
+            )}
+          </>
         )}
         <div className="completed__actions">
           <ShareResultButton
