@@ -21,21 +21,22 @@ The API returns `400` for invalid input, `404` for missing resources, `409` for 
 
 ## `GET /api/v1/health`
 
-Returns process health without a database query.
+Requires an `x-aaidle-health-key` header whose value exactly matches `HEALTH_KEY`.
+Returns process health without a database query. The version is the deployed release tag.
 
 ```json
 {
   "status": "ok",
   "service": "aidle-api",
   "apiVersion": "v1",
-  "version": "0.1.0"
+  "version": "v0.1.0"
 }
 ```
 
 ## `GET /api/v1/health/ready`
 
 Returns the same response after checking database connectivity.
-Use this for readiness checks.
+It requires the same `x-aaidle-health-key` header. Use this for authenticated readiness checks.
 
 ## `GET /api/v1/models`
 

@@ -44,6 +44,8 @@ pub struct AppConfig {
     pub app_origin: String,
     pub secure_cookies: bool,
     pub auth_secret: String,
+    pub health_key: String,
+    pub release_version: String,
     pub github_oauth: Option<OAuthClientConfig>,
     pub google_oauth: Option<OAuthClientConfig>,
     pub resend_api_key: Option<String>,
@@ -90,6 +92,18 @@ impl AppConfig {
             is_production,
             "local-development-auth-secret-not-for-production",
         )?;
+        let health_key = required_secret(
+            "HEALTH_KEY",
+            is_production,
+            "local-development-health-key-not-for-production",
+        )?;
+        let release_version = match env::var("AAIDLE_VERSION") {
+            Ok(version) if !version.trim().is_empty() => version,
+            _ if is_production => {
+                return Err(AppError::config("AAIDLE_VERSION is required in production"));
+            }
+            _ => env!("CARGO_PKG_VERSION").to_owned(),
+        };
 
         Ok(Self {
             environment,
@@ -100,6 +114,8 @@ impl AppConfig {
             app_origin,
             secure_cookies: is_production,
             auth_secret,
+            health_key,
+            release_version,
             github_oauth: oauth_config("GITHUB")?,
             google_oauth: oauth_config("GOOGLE")?,
             resend_api_key: env::var("RESEND_API_KEY")

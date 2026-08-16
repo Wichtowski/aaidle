@@ -34,6 +34,8 @@ async fn test_app() -> (axum::Router, SqlitePool) {
         app_origin: "http://localhost:3000".to_owned(),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
+        health_key: "test health key that is longer than thirty two bytes".to_owned(),
+        release_version: "v1.2.3".to_owned(),
         github_oauth: None,
         google_oauth: None,
         resend_api_key: None,
@@ -61,6 +63,8 @@ async fn production_style_test_pool() -> (SqlitePool, PathBuf) {
         app_origin: "http://localhost:3000".to_owned(),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
+        health_key: "test health key that is longer than thirty two bytes".to_owned(),
+        release_version: "v1.2.3".to_owned(),
         github_oauth: None,
         google_oauth: None,
         resend_api_key: None,
@@ -209,9 +213,9 @@ fn current_millis() -> i64 {
 }
 
 #[tokio::test]
-async fn public_routes_are_versioned_and_hide_the_answer() {
+async fn routes_are_versioned_and_hide_the_answer() {
     let (app, _) = test_app().await;
-    let health = app
+    let missing_health_key = app
         .clone()
         .oneshot(
             Request::get("/api/v1/health")
@@ -220,8 +224,52 @@ async fn public_routes_are_versioned_and_hide_the_answer() {
         )
         .await
         .expect("health response");
+    assert_eq!(missing_health_key.status(), StatusCode::UNAUTHORIZED);
+
+    let invalid_health_key = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/health")
+                .header("x-aaidle-health-key", "invalid health key")
+                .body(Body::empty())
+                .expect("health request"),
+        )
+        .await
+        .expect("health response");
+    assert_eq!(invalid_health_key.status(), StatusCode::UNAUTHORIZED);
+
+    let health = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/health")
+                .header(
+                    "x-aaidle-health-key",
+                    "test health key that is longer than thirty two bytes",
+                )
+                .body(Body::empty())
+                .expect("health request"),
+        )
+        .await
+        .expect("health response");
     assert_eq!(health.status(), StatusCode::OK);
-    assert_eq!(response_json(health).await["apiVersion"], "v1");
+    let health = response_json(health).await;
+    assert_eq!(health["apiVersion"], "v1");
+    assert_eq!(health["version"], "v1.2.3");
+
+    let ready = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/health/ready")
+                .header(
+                    "x-aaidle-health-key",
+                    "test health key that is longer than thirty two bytes",
+                )
+                .body(Body::empty())
+                .expect("readiness request"),
+        )
+        .await
+        .expect("readiness response");
+    assert_eq!(ready.status(), StatusCode::OK);
 
     let models = app
         .clone()

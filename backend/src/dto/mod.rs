@@ -12,7 +12,7 @@ pub struct HealthResponse {
     pub status: &'static str,
     pub service: &'static str,
     pub api_version: &'static str,
-    pub version: &'static str,
+    pub version: String,
 }
 
 #[derive(Deserialize)]

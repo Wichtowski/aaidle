@@ -40,6 +40,7 @@ use crate::{
 
 const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 const MAX_BODY_BYTES: usize = 16 * 1024;
+const HEALTH_KEY_HEADER: &str = "x-aaidle-health-key";
 
 pub fn router(state: AppState) -> Router {
     let request_id = HeaderName::from_static("x-request-id");
@@ -555,18 +556,52 @@ fn normalize_soundcloud_url(value: &str) -> AppResult<Option<String>> {
     Ok(Some(url.to_string()))
 }
 
-async fn health() -> Json<HealthResponse> {
+async fn health(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<Json<HealthResponse>> {
+    authorize_health_request(&state, &headers)?;
+    Ok(health_response(&state))
+}
+
+fn health_response(state: &AppState) -> Json<HealthResponse> {
     Json(HealthResponse {
         status: "ok",
         service: "aidle-api",
         api_version: "v1",
-        version: env!("CARGO_PKG_VERSION"),
+        version: state.config.release_version.clone(),
     })
 }
 
-async fn ready(State(state): State<AppState>) -> AppResult<Json<HealthResponse>> {
+async fn ready(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<Json<HealthResponse>> {
+    authorize_health_request(&state, &headers)?;
     sqlx::query("SELECT 1").fetch_one(&state.db).await?;
-    Ok(health().await)
+    Ok(health_response(&state))
+}
+
+fn authorize_health_request(state: &AppState, headers: &HeaderMap) -> AppResult<()> {
+    let provided_key = headers
+        .get(HEALTH_KEY_HEADER)
+        .map(|value| value.as_bytes())
+        .unwrap_or_default();
+    if constant_time_eq(provided_key, state.config.health_key.as_bytes()) {
+        Ok(())
+    } else {
+        Err(AppError::Unauthorized(
+            "Health endpoint authentication is required.".to_owned(),
+        ))
+    }
+}
+
+fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
+    let mut difference = left.len() ^ right.len();
+    for index in 0..left.len().max(right.len()) {
+        difference |= usize::from(*left.get(index).unwrap_or(&0) ^ *right.get(index).unwrap_or(&0));
+    }
+    difference == 0
 }
 
 #[derive(Deserialize)]

@@ -19,6 +19,8 @@ on:
         required: true
       AAIDLE_AUTH_SECRET:
         required: true
+      AAIDLE_HEALTH_KEY:
+        required: true
       AAIDLE_GITHUB_CLIENT_ID:
         required: false
       AAIDLE_GITHUB_CLIENT_SECRET:
@@ -57,6 +59,7 @@ jobs:
         env:
           AAIDLE_DAILY_SELECTION_SECRET: ${{ secrets.AAIDLE_DAILY_SELECTION_SECRET }}
           AAIDLE_AUTH_SECRET: ${{ secrets.AAIDLE_AUTH_SECRET }}
+          HEALTH_KEY: ${{ secrets.AAIDLE_HEALTH_KEY }}
           AAIDLE_GITHUB_CLIENT_ID: ${{ secrets.AAIDLE_GITHUB_CLIENT_ID }}
           AAIDLE_GITHUB_CLIENT_SECRET: ${{ secrets.AAIDLE_GITHUB_CLIENT_SECRET }}
           AAIDLE_GOOGLE_CLIENT_ID: ${{ secrets.AAIDLE_GOOGLE_CLIENT_ID }}
@@ -69,6 +72,7 @@ jobs:
           {
             printf 'DAILY_SELECTION_SECRET=%s\n' "$AAIDLE_DAILY_SELECTION_SECRET"
             printf 'AUTH_SECRET=%s\n' "$AAIDLE_AUTH_SECRET"
+            printf 'HEALTH_KEY=%s\n' "$AAIDLE_HEALTH_KEY"
             printf 'GITHUB_CLIENT_ID=%s\n' "$AAIDLE_GITHUB_CLIENT_ID"
             printf 'GITHUB_CLIENT_SECRET=%s\n' "$AAIDLE_GITHUB_CLIENT_SECRET"
             printf 'GOOGLE_CLIENT_ID=%s\n' "$AAIDLE_GOOGLE_CLIENT_ID"
