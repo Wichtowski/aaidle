@@ -1,41 +1,62 @@
 name: aaidle
 
 services:
-  app:
-    image: ${AAIDLE_IMAGE}:${AAIDLE_VERSION}
+  api:
+    image: ${AAIDLE_API_IMAGE}:${AAIDLE_VERSION}
     pull_policy: always
-    container_name: aaidle-app
+    container_name: aaidle-api
     restart: unless-stopped
+    depends_on:
+      seed:
+        condition: service_completed_successfully
     environment:
-      DATABASE_PATH: /data/aaidle.db
+      AIDLE_ENV: production
+      APP_ORIGIN: https://aaidle.com
       DAILY_SELECTION_SECRET: ${DAILY_SELECTION_SECRET}
-      APP_ORIGIN: ${APP_ORIGIN}
       AUTH_SECRET: ${AUTH_SECRET}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      AAIDLE_VERSION: ${AAIDLE_VERSION:-dev}
-      NODE_ENV: production
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
     volumes:
-      - sqlite_data:/data
+      - api_data:/data
     networks:
       - edge
-    mem_limit: 256m
+    mem_limit: 128m
     cpus: "1.0"
-    pids_limit: 256
+    pids_limit: 128
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
 
+  seed:
+    image: ${AAIDLE_API_IMAGE}:${AAIDLE_VERSION}
+    pull_policy: always
+    container_name: aaidle-seed
+    restart: "no"
+    command: ["aidle-seed"]
+    environment:
+      AIDLE_ENV: production
+      APP_ORIGIN: https://aaidle.com
+      DAILY_SELECTION_SECRET: ${DAILY_SELECTION_SECRET}
+      AUTH_SECRET: ${AUTH_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+    volumes:
+      - api_data:/data
+    networks:
+      - edge
+
 networks:
   edge:
-    name: echotrade_app_net
+    name: aaidle_edge_net
     external: true
 
 volumes:
-  sqlite_data:
-    name: aaidle_sqlite_data
+  api_data:

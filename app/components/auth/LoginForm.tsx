@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa6";
 import { ApiError, apiClient } from "../../../lib/api/client";
@@ -28,11 +26,11 @@ export function LoginForm() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.has("activated"))
-      setToast({ message: "Your account is active. You can now sign in.", variant: "success" });
+      {setToast({ message: "Your account is active. You can now sign in.", variant: "success" });}
     if (params.get("error") === "activation")
-      setToast({ message: "That activation link is invalid or expired.", variant: "error" });
+      {setToast({ message: "That activation link is invalid or expired.", variant: "error" });}
     if (params.get("error") === "reset-link")
-      setToast({ message: "That password reset link is invalid or expired.", variant: "error" });
+      {setToast({ message: "That password reset link is invalid or expired.", variant: "error" });}
   }, []);
 
   const sendEmailRequest = async (
@@ -74,7 +72,7 @@ export function LoginForm() {
         setLocalActivationUrl(activationUrl ?? null);
         if (activationUrl) setNotice("Activate your local account to complete registration.");
         else
-          setToast({ message: "Check your inbox to activate your account.", variant: "success" });
+          {setToast({ message: "Check your inbox to activate your account.", variant: "success" });}
         return;
       }
       const { user: signedInUser } = await apiClient.signInWithPassword(email, password);
@@ -82,7 +80,7 @@ export function LoginForm() {
       window.location.assign("/profile");
     } catch (error) {
       if (mode === "sign-in")
-        setSignInErrorCode(error instanceof ApiError ? (error.code ?? "UNKNOWN") : "UNKNOWN");
+        {setSignInErrorCode(error instanceof ApiError ? (error.code ?? "UNKNOWN") : "UNKNOWN");}
       setToast({
         message: error instanceof Error ? error.message : "Could not sign in.",
         variant: "error",
@@ -101,10 +99,10 @@ export function LoginForm() {
       />
       {user && !user.emailVerified && user.email && <ActivationPrompt email={user.email} />}
       <div className="auth-card__providers">
-        <a className="button" href="/api/v1/auth/oauth/github">
+        <a className="button" href="/api/v2/auth/oauth/github">
           <FaGithub aria-hidden="true" /> Continue with GitHub
         </a>
-        <a className="button" href="/api/v1/auth/oauth/google">
+        <a className="button" href="/api/v2/auth/oauth/google">
           <FaGoogle aria-hidden="true" /> Continue with Google
         </a>
       </div>

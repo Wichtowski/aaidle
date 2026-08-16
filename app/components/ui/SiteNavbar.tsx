@@ -1,7 +1,5 @@
-"use client";
-
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { canManageUsers } from "@/lib/auth/permissions";
 import { useAuth } from "../auth/useAuth";
 import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
@@ -13,7 +11,7 @@ export function SiteNavbar({
   children?: ReactNode;
   hardcore?: boolean;
 }) {
-  const { user, signOut } = useAuth();
+  const { unavailable, user, signOut, retry } = useAuth();
   const labels = hardcore
     ? {
         profile: "Soul",
@@ -34,22 +32,27 @@ export function SiteNavbar({
 
   return (
     <nav className="site-navbar">
-      <Link aria-label="aAIdle home" className="brand" href="/">
+      <Link aria-label="aAIdle home" className="brand" to="/">
         a<span>AI</span>dle
       </Link>
       <div className="site-navbar__actions">
         {children}
-        <Link href="/profile">{labels.profile}</Link>
-        {user && canManageUsers(user.permission) && <Link href="/admin">Admin</Link>}
-        <Link href="/privacy/v1">{labels.privacy}</Link>
-        <Link href="/credits">{labels.credits}</Link>
-        {user && !user.disabled && <Link href="/report-issue">{labels.issues}</Link>}
+        {unavailable && (
+          <button className="site-navbar__auth" onClick={retry} type="button">
+            Reconnect
+          </button>
+        )}
+        <Link to="/profile">{labels.profile}</Link>
+        {user && canManageUsers(user.permission) && <Link to="/admin">Admin</Link>}
+        <Link to="/privacy/v1">{labels.privacy}</Link>
+        <Link to="/credits">{labels.credits}</Link>
+        {user && !user.disabled && <Link to="/report-issue">{labels.issues}</Link>}
         {user ? (
           <button className="site-navbar__auth" onClick={signOut} type="button">
             {labels.signOut}
           </button>
         ) : (
-          <Link href="/login">{labels.signIn}</Link>
+          <Link to="/login">{labels.signIn}</Link>
         )}
         <BuyMeCoffeeLink hardcore={hardcore} />
       </div>

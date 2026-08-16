@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, type FormEvent } from "react";
 import { ApiError, apiClient } from "@/lib/api/client";
 
@@ -7,7 +5,6 @@ export function IssueReportForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [issueUrl, setIssueUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -15,14 +12,7 @@ export function IssueReportForm() {
     setSubmitting(true);
     setError(null);
     try {
-      const result = await apiClient.reportIssue({
-        title,
-        description,
-        page: window.location.pathname,
-      });
-      setIssueUrl(result.issueUrl);
-      setTitle("");
-      setDescription("");
+      await apiClient.reportIssue();
     } catch (requestError) {
       setError(
         requestError instanceof ApiError
@@ -61,22 +51,16 @@ export function IssueReportForm() {
           value={description}
         />
       </label>
-      <p className="issue-report__notice">Reports are published as public GitHub issues.</p>
+      <p className="issue-report__notice">
+        Issue reporting is temporarily unavailable while its API v2 endpoint is being migrated.
+      </p>
       {error && (
         <p className="issue-report__error" role="alert">
           {error}
         </p>
       )}
-      {issueUrl && (
-        <p className="issue-report__success">
-          Report created.{" "}
-          <a href={issueUrl} rel="noreferrer" target="_blank">
-            View issue
-          </a>
-        </p>
-      )}
-      <button className="button button--primary" disabled={submitting} type="submit">
-        {submitting ? "Sending report..." : "Send report"}
+      <button className="button button--primary" disabled type="submit">
+        Reporting unavailable
       </button>
     </form>
   );

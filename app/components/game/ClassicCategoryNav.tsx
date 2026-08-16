@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import {
   classicCategories,
   classicCategoryDetails,
@@ -21,9 +21,8 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
         .map((item) => (
           <Link
             aria-current={item === category ? "page" : undefined}
-            href={`/classic/${classicCategoryDetails[item].routeSegment}`}
+            to={`/classic/${classicCategoryDetails[item].routeSegment}`}
             key={item}
-            prefetch
           >
             {classicCategoryDetails[item].label}
           </Link>

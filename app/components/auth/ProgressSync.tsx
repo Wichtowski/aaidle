@@ -48,8 +48,9 @@ function AuthenticatedProgressSync() {
         setCloudReady(true);
       })
       .catch(() => {
-        if (!cancelled)
-          retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+        if (!cancelled && retry < 2) {
+          retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 2_000);
+        }
       });
 
     return () => {
@@ -76,8 +77,8 @@ function AuthenticatedProgressSync() {
           if (syncedSerialized !== serialized) replaceProgress(synced);
         })
         .catch(() => {
-          if (!cancelled) {
-            retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 30_000);
+          if (!cancelled && retry < 2) {
+            retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 2_000);
           }
         });
     }, 750);

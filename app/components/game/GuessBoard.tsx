@@ -38,14 +38,18 @@ export function GuessBoard({
   guesses,
   difficulty = "normal",
   category,
+  columns: declaredColumns,
 }: {
   guesses: BoardGuess[];
   difficulty?: ClassicDifficulty;
   category?: ClassicCategory;
+  columns?: string[];
 }) {
-  const columns: readonly ClassicColumn[] = category
-    ? classicColumnsForGame(category, difficulty)
-    : classicColumns;
+  const columns: readonly ClassicColumn[] = declaredColumns?.length
+    ? declaredColumns.filter((column): column is ClassicColumn => classicColumns.includes(column as ClassicColumn))
+    : category
+      ? classicColumnsForGame(category, difficulty)
+      : classicColumns;
   const guessIds = guesses.map((guess) => guess.requestId);
   const guessKey = guessIds.join(":");
   const [collapsedGuessIds, setCollapsedGuessIds] = useState<Set<string>>(() => new Set());

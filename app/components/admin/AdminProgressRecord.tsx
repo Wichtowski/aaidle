@@ -1,6 +1,5 @@
 import { useState, type PointerEvent } from "react";
 import {
-  classicCategoryDetails,
   classicCategoryFromRouteSegment,
   type ComparableModel,
 } from "@/lib/domain/models/model-types";
@@ -12,15 +11,6 @@ const dateTime = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "medium",
   timeStyle: "short",
 });
-
-function formatMode(mode: string) {
-  const [game, categorySegment, difficulty] = mode.split(":");
-  const category = classicCategoryFromRouteSegment(categorySegment);
-
-  if (game !== "classic" || !category || !difficulty) return mode;
-
-  return `${classicCategoryDetails[category].label} · ${difficulty}`;
-}
 
 function gameModeName(mode: string) {
   const [game] = mode.split(":");

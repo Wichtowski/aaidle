@@ -11,13 +11,33 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
-    "types": ["vinext/types", "node"],
+    "types": ["vite/client", "node"],
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src", "app/components", "lib/api", "lib/auth/permissions.ts", "lib/domain", "lib/storage", "lib/utils", "tests"],
+  "exclude": [
+    "node_modules",
+    "lib/domain/challenges/challenge-service.ts",
+    "lib/domain/games/classic/classic-game-api.ts",
+    "lib/domain/games/classic/guess-service.ts",
+    "lib/domain/games/classic/hardcore-access.ts",
+    "lib/domain/games/classic/trajectory-access.ts",
+    "lib/domain/games/emoji/emoji-game-service.ts",
+    "lib/domain/games/emoji/emoji-guess-service.ts",
+    "tests/unit/aaidle-game-agent.test.ts",
+    "tests/unit/account-deletion-verify.test.ts",
+    "tests/unit/auth-crypto.test.ts",
+    "tests/unit/auth-email.test.ts",
+    "tests/unit/auth-http.test.ts",
+    "tests/unit/auth-rate-limit.test.ts",
+    "tests/unit/github-issue-reporter.test.ts",
+    "tests/unit/model-pools.test.ts",
+    "tests/unit/oauth-state.test.ts",
+    "tests/unit/public-challenge.test.ts",
+    "tests/unit/trajectory-access.test.ts"
+  ]
 }

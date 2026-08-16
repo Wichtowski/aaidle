@@ -1,11 +1,8 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaVolumeHigh } from "react-icons/fa6";
 import { updateProgress } from "@/lib/storage/local-progress-store";
 import { useLocalProgress, useLocalProgressReady } from "@/lib/storage/use-local-progress";
-
-type PublicConfig = { hardcoreSoundCloudUrl: string | null };
+import { apiClient } from "../../../lib/api/client";
 
 type SoundCloudWidget = {
   bind: (event: string, listener: () => void) => void;
@@ -55,11 +52,9 @@ export function HardcoreSoundtrack() {
   useEffect(() => {
     let active = true;
 
-    void fetch("/api/v1/public-config", { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) return null;
-        return ((await response.json()) as PublicConfig).hardcoreSoundCloudUrl;
-      })
+    void apiClient
+      .publicConfig()
+      .then((config) => config.hardcoreSoundtrackUrl)
       .then((url) => {
         if (active) setTrackUrl(url);
       })

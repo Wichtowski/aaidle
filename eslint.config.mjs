@@ -19,8 +19,6 @@ export default tseslint.config(
   {
     ignores: [
       "dist/**",
-      ".next/**",
-      ".vinext/**",
       ".wrangler/**",
       "tests/results/**",
       "tests/reports/**",

@@ -18,17 +18,25 @@ const lifetime = 5_400;
 
 export function CelebrationPhysics({
   obstacleRef,
+  onComplete,
 }: {
   obstacleRef: RefObject<HTMLElement | null>;
+  onComplete: () => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onComplete();
+      return;
+    }
 
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
+    if (!canvas || !context) {
+      onComplete();
+      return;
+    }
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -133,7 +141,11 @@ export function CelebrationPhysics({
       Engine.update(engine, delta);
       render(elapsed);
 
-      if (elapsed < lifetime) frame = window.requestAnimationFrame(tick);
+      if (elapsed < lifetime) {
+        frame = window.requestAnimationFrame(tick);
+      } else {
+        onComplete();
+      }
     };
 
     frame = window.requestAnimationFrame(tick);
@@ -142,7 +154,7 @@ export function CelebrationPhysics({
       Composite.clear(engine.world, false, true);
       Engine.clear(engine);
     };
-  }, [obstacleRef]);
+  }, [obstacleRef, onComplete]);
 
   return (
     <div className="completed-modal__confetti" aria-hidden="true">

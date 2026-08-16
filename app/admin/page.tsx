@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { canManageAdministrators, canManageUsers } from "@/lib/auth/permissions";
 import { apiClient, type AdminUserDetail, type AdminUserSummary } from "@/lib/api/client";
 import { AdminProgressRecord } from "../components/admin/AdminProgressRecord";
@@ -22,7 +20,7 @@ function userName(user: Pick<AdminUserSummary, "email" | "displayName">) {
 }
 
 export default function AdminPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { loading, user } = useAuth();
   const [users, setUsers] = useState<AdminUserSummary[]>([]);
   const [total, setTotal] = useState(0);
@@ -39,9 +37,9 @@ export default function AdminPage() {
   const detailRequestId = useRef(0);
 
   useEffect(() => {
-    if (!loading && user?.disabled) router.replace("/account-disabled");
-    else if (!loading && (!user || !canManageUsers(user.permission))) router.replace("/");
-  }, [loading, router, user]);
+    if (!loading && user?.disabled) navigate("/account-disabled", { replace: true });
+    else if (!loading && (!user || !canManageUsers(user.permission))) navigate("/", { replace: true });
+  }, [loading, navigate, user]);
 
   useEffect(() => {
     if (!user || !canManageUsers(user.permission)) return;
@@ -475,8 +473,8 @@ function UserDetail({
         {user.progress ? (
           <AdminProgressRecord
             progress={user.progress}
-            trajectoryReferenceModels={user.trajectoryReferenceModels}
-            trajectoryTargets={user.trajectoryTargets}
+            trajectoryReferenceModels={user.trajectoryReferenceModels ?? []}
+            trajectoryTargets={user.trajectoryTargets ?? {}}
             onRemoveGuess={onRemoveGuess}
             removingGuessId={removingGuessId}
           />

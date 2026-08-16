@@ -28,11 +28,11 @@ jobs:
           IMAGE_NAME: ghcr.io/${{ github.repository }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
-          image="${IMAGE_NAME,,}:$RELEASE_TAG"
+          image="${IMAGE_NAME,,}-api:$RELEASE_TAG"
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release edit "$RELEASE_TAG" --notes "Container image: \`$image\`"
+            gh release edit "$RELEASE_TAG" --notes "API container image: \`$image\`"
           else
-            gh release create "$RELEASE_TAG" --title "aAIdle $RELEASE_TAG" --generate-notes --notes "Container image: \`$image\`"
+            gh release create "$RELEASE_TAG" --title "aAIdle $RELEASE_TAG" --generate-notes --notes "API container image: \`$image\`"
           fi
       - name: Write summary
         env:

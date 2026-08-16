@@ -46,7 +46,7 @@ export function EmojiCompletedDialog({
         if (event.target === event.currentTarget) close();
       }}
     >
-      <CelebrationPhysics obstacleRef={modalRef} />
+      <CelebrationPhysics obstacleRef={modalRef} onComplete={() => undefined} />
       <section className="completed" ref={modalRef}>
         <button aria-label="Close completion dialog" className="completed__close" onClick={close}>
           <FaXmark aria-hidden focusable="false" />

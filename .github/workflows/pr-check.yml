@@ -71,3 +71,23 @@ jobs:
       - name: Fail non-lint check failures
         if: steps.initial-check.outcome == 'failure' && steps.lint.outcome == 'success'
         run: exit 1
+
+  rust:
+    name: Rust build and test
+    if: github.event.pull_request.head.ref != 'main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Rust
+        run: rustup toolchain install 1.94.0 --profile minimal
+      - name: Build API
+        run: cargo +1.94.0 build --locked
+      - name: Test API
+        run: cargo +1.94.0 test --locked
