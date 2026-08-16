@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   selectDailyModel,
   selectDistinctClassicDailyModels,
-} from "../../lib/domain/challenges/daily-selector";
-import { NoEligibleModelsError } from "../../lib/domain/challenges/challenge-types";
+} from "../../src/lib/domain/challenges/daily-selector";
+import { NoEligibleModelsError } from "../../src/lib/domain/challenges/challenge-types";
 const models = [{ id: "a" }, { id: "b" }, { id: "c" }];
 describe("daily selector", () => {
   it("is deterministic regardless of input order", async () => {

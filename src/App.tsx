@@ -1,24 +1,28 @@
 import { lazy, Suspense, useState } from "react";
 import { FaArrowRight, FaImage, FaTimeline, FaTriangleExclamation } from "react-icons/fa6";
 import { Link, Navigate, Route, Routes, useParams } from "react-router-dom";
-import { AuthProvider } from "../app/components/auth/AuthProvider";
-import { CookieConsent } from "../app/components/ui/CookieConsent";
-import { GlobalHellMode } from "../app/components/ui/GlobalHellMode";
-import { ProgressSync } from "../app/components/auth/ProgressSync";
-import { LoginForm } from "../app/components/auth/LoginForm";
-import { ResetPasswordForm } from "../app/components/auth/ResetPasswordForm";
-import { SiteNavbar } from "../app/components/ui/SiteNavbar";
-import { ClassicGame } from "../app/components/game/ClassicGame";
-import { EmojiGame } from "../app/components/game/EmojiGame";
-import { useAuth } from "../app/components/auth/useAuth";
-import { useLocalProgress } from "../lib/storage/use-local-progress";
-import { classicCategoryFromRouteSegment, isClassicDifficulty } from "../lib/domain/models/model-types";
-import { apiClient } from "../lib/api/client";
+import { AuthProvider } from "@components/auth/AuthProvider";
+import { CookieConsent } from "@components/ui/CookieConsent";
+import { GlobalHellMode } from "@components/ui/GlobalHellMode";
+import { ProgressSync } from "@components/auth/ProgressSync";
+import { LoginForm } from "@components/auth/LoginForm";
+import { ResetPasswordForm } from "@components/auth/ResetPasswordForm";
+import { SiteNavbar } from "@components/ui/SiteNavbar";
+import { useAuth } from "@components/auth/useAuth";
+import { useLocalProgress } from "@lib/storage/use-local-progress";
+import { classicCategoryFromRouteSegment, isClassicDifficulty } from "@lib/domain/models/model-types";
+import { apiClient } from "@lib/api/client";
 
-const ProfilePage = lazy(() => import("../app/profile/page"));
-const AdminPage = lazy(() => import("../app/admin/page"));
-const CreditsPage = lazy(() => import("../app/credits/page"));
-const PrivacyPage = lazy(() => import("../app/privacy/v1/page"));
+const ProfilePage = lazy(() => import("@app/profile/page"));
+const AdminPage = lazy(() => import("@app/admin/page"));
+const CreditsPage = lazy(() => import("@app/credits/page"));
+const PrivacyPage = lazy(() => import("@app/privacy/v1/page"));
+const ClassicGame = lazy(() =>
+  import("@components/game/ClassicGame").then(({ ClassicGame }) => ({ default: ClassicGame })),
+);
+const EmojiGame = lazy(() =>
+  import("@components/game/EmojiGame").then(({ EmojiGame }) => ({ default: EmojiGame })),
+);
 
 function HomePage() {
   return (

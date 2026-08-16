@@ -2,10 +2,10 @@
 
 ```text
 Browser
-  | GET /api/games/classic/today
+  | GET /api/v2/games/classic/...
   v
-Vinext route handler on Node.js
-  | ensureDailyChallenge() - deterministic secret-derived selection
+Rust/Axum API
+  | deterministic, secret-derived daily selection
   v
 SQLite
   | public DTO: id/date/mode/expiresAt/columns (never answer_model_id)
@@ -26,8 +26,8 @@ Public guessed model + comparison response
 
 ## Boundaries
 
-- Route handlers access SQLite through server-only `lib/db/client.ts`. Client components never import database code.
-- The full catalog is loaded once into server memory from `data/models.seed.json`; only an intentionally public autocomplete projection is sent to browsers.
+- The Rust API accesses SQLite through SQLx. Browser code under `src/` never imports database code.
+- The full catalog is seeded from `data/models.seed.json`; only an intentionally public autocomplete projection is sent to browsers.
 - `daily_challenges.answer_model_id` is not selected into the public challenge DTO, model autocomplete response, RSC props, or local storage.
 - The client owns UI progress in the versioned, Zod-validated external localStorage store. It is SSR-safe and synchronizes `storage` events between tabs.
 - After email activation, the local progress cache is merged into an account-owned database record and subsequent local changes are synchronized automatically.

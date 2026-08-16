@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { GuessRow } from "../../app/components/game/GuessRow";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
+import { GuessRow } from "../../src/app/components/game/GuessRow";
+import type { ClassicComparison } from "../../src/lib/domain/guesses/comparison-types";
 import {
   classicColumns,
   classicColumnsByCategory,
-} from "../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+} from "../../src/lib/domain/guesses/comparison-types";
+import type { ComparableModel } from "../../src/lib/domain/models/model-types";
 
 const model: ComparableModel = {
   id: "example-model",

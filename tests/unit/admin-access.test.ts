@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canManageAdministrators, canManageUsers } from "../../lib/auth/permissions";
+import { canManageAdministrators, canManageUsers } from "../../src/lib/auth/permissions";
 
 describe("admin access", () => {
   it("allows developers and super administrators to manage users", () => {

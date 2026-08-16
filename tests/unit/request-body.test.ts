@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readRequestText } from "../../lib/validation/request-body";
+import { readRequestText } from "../../src/lib/validation/request-body";
 
 describe("bounded request bodies", () => {
   it("rejects an oversized declared body before reading it", async () => {

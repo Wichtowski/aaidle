@@ -76,15 +76,8 @@ Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling
 
 ## Model catalog
 
-Update [data/models.seed.json](data/models.seed.json), then run:
+The canonical model and Emoji-game seed data live in [data](data). After updating either file, run:
 
 ```bash
 pnpm db:validate-seed
-pnpm db:seed
-```
-
-To discard and rebuild the local SQLite database from the current migrations and seed data, stop the development server and run:
-
-```bash
-pnpm db:reload
 ```

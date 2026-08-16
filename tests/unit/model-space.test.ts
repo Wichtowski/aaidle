@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { modelSpaceAxes, modelSpacePoint } from "../../lib/domain/models/model-space";
-import type { ClassicCategory, ComparableModel } from "../../lib/domain/models/model-types";
+import { modelSpaceAxes, modelSpacePoint } from "../../src/lib/domain/models/model-space";
+import type { ClassicCategory, ComparableModel } from "../../src/lib/domain/models/model-types";
 
 const model = (id: string, releaseYear: number, contextWindowTokens: number): ComparableModel => ({
   id,

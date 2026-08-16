@@ -3,9 +3,9 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { GuessBoard } from "../../app/components/game/GuessBoard";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+import { GuessBoard } from "../../src/app/components/game/GuessBoard";
+import type { ClassicComparison } from "../../src/lib/domain/guesses/comparison-types";
+import type { ComparableModel } from "../../src/lib/domain/models/model-types";
 
 const comparison: ClassicComparison = {
   provider: "incorrect",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { mergeCloudProgress } from "../../lib/domain/players/cloud-progress";
-import { classicChallengeMode } from "../../lib/domain/models/model-types";
-import { freshProgress } from "../../lib/storage/local-progress-store";
+import { mergeCloudProgress } from "../../src/lib/domain/players/cloud-progress";
+import { classicChallengeMode } from "../../src/lib/domain/models/model-types";
+import { freshProgress } from "../../src/lib/storage/local-progress-store";
 
 describe("cloud progress", () => {
   it("preserves solved games from both devices while merging sync data", () => {

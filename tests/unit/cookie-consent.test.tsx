@@ -3,7 +3,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { CookieConsent } from "../../app/components/ui/CookieConsent";
+import { CookieConsent } from "../../src/app/components/ui/CookieConsent";
 
 const consentCookie = "aaidle_cookie_consent";
 

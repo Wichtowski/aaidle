@@ -5,8 +5,8 @@ import {
   compareNullableBoolean,
   compareScalar,
   compareSets,
-} from "../../lib/domain/guesses/comparison-engine";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+} from "../../src/lib/domain/guesses/comparison-engine";
+import type { ComparableModel } from "../../src/lib/domain/models/model-types";
 const base: ComparableModel = {
   id: "a",
   name: "A",

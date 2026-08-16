@@ -3,9 +3,9 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { AdminProgressRecord } from "../../app/components/admin/AdminProgressRecord";
-import { classicColumns } from "../../lib/domain/guesses/comparison-types";
-import { distribution } from "../../lib/utils/dates";
+import { AdminProgressRecord } from "../../src/app/components/admin/AdminProgressRecord";
+import { classicColumns } from "../../src/lib/domain/guesses/comparison-types";
+import { distribution } from "../../src/lib/utils/dates";
 
 afterEach(cleanup);
 

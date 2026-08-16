@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applySolvedStreak } from "../../lib/domain/players/streak-service";
+import { applySolvedStreak } from "../../src/lib/domain/players/streak-service";
 describe("streaks", () => {
   it("starts a streak", () =>
     expect(

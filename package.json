@@ -9,12 +9,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src app/components app/admin/page.tsx app/profile/page.tsx app/credits/page.tsx app/privacy/v1/page.tsx lib/api lib/auth/permissions.ts lib/domain/models lib/domain/guesses/comparison-types.ts lib/domain/guesses/model-game-fields.ts lib/domain/players/cloud-progress.ts lib/domain/players/streak-service.ts lib/domain/games/classic/difficulty-preference.ts lib/domain/games/classic/hardcore-unlock.ts lib/storage lib/utils",
+    "lint": "eslint src",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "check": "pnpm ci:validate-actions && pnpm typecheck && pnpm lint && pnpm test",
     "ci:validate-actions": "node scripts/validate-workflow-action-pins.mjs",
+    "db:validate-seed": "node scripts/validate-model-data.mjs && node scripts/validate-emoji-game-data.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {

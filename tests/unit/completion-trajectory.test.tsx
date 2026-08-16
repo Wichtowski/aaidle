@@ -3,14 +3,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { CompletionTrajectory } from "../../app/components/game/CompletionTrajectory";
-import { GameCompletedDialog } from "../../app/components/game/GameCompletedDialog";
-import { ModelSpaceTrajectory } from "../../app/components/game/ModelSpaceTrajectory";
-import { apiClient } from "../../lib/api/client";
-import type { ClassicComparison } from "../../lib/domain/guesses/comparison-types";
-import type { ComparableModel } from "../../lib/domain/models/model-types";
+import { CompletionTrajectory } from "../../src/app/components/game/CompletionTrajectory";
+import { GameCompletedDialog } from "../../src/app/components/game/GameCompletedDialog";
+import { ModelSpaceTrajectory } from "../../src/app/components/game/ModelSpaceTrajectory";
+import { apiClient } from "../../src/lib/api/client";
+import type { ClassicComparison } from "../../src/lib/domain/guesses/comparison-types";
+import type { ComparableModel } from "../../src/lib/domain/models/model-types";
 
-vi.mock("../../app/components/game/CelebrationPhysics", () => ({
+vi.mock("../../src/app/components/game/CelebrationPhysics", () => ({
   CelebrationPhysics: ({ onComplete }: { onComplete: () => void }) =>
     createElement("button", { onClick: onComplete, type: "button" }, "Finish celebration"),
 }));

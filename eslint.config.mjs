@@ -8,7 +8,7 @@ export default tseslint.config(
     languageOptions: { globals: { URL: "readonly", process: "readonly", console: "readonly" } },
   },
   {
-    files: ["app/**/*.{ts,tsx}", "lib/**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
       curly: ["error", "multi-line"],

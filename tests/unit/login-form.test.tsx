@@ -3,8 +3,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AuthContext } from "../../app/components/auth/auth-context";
-import { LoginForm } from "../../app/components/auth/LoginForm";
+import { AuthContext } from "../../src/app/components/auth/auth-context";
+import { LoginForm } from "../../src/app/components/auth/LoginForm";
 
 const originalFetch = globalThis.fetch;
 

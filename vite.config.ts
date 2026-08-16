@@ -18,7 +18,15 @@ logger.error = (message, options) => {
 export default defineConfig({
   customLogger: logger,
   plugins: [react()],
-  resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@app": fileURLToPath(new URL("./src/app", import.meta.url)),
+      "@components": fileURLToPath(new URL("./src/app/components", import.meta.url)),
+      "@lib": fileURLToPath(new URL("./src/lib", import.meta.url)),
+      "@data": fileURLToPath(new URL("./data", import.meta.url)),
+    },
+  },
   server: {
     proxy: {
       "/api": {

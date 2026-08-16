@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ApiError, apiClient, isApiUnavailable, NetworkError } from "../../lib/api/client";
+import { ApiError, apiClient, isApiUnavailable, NetworkError } from "../../src/lib/api/client";
 
 const response = (body: unknown) =>
   new Response(JSON.stringify(body), {

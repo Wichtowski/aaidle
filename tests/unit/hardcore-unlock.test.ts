@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
-} from "../../lib/domain/games/classic/hardcore-unlock";
-import { freshProgress } from "../../lib/storage/local-progress-store";
+} from "../../src/lib/domain/games/classic/hardcore-unlock";
+import { freshProgress } from "../../src/lib/storage/local-progress-store";
 import {
   classicChallengeMode,
   focusedClassicCategories,
-} from "../../lib/domain/models/model-types";
+} from "../../src/lib/domain/models/model-types";
 
 describe("Hardcore unlock ritual", () => {
   it("requires all focused Challenge categories on the same date", () => {

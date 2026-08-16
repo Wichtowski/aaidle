@@ -4,7 +4,7 @@ import {
   resolveDistinctEmoji,
   revealedEmoji,
   type EmojiClueSlot,
-} from "../../lib/domain/games/emoji/prototype";
+} from "../../src/lib/domain/games/emoji/prototype";
 
 const overlappingSlots: EmojiClueSlot[] = [
   { concept: "first", emojiCandidates: ["🧠", "💡"] },

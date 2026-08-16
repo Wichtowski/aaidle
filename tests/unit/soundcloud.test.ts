@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeSoundCloudUrl } from "../../lib/media/soundcloud";
+import { normalizeSoundCloudUrl } from "../../src/lib/media/soundcloud";
 
 describe("normalizeSoundCloudUrl", () => {
   it("accepts a public HTTPS SoundCloud track URL", () => {

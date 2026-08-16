@@ -17,7 +17,7 @@ describe("local progress storage", () => {
   });
 
   it("clears browser progress and keeps authenticated updates out of local storage", async () => {
-    const store = await import("../../lib/storage/local-progress-store");
+    const store = await import("../../src/lib/storage/local-progress-store");
     window.localStorage.removeItem(store.progressKey);
     window.localStorage.removeItem(store.playerIdKey);
     const localProgress = store.freshProgress();
@@ -36,7 +36,7 @@ describe("local progress storage", () => {
   });
 
   it("keeps permanent Inner Circle state outside disposable progress", async () => {
-    const store = await import("../../lib/storage/local-progress-store");
+    const store = await import("../../src/lib/storage/local-progress-store");
     const progress = store.freshProgress();
     progress.preferences.hardcoreUnlocked = true;
     progress.preferences.hellMode = true;
@@ -53,7 +53,7 @@ describe("local progress storage", () => {
   });
 
   it("migrates the previous Classic modal preference without showing it again", async () => {
-    const store = await import("../../lib/storage/local-progress-store");
+    const store = await import("../../src/lib/storage/local-progress-store");
     const previousProgress = store.freshProgress();
     previousProgress.preferences.hasSeenClassicPrivacy = true;
     delete (previousProgress.preferences as Partial<typeof previousProgress.preferences>)

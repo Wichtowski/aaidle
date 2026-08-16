@@ -1,6 +1,6 @@
 PNPM ?= pnpm
 COMPOSE ?= docker compose -f backend/compose.yml
-SCRIPTS := create-local-superadmin migrate reload-database seed show-todays-challenges sqlite-connection validate-emoji-game-data validate-model-data validate-workflow-action-pins
+SCRIPTS := validate-emoji-game-data validate-model-data validate-workflow-action-pins
 
 .DEFAULT_GOAL := help
 
