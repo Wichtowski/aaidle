@@ -118,11 +118,11 @@ pub fn solved_challenge_ids(progress: &Value) -> Vec<String> {
         .collect()
 }
 
-pub fn hardcore_unlocked(progress: &Value) -> bool {
+pub fn player_id(progress: &Value) -> AppResult<&str> {
     progress
-        .pointer("/preferences/hardcoreUnlocked")
-        .and_then(Value::as_bool)
-        .unwrap_or(false)
+        .pointer("/playerId")
+        .and_then(Value::as_str)
+        .ok_or_else(|| AppError::Unavailable("Stored progress is invalid.".to_owned()))
 }
 
 fn validate_game(value: &Value) -> AppResult<()> {

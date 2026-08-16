@@ -88,7 +88,7 @@ function DeleteAccountPage() {
 }
 
 function DeferredIssuePage() {
-  return <main className="page issue-report-page"><SiteNavbar /><section className="issue-report"><div className="issue-report__content"><p className="eyebrow">Temporarily unavailable</p><h1>Report an issue.</h1><p className="lede">Issue reporting is unavailable until the deferred API v2 endpoint is implemented.</p></div></section></main>;
+  return <main className="page issue-report-page"><SiteNavbar /><section className="issue-report"><div className="issue-report__content"><p className="eyebrow">Temporarily unavailable</p><h1>Report an issue.</h1><p className="lede">Issue reporting is unavailable until the deferred API endpoint is implemented.</p></div></section></main>;
 }
 
 function Content() {

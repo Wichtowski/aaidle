@@ -2,7 +2,7 @@
 
 ```text
 Browser
-  | GET /api/v2/games/classic/...
+  | GET /api/v1/games/classic/...
   v
 Rust/Axum API
   | deterministic, secret-derived daily selection

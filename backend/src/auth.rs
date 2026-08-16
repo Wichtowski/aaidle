@@ -69,7 +69,7 @@ impl OAuthProvider {
 
     fn callback_url(self, config: &AppConfig) -> String {
         format!(
-            "{}/api/v2/auth/oauth/{}/callback",
+            "{}/api/v1/auth/oauth/{}/callback",
             config.app_origin,
             self.as_str()
         )
@@ -762,6 +762,7 @@ async fn github_identity(client: &Client, access_token: &str) -> AppResult<OAuth
         .bearer_auth(access_token)
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
+        .header("User-Agent", "aidle-api")
         .send()
         .await
         .map_err(|_| {
@@ -783,6 +784,7 @@ async fn github_identity(client: &Client, access_token: &str) -> AppResult<OAuth
         .bearer_auth(access_token)
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
+        .header("User-Agent", "aidle-api")
         .send()
         .await
         .map_err(|_| {

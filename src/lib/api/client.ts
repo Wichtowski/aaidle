@@ -9,7 +9,7 @@ import type {
 } from "../domain/models/model-types";
 import type { LocalProgress } from "../storage/local-progress-schema";
 
-const apiPath = (path: string) => `/api/v2${path}`;
+const apiPath = (path: string) => `/api/v1${path}`;
 
 export type AuthUser = {
   id: string;
@@ -277,7 +277,7 @@ class ApiClient {
   }
 
   reportIssue() {
-    throw new ApiError("Issue reporting is temporarily unavailable while its v2 API is completed.", 501);
+    throw new ApiError("Issue reporting is temporarily unavailable while its v1 API is completed.", 501);
   }
 
   adminUsers(page: number, query: string) {

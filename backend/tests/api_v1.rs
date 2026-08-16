@@ -214,19 +214,19 @@ async fn public_routes_are_versioned_and_hide_the_answer() {
     let health = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/health")
+            Request::get("/api/v1/health")
                 .body(Body::empty())
                 .expect("health request"),
         )
         .await
         .expect("health response");
     assert_eq!(health.status(), StatusCode::OK);
-    assert_eq!(response_json(health).await["apiVersion"], "v2");
+    assert_eq!(response_json(health).await["apiVersion"], "v1");
 
     let models = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/models")
+            Request::get("/api/v1/models")
                 .body(Body::empty())
                 .expect("models request"),
         )
@@ -243,7 +243,7 @@ async fn public_routes_are_versioned_and_hide_the_answer() {
 
     let classic = app
         .oneshot(
-            Request::get("/api/v2/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/normal")
                 .body(Body::empty())
                 .expect("Classic request"),
         )
@@ -281,7 +281,7 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
     let register = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/register")
+            Request::post("/api/v1/auth/register")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -301,7 +301,7 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
     let login = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/password")
+            Request::post("/api/v1/auth/password")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -334,7 +334,7 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
     let me = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/auth/me")
+            Request::get("/api/v1/auth/me")
                 .header("cookie", &session)
                 .body(Body::empty())
                 .expect("me request"),
@@ -349,7 +349,7 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
 
     let logout = app
         .oneshot(
-            Request::post("/api/v2/auth/logout")
+            Request::post("/api/v1/auth/logout")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", session)
                 .body(Body::empty())
@@ -367,7 +367,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let registration = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/register")
+            Request::post("/api/v1/auth/register")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -406,7 +406,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let login = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/password")
+            Request::post("/api/v1/auth/password")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -436,7 +436,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let reset = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/password-reset/complete")
+            Request::post("/api/v1/auth/password-reset/complete")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", format!("aaidle_password_reset={reset_token}"))
                 .header("content-type", "application/json")
@@ -460,7 +460,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let replay = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/password-reset/complete")
+            Request::post("/api/v1/auth/password-reset/complete")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", format!("aaidle_password_reset={reset_token}"))
                 .header("content-type", "application/json")
@@ -479,7 +479,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let deletion = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/account-deletion/complete")
+            Request::post("/api/v1/auth/account-deletion/complete")
                 .header("origin", "http://localhost:3000")
                 .header(
                     "cookie",
@@ -495,7 +495,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     assert_eq!(deletion.status(), StatusCode::NO_CONTENT);
     let me = app
         .oneshot(
-            Request::get("/api/v2/auth/me")
+            Request::get("/api/v1/auth/me")
                 .header("cookie", format!("aaidle_session={old_session}"))
                 .body(Body::empty())
                 .expect("me request"),
@@ -506,13 +506,13 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
 }
 
 #[tokio::test]
-async fn account_progress_merges_across_devices_and_persists_unlocks() {
+async fn account_progress_merges_verified_completions_without_granting_hardcore() {
     let (app, pool) = test_app().await;
     let email = "progress@example.test";
     let register = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/register")
+            Request::post("/api/v1/auth/register")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -527,7 +527,7 @@ async fn account_progress_merges_across_devices_and_persists_unlocks() {
     let login = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/auth/password")
+            Request::post("/api/v1/auth/password")
                 .header("origin", "http://localhost:3000")
                 .header("content-type", "application/json")
                 .body(Body::from(
@@ -542,7 +542,7 @@ async fn account_progress_merges_across_devices_and_persists_unlocks() {
     let classic = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/normal")
                 .body(Body::empty())
                 .expect("classic game request"),
         )
@@ -572,10 +572,72 @@ async fn account_progress_merges_across_devices_and_persists_unlocks() {
         "stats": {"classic": {"currentStreak": 0, "bestStreak": 0, "gamesPlayed": 0, "gamesWon": 0, "lastPlayedDate": null, "lastSolvedDate": null, "guessDistribution": {}}},
         "preferences": {"reducedMotion": false, "highContrast": false, "hasSeenClassicPrivacy": false, "hardcoreUnlocked": true, "innerCircleActive": false, "hellMode": false, "hasAutoplayedHardcoreSoundtrack": false}
     });
+    let forged_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header("cookie", format!("aaidle_session={session}"))
+                .header("content-type", "application/json")
+                .body(Body::from(progress.to_string()))
+                .expect("forged progress request"),
+        )
+        .await
+        .expect("forged progress response");
+    assert_eq!(forged_sync.status(), StatusCode::OK);
+    let user_id =
+        sqlx::query_scalar::<_, String>("SELECT id FROM users WHERE email_normalized = ?")
+            .bind(email)
+            .fetch_one(&pool)
+            .await
+            .expect("user ID");
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM user_challenge_completions WHERE user_id = ?"
+        )
+        .bind(&user_id)
+        .fetch_one(&pool)
+        .await
+        .expect("completion count"),
+        0
+    );
+    assert!(
+        !auth::has_hardcore_access(&pool, &user_id)
+            .await
+            .expect("hardcore access")
+    );
+    let answer_model_id = sqlx::query_scalar::<_, String>(
+        "SELECT answer_model_id FROM daily_challenges WHERE id = ?",
+    )
+    .bind(&challenge_id)
+    .fetch_one(&pool)
+    .await
+    .expect("challenge answer");
+    let accepted_guess = app
+        .clone()
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses"
+            ))
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": player_id,
+                    "requestId": request_id,
+                    "guessedModelId": answer_model_id,
+                    "attemptNumber": 1
+                })
+                .to_string(),
+            ))
+            .expect("guess request"),
+        )
+        .await
+        .expect("guess response");
+    assert_eq!(accepted_guess.status(), StatusCode::OK);
     let synced = app
         .clone()
         .oneshot(
-            Request::put("/api/v2/auth/progress")
+            Request::put("/api/v1/auth/progress")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", format!("aaidle_session={session}"))
                 .header("content-type", "application/json")
@@ -587,14 +649,8 @@ async fn account_progress_merges_across_devices_and_persists_unlocks() {
     let synced = response_json(synced).await;
     assert_eq!(synced["progress"]["stats"]["classic"]["gamesPlayed"], 1);
     assert_eq!(synced["progress"]["stats"]["classic"]["gamesWon"], 1);
-    let user_id =
-        sqlx::query_scalar::<_, String>("SELECT id FROM users WHERE email_normalized = ?")
-            .bind(email)
-            .fetch_one(&pool)
-            .await
-            .expect("user ID");
     assert!(
-        auth::has_hardcore_access(&pool, &user_id)
+        !auth::has_hardcore_access(&pool, &user_id)
             .await
             .expect("hardcore access")
     );
@@ -610,7 +666,7 @@ async fn account_progress_merges_across_devices_and_persists_unlocks() {
     );
     let loaded = app
         .oneshot(
-            Request::get("/api/v2/auth/progress")
+            Request::get("/api/v1/auth/progress")
                 .header("cookie", format!("aaidle_session={session}"))
                 .body(Body::empty())
                 .expect("progress load request"),
@@ -640,7 +696,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     let anonymous = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/admin/users")
+            Request::get("/api/v1/admin/users")
                 .body(Body::empty())
                 .expect("anonymous request"),
         )
@@ -650,7 +706,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     let forbidden = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/admin/users")
+            Request::get("/api/v1/admin/users")
                 .header("cookie", format!("aaidle_session={normal_session}"))
                 .body(Body::empty())
                 .expect("normal request"),
@@ -667,7 +723,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     let allowed = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/admin/users?query=normal-admin-test")
+            Request::get("/api/v1/admin/users?query=normal-admin-test")
                 .header("cookie", format!("aaidle_session={normal_session}"))
                 .body(Body::empty())
                 .expect("developer request"),
@@ -686,7 +742,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     let disabled = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/admin/users")
+            Request::get("/api/v1/admin/users")
                 .header("cookie", format!("aaidle_session={normal_session}"))
                 .body(Body::empty())
                 .expect("disabled request"),
@@ -714,7 +770,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     let updated = app
         .clone()
         .oneshot(
-            Request::put("/api/v2/admin/settings/hardcore-soundtrack")
+            Request::put("/api/v1/admin/settings/hardcore-soundtrack")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", format!("aaidle_session={superadmin_session}"))
                 .header("content-type", "application/json")
@@ -728,7 +784,7 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
     assert_eq!(updated.status(), StatusCode::OK);
     let public = app
         .oneshot(
-            Request::get("/api/v2/public-config")
+            Request::get("/api/v1/public-config")
                 .body(Body::empty())
                 .expect("public config request"),
         )
@@ -746,7 +802,7 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
     let game = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/normal")
                 .body(Body::empty())
                 .expect("classic game request"),
         )
@@ -758,7 +814,7 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
         .clone()
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{challenge_id}/trajectory"
+                "/api/v1/games/classic/challenges/{challenge_id}/trajectory"
             ))
             .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
@@ -771,7 +827,7 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
     let solved = app
         .clone()
         .oneshot(
-            Request::post(format!("/api/v2/games/classic/challenges/{challenge_id}/guesses"))
+            Request::post(format!("/api/v1/games/classic/challenges/{challenge_id}/guesses"))
                 .header("content-type", "application/json")
                 .body(Body::from(
                     serde_json::json!({"playerId": Uuid::new_v4(), "requestId": Uuid::new_v4(), "guessedModelId": "model-one", "attemptNumber": 1}).to_string(),
@@ -789,7 +845,7 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
         .clone()
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{challenge_id}/trajectory"
+                "/api/v1/games/classic/challenges/{challenge_id}/trajectory"
             ))
             .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
@@ -804,7 +860,7 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
     let wrong_challenge = app
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{}/trajectory",
+                "/api/v1/games/classic/challenges/{}/trajectory",
                 Uuid::new_v4()
             ))
             .header("origin", "http://localhost:3000")
@@ -836,7 +892,7 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
     let locked = app
         .clone()
         .oneshot(
-            Request::post("/api/v2/games/classic/hardcore/access")
+            Request::post("/api/v1/games/classic/hardcore/access")
                 .header("origin", "http://localhost:3000")
                 .header("cookie", format!("aaidle_session={session}"))
                 .body(Body::empty())
@@ -871,14 +927,14 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
             .expect("completion");
     }
     let first = app.clone().oneshot(
-        Request::post("/api/v2/games/classic/hardcore/access")
+        Request::post("/api/v1/games/classic/hardcore/access")
             .header("origin", "http://localhost:3000")
             .header("cookie", format!("aaidle_session={session}"))
             .body(Body::empty())
             .expect("first access request"),
     );
     let second = app.oneshot(
-        Request::post("/api/v2/games/classic/hardcore/access")
+        Request::post("/api/v1/games/classic/hardcore/access")
             .header("origin", "http://localhost:3000")
             .header("cookie", format!("aaidle_session={session}"))
             .body(Body::empty())
@@ -903,7 +959,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
     let game = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/normal")
                 .body(Body::empty())
                 .expect("Classic request"),
         )
@@ -925,7 +981,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
     .to_string();
     let request = || {
         Request::post(format!(
-            "/api/v2/games/classic/challenges/{challenge_id}/guesses"
+            "/api/v1/games/classic/challenges/{challenge_id}/guesses"
         ))
         .header("content-type", "application/json")
         .body(Body::from(body.clone()))
@@ -966,7 +1022,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
         .clone()
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{challenge_id}/guesses"
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
             .header("content-type", "application/json")
             .body(Body::from(
@@ -991,7 +1047,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
     let stats = app
         .oneshot(
             Request::get(format!(
-                "/api/v2/games/classic/challenges/{challenge_id}/stats"
+                "/api/v1/games/classic/challenges/{challenge_id}/stats"
             ))
             .body(Body::empty())
             .expect("stats request"),
@@ -1010,7 +1066,7 @@ async fn classic_category_route_scopes_the_model_pool_and_rejects_outside_guesse
     let game = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/normal")
                 .body(Body::empty())
                 .expect("classic game request"),
         )
@@ -1025,7 +1081,7 @@ async fn classic_category_route_scopes_the_model_pool_and_rejects_outside_guesse
     let response = app
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{challenge_id}/guesses"
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
             .header("content-type", "application/json")
             .body(Body::from(
@@ -1054,7 +1110,7 @@ async fn oversized_guess_bodies_are_rejected() {
     let response = app
         .oneshot(
             Request::post(format!(
-                "/api/v2/games/classic/challenges/{}/guesses",
+                "/api/v1/games/classic/challenges/{}/guesses",
                 Uuid::new_v4()
             ))
             .header("content-type", "application/json")
@@ -1072,7 +1128,7 @@ async fn emoji_game_has_progressive_hints_and_idempotent_family_guesses() {
     let game = app
         .clone()
         .oneshot(
-            Request::get("/api/v2/games/emoji")
+            Request::get("/api/v1/games/emoji")
                 .body(Body::empty())
                 .expect("emoji game request"),
         )
@@ -1109,7 +1165,7 @@ async fn emoji_game_has_progressive_hints_and_idempotent_family_guesses() {
         .clone()
         .oneshot(
             Request::get(format!(
-                "/api/v2/games/emoji/challenges/{challenge_id}/hints?playerId={player_id}"
+                "/api/v1/games/emoji/challenges/{challenge_id}/hints?playerId={player_id}"
             ))
             .body(Body::empty())
             .expect("emoji hints request"),
@@ -1136,7 +1192,7 @@ async fn emoji_game_has_progressive_hints_and_idempotent_family_guesses() {
             .clone()
             .oneshot(
                 Request::post(format!(
-                    "/api/v2/games/emoji/challenges/{challenge_id}/guesses"
+                    "/api/v1/games/emoji/challenges/{challenge_id}/guesses"
                 ))
                 .header("content-type", "application/json")
                 .body(Body::from(payload))
@@ -1155,7 +1211,7 @@ async fn emoji_game_has_progressive_hints_and_idempotent_family_guesses() {
     let replay = app
         .clone()
         .oneshot(
-            Request::post(format!("/api/v2/games/emoji/challenges/{challenge_id}/guesses"))
+            Request::post(format!("/api/v1/games/emoji/challenges/{challenge_id}/guesses"))
                 .header("content-type", "application/json")
                 .body(Body::from(
                     serde_json::json!({"playerId": player_id, "requestId": first_request_id, "guessedFamilyId": wrong_families[0], "attemptNumber": 1}).to_string(),

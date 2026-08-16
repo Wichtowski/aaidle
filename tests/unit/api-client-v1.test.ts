@@ -7,7 +7,7 @@ const response = (body: unknown) =>
     headers: { "Content-Type": "application/json" },
   });
 
-describe("v2 API client", () => {
+describe("v1 API client", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("submits a Classic guess with the caller’s stable player and request IDs", async () => {
@@ -30,7 +30,7 @@ describe("v2 API client", () => {
     );
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/v2/games/classic/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses",
+      "/api/v1/games/classic/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses",
       expect.objectContaining({ credentials: "include", method: "POST" }),
     );
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
@@ -51,7 +51,7 @@ describe("v2 API client", () => {
     );
 
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v2/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
   });
 

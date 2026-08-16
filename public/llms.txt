@@ -27,7 +27,7 @@ Use `hardcore` only with the `hardcore` category.
 
 ## Direct REST API
 
-- [Current Classic game](https://aaidle.com/api/v2/games/classic/llm/normal): Direct endpoint for today's normal LLM game
+- [Current Classic game](https://aaidle.com/api/v1/games/classic/llm/normal): Direct endpoint for today's normal LLM game
 - [Classic game routes](https://aaidle.com/openapi.json): Direct game retrieval and guess-submission endpoint definitions
 
 ## Optional

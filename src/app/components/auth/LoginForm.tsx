@@ -99,10 +99,10 @@ export function LoginForm() {
       />
       {user && !user.emailVerified && user.email && <ActivationPrompt email={user.email} />}
       <div className="auth-card__providers">
-        <a className="button" href="/api/v2/auth/oauth/github">
+        <a className="button" href="/api/v1/auth/oauth/github">
           <FaGithub aria-hidden="true" /> Continue with GitHub
         </a>
-        <a className="button" href="/api/v2/auth/oauth/google">
+        <a className="button" href="/api/v1/auth/oauth/google">
           <FaGoogle aria-hidden="true" /> Continue with Google
         </a>
       </div>

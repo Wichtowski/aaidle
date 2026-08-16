@@ -22,9 +22,9 @@ pub struct AuthEmailDelivery {
 impl AuthEmailPurpose {
     fn path(self) -> &'static str {
         match self {
-            Self::EmailVerification => "/api/v2/auth/email-verification/verify",
-            Self::PasswordReset => "/api/v2/auth/password-reset/verify",
-            Self::AccountDeletion => "/api/v2/auth/account-deletion/verify",
+            Self::EmailVerification => "/api/v1/auth/email-verification/verify",
+            Self::PasswordReset => "/api/v1/auth/password-reset/verify",
+            Self::AccountDeletion => "/api/v1/auth/account-deletion/verify",
         }
     }
 

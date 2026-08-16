@@ -1,7 +1,7 @@
-# AIdle API
+# AIdle API operations
 
 This directory contains the self-hosted Rust backend for AIdle.
-It is a small Axum process that exposes only `/api/v2` routes, uses SQLx with SQLite, and keeps all player state in the database.
+It is a small Axum process that exposes only `/api/v1` routes, uses SQLx with SQLite, and keeps all player state in the database.
 
 The API does not serve frontend assets or contain frontend behavior.
 
@@ -12,11 +12,12 @@ The supported database is SQLite.
 
 ## Local setup
 
-From this directory, copy `.env.example` into `.env`.
+From the repository root, copy `backend/.env.example` into `backend/.env`.
 For a new local database, run:
 
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
+cd backend
 cargo run --bin seed
 cargo run --bin aidle-api
 ```
@@ -51,6 +52,7 @@ Model IDs remain text IDs for compatibility with the existing catalog, while pub
 ## Checks
 
 ```bash
+cd backend
 cargo fmt --check
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test

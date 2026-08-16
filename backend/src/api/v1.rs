@@ -559,7 +559,7 @@ async fn health() -> Json<HealthResponse> {
     Json(HealthResponse {
         status: "ok",
         service: "aidle-api",
-        api_version: "v2",
+        api_version: "v1",
         version: env!("CARGO_PKG_VERSION"),
     })
 }
@@ -1208,25 +1208,7 @@ async fn progress_put(
     assert_same_origin(&state, &headers)?;
     let user = authenticated_user(&state, &headers).await?;
     let incoming = crate::progress::parse_progress(parse_json_payload(payload)?)?;
-    let stored = sqlx::query_scalar::<_, String>(
-        "SELECT progress_json FROM user_progress WHERE user_id = ?",
-    )
-    .bind(&user.id)
-    .fetch_optional(&state.db)
-    .await?;
-    let progress = match stored {
-        Some(value) => crate::progress::merge_progress(serde_json::from_str(&value)?, incoming)?,
-        None => incoming,
-    };
-    sqlx::query(
-        "INSERT INTO user_progress (user_id, progress_json, updated_at) VALUES (?, ?, ?) \
-         ON CONFLICT(user_id) DO UPDATE SET progress_json = excluded.progress_json, updated_at = excluded.updated_at",
-    )
-    .bind(&user.id)
-    .bind(serde_json::to_string(&progress)?)
-    .bind(now_millis())
-    .execute(&state.db)
-    .await?;
+    let progress = persist_merged_progress(&state, &user.id, incoming).await?;
     synchronize_progress_records(&state, &user.id, &progress).await?;
     Ok((
         [("cache-control", "no-store")],
@@ -1236,23 +1218,80 @@ async fn progress_put(
     ))
 }
 
+async fn persist_merged_progress(
+    state: &AppState,
+    user_id: &str,
+    incoming: Value,
+) -> AppResult<Value> {
+    for _ in 0..12 {
+        let stored = sqlx::query_scalar::<_, String>(
+            "SELECT progress_json FROM user_progress WHERE user_id = ?",
+        )
+        .bind(user_id)
+        .fetch_optional(&state.db)
+        .await?;
+        let progress = match &stored {
+            Some(value) => {
+                crate::progress::merge_progress(serde_json::from_str(value)?, incoming.clone())?
+            }
+            None => incoming.clone(),
+        };
+        let serialized = serde_json::to_string(&progress)?;
+        let changed = match stored {
+            Some(previous) => sqlx::query(
+                "UPDATE user_progress SET progress_json = ?, updated_at = ? \
+                 WHERE user_id = ? AND progress_json = ?",
+            )
+            .bind(&serialized)
+            .bind(now_millis())
+            .bind(user_id)
+            .bind(previous)
+            .execute(&state.db)
+            .await?
+            .rows_affected(),
+            None => sqlx::query(
+                "INSERT INTO user_progress (user_id, progress_json, updated_at) VALUES (?, ?, ?) \
+                 ON CONFLICT(user_id) DO NOTHING",
+            )
+            .bind(user_id)
+            .bind(&serialized)
+            .bind(now_millis())
+            .execute(&state.db)
+            .await?
+            .rows_affected(),
+        };
+        if changed == 1 {
+            return Ok(progress);
+        }
+    }
+    Err(AppError::Conflict("PROGRESS_UPDATE_CONFLICT".to_owned()))
+}
+
 async fn synchronize_progress_records(
     state: &AppState,
     user_id: &str,
     progress: &Value,
 ) -> AppResult<()> {
     let now = now_millis();
-    if crate::progress::hardcore_unlocked(progress) {
-        crate::auth::grant_hardcore_access(&state.db, user_id, now).await?;
-    }
+    let player_id = crate::progress::player_id(progress)?;
     for challenge_id in crate::progress::solved_challenge_ids(progress) {
         sqlx::query(
             "INSERT OR IGNORE INTO user_challenge_completions (user_id, challenge_id, completed_at) \
-             SELECT ?, id, ? FROM daily_challenges WHERE id = ?",
+             SELECT ?, d.id, ? FROM daily_challenges d WHERE d.id = ? AND (\
+               (d.mode LIKE 'classic:%' AND EXISTS (\
+                 SELECT 1 FROM guess_events g WHERE g.challenge_id = d.id \
+                 AND g.player_id = ? AND g.is_correct = 1\
+               )) OR (d.mode = 'emoji:family' AND EXISTS (\
+                 SELECT 1 FROM emoji_guess_events e WHERE e.challenge_id = d.id \
+                 AND e.player_id = ? AND e.is_correct = 1\
+               ))\
+             )",
         )
         .bind(user_id)
         .bind(now)
         .bind(challenge_id)
+        .bind(player_id)
+        .bind(player_id)
         .execute(&state.db)
         .await?;
     }

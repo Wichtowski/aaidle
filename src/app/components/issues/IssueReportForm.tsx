@@ -52,7 +52,7 @@ export function IssueReportForm() {
         />
       </label>
       <p className="issue-report__notice">
-        Issue reporting is temporarily unavailable while its API v2 endpoint is being migrated.
+        Issue reporting is temporarily unavailable while its API v1 endpoint is being migrated.
       </p>
       {error && (
         <p className="issue-report__error" role="alert">

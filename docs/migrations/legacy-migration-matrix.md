@@ -3,9 +3,9 @@
 This audit covers every `app/api/v1/**/route.ts` file present on 2026-08-15.
 The frontend currently calls every route marked `Yes` through `lib/api/client.ts` or direct `fetch` calls.
 Email verification and OAuth callback routes are entered through email links or provider redirects rather than a normal client fetch.
-Every target path in this table is relative to `/api/v2`.
+Every target path in this table is relative to `/api/v1`.
 
-| Legacy route | Purpose and current implementation | Frontend uses it | Target v2 route | Status | Action | Preserved behavior or migration note |
+| Legacy route | Purpose and current implementation | Frontend uses it | Target v1 route | Status | Action | Preserved behavior or migration note |
 | --- | --- | --- | --- | --- | --- | --- |
 | `GET/PUT /admin/settings/hardcore-soundtrack` | Superadmin setting in route and `site_settings` | Yes | `/admin/settings/hardcore-soundtrack` | FULLY MIGRATED | REPLACE | Server-side superadmin check, same-origin update, SoundCloud validation, and public allowlist |
 | `GET/PATCH/DELETE /admin/users/:userId` | User administration in route and auth/progress services | Yes | `/admin/users/:userId` | FULLY MIGRATED | REPLACE | Permission, disabled-account, completion, progress, and safe saved-guess deletion behavior |
