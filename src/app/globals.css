@@ -219,7 +219,6 @@ a {
   font-family: Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.075em;
-  word-spacing: -0.35em;
   white-space: nowrap;
 }
 .home .hero {
@@ -840,25 +839,46 @@ body.hell-mode .game-placeholder__status {
   line-height: 1.35;
 }
 .comparison--correct {
-  background: #237a45;
-  color: #fff;
+  background: #dcefe1;
+  color: #245c39;
 }
 .comparison--partial {
-  background: #f2b134;
-  color: #432a00;
+  background: #fae9bd;
+  color: #6a4b0b;
 }
 .comparison--incorrect {
-  background: #68221d;
-  color: #ffe0d8;
+  background: #f4ddda;
+  color: #7a322b;
 }
 .comparison--higher,
 .comparison--lower {
-  background: #2f78a8;
-  color: #fff;
+  background: #d9eaf3;
+  color: #285b78;
 }
 .comparison--unknown {
   background: #e7e9e7;
   color: #4b5650;
+}
+:is(:root.hell-mode, body.hell-mode) .comparison--correct {
+  background: #1d4a32;
+  color: #d9ffe4;
+}
+:is(:root.hell-mode, body.hell-mode) .comparison--partial {
+  background: #482c18;
+  color: #ffe1a4;
+}
+:is(:root.hell-mode, body.hell-mode) .comparison--incorrect {
+  background: #64201d;
+  color: #ffe0d7;
+}
+:is(:root.hell-mode, body.hell-mode) .comparison--higher,
+:is(:root.hell-mode, body.hell-mode) .comparison--lower {
+  background: #183d54;
+  color: #cceeff;
+}
+:is(:root.hell-mode, body.hell-mode) .comparison--unknown {
+  background: #332b2d;
+  color: #d6ccca;
 }
 .legend {
   display: flex;
@@ -2914,14 +2934,14 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .comparison-card__face--cover {
   align-items: center;
   justify-content: center;
-  background: var(--ink);
-  color: #fff;
+  background: #dfeaed;
+  color: #314d57;
   font-weight: 800;
   font-size: 12px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
-:is(:root.hell-mode, body.hell-mode) .comparison-card__face--cover {
+.game-page--hardcore .comparison-card__face--cover {
   background: #2c1215;
 }
 .comparison-card__face--result {
@@ -4231,24 +4251,44 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   border-radius: 6px;
 }
 .how-to-play-modal__item--correct {
-  background: #237a45;
-  color: #fff !important;
+  background: #dcefe1;
+  color: #245c39 !important;
 }
 .how-to-play-modal__item--partial {
-  background: #f2b134;
-  color: #432a00 !important;
+  background: #fae9bd;
+  color: #6a4b0b !important;
 }
 .how-to-play-modal__item--incorrect {
-  background: #68221d;
-  color: #ffe0d8 !important;
+  background: #f4ddda;
+  color: #7a322b !important;
 }
 .how-to-play-modal__item--direction {
-  background: #2f78a8;
-  color: #fff !important;
+  background: #d9eaf3;
+  color: #285b78 !important;
 }
 .how-to-play-modal__item--unknown {
   background: #e7e9e7;
   color: #4b5650 !important;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__item--correct {
+  background: #1d4a32;
+  color: #d9ffe4 !important;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__item--partial {
+  background: #482c18;
+  color: #ffe1a4 !important;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__item--incorrect {
+  background: #64201d;
+  color: #ffe0d7 !important;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__item--direction {
+  background: #183d54;
+  color: #cceeff !important;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__item--unknown {
+  background: #332b2d;
+  color: #d6ccca !important;
 }
 .how-to-play-modal__content li[class*="how-to-play-modal__item--"] svg {
   color: currentColor !important;
@@ -4489,6 +4529,7 @@ body::-webkit-scrollbar-thumb:hover,
   font-weight: 900;
   letter-spacing: -0.12em;
   line-height: 0.8;
+  -webkit-user-select: none;
   user-select: none;
 }
 .not-found h1 {
@@ -4623,24 +4664,54 @@ body::-webkit-scrollbar-thumb:hover,
   list-style: none;
 }
 .emoji-clues__clue {
-  display: grid;
+  min-width: 0;
   min-height: 112px;
-  place-items: center;
   border: 1px solid var(--line);
   border-radius: 16px;
-  background: var(--panel);
+  overflow: hidden;
+  perspective: 900px;
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   font-size: clamp(42px, 8vw, 70px);
   box-shadow: 0 6px 18px rgb(26 37 55 / 7%);
 }
-.emoji-clues__clue img {
+.emoji-clues__clue-inner {
+  position: relative;
+  min-height: 110px;
+  transform-style: preserve-3d;
+  transition: transform 560ms cubic-bezier(0.22, 0.75, 0.24, 1);
+}
+.emoji-clues__clue--revealed .emoji-clues__clue-inner {
+  transform: rotateY(180deg);
+}
+.emoji-clues__clue-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.emoji-clues__clue-cover {
+  color: var(--muted);
+  font-family: inherit;
+  background: color-mix(in srgb, var(--panel) 75%, var(--paper));
+}
+.emoji-clues__clue-result {
+  background: var(--panel);
+  transform: rotateY(180deg);
+}
+.emoji-clues__clue-result img {
   width: min(72px, 72%);
   max-height: 70px;
 }
 .emoji-clues__clue--hidden {
-  color: var(--muted);
   font-family: inherit;
-  background: color-mix(in srgb, var(--panel) 75%, var(--paper));
+}
+@media (prefers-reduced-motion: reduce) {
+  .emoji-clues__clue-inner {
+    transition: none;
+  }
 }
 .emoji-clues__search {
   position: relative;
@@ -4694,6 +4765,9 @@ body::-webkit-scrollbar-thumb:hover,
 }
 .emoji-clues__search li button:hover {
   background: var(--paper);
+}
+.emoji-clues__search li[aria-selected="true"] button {
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
 }
 .emoji-clues__search small {
   color: var(--muted);
