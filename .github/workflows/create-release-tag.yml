@@ -123,12 +123,40 @@ jobs:
           echo "tag=$next_tag" >> "$GITHUB_OUTPUT"
 
       - name: Create annotated tag
+        id: create-tag
         env:
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
-          git rev-parse --verify --quiet "refs/tags/$RELEASE_TAG" >/dev/null && exit 0
+          if git rev-parse --verify --quiet "refs/tags/$RELEASE_TAG" >/dev/null; then
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git tag --annotate "$RELEASE_TAG" --message "Release $RELEASE_TAG"
           git push origin "refs/tags/$RELEASE_TAG"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+
+      - name: Write summary
+        if: always()
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          TAG_CREATED: ${{ steps.create-tag.outputs.created }}
+        run: |
+          {
+            echo "## Release version"
+            echo
+            if [[ -n "$RELEASE_TAG" ]]; then
+              echo "- Version: $RELEASE_TAG"
+              if [[ "$TAG_CREATED" == "true" ]]; then
+                echo "- Status: Created"
+              elif [[ "$TAG_CREATED" == "false" ]]; then
+                echo "- Status: Already existed"
+              else
+                echo "- Status: Not created"
+              fi
+            else
+              echo "- Version: unavailable"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

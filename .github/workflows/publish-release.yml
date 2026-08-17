@@ -34,13 +34,3 @@ jobs:
           else
             gh release create "$RELEASE_TAG" --title "aAIdle $RELEASE_TAG" --generate-notes --notes "API container image: \`$image\`"
           fi
-      - name: Write summary
-        env:
-          RELEASE_TAG: ${{ inputs.release_tag }}
-        run: |
-          {
-            echo "## Release $RELEASE_TAG"
-            echo
-            echo "- GitHub Release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$RELEASE_TAG"
-            echo "- Deployment waits for production approval"
-          } >> "$GITHUB_STEP_SUMMARY"

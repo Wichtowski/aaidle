@@ -143,6 +143,6 @@ jobs:
           {
             echo "## Production deployment"
             echo
-            echo "- Release: $RELEASE_TAG"
+            echo "- Deployed version: $RELEASE_TAG"
             echo "- URL: https://aaidle.com"
           } >> "$GITHUB_STEP_SUMMARY"
