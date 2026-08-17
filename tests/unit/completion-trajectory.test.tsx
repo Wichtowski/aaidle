@@ -20,7 +20,7 @@ const model = (id: string, name: string): ComparableModel => ({
   name,
   provider: "Example AI",
   country: "Poland",
-  family: "Example",
+  family: ["Example"],
   categories: ["Chat"],
   inputModalities: ["Text"],
   outputModalities: ["Text"],

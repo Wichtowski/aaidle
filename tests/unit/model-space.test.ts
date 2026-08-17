@@ -7,7 +7,7 @@ const model = (id: string, releaseYear: number, contextWindowTokens: number): Co
   name: id,
   provider: "Example",
   country: null,
-  family: "Example",
+  family: ["Example"],
   categories: ["example"],
   inputModalities: ["image"],
   outputModalities: ["image"],

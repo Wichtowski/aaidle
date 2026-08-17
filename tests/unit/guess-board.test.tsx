@@ -27,7 +27,7 @@ const model = (index: number): ComparableModel => ({
   name: `Model ${index}`,
   provider: "Example AI",
   country: "Poland",
-  family: "Example",
+  family: ["Example"],
   categories: ["Chat"],
   inputModalities: ["Text"],
   outputModalities: ["Text"],

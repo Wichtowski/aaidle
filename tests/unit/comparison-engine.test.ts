@@ -5,6 +5,7 @@ import {
   compareNullableBoolean,
   compareScalar,
   compareSets,
+  compareToolUse,
 } from "../../src/lib/domain/guesses/comparison-engine";
 import type { ComparableModel } from "../../src/lib/domain/models/model-types";
 const base: ComparableModel = {
@@ -12,7 +13,7 @@ const base: ComparableModel = {
   name: "A",
   provider: "OpenAI",
   country: "US",
-  family: "GPT",
+  family: ["GPT"],
   categories: ["Language Model", "Coding"],
   inputModalities: ["Text"],
   outputModalities: ["Text"],
@@ -50,6 +51,11 @@ describe("comparison engine", () => {
   it("compares nullable booleans", () => {
     expect(compareNullableBoolean(false, false)).toBe("correct");
     expect(compareNullableBoolean(null, false)).toBe("unknown");
+  });
+  it("treats unavailable Tool calling metadata as No", () => {
+    expect(compareToolUse(false, null)).toBe("correct");
+    expect(compareToolUse(null, null)).toBe("correct");
+    expect(compareToolUse(true, null)).toBe("incorrect");
   });
   it("reports release direction by year and quarter", () => {
     const answer = {

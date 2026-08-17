@@ -16,7 +16,7 @@ const model: ComparableModel = {
   name: "Example model",
   provider: "Example AI",
   country: "Poland",
-  family: "Example",
+  family: ["Example"],
   categories: ["Chat", "Coding"],
   inputModalities: ["Text"],
   outputModalities: ["Text"],
@@ -117,7 +117,7 @@ describe("Hardcore GuessRow", () => {
     const toolUseCard = container.querySelectorAll(".comparison-card")[toolUseColumn];
     expect(
       toolUseCard?.querySelector(".comparison--correct .comparison-card__value")?.textContent,
-    ).toBe("N/A");
+    ).toBe("No");
   });
 
   it("reserves overlap emphasis for partial matches in Normal only", () => {
