@@ -8,7 +8,7 @@ on:
         required: true
         default: auto
         type: choice
-        options: [auto, initial, patch, minor, major]
+        options: [skip, auto, initial, patch, minor, major]
       source_ref:
         description: Branch, tag, or commit to tag
         required: true
@@ -47,10 +47,21 @@ jobs:
         id: version
         env:
           BUMP: ${{ inputs.bump }}
+          SOURCE_REF: ${{ inputs.source_ref }}
         run: |
           set -euo pipefail
 
           existing_tag=$(git tag --points-at HEAD --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)
+          if [ "$BUMP" = "skip" ]; then
+            selected_tag="${SOURCE_REF#refs/tags/}"
+            if ! [[ "$selected_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || ! git rev-parse --verify --quiet "refs/tags/$selected_tag" >/dev/null; then
+              echo "::error::The skip bump requires source_ref to be an existing SemVer tag"
+              exit 1
+            fi
+            echo "tag=$selected_tag" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           # Automatic releases are idempotent. An explicitly requested bump may
           # intentionally add a new SemVer tag to a commit that is already tagged.
           if [ "$BUMP" = "auto" ] && [ -n "$existing_tag" ]; then

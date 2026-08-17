@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       bump:
-        description: SemVer increment
+        description: SemVer increment, or skip
         required: true
         default: auto
         type: choice
-        options: [auto, initial, patch, minor, major]
+        options: [skip, auto, patch, minor, major]
 
 concurrency:
   group: aaidle-production-release
@@ -23,7 +23,7 @@ jobs:
       contents: write
     with:
       bump: ${{ inputs.bump || 'auto' }}
-      source_ref: ${{ github.event_name == 'push' && github.sha || 'main' }}
+      source_ref: ${{ github.event_name == 'push' && github.sha || github.ref }}
 
   unit-tests:
     needs: create-release-tag
