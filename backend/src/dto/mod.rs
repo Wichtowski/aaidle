@@ -56,6 +56,18 @@ pub struct EmailAcceptedResponse {
     pub activation_url: Option<String>,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct IssueReportRequest {
+    pub title: String,
+    pub description: String,
+}
+
+#[derive(Serialize)]
+pub struct IssueReportResponse {
+    pub url: String,
+}
+
 #[derive(Serialize)]
 pub struct ProgressResponse {
     pub progress: Option<Value>,
@@ -246,55 +258,66 @@ pub struct ClassicGameResponse {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct EmojiFamilyResponse {
+pub struct VisualClueEntityResponse {
     pub id: String,
     pub name: String,
-    pub provider_name: String,
-    pub representative_model_id: String,
+    pub aliases: Vec<String>,
+    pub entity_kind: String,
 }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct EmojiGameResponse {
-    pub challenge: PublicEmojiChallenge,
-    pub families: Vec<EmojiFamilyResponse>,
-    pub global_completion_count: i64,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PublicEmojiChallenge {
+pub struct EmojiCluesChallenge {
     pub id: Uuid,
     pub date: String,
-    pub mode: &'static str,
+    pub mode: String,
+    pub difficulty: String,
     pub expires_at: String,
-    pub initial_emoji: Vec<String>,
-    pub maximum_emoji: usize,
+    pub clues: Vec<crate::domain::visual_clues::VisualClue>,
+    pub reveal_mode: crate::domain::visual_clues::RevealMode,
+    pub maximum_clues: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EmojiCluesGameResponse {
+    pub challenge: EmojiCluesChallenge,
+    pub entities: Vec<VisualClueEntityResponse>,
+    pub global_completion_count: i64,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
-pub struct EmojiGuessRequest {
+pub struct EmojiCluesGuessRequest {
     pub player_id: Uuid,
     pub request_id: Uuid,
-    pub guessed_family_id: String,
+    pub guessed_entity_id: String,
     pub attempt_number: u16,
 }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct EmojiGuessResponse {
-    pub family: EmojiFamilyResponse,
+pub struct EmojiCluesGuessResponse {
+    pub entity: VisualClueEntityResponse,
     pub is_correct: bool,
     pub attempt_number: u16,
     pub global_completion_count: i64,
     pub player_stats: PlayerModeStats,
-    pub emoji: Vec<String>,
+    pub clues: Vec<crate::domain::visual_clues::VisualClue>,
 }
 
 #[derive(Serialize)]
-pub struct EmojiHintsResponse {
-    pub emoji: Vec<String>,
+pub struct EmojiCluesHintsResponse {
+    pub clues: Vec<crate::domain::visual_clues::VisualClue>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HardcoreStatusResponse {
+    pub signed_in: bool,
+    pub unlocked: bool,
+    pub completed_categories: Vec<String>,
+    pub required_categories: Vec<String>,
 }
 
 #[derive(Clone, Serialize)]

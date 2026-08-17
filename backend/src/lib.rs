@@ -8,6 +8,7 @@ pub mod domain;
 pub mod dto;
 pub mod email;
 pub mod error;
+pub mod issues;
 pub mod progress;
 pub mod repository;
 pub mod state;

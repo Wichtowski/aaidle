@@ -78,7 +78,7 @@ Configure GitHub and Google OAuth callbacks as `https://aaidle.com/api/v1/auth/o
 The frontend is a Vite-built React SPA. CI deploys the `dist/` assets to the VPS, where the
 platform Caddy instance serves the SPA fallback and proxies `/api/*` to the private Rust API
 container. The frontend does not run in a production container.
-Issue reporting is intentionally disabled until the deferred Rust `/api/v1` issue-reporting endpoint exists.
+Signed-in users can submit issue reports through the Rust API. Configure `AAIDLE_GITHUB_ISSUES_TOKEN` with GitHub Issues write access for `Wichtowski/aaidle` to enable delivery.
 Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling email/password accounts.
 
 ## Model catalog

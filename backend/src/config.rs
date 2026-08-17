@@ -47,6 +47,7 @@ pub struct AppConfig {
     pub health_key: String,
     pub release_version: String,
     pub github_oauth: Option<OAuthClientConfig>,
+    pub github_issues_token: Option<String>,
     pub google_oauth: Option<OAuthClientConfig>,
     pub resend_api_key: Option<String>,
 }
@@ -117,6 +118,9 @@ impl AppConfig {
             health_key,
             release_version,
             github_oauth: oauth_config("GITHUB")?,
+            github_issues_token: env::var("GITHUB_ISSUES_TOKEN")
+                .ok()
+                .filter(|value| !value.trim().is_empty()),
             google_oauth: oauth_config("GOOGLE")?,
             resend_api_key: env::var("RESEND_API_KEY")
                 .ok()

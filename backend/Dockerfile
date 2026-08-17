@@ -6,7 +6,7 @@ COPY backend/Cargo.toml backend/Cargo.lock ./backend/
 COPY backend/src ./backend/src
 COPY backend/migrations ./backend/migrations
 COPY data/models.seed.json ./data/models.seed.json
-COPY data/emoji-game.seed.json ./data/emoji-game.seed.json
+COPY data/emoji.seed.json ./data/emoji.seed.json
 
 WORKDIR /build/backend
 

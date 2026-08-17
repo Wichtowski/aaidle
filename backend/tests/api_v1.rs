@@ -37,6 +37,7 @@ async fn test_app() -> (axum::Router, SqlitePool) {
         health_key: "test health key that is longer than thirty two bytes".to_owned(),
         release_version: "v1.2.3".to_owned(),
         github_oauth: None,
+        github_issues_token: None,
         google_oauth: None,
         resend_api_key: None,
     });
@@ -66,6 +67,7 @@ async fn production_style_test_pool() -> (SqlitePool, PathBuf) {
         health_key: "test health key that is longer than thirty two bytes".to_owned(),
         release_version: "v1.2.3".to_owned(),
         github_oauth: None,
+        github_issues_token: None,
         google_oauth: None,
         resend_api_key: None,
     };
@@ -146,42 +148,19 @@ async fn seed(pool: &SqlitePool) {
         .execute(pool)
         .await
         .expect("attach family");
-    sqlx::query(
-        "INSERT INTO emoji_puzzles (family_id, puzzle_json, updated_at) VALUES ('openai-gpt', ?, 0)",
-    )
-    .bind(r#"{"familyId":"openai-gpt","variants":[{"slots":[{"concept":"one","emojiCandidates":["1"]},{"concept":"two","emojiCandidates":["2"]},{"concept":"three","emojiCandidates":["3"]},{"concept":"four","emojiCandidates":["4"]},{"concept":"five","emojiCandidates":["5"]},{"concept":"six","emojiCandidates":["6"]}]}]}"#)
-    .execute(pool)
-    .await
-    .expect("seed emoji puzzle");
-    for number in 1..=4 {
-        let family_id = format!("openai-test-{number}");
-        let model_id = format!("emoji-model-{number}");
+    for number in 3..=6 {
+        let id = format!("model-{number}");
         sqlx::query(
-            "INSERT INTO model_families (id, provider_id, name, slug, created_at, updated_at) VALUES (?, 'openai', ?, ?, 0, 0)",
+            "INSERT INTO models (id, provider_id, name, slug, release_year, local_execution, reasoning_support, \
+             status, is_guessable, verified_at, source_label, created_at, updated_at) \
+             VALUES (?, 'openai', ?, ?, 2025, 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
         )
-        .bind(&family_id)
-        .bind(format!("Test {number}"))
-        .bind(format!("test-{number}"))
+        .bind(&id)
+        .bind(format!("Model {number}"))
+        .bind(&id)
         .execute(pool)
         .await
-        .expect("seed alternate family");
-        sqlx::query(
-            "INSERT INTO models (id, provider_id, family_id, name, slug, local_execution, reasoning_support, status, is_guessable, verified_at, source_label, created_at, updated_at) \
-             VALUES (?, 'openai', ?, ?, ?, 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
-        )
-        .bind(&model_id)
-        .bind(&family_id)
-        .bind(format!("Emoji Model {number}"))
-        .bind(&model_id)
-        .execute(pool)
-        .await
-        .expect("seed alternate model");
-        sqlx::query("INSERT INTO emoji_puzzles (family_id, puzzle_json, updated_at) VALUES (?, ?, 0)")
-            .bind(&family_id)
-            .bind(format!(r#"{{"familyId":"{family_id}","variants":[{{"slots":[{{"concept":"one","emojiCandidates":["1"]}},{{"concept":"two","emojiCandidates":["2"]}},{{"concept":"three","emojiCandidates":["3"]}},{{"concept":"four","emojiCandidates":["4"]}},{{"concept":"five","emojiCandidates":["5"]}},{{"concept":"six","emojiCandidates":["6"]}}]}}]}}"#))
-            .execute(pool)
-            .await
-            .expect("seed alternate puzzle");
+        .expect("seed additional model");
     }
 }
 
@@ -225,6 +204,15 @@ async fn routes_are_versioned_and_hide_the_answer() {
         .await
         .expect("health response");
     assert_eq!(missing_health_key.status(), StatusCode::UNAUTHORIZED);
+    assert!(
+        missing_health_key
+            .into_body()
+            .collect()
+            .await
+            .expect("read unauthorized response")
+            .to_bytes()
+            .is_empty()
+    );
 
     let invalid_health_key = app
         .clone()
@@ -237,6 +225,15 @@ async fn routes_are_versioned_and_hide_the_answer() {
         .await
         .expect("health response");
     assert_eq!(invalid_health_key.status(), StatusCode::UNAUTHORIZED);
+    assert!(
+        invalid_health_key
+            .into_body()
+            .collect()
+            .await
+            .expect("read unauthorized response")
+            .to_bytes()
+            .is_empty()
+    );
 
     let health = app
         .clone()
@@ -966,9 +963,13 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
             .execute(&pool)
             .await
             .expect("challenge");
-        sqlx::query("INSERT INTO user_challenge_completions (user_id, challenge_id, completed_at) VALUES (?, ?, ?)")
+        let category = mode
+            .strip_prefix("classic:")
+            .and_then(|value| value.strip_suffix(":challenge"))
+            .expect("classic challenge category");
+        sqlx::query("INSERT INTO user_game_progress (user_id, game_type, difficulty, category, completed_at) VALUES (?, 'classic', 'challenge', ?, ?)")
             .bind(&user.id)
-            .bind(challenge_id)
+            .bind(category)
             .bind(current_millis())
             .execute(&pool)
             .await
@@ -992,11 +993,13 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
     assert_eq!(first.expect("first response").status(), StatusCode::OK);
     assert_eq!(second.expect("second response").status(), StatusCode::OK);
     assert_eq!(
-        sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM user_hardcore_access WHERE user_id = ?")
-            .bind(&user.id)
-            .fetch_one(&pool)
-            .await
-            .expect("grant count"),
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM user_unlocks WHERE user_id = ? AND unlock_key = 'hardcore-mode'"
+        )
+        .bind(&user.id)
+        .fetch_one(&pool)
+        .await
+        .expect("grant count"),
         1
     );
 }
@@ -1168,113 +1171,6 @@ async fn oversized_guess_bodies_are_rejected() {
         .await
         .expect("oversized response");
     assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
-}
-
-#[tokio::test]
-async fn emoji_game_has_progressive_hints_and_idempotent_family_guesses() {
-    let (app, pool) = test_app().await;
-    let game = app
-        .clone()
-        .oneshot(
-            Request::get("/api/v1/games/emoji")
-                .body(Body::empty())
-                .expect("emoji game request"),
-        )
-        .await
-        .expect("emoji game response");
-    assert_eq!(game.status(), StatusCode::OK);
-    let game = response_json(game).await;
-    assert_eq!(
-        game["challenge"]["initialEmoji"]
-            .as_array()
-            .expect("emoji")
-            .len(),
-        2
-    );
-    let challenge_id = game["challenge"]["id"].as_str().expect("challenge ID");
-    let answer_family_id = sqlx::query_scalar::<_, String>(
-        "SELECT m.family_id FROM daily_challenges d JOIN models m ON m.id = d.answer_model_id WHERE d.id = ?",
-    )
-    .bind(challenge_id)
-    .fetch_one(&pool)
-    .await
-    .expect("answer family");
-    let wrong_families = game["families"]
-        .as_array()
-        .expect("families")
-        .iter()
-        .map(|family| family["id"].as_str().expect("family ID").to_owned())
-        .filter(|family| family != &answer_family_id)
-        .take(4)
-        .collect::<Vec<_>>();
-    assert_eq!(wrong_families.len(), 4);
-    let player_id = Uuid::new_v4();
-    let hints = app
-        .clone()
-        .oneshot(
-            Request::get(format!(
-                "/api/v1/games/emoji/challenges/{challenge_id}/hints?playerId={player_id}"
-            ))
-            .body(Body::empty())
-            .expect("emoji hints request"),
-        )
-        .await
-        .expect("emoji hints response");
-    assert_eq!(
-        response_json(hints).await["emoji"]
-            .as_array()
-            .expect("hints")
-            .len(),
-        2
-    );
-    let first_request_id = Uuid::new_v4();
-    for (index, family_id) in wrong_families.iter().enumerate() {
-        let payload = serde_json::json!({
-            "playerId": player_id,
-            "requestId": if index == 0 { first_request_id } else { Uuid::new_v4() },
-            "guessedFamilyId": family_id,
-            "attemptNumber": index + 1
-        })
-        .to_string();
-        let response = app
-            .clone()
-            .oneshot(
-                Request::post(format!(
-                    "/api/v1/games/emoji/challenges/{challenge_id}/guesses"
-                ))
-                .header("content-type", "application/json")
-                .body(Body::from(payload))
-                .expect("emoji wrong guess"),
-            )
-            .await
-            .expect("emoji wrong response");
-        let response = response_json(response).await;
-        assert!(!response["isCorrect"].as_bool().expect("wrong result"));
-        assert_eq!(
-            response["emoji"].as_array().expect("emoji").len(),
-            index + 3
-        );
-        assert_eq!(response["playerStats"]["gamesPlayed"], 1);
-    }
-    let replay = app
-        .clone()
-        .oneshot(
-            Request::post(format!("/api/v1/games/emoji/challenges/{challenge_id}/guesses"))
-                .header("content-type", "application/json")
-                .body(Body::from(
-                    serde_json::json!({"playerId": player_id, "requestId": first_request_id, "guessedFamilyId": wrong_families[0], "attemptNumber": 1}).to_string(),
-                ))
-                .expect("emoji retry"),
-        )
-        .await
-        .expect("emoji retry response");
-    assert_eq!(
-        response_json(replay).await["emoji"]
-            .as_array()
-            .expect("emoji")
-            .len(),
-        6
-    );
 }
 
 #[tokio::test]

@@ -1,6 +1,19 @@
 name: Create Release Tag
 
 on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: SemVer increment
+        required: true
+        default: auto
+        type: choice
+        options: [auto, initial, patch, minor, major]
+      source_ref:
+        description: Branch, tag, or commit to tag
+        required: true
+        default: main
+        type: string
   workflow_call:
     inputs:
       bump:

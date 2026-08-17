@@ -881,8 +881,10 @@ pub async fn user_for_session(
 
 pub async fn has_hardcore_access(pool: &SqlitePool, user_id: &str) -> AppResult<bool> {
     Ok(sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM user_hardcore_access WHERE user_id = ?)",
+        "SELECT EXISTS(SELECT 1 FROM user_unlocks WHERE user_id = ? AND unlock_key = 'hardcore-mode') \
+         OR EXISTS(SELECT 1 FROM user_hardcore_access WHERE user_id = ?)",
     )
+    .bind(user_id)
     .bind(user_id)
     .fetch_one(pool)
     .await?
@@ -890,7 +892,7 @@ pub async fn has_hardcore_access(pool: &SqlitePool, user_id: &str) -> AppResult<
 }
 
 pub async fn grant_hardcore_access(pool: &SqlitePool, user_id: &str, now: i64) -> AppResult<()> {
-    sqlx::query("INSERT OR IGNORE INTO user_hardcore_access (user_id, unlocked_at) VALUES (?, ?)")
+    sqlx::query("INSERT OR IGNORE INTO user_unlocks (user_id, unlock_key, unlocked_at) VALUES (?, 'hardcore-mode', ?)")
         .bind(user_id)
         .bind(now)
         .execute(pool)

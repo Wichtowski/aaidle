@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+pub mod visual_clues;
+
 use sqlx::{FromRow, SqliteConnection, SqlitePool};
 use time::macros::format_description;
 use time::{Date, OffsetDateTime, format_description::FormatItem};
@@ -8,7 +10,6 @@ use uuid::Uuid;
 use crate::{
     domain::{
         comparison::{ComparableModel, ComparisonResult, compare_models},
-        emoji::{EmojiPuzzle, ResolvedEmojiPuzzle, generate_puzzle, resolve_puzzle},
         selection::{RecentAnswer, select_daily_model},
         streak::{PlayerStreak, update_streak},
     },
@@ -70,34 +71,6 @@ struct PlayerStatsRow {
     last_played_date: Option<String>,
     last_solved_date: Option<String>,
     guess_distribution_json: String,
-}
-
-#[derive(FromRow)]
-struct EmojiFamilyRow {
-    id: String,
-    name: String,
-    provider_name: String,
-    representative_model_id: Option<String>,
-}
-
-impl EmojiFamilyRow {
-    fn into_family(self) -> Option<EmojiFamily> {
-        Some(EmojiFamily {
-            id: self.id,
-            name: self.name,
-            provider_name: self.provider_name,
-            representative_model_id: self.representative_model_id?,
-        })
-    }
-}
-
-#[derive(FromRow)]
-struct StoredEmojiGuessRow {
-    challenge_id: String,
-    player_id: String,
-    guessed_family_id: String,
-    attempt_number: i64,
-    is_correct: i64,
 }
 
 #[derive(FromRow)]
@@ -221,41 +194,10 @@ pub struct ClassicGameData {
     pub completion_count: i64,
 }
 
-pub struct EmojiFamily {
-    pub id: String,
-    pub name: String,
-    pub provider_name: String,
-    pub representative_model_id: String,
-}
-
-pub struct EmojiChallengeData {
-    pub challenge: ChallengeRecord,
-    pub initial_emoji: Vec<String>,
-    pub maximum_emoji: usize,
-    pub families: Vec<EmojiFamily>,
-    pub completion_count: i64,
-}
-
-pub struct EmojiGuessInput {
-    pub challenge_id: Uuid,
-    pub player_id: Uuid,
-    pub request_id: Uuid,
-    pub guessed_family_id: String,
-    pub attempt_number: u16,
-}
-
-pub struct EmojiGuessOutcome {
-    pub family: EmojiFamily,
-    pub is_correct: bool,
-    pub attempt_number: u16,
-    pub completion_count: i64,
-    pub player_stats: PlayerModeStats,
-}
-
 #[derive(Clone, Copy)]
 enum PlayerEventTable {
     Classic,
-    Emoji,
+    VisualClues,
 }
 
 impl PlayerEventTable {
@@ -264,8 +206,8 @@ impl PlayerEventTable {
             Self::Classic => {
                 "SELECT COUNT(*) FROM guess_events WHERE challenge_id = ? AND player_id = ?"
             }
-            Self::Emoji => {
-                "SELECT COUNT(*) FROM emoji_guess_events WHERE challenge_id = ? AND player_id = ?"
+            Self::VisualClues => {
+                "SELECT COUNT(*) FROM visual_clue_guess_events WHERE challenge_id = ? AND player_id = ?"
             }
         }
     }
@@ -619,177 +561,6 @@ pub async fn classic_trajectory(
     Ok((challenge, public_models_by_ids(pool, &ids).await?))
 }
 
-pub async fn emoji_game(
-    pool: &SqlitePool,
-    date: &str,
-    secret: &str,
-) -> AppResult<EmojiChallengeData> {
-    let challenge = ensure_daily_emoji_challenge(pool, date, secret).await?;
-    let puzzle = puzzle_for_challenge(pool, &challenge, secret).await?;
-    let families = emoji_families(pool).await?;
-    let completion_count = completion_count(pool, &challenge.id).await?;
-    Ok(EmojiChallengeData {
-        challenge,
-        initial_emoji: puzzle.emoji.into_iter().take(2).collect(),
-        maximum_emoji: 6,
-        families,
-        completion_count,
-    })
-}
-
-pub async fn emoji_hints(
-    pool: &SqlitePool,
-    challenge_id: Uuid,
-    player_id: Uuid,
-    secret: &str,
-) -> AppResult<Vec<String>> {
-    let challenge = find_challenge(pool, challenge_id)
-        .await?
-        .filter(|challenge| challenge.mode == "emoji:family")
-        .ok_or_else(|| AppError::NotFound("Emoji challenge not found.".to_owned()))?;
-    let solved = sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM emoji_guess_events WHERE challenge_id = ? AND player_id = ? AND is_correct = 1)",
-    )
-    .bind(challenge_id.to_string())
-    .bind(player_id.to_string())
-    .fetch_one(pool)
-    .await?
-        != 0;
-    let wrong_guesses = sqlx::query_scalar::<_, i64>(
-        "SELECT COUNT(*) FROM emoji_guess_events WHERE challenge_id = ? AND player_id = ? AND is_correct = 0",
-    )
-    .bind(challenge_id.to_string())
-    .bind(player_id.to_string())
-    .fetch_one(pool)
-    .await?;
-    let count = if solved {
-        6
-    } else {
-        (2 + wrong_guesses).min(6) as usize
-    };
-    Ok(puzzle_for_challenge(pool, &challenge, secret)
-        .await?
-        .emoji
-        .into_iter()
-        .take(count)
-        .collect())
-}
-
-pub async fn process_emoji_guess(
-    pool: &SqlitePool,
-    input: EmojiGuessInput,
-) -> AppResult<EmojiGuessOutcome> {
-    for attempt in 0..12 {
-        match process_emoji_guess_once(pool, &input).await {
-            Err(error) if is_sqlite_busy(&error) && attempt < 11 => {
-                tokio::time::sleep(std::time::Duration::from_millis(10_u64 << attempt)).await;
-            }
-            result => return result,
-        }
-    }
-    unreachable!("the retry loop always returns")
-}
-
-async fn process_emoji_guess_once(
-    pool: &SqlitePool,
-    input: &EmojiGuessInput,
-) -> AppResult<EmojiGuessOutcome> {
-    let mut transaction = pool.begin().await?;
-    let connection = &mut *transaction;
-    if let Some(stored) = find_emoji_guess_by_request_id(connection, input.request_id).await? {
-        let outcome = replay_emoji_guess(connection, stored, input).await?;
-        transaction.commit().await?;
-        return Ok(outcome);
-    }
-    let challenge = find_challenge(&mut *connection, input.challenge_id)
-        .await?
-        .filter(|challenge| challenge.mode == "emoji:family")
-        .ok_or_else(|| AppError::NotFound("Emoji challenge not found.".to_owned()))?;
-    if sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM emoji_guess_events WHERE challenge_id = ? AND player_id = ? AND guessed_family_id = ?)",
-    )
-    .bind(input.challenge_id.to_string())
-    .bind(input.player_id.to_string())
-    .bind(&input.guessed_family_id)
-    .fetch_one(&mut *connection)
-    .await?
-        != 0
-    {
-        return Err(AppError::Conflict("DUPLICATE_GUESS".to_owned()));
-    }
-    if sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM emoji_guess_events WHERE challenge_id = ? AND player_id = ? AND is_correct = 1)",
-    )
-    .bind(input.challenge_id.to_string())
-    .bind(input.player_id.to_string())
-    .fetch_one(&mut *connection)
-    .await?
-        != 0
-    {
-        return Err(AppError::Conflict("CHALLENGE_COMPLETED".to_owned()));
-    }
-    let family = emoji_family(connection, &input.guessed_family_id)
-        .await?
-        .ok_or_else(|| AppError::validation("This family is not in the Emoji answer pool."))?;
-    let answer_family_id =
-        sqlx::query_scalar::<_, String>("SELECT family_id FROM models WHERE id = ?")
-            .bind(&challenge.answer_model_id)
-            .fetch_optional(&mut *connection)
-            .await?
-            .ok_or_else(|| {
-                AppError::Unavailable("Emoji challenge answer is unavailable.".to_owned())
-            })?;
-    let is_correct = family.id == answer_family_id;
-    let now = now_unix_millis();
-    ensure_anonymous_player(connection, input.player_id, now).await?;
-    let inserted = sqlx::query(
-        "INSERT INTO emoji_guess_events (id, request_id, challenge_id, player_id, guessed_family_id, attempt_number, is_correct, created_at) \
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
-    )
-    .bind(Uuid::new_v4().to_string())
-    .bind(input.request_id.to_string())
-    .bind(input.challenge_id.to_string())
-    .bind(input.player_id.to_string())
-    .bind(&input.guessed_family_id)
-    .bind(i64::from(input.attempt_number))
-    .bind(i64::from(u8::from(is_correct)))
-    .bind(now)
-    .execute(&mut *connection)
-    .await?
-    .rows_affected();
-    if inserted == 0 {
-        if let Some(stored) = find_emoji_guess_by_request_id(connection, input.request_id).await? {
-            let outcome = replay_emoji_guess(connection, stored, input).await?;
-            transaction.commit().await?;
-            return Ok(outcome);
-        }
-        return Err(AppError::Conflict("DUPLICATE_GUESS".to_owned()));
-    }
-    let player_stats = update_player_stats(
-        connection,
-        PlayerEventTable::Emoji,
-        input.player_id,
-        &challenge,
-        input.attempt_number,
-        is_correct,
-        now,
-    )
-    .await?;
-    let completion_count = if is_correct {
-        increment_completion_count(connection, &challenge.id).await?
-    } else {
-        completion_count(connection, &challenge.id).await?
-    };
-    transaction.commit().await?;
-    Ok(EmojiGuessOutcome {
-        family,
-        is_correct,
-        attempt_number: input.attempt_number,
-        completion_count,
-        player_stats,
-    })
-}
-
 pub async fn process_guess(pool: &SqlitePool, input: GuessInput) -> AppResult<GuessOutcome> {
     for attempt in 0..12 {
         match process_guess_once(pool, &input).await {
@@ -997,112 +768,6 @@ fn is_sqlite_busy(error: &AppError) -> bool {
         }
         _ => false,
     }
-}
-
-async fn ensure_daily_emoji_challenge(
-    pool: &SqlitePool,
-    date: &str,
-    secret: &str,
-) -> AppResult<ChallengeRecord> {
-    const MODE: &str = "emoji:family";
-    if let Some(challenge) = find_challenge_by_date_and_mode(pool, date, MODE).await? {
-        return Ok(challenge);
-    }
-    let puzzles = load_emoji_puzzles(pool).await?;
-    let puzzle = generate_puzzle(date, secret, &puzzles)?;
-    let representative = sqlx::query_scalar::<_, String>(
-        "SELECT id FROM models WHERE family_id = ? ORDER BY id LIMIT 1",
-    )
-    .bind(&puzzle.family_id)
-    .fetch_optional(pool)
-    .await?
-    .ok_or_else(|| {
-        AppError::Unavailable("Emoji puzzle family is missing from the model catalog.".to_owned())
-    })?;
-    sqlx::query(
-        "INSERT INTO daily_challenges \
-         (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) \
-         VALUES (?, ?, ?, ?, 1, ?, 'lazy') ON CONFLICT(challenge_date, mode) DO NOTHING",
-    )
-    .bind(Uuid::new_v4().to_string())
-    .bind(date)
-    .bind(MODE)
-    .bind(representative)
-    .bind(now_unix_millis())
-    .execute(pool)
-    .await?;
-    find_challenge_by_date_and_mode(pool, date, MODE)
-        .await?
-        .ok_or_else(|| AppError::Unavailable("Today’s Emoji challenge is unavailable.".to_owned()))
-}
-
-async fn puzzle_for_challenge(
-    pool: &SqlitePool,
-    challenge: &ChallengeRecord,
-    secret: &str,
-) -> AppResult<ResolvedEmojiPuzzle> {
-    let family_id = sqlx::query_scalar::<_, String>("SELECT family_id FROM models WHERE id = ?")
-        .bind(&challenge.answer_model_id)
-        .fetch_optional(pool)
-        .await?
-        .ok_or_else(|| {
-            AppError::Unavailable("Emoji challenge answer is unavailable.".to_owned())
-        })?;
-    let puzzle = sqlx::query_scalar::<_, String>(
-        "SELECT puzzle_json FROM emoji_puzzles WHERE family_id = ?",
-    )
-    .bind(family_id)
-    .fetch_optional(pool)
-    .await?
-    .map(|value| serde_json::from_str::<EmojiPuzzle>(&value))
-    .transpose()?
-    .ok_or_else(|| AppError::Unavailable("Emoji puzzle is unavailable.".to_owned()))?;
-    resolve_puzzle(
-        challenge.challenge_date.as_str(),
-        &format!("{secret}:emoji:{}", challenge.challenge_date),
-        &puzzle,
-    )
-}
-
-async fn load_emoji_puzzles(pool: &SqlitePool) -> AppResult<Vec<EmojiPuzzle>> {
-    let rows =
-        sqlx::query_scalar::<_, String>("SELECT puzzle_json FROM emoji_puzzles ORDER BY family_id")
-            .fetch_all(pool)
-            .await?;
-    rows.into_iter()
-        .map(|row| serde_json::from_str(&row).map_err(AppError::from))
-        .collect()
-}
-
-async fn emoji_families(pool: &SqlitePool) -> AppResult<Vec<EmojiFamily>> {
-    let rows = sqlx::query_as::<_, EmojiFamilyRow>(
-        "SELECT f.id, f.name, p.name AS provider_name, \
-         (SELECT id FROM models WHERE family_id = f.id ORDER BY id LIMIT 1) AS representative_model_id \
-         FROM emoji_puzzles e JOIN model_families f ON f.id = e.family_id \
-         JOIN providers p ON p.id = f.provider_id ORDER BY f.id",
-    )
-    .fetch_all(pool)
-    .await?;
-    Ok(rows
-        .into_iter()
-        .filter_map(EmojiFamilyRow::into_family)
-        .collect())
-}
-
-async fn emoji_family(
-    connection: &mut SqliteConnection,
-    family_id: &str,
-) -> AppResult<Option<EmojiFamily>> {
-    Ok(sqlx::query_as::<_, EmojiFamilyRow>(
-        "SELECT f.id, f.name, p.name AS provider_name, \
-         (SELECT id FROM models WHERE family_id = f.id ORDER BY id LIMIT 1) AS representative_model_id \
-         FROM emoji_puzzles e JOIN model_families f ON f.id = e.family_id \
-         JOIN providers p ON p.id = f.provider_id WHERE f.id = ?",
-    )
-    .bind(family_id)
-    .fetch_optional(&mut *connection)
-    .await?
-    .and_then(EmojiFamilyRow::into_family))
 }
 
 async fn ensure_anonymous_player(
@@ -1361,56 +1026,6 @@ async fn find_guess_by_request_id(
     .bind(request_id.to_string())
     .fetch_optional(&mut *connection)
     .await?)
-}
-
-async fn find_emoji_guess_by_request_id(
-    connection: &mut SqliteConnection,
-    request_id: Uuid,
-) -> AppResult<Option<StoredEmojiGuessRow>> {
-    Ok(sqlx::query_as::<_, StoredEmojiGuessRow>(
-        "SELECT challenge_id, player_id, guessed_family_id, attempt_number, is_correct \
-         FROM emoji_guess_events WHERE request_id = ?",
-    )
-    .bind(request_id.to_string())
-    .fetch_optional(&mut *connection)
-    .await?)
-}
-
-async fn replay_emoji_guess(
-    connection: &mut SqliteConnection,
-    stored: StoredEmojiGuessRow,
-    input: &EmojiGuessInput,
-) -> AppResult<EmojiGuessOutcome> {
-    if stored.challenge_id != input.challenge_id.to_string()
-        || stored.player_id != input.player_id.to_string()
-        || stored.guessed_family_id != input.guessed_family_id
-        || stored.attempt_number != i64::from(input.attempt_number)
-    {
-        return Err(AppError::Conflict("REQUEST_ID_REUSED".to_owned()));
-    }
-    let family = emoji_family(connection, &stored.guessed_family_id)
-        .await?
-        .ok_or_else(|| AppError::Unavailable("Stored Emoji family is unavailable.".to_owned()))?;
-    let challenge = sqlx::query_as::<_, ChallengeRecord>(
-        "SELECT id, challenge_date, mode, answer_model_id FROM daily_challenges WHERE id = ?",
-    )
-    .bind(input.challenge_id.to_string())
-    .fetch_optional(&mut *connection)
-    .await?
-    .ok_or_else(|| AppError::NotFound("Emoji challenge not found.".to_owned()))?;
-    let stats = load_player_stats(connection, input.player_id, &challenge.mode)
-        .await?
-        .ok_or_else(|| {
-            AppError::Unavailable("Stored player statistics are unavailable.".to_owned())
-        })?;
-    let completion_count = completion_count(&mut *connection, &challenge.id).await?;
-    Ok(EmojiGuessOutcome {
-        family,
-        is_correct: stored.is_correct != 0,
-        attempt_number: stored.attempt_number as u16,
-        completion_count,
-        player_stats: player_stats_dto(stats)?,
-    })
 }
 
 async fn replay_guess(

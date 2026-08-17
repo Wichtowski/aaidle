@@ -1,12 +1,12 @@
 PNPM ?= pnpm
 COMPOSE ?= docker compose -f backend/compose.yml
-SCRIPTS := validate-emoji-game-data validate-model-data validate-workflow-action-pins
+SCRIPTS := validate-emoji-data validate-model-data validate-workflow-action-pins
 
 .DEFAULT_GOAL := help
 
 .PHONY: help install dev build preview lint typecheck test test-watch check format \
 	backend-up backend-down backend-logs backend-ps backend-build backend-test \
-	up down logs ps scripts $(SCRIPTS)
+	backend-migrate up down logs ps migrate scripts $(SCRIPTS)
 
 help:
 	@echo "AIdle development commands"
@@ -28,6 +28,7 @@ help:
 	@echo "  make ps               Show Rust API status"
 	@echo "  make backend-build    Build the Rust API"
 	@echo "  make backend-test     Run Rust API tests"
+	@echo "  make migrate          Apply Rust API migrations to the local Docker database"
 	@echo ""
 	@echo "  make scripts          List available repository scripts"
 	@echo "  make validate-workflow-action-pins"
@@ -89,6 +90,11 @@ backend-build:
 
 backend-test:
 	cargo test --manifest-path backend/Cargo.toml
+
+migrate: backend-migrate
+
+backend-migrate:
+	$(COMPOSE) run --rm api aidle-api migrate
 
 scripts:
 	@printf '%s\n' $(SCRIPTS)

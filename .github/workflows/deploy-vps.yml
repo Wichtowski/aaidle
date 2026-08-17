@@ -25,6 +25,8 @@ on:
         required: false
       AAIDLE_GITHUB_CLIENT_SECRET:
         required: false
+      AAIDLE_GITHUB_ISSUES_TOKEN:
+        required: false
       AAIDLE_GOOGLE_CLIENT_ID:
         required: false
       AAIDLE_GOOGLE_CLIENT_SECRET:
@@ -62,6 +64,7 @@ jobs:
           AAIDLE_HEALTH_KEY: ${{ secrets.AAIDLE_HEALTH_KEY }}
           AAIDLE_GITHUB_CLIENT_ID: ${{ secrets.AAIDLE_GITHUB_CLIENT_ID }}
           AAIDLE_GITHUB_CLIENT_SECRET: ${{ secrets.AAIDLE_GITHUB_CLIENT_SECRET }}
+          AAIDLE_GITHUB_ISSUES_TOKEN: ${{ secrets.AAIDLE_GITHUB_ISSUES_TOKEN }}
           AAIDLE_GOOGLE_CLIENT_ID: ${{ secrets.AAIDLE_GOOGLE_CLIENT_ID }}
           AAIDLE_GOOGLE_CLIENT_SECRET: ${{ secrets.AAIDLE_GOOGLE_CLIENT_SECRET }}
           AAIDLE_RESEND_API_KEY: ${{ secrets.AAIDLE_RESEND_API_KEY }}
@@ -75,6 +78,7 @@ jobs:
             printf 'HEALTH_KEY=%s\n' "$AAIDLE_HEALTH_KEY"
             printf 'GITHUB_CLIENT_ID=%s\n' "$AAIDLE_GITHUB_CLIENT_ID"
             printf 'GITHUB_CLIENT_SECRET=%s\n' "$AAIDLE_GITHUB_CLIENT_SECRET"
+            printf 'GITHUB_ISSUES_TOKEN=%s\n' "$AAIDLE_GITHUB_ISSUES_TOKEN"
             printf 'GOOGLE_CLIENT_ID=%s\n' "$AAIDLE_GOOGLE_CLIENT_ID"
             printf 'GOOGLE_CLIENT_SECRET=%s\n' "$AAIDLE_GOOGLE_CLIENT_SECRET"
             printf 'RESEND_API_KEY=%s\n' "$AAIDLE_RESEND_API_KEY"

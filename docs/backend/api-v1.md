@@ -23,6 +23,7 @@ The API returns `400` for invalid input, `404` for missing resources, `409` for 
 
 Requires an `x-aaidle-health-key` header whose value exactly matches `HEALTH_KEY`.
 Returns process health without a database query. The version is the deployed release tag.
+Requests without a valid key receive an empty `401 Unauthorized` response.
 
 ```json
 {
@@ -80,12 +81,10 @@ The signed token is bound to that challenge and answer model and does not disclo
 `POST /api/v1/games/classic/hardcore/access` grants permanent account access only when the signed-in account has completed all six distinct focused Classic Challenge boards on the current UTC date.
 Generic `/challenges/*` routes are not part of the public v2 contract.
 
-`GET /api/v1/games/emoji` returns the public Emoji challenge, first two clues, family answer pool, and global completion count.
-`GET /api/v1/games/emoji/challenges/{challengeId}/hints?playerId={uuid}` returns only the clues earned by that player.
-Players begin with two clues and gain one after each accepted unique wrong family guess, capped at six.
-After a correct guess, all six deterministic clues are returned.
-Idempotent retries and rejected duplicates never unlock clues.
-`POST /api/v1/games/emoji/challenges/{challengeId}/guesses` accepts the same retry-safe `playerId`, `requestId`, and `attemptNumber` fields as Classic, with `guessedFamilyId` in place of `guessedModelId`.
+`GET /api/v1/games/emoji-clues/{difficulty}` returns an answer-safe Emoji Clues challenge, its initially available clues, public entity choices, and global completion count. Supported difficulties are `normal`, `challenge`, and access-controlled `hardcore`.
+`GET /api/v1/games/emoji-clues/challenges/{challengeId}/hints?playerId={uuid}` returns the clues earned by that player.
+`POST /api/v1/games/emoji-clues/challenges/{challengeId}/guesses` accepts retry-safe `playerId`, `requestId`, `attemptNumber`, and `guessedEntityId` fields. The server validates and records every accepted guess, so rejected or duplicate requests cannot change progress.
+Emoji Clues supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
 
 ## Session routes
 
@@ -129,6 +128,10 @@ The request body limit for this route is 1 MB.
 The `DELETE` route preserves legacy behavior by deleting one saved cloud-progress guess, not by deleting the account or anonymous aggregate game events.
 `GET` and `PUT /api/v1/admin/settings/hardcore-soundtrack` are superadmin-only.
 The update accepts only public HTTPS SoundCloud URLs and `GET /api/v1/public-config` exposes only the normalized soundtrack URL.
+
+## Issue reporting
+
+`POST /api/v1/issues` requires a signed-in, non-disabled account and a same-origin request. It accepts a `title` from 8 to 120 characters and a `description` from 20 to 5,000 characters, then creates an issue in the project tracker using the server-side `GITHUB_ISSUES_TOKEN`. The endpoint is limited to three reports per account and client IP per hour and returns the created issue URL. The GitHub token is never sent to the browser or logged.
 
 ## Migration mapping
 

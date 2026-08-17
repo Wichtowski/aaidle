@@ -73,32 +73,30 @@ export type ClassicGuessPayload = {
   globalCompletionCount: number | null;
 };
 
-export type EmojiGamePayload = {
+export type VisualClue =
+  | { type: "emoji"; value: string; revealPriority?: number }
+  | { type: "icon"; icon: string; revealPriority?: number };
+
+export type EmojiCluesDifficulty = "normal" | "challenge" | "hardcore";
+export type EmojiCluesGamePayload = {
   challenge: {
     id: string;
     date: string;
-    mode: "emoji";
+    mode: string;
+    difficulty: EmojiCluesDifficulty;
     expiresAt: string;
-    initialEmoji: string[];
-    maximumEmoji: number;
+    clues: VisualClue[];
+    revealMode: "progressive" | "all-at-once";
+    maximumClues: number;
   };
-  families: Array<{
-    id: string;
-    name: string;
-    providerName: string;
-    representativeModelId: string;
-  }>;
+  entities: Array<{ id: string; name: string; aliases: string[]; entityKind: string }>;
   globalCompletionCount: number;
 };
-
-export type EmojiGuessPayload = {
-  guess: {
-    family: { id: string; name: string; providerName: string };
-    isCorrect: boolean;
-    attemptNumber: number;
-  };
-  globalCompletionCount: number | null;
-  emoji: string[];
+export type HardcoreStatus = {
+  signedIn: boolean;
+  unlocked: boolean;
+  completedCategories: string[];
+  requiredCategories: string[];
 };
 
 type ApiErrorPayload = { error?: { code?: string; message?: string } };
@@ -123,14 +121,6 @@ type V2ClassicGuess = {
   isCorrect: boolean;
   globalCompletionCount: number;
   trajectoryAccessToken?: string;
-};
-
-type V2EmojiGuess = {
-  family: { id: string; name: string; providerName: string };
-  isCorrect: boolean;
-  attemptNumber: number;
-  globalCompletionCount: number;
-  emoji: string[];
 };
 
 export class ApiError extends Error {
@@ -186,9 +176,9 @@ class ApiClient {
       throw new NetworkError();
     }
 
-    const payload = (response.status === 204 ? undefined : await response.json().catch(() => null)) as
-      | (T & ApiErrorPayload)
-      | null;
+    const payload = (
+      response.status === 204 ? undefined : await response.json().catch(() => null)
+    ) as (T & ApiErrorPayload) | null;
     if (!response.ok) {
       throw new ApiError(
         payload?.error?.message ?? "Request failed. Please try again.",
@@ -269,24 +259,36 @@ class ApiClient {
   }
 
   cloudProgress() {
-    return this.request<{ progress: LocalProgress | null }>("/auth/progress", { cache: "no-store" });
+    return this.request<{ progress: LocalProgress | null }>("/auth/progress", {
+      cache: "no-store",
+    });
   }
 
   enableHardcoreAccess() {
     return this.request<{ unlocked: true }>("/games/classic/hardcore/access", { method: "POST" });
   }
 
-  reportIssue() {
-    throw new ApiError("Issue reporting is temporarily unavailable while its v1 API is completed.", 501);
+  hardcoreStatus() {
+    return this.request<HardcoreStatus>("/auth/hardcore-status", { cache: "no-store" });
+  }
+
+  reportIssue(title: string, description: string) {
+    return this.request<{ url: string }>("/issues", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, description }),
+    });
   }
 
   adminUsers(page: number, query: string) {
     const search = new URLSearchParams({ page: String(page) });
     if (query) search.set("query", query);
-    return this.request<{ users: AdminUserSummary[]; total: number; page: number; pageSize: number }>(
-      `/admin/users?${search}`,
-      { cache: "no-store" },
-    );
+    return this.request<{
+      users: AdminUserSummary[];
+      total: number;
+      page: number;
+      pageSize: number;
+    }>(`/admin/users?${search}`, { cache: "no-store" });
   }
 
   adminUser(userId: string) {
@@ -297,7 +299,11 @@ class ApiClient {
 
   updateAdminUser(
     userId: string,
-    update: { permission?: Extract<UserPermission, "user" | "developer">; disabled?: boolean; disabledReason?: string },
+    update: {
+      permission?: Extract<UserPermission, "user" | "developer">;
+      disabled?: boolean;
+      disabledReason?: string;
+    },
   ) {
     return this.request<{ user: AdminUserDetail }>(`/admin/users/${encodeURIComponent(userId)}`, {
       method: "PATCH",
@@ -315,7 +321,9 @@ class ApiClient {
   }
 
   hardcoreSoundtrackSetting() {
-    return this.request<{ url: string }>("/admin/settings/hardcore-soundtrack", { cache: "no-store" });
+    return this.request<{ url: string }>("/admin/settings/hardcore-soundtrack", {
+      cache: "no-store",
+    });
   }
 
   updateHardcoreSoundtrack(url: string) {
@@ -333,7 +341,10 @@ class ApiClient {
   }
 
   classicGame(category: ClassicCategory, difficulty: ClassicDifficulty, signal?: AbortSignal) {
-    const path = category === "hardcore" ? "/games/classic/hardcore" : `/games/classic/${category}/${difficulty}`;
+    const path =
+      category === "hardcore"
+        ? "/games/classic/hardcore"
+        : `/games/classic/${category}/${difficulty}`;
     return this.request<V2ClassicGame>(path, { signal }).then((payload) => ({
       challenge: {
         ...payload.challenge,
@@ -374,53 +385,64 @@ class ApiClient {
   }
 
   classicStats(challengeId: string) {
-    return this.request<{ challengeId: string; totalGuesses: number; uniquePlayers: number; correctGuesses: number }>(
-      `/games/classic/challenges/${challengeId}/stats`,
-    );
+    return this.request<{
+      challengeId: string;
+      totalGuesses: number;
+      uniquePlayers: number;
+      correctGuesses: number;
+    }>(`/games/classic/challenges/${challengeId}/stats`);
   }
 
-  emojiGame(signal?: AbortSignal) {
-    return this.request<EmojiGamePayload>("/games/emoji", { signal });
+  emojiCluesGame(difficulty: EmojiCluesDifficulty, signal?: AbortSignal) {
+    return this.request<EmojiCluesGamePayload>(`/games/emoji-clues/${difficulty}`, { signal });
   }
 
-  submitEmojiGuess(
+  submitEmojiCluesGuess(
     challengeId: string,
     playerId: string,
     requestId: string,
-    guessedFamilyId: string,
+    guessedEntityId: string,
     attemptNumber: number,
   ) {
-    return this.request<V2EmojiGuess>(`/games/emoji/challenges/${challengeId}/guesses`, {
+    return this.request<{
+      entity: EmojiCluesGamePayload["entities"][number];
+      isCorrect: boolean;
+      attemptNumber: number;
+      globalCompletionCount: number;
+      clues: VisualClue[];
+    }>(`/games/emoji-clues/challenges/${challengeId}/guesses`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ playerId, requestId, guessedFamilyId, attemptNumber }),
-    }).then((payload) => ({
-      guess: { family: payload.family, isCorrect: payload.isCorrect, attemptNumber: payload.attemptNumber },
-      globalCompletionCount: payload.globalCompletionCount,
-      emoji: payload.emoji,
-    }));
-  }
-
-  emojiHints(challengeId: string, playerId: string) {
-    const query = new URLSearchParams({ playerId });
-    return this.request<{ emoji: string[] }>(`/games/emoji/challenges/${challengeId}/hints?${query}`, {
-      cache: "no-store",
+      body: JSON.stringify({ playerId, requestId, guessedEntityId, attemptNumber }),
     });
   }
 
+  emojiCluesHints(challengeId: string, playerId: string) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<{ clues: VisualClue[] }>(
+      `/games/emoji-clues/challenges/${challengeId}/hints?${query}`,
+      { cache: "no-store" },
+    );
+  }
+
   classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {
-    return this.request<{ models: PublicModel[] }>(`/games/classic/challenges/${challengeId}/trajectory`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ trajectoryAccessToken }),
-      signal,
-    }).then(({ models }) => ({
-      models: models.map((model) => toComparableModel({
-        id: model.id,
-        name: model.name,
-        provider: model.providerName,
-        family: model.familyName,
-      })),
+    return this.request<{ models: PublicModel[] }>(
+      `/games/classic/challenges/${challengeId}/trajectory`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trajectoryAccessToken }),
+        signal,
+      },
+    ).then(({ models }) => ({
+      models: models.map((model) =>
+        toComparableModel({
+          id: model.id,
+          name: model.name,
+          provider: model.providerName,
+          family: model.familyName,
+        }),
+      ),
     }));
   }
 }

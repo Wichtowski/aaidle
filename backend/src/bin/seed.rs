@@ -8,7 +8,7 @@ use sqlx::SqliteConnection;
 use time::OffsetDateTime;
 
 const MODELS: &str = include_str!("../../../data/models.seed.json");
-const EMOJI_PUZZLES: &str = include_str!("../../../data/emoji-game.seed.json");
+const EMOJI_CLUES: &str = include_str!("../../../data/emoji.seed.json");
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -32,16 +32,6 @@ struct SeedModel {
     category_details: serde_json::Value,
 }
 
-#[derive(Deserialize)]
-struct EmojiPuzzle {
-    #[serde(rename = "familyId")]
-    family_id: String,
-    #[serde(rename = "variants")]
-    variants: serde_json::Value,
-    #[serde(rename = "logoHint")]
-    logo_hint: Option<serde_json::Value>,
-}
-
 #[tokio::main]
 async fn main() -> AppResult<()> {
     dotenvy::dotenv().ok();
@@ -56,19 +46,29 @@ async fn main() -> AppResult<()> {
     for model in &models {
         seed_model(&mut transaction, model, now).await?;
     }
-    let emoji_puzzles: Vec<EmojiPuzzle> = serde_json::from_str(EMOJI_PUZZLES)?;
-    for puzzle in emoji_puzzles {
-        let puzzle_json = serde_json::json!({
-            "familyId": puzzle.family_id,
-            "variants": puzzle.variants,
-            "logoHint": puzzle.logo_hint,
-        });
+    let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
+        serde_json::from_str(EMOJI_CLUES)?;
+    for entity in visual_clues {
         sqlx::query(
-            "INSERT INTO emoji_puzzles (family_id, puzzle_json, updated_at) VALUES (?, ?, ?) \
-             ON CONFLICT(family_id) DO UPDATE SET puzzle_json = excluded.puzzle_json, updated_at = excluded.updated_at",
+            "INSERT INTO visual_clue_entities \
+             (id, name, aliases_json, entity_kind, categories_json, min_pool, entity_json, updated_at) \
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?) \
+             ON CONFLICT(id) DO UPDATE SET name = excluded.name, aliases_json = excluded.aliases_json, \
+             entity_kind = excluded.entity_kind, categories_json = excluded.categories_json, \
+             min_pool = excluded.min_pool, entity_json = excluded.entity_json, updated_at = excluded.updated_at",
         )
-        .bind(&puzzle.family_id)
-        .bind(serde_json::to_string(&puzzle_json)?)
+        .bind(&entity.id)
+        .bind(&entity.name)
+        .bind(serde_json::to_string(&entity.aliases)?)
+        .bind(match &entity.entity_kind {
+            aidle_api::domain::visual_clues::EntityKind::Emoji => "emoji",
+            aidle_api::domain::visual_clues::EntityKind::Architecture => "architecture",
+            aidle_api::domain::visual_clues::EntityKind::Algorithm => "algorithm",
+            aidle_api::domain::visual_clues::EntityKind::Operator => "operator",
+        })
+        .bind(serde_json::to_string(&entity.categories)?)
+        .bind(i64::from(entity.min_pool))
+        .bind(serde_json::to_string(&entity)?)
         .bind(now)
         .execute(&mut *transaction)
         .await?;

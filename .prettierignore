@@ -1,0 +1,5 @@
+backend/**
+dist/**
+node_modules/**
+tests/reports/**
+tests/results/**

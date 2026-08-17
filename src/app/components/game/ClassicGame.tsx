@@ -28,6 +28,7 @@ import { HardcoreAtmosphere } from "./HardcoreAtmosphere";
 import { HardcoreSoundtrack } from "./HardcoreSoundtrack";
 import { RitualGateDialog } from "./RitualGateDialog";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
+import { GameLoadingState } from "../ui/GameLoadingState";
 import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
@@ -240,7 +241,9 @@ export function ClassicGame({
   }, [challenge, progress.preferences.hasSeenClassicHowToPlay, progressReady]);
 
   useEffect(() => {
-    if (innerCircleActive && category !== "hardcore") navigate("/classic/hardcore", { replace: true });
+    if (innerCircleActive && category !== "hardcore") {
+      navigate("/classic/hardcore", { replace: true });
+    }
   }, [category, innerCircleActive, navigate]);
 
   const closeHowToPlay = () => {
@@ -282,7 +285,9 @@ export function ClassicGame({
   };
 
   const selectDifficulty = (nextDifficulty: ClassicDifficulty) => {
-    if (nextDifficulty === selectedDifficulty) return;
+    if (nextDifficulty === selectedDifficulty) {
+      return;
+    }
     completionGameKey.current = null;
     setShowCompletion(false);
     setShowRitualGate(false);
@@ -309,7 +314,9 @@ export function ClassicGame({
 
   const pick = async (model: PublicModelIndex, requestId: string = crypto.randomUUID()) => {
     const isRetry = retryGuess?.requestId === requestId;
-    if (!challenge || busy || (guessed.has(model.id) && !isRetry) || game?.status === "solved") return;
+    if (!challenge || busy || (guessed.has(model.id) && !isRetry) || game?.status === "solved") {
+      return;
+    }
 
     setBusy(true);
     setError(null);
@@ -452,7 +459,7 @@ export function ClassicGame({
         onPick={pick}
       />
       {category === "hardcore" && <HardcoreSoundtrack />}
-      {!challenge && isLoadingGame && <p className="notice">Loading today’s game…</p>}
+      {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
       {!challenge && error !== null && isApiUnavailable(error) && (
         <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
       )}
@@ -465,15 +472,17 @@ export function ClassicGame({
                 ? error.message
                 : "Could not load today’s game."}
           </p>
-          <button className="button" onClick={() => setLoadAttempt((attempt) => attempt + 1)} type="button">
+          <button
+            className="button"
+            onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+            type="button"
+          >
             Try again
           </button>
         </section>
       )}
       {challenge && error !== null && isApiUnavailable(error) && retryGuess && (
-        <ApiUnavailableState
-          onRetry={() => void pick(retryGuess.model, retryGuess.requestId)}
-        />
+        <ApiUnavailableState onRetry={() => void pick(retryGuess.model, retryGuess.requestId)} />
       )}
       {challenge && error !== null && (!isApiUnavailable(error) || !retryGuess) && (
         <div className="notice" role="alert">
@@ -540,6 +549,7 @@ export function ClassicGame({
         onClick={() => setShowHowToPlay(true)}
       >
         <FaCircleQuestion aria-hidden focusable="false" />
+        <span>How to play</span>
       </button>
 
       <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
