@@ -1,6 +1,7 @@
 import { GuessAutocomplete } from "./GuessAutocomplete";
 import { ClassicCategoryNav } from "./ClassicCategoryNav";
 import { GameIntro } from "./GameLayout";
+import { utcDate } from "@lib/utils/dates";
 import {
   classicCategoryDetails,
   type ClassicCategory,
@@ -13,6 +14,25 @@ const difficultyLabels: Record<ClassicDifficulty, string> = {
   challenge: "Challenge",
   hardcore: "Hardcore",
 };
+
+function resolveCategoryLabelToLongName(label: string): string {
+  switch (label) {
+    case "LLM":
+      return "Large Language Model";
+    case "CV":
+      return "Computer Vision";
+    case "NLP":
+      return "Natural Language Processing";
+    case "OD":
+      return "Object Detection";
+    case "Classical ML":
+      return "Classical Machine Learning";
+    case "Filters":
+      return "Linear & Non-Linear Filters";
+    default:
+      return label;
+  }
+}
 
 export function ClassicGameControls({
   category,
@@ -75,13 +95,14 @@ export function ClassicGameControls({
       expiresAt={expiresAt}
       eyebrow={
         <>
-          Classic · {date ?? "Loading"} · {classicCategoryDetails[category].label}
+          Classic · {date ?? utcDate()} · {resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
         </>
       }
       input={
         date &&
         canGuess && (
           <GuessAutocomplete
+            category={category}
             disabled={busy || loading}
             models={models}
             excluded={guessed}

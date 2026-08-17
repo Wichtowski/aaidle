@@ -23,6 +23,11 @@ export function compareNullableBoolean(a: boolean | null, b: boolean | null): Sc
   if (a == null || b == null) return a == null && b == null ? "correct" : "unknown";
   return a === b ? "correct" : "incorrect";
 }
+
+export function compareToolUse(a: boolean | null, b: boolean | null): ScalarComparison {
+  return (a ?? false) === (b ?? false) ? "correct" : "incorrect";
+}
+
 export const compareEnum = compareScalar;
 export function compareSets(a: string[] | null, b: string[] | null): SetComparison {
   if (!a?.length || !b?.length) return !a?.length && !b?.length ? "correct" : "unknown";
@@ -67,7 +72,7 @@ export function compareClassicModels(
   return {
     provider: compareScalar(guessed.provider, answer.provider),
     country: compareScalar(guessed.country, answer.country),
-    family: compareScalar(guessed.family, answer.family),
+    family: compareSets(guessed.family, answer.family),
     categories: compareSets(guessed.categories, answer.categories),
     inputModalities: compareSets(guessed.inputModalities, answer.inputModalities),
     outputModalities: compareSets(guessed.outputModalities, answer.outputModalities),
@@ -80,7 +85,7 @@ export function compareClassicModels(
       language(guessed)?.supportedLanguages ?? nlp(guessed)?.supportedLanguages ?? null,
       language(answer)?.supportedLanguages ?? nlp(answer)?.supportedLanguages ?? null,
     ),
-    toolUse: compareNullableBoolean(
+    toolUse: compareToolUse(
       language(guessed)?.toolUse ?? null,
       language(answer)?.toolUse ?? null,
     ),

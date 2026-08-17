@@ -30,6 +30,7 @@ export const localProgressSchema = z
             isCorrect: z.boolean(),
             sameGuessCount: z.number(),
             trajectoryAccessToken: z.string().optional(),
+            matchingFamily: z.array(z.string()).default([]),
             matchingCategories: z.array(z.string()).default([]),
             matchingInputModalities: z.array(z.string()).default([]),
             matchingOutputModalities: z.array(z.string()).default([]),

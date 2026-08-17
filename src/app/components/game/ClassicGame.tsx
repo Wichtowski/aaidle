@@ -49,6 +49,7 @@ type SavedGuess = {
   isCorrect: boolean;
   sameGuessCount: number;
   trajectoryAccessToken?: string;
+  matchingFamily: string[];
   matchingCategories: string[];
   matchingInputModalities: string[];
   matchingOutputModalities: string[];
@@ -163,6 +164,7 @@ export function ClassicGame({
   const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
   const animatedGameKey = useRef<string | null>(null);
   const completionGameKey = useRef<string | null>(null);
+  const hydratedHistoryKeys = useRef(new Set<string>());
   const loadedDifficultyRef = useRef(difficulty);
   const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>(
     initialGame ? { [difficulty]: initialGame } : {},
@@ -233,6 +235,63 @@ export function ClassicGame({
     animatedGameKey.current = key;
     setAnimatedGuessId(guesses.at(-1)?.requestId ?? null);
   }, [guesses, key, progressReady]);
+
+  useEffect(() => {
+    if (!challenge || !key || !progressReady) return;
+
+    const historyKey = `${challenge.id}:${progress.playerId}`;
+    if (hydratedHistoryKeys.current.has(historyKey)) return;
+    hydratedHistoryKeys.current.add(historyKey);
+
+    void apiClient.classicGuessHistory(challenge.id, progress.playerId).then((history) => {
+      if (history.length === 0) return;
+
+      updateProgress((state) => {
+        const old = state.games[key];
+        const existing = old?.guesses ?? [];
+        const existingRequestIds = new Set(existing.map((guess) => guess.requestId));
+        const restored = history
+          .filter((guess) => !existingRequestIds.has(guess.requestId))
+          .map((guess) => ({
+            requestId: guess.requestId,
+            modelId: guess.model.id,
+            modelName: guess.model.name,
+            attemptedAt: guess.attemptedAt,
+            attemptNumber: guess.attemptNumber,
+            isCorrect: guess.isCorrect,
+            sameGuessCount: 1,
+            matchingFamily: guess.matchingFamily,
+            matchingCategories: guess.matchingCategories,
+            matchingInputModalities: guess.matchingInputModalities,
+            matchingOutputModalities: guess.matchingOutputModalities,
+            matchingUseCases: guess.matchingUseCases,
+            model: guess.model,
+            comparison: guess.comparison,
+          }));
+        if (restored.length === 0) return state;
+
+        const restoredGuesses = [...existing, ...restored].sort(
+          (left, right) => left.attemptNumber - right.attemptNumber,
+        );
+        const correctGuess = restoredGuesses.find((guess) => guess.isCorrect);
+        return {
+          ...state,
+          games: {
+            ...state.games,
+            [key]: {
+              challengeId: challenge.id,
+              challengeDate: challenge.date,
+              mode: classicChallengeMode(category, loadedDifficulty),
+              status: correctGuess ? ("solved" as const) : ("in-progress" as const),
+              guesses: restoredGuesses,
+              startedAt: old?.startedAt ?? restoredGuesses[0].attemptedAt,
+              completedAt: old?.completedAt ?? correctGuess?.attemptedAt ?? null,
+            },
+          },
+        };
+      });
+    });
+  }, [category, challenge, key, loadedDifficulty, progress.playerId, progressReady]);
 
   useEffect(() => {
     if (progressReady && challenge && !progress.preferences.hasSeenClassicHowToPlay) {
@@ -346,6 +405,7 @@ export function ClassicGame({
         isCorrect: payload.guess.isCorrect,
         sameGuessCount: payload.guess.sameGuessCount,
         trajectoryAccessToken: payload.trajectoryAccessToken ?? undefined,
+        matchingFamily: payload.guess.matchingFamily,
         matchingCategories: payload.guess.matchingCategories,
         matchingInputModalities: payload.guess.matchingInputModalities,
         matchingOutputModalities: payload.guess.matchingOutputModalities,
@@ -511,6 +571,7 @@ export function ClassicGame({
               animate: guess.requestId === animatedGuessId,
               revealed: true,
               showCards: true,
+              matchingFamily: guess.matchingFamily ?? [],
               matchingCategories: guess.matchingCategories ?? [],
               matchingInputModalities: guess.matchingInputModalities ?? [],
               matchingOutputModalities: guess.matchingOutputModalities ?? [],
@@ -525,6 +586,7 @@ export function ClassicGame({
                     animate: false,
                     revealed: false,
                     showCards: false,
+                    matchingFamily: [],
                     matchingCategories: [],
                     matchingInputModalities: [],
                     matchingOutputModalities: [],

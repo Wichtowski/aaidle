@@ -2,14 +2,26 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { normalizeModelSearch } from "@lib/domain/models/model-normalizer";
-import type { PublicModelIndex } from "@lib/domain/models/model-types";
+import type { ClassicCategory, PublicModelIndex } from "@lib/domain/models/model-types";
+
+const placeholderByCategory: Record<ClassicCategory, string> = {
+  llm: "Search GPT-5.6, Claude Opus 4.8, Gemini...",
+  cv: "Search ResNet, ViT, CLIP...",
+  nlp: "Search BERT, RoBERTa, T5...",
+  "object-detection": "Search YOLO, Faster R-CNN, DETR...",
+  "classical-ml": "Search Random Forest, XGBoost, SVM...",
+  filters: "Search Gaussian Blur, Sobel, Canny...",
+  hardcore: "Search for all & nothing...",
+};
 
 export function GuessAutocomplete({
+  category,
   models,
   excluded,
   onPick,
   disabled = false,
 }: {
+  category: ClassicCategory;
   models: PublicModelIndex[];
   excluded: Set<string>;
   onPick: (model: PublicModelIndex) => void;
@@ -132,7 +144,7 @@ export function GuessAutocomplete({
               setActiveIndex(-1);
             }
           }}
-          placeholder="Search GPT-4o, Claude, Gemini…"
+          placeholder={placeholderByCategory[category]}
           role="combobox"
           value={query}
         />

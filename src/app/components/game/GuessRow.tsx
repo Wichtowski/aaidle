@@ -87,7 +87,7 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
   const filters = details?.filters;
   const value = {
     supportedLanguages: language?.supportedLanguages ?? nlp?.supportedLanguages,
-    toolUse: language?.toolUse,
+    toolUse: language?.toolUse ?? false,
     multimodal: language?.multimodal,
     visionTasks: vision?.visionTasks,
     architecture:
@@ -118,6 +118,14 @@ function categoryValue(model: ComparableModel, field: string): ReactNode {
   return label(value);
 }
 
+function familyItems(model: ComparableModel) {
+  const family = (model as { family?: unknown }).family;
+  if (Array.isArray(family)) {
+    return family.filter((item): item is string => typeof item === "string");
+  }
+  return typeof family === "string" ? [family] : null;
+}
+
 function MatchedList({
   items,
   matches,
@@ -133,7 +141,17 @@ function MatchedList({
     <>
       {items.map((item, index) => {
         const isMatch = matches.some(
-          (match) => match.toLocaleLowerCase() === item.toLocaleLowerCase(),
+          (match) =>
+            match
+              .trim()
+              .toLocaleLowerCase()
+              .replace(/[–—]/g, "-")
+              .replace(/[\s_-]+/g, "-") ===
+            item
+              .trim()
+              .toLocaleLowerCase()
+              .replace(/[–—]/g, "-")
+              .replace(/[\s_-]+/g, "-"),
         );
         return (
           <span key={item}>
@@ -150,6 +168,7 @@ export function GuessRow({
   model,
   comparison,
   matchingCategories,
+  matchingFamily = [],
   matchingInputModalities,
   matchingOutputModalities,
   matchingUseCases,
@@ -165,6 +184,7 @@ export function GuessRow({
   model: ComparableModel;
   comparison: ClassicComparison;
   matchingCategories: string[];
+  matchingFamily?: string[];
   matchingInputModalities: string[];
   matchingOutputModalities: string[];
   matchingUseCases: string[];
@@ -187,7 +207,16 @@ export function GuessRow({
         />
       ),
     },
-    family: { status: comparison.family, value: label(model.family) },
+    family: {
+      status: comparison.family,
+      value: (
+        <MatchedList
+          highlightMatches={difficulty === "normal" && comparison.family === "partial"}
+          items={familyItems(model)}
+          matches={matchingFamily}
+        />
+      ),
+    },
     categories: {
       status: comparison.categories,
       value: hardcore ? (

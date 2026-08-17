@@ -168,7 +168,7 @@ export type ComparableModel = {
   name: string;
   provider: string | null;
   country: string | null;
-  family: string | null;
+  family: string[] | null;
   categories: string[] | null;
   inputModalities: string[] | null;
   outputModalities: string[] | null;

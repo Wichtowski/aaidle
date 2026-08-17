@@ -5,6 +5,7 @@ import type {
   ClassicCategory,
   ClassicDifficulty,
   ComparableModel,
+  PublicGuessedModel,
   PublicModelIndex,
 } from "../domain/models/model-types";
 import type { LocalProgress } from "../storage/local-progress-schema";
@@ -62,6 +63,7 @@ export type ClassicGuessPayload = {
   guess: {
     isCorrect: boolean;
     sameGuessCount: number;
+    matchingFamily: string[];
     matchingCategories: string[];
     matchingInputModalities: string[];
     matchingOutputModalities: string[];
@@ -116,11 +118,25 @@ type V2ClassicGame = {
 };
 
 type V2ClassicGuess = {
-  guessedModel: { id: string; name: string; provider: string | null; family: string | null };
+  guessedModel: PublicGuessedModel;
   comparison: ClassicComparison;
+  matchingFamily: string[];
+  matchingCategories: string[];
+  matchingInputModalities: string[];
+  matchingOutputModalities: string[];
+  matchingUseCases: string[];
   isCorrect: boolean;
   globalCompletionCount: number;
   trajectoryAccessToken?: string;
+};
+
+type V2ClassicGuessHistoryEntry = Omit<
+  V2ClassicGuess,
+  "globalCompletionCount" | "trajectoryAccessToken"
+> & {
+  requestId: string;
+  attemptedAt: number;
+  attemptNumber: number;
 };
 
 export class ApiError extends Error {
@@ -145,22 +161,34 @@ export function isApiUnavailable(error: unknown) {
   return error instanceof NetworkError || (error instanceof ApiError && error.status >= 500);
 }
 
-const toComparableModel = (model: V2ClassicGuess["guessedModel"]): ComparableModel => ({
+type ComparableModelSource = Pick<PublicGuessedModel, "id" | "name" | "provider"> &
+  Partial<Omit<PublicGuessedModel, "id" | "name" | "provider" | "family">> & {
+  family?: unknown;
+};
+
+const stringArray = (value: unknown): string[] | null => {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string");
+  }
+  return typeof value === "string" ? [value] : null;
+};
+
+const toComparableModel = (model: ComparableModelSource): ComparableModel => ({
   id: model.id,
   name: model.name,
   provider: model.provider,
-  country: null,
-  family: model.family,
-  categories: null,
-  inputModalities: null,
-  outputModalities: null,
-  useCases: null,
-  reasoningSupport: null,
-  weightAvailability: null,
-  categoryDetails: {},
-  releaseYear: null,
-  releaseDate: null,
-  contextWindowTokens: null,
+  country: model.country ?? null,
+  family: stringArray(model.family),
+  categories: model.categories ?? null,
+  inputModalities: model.inputModalities ?? null,
+  outputModalities: model.outputModalities ?? null,
+  useCases: model.useCases ?? null,
+  reasoningSupport: model.reasoningSupport ?? null,
+  weightAvailability: model.weightAvailability ?? null,
+  categoryDetails: model.categoryDetails ?? {},
+  releaseYear: model.releaseYear ?? null,
+  releaseDate: model.releaseDate ?? null,
+  contextWindowTokens: model.contextWindowTokens ?? null,
 });
 
 class ApiClient {
@@ -372,16 +400,39 @@ class ApiClient {
       guess: {
         isCorrect: payload.isCorrect,
         sameGuessCount: 1,
-        matchingCategories: [],
-        matchingInputModalities: [],
-        matchingOutputModalities: [],
-        matchingUseCases: [],
+        matchingFamily: payload.matchingFamily,
+        matchingCategories: payload.matchingCategories,
+        matchingInputModalities: payload.matchingInputModalities,
+        matchingOutputModalities: payload.matchingOutputModalities,
+        matchingUseCases: payload.matchingUseCases,
         model: toComparableModel(payload.guessedModel),
         comparison: payload.comparison,
       },
       trajectoryAccessToken: payload.trajectoryAccessToken ?? null,
       globalCompletionCount: payload.globalCompletionCount,
     }));
+  }
+
+  classicGuessHistory(challengeId: string, playerId: string) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<{ guesses: V2ClassicGuessHistoryEntry[] }>(
+      `/games/classic/challenges/${challengeId}/guesses?${query}`,
+      { cache: "no-store" },
+    ).then(({ guesses }) =>
+      guesses.map((guess) => ({
+        requestId: guess.requestId,
+        attemptedAt: new Date(guess.attemptedAt).toISOString(),
+        attemptNumber: guess.attemptNumber,
+        isCorrect: guess.isCorrect,
+        matchingFamily: guess.matchingFamily,
+        matchingCategories: guess.matchingCategories,
+        matchingInputModalities: guess.matchingInputModalities,
+        matchingOutputModalities: guess.matchingOutputModalities,
+        matchingUseCases: guess.matchingUseCases,
+        model: toComparableModel(guess.guessedModel),
+        comparison: guess.comparison,
+      })),
+    );
   }
 
   classicStats(challengeId: string) {
@@ -425,6 +476,14 @@ class ApiClient {
     );
   }
 
+  emojiCluesGuessHistory(challengeId: string, playerId: string) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<{
+      guesses: Array<{ id: string; name: string; isCorrect: boolean; attemptNumber: number }>;
+      clues: VisualClue[];
+    }>(`/games/emoji-clues/challenges/${challengeId}/guesses?${query}`, { cache: "no-store" });
+  }
+
   classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {
     return this.request<{ models: PublicModel[] }>(
       `/games/classic/challenges/${challengeId}/trajectory`,
@@ -440,7 +499,7 @@ class ApiClient {
           id: model.id,
           name: model.name,
           provider: model.providerName,
-          family: model.familyName,
+          family: model.familyName ? [model.familyName] : null,
         }),
       ),
     }));

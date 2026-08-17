@@ -8,6 +8,7 @@ import {
   type EmojiCluesGamePayload,
 } from "@lib/api/client";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
+import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../ui/SiteNavbar";
 import { GameIntro } from "./GameLayout";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
@@ -30,6 +31,7 @@ export function EmojiCluesGame() {
   const [game, setGame] = useState<EmojiCluesGamePayload | null>(null);
   const [guesses, setGuesses] = useState<Guess[]>([]);
   const [query, setQuery] = useState("");
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [isLoadingGame, setIsLoadingGame] = useState(true);
   const [loadAttempt, setLoadAttempt] = useState(0);
@@ -42,6 +44,7 @@ export function EmojiCluesGame() {
     requiredCategories: string[];
   } | null>(null);
   const gameCache = useRef<Partial<Record<EmojiCluesDifficulty, CachedGame>>>({});
+  const hydratedHistoryKeys = useRef(new Set<string>());
 
   useEffect(() => {
     void apiClient.hardcoreStatus().then(setHardcore).catch(setError);
@@ -89,6 +92,35 @@ export function EmojiCluesGame() {
     };
   }, [difficulty, hardcore?.unlocked, loadAttempt]);
 
+  useEffect(() => {
+    if (!game) return;
+    const historyKey = `${game.challenge.id}:${progress.playerId}`;
+    if (hydratedHistoryKeys.current.has(historyKey)) return;
+    hydratedHistoryKeys.current.add(historyKey);
+
+    void apiClient.emojiCluesGuessHistory(game.challenge.id, progress.playerId).then((history) => {
+      const restoredGuesses = history.guesses.map((guess) => ({
+        id: guess.id,
+        name: guess.name,
+        isCorrect: guess.isCorrect,
+      }));
+      setGuesses(restoredGuesses);
+      setGame((current) =>
+        current && current.challenge.id === game.challenge.id
+          ? { ...current, challenge: { ...current.challenge, clues: history.clues } }
+          : current,
+      );
+      const cachedGame = gameCache.current[difficulty];
+      if (cachedGame?.game.challenge.id === game.challenge.id) {
+        gameCache.current[difficulty] = {
+          ...cachedGame,
+          guesses: restoredGuesses,
+          game: { ...cachedGame.game, challenge: { ...cachedGame.game.challenge, clues: history.clues } },
+        };
+      }
+    });
+  }, [difficulty, game, progress.playerId]);
+
   const available = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("en-US");
     if (!normalized || !game) return [];
@@ -102,6 +134,7 @@ export function EmojiCluesGame() {
       )
       .slice(0, 8);
   }, [game, guesses, query]);
+  const activeOption = available[activeOptionIndex] ?? available[0];
   const solved = guesses.some((guess) => guess.isCorrect);
   const choose = async (entity: EmojiCluesGamePayload["entities"][number]) => {
     if (!game || busy || solved) return;
@@ -148,7 +181,7 @@ export function EmojiCluesGame() {
   };
 
   const completed = hardcore?.completedCategories ?? [];
-  const date = game?.challenge.date ?? null;
+  const date = game?.challenge.date ?? utcDate();
   return (
     <main className="page game-page emoji-clues-page">
       <SiteNavbar />
@@ -158,7 +191,7 @@ export function EmojiCluesGame() {
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
           <>
-            Emoji Clues · {date ?? "Loading"} · {difficultyLabels[difficulty]}
+            Emoji Clues · {date} · {difficultyLabels[difficulty]}
           </>
         }
         title="What AI idea do these clues point to?"
@@ -202,33 +235,38 @@ export function EmojiCluesGame() {
       ) : game ? (
         <section className="emoji-clues" aria-label="Visual clues and guesses">
           <ol className="emoji-clues__clues" aria-label="Visual clues">
-            {Array.from({ length: game.challenge.maximumClues }, (_, index) => (
-              <li
-                className={
-                  index < game.challenge.clues.length
-                    ? "emoji-clues__clue"
-                    : "emoji-clues__clue emoji-clues__clue--hidden"
-                }
-                key={index}
-              >
-                {index < game.challenge.clues.length ? (
-                  game.challenge.clues[index].type === "emoji" ? (
-                    game.challenge.clues[index].value
-                  ) : (
-                    <EmojiClueIcon icon={game.challenge.clues[index].icon} />
-                  )
-                ) : (
-                  "?"
-                )}
-              </li>
-            ))}
+            {Array.from({ length: game.challenge.maximumClues }, (_, index) => {
+              const clue = game.challenge.clues[index];
+              const revealed = Boolean(clue);
+              return (
+                <li
+                  className={`emoji-clues__clue${
+                    revealed ? " emoji-clues__clue--revealed" : " emoji-clues__clue--hidden"
+                  }`}
+                  key={index}
+                >
+                  <div className="emoji-clues__clue-inner">
+                    <span aria-hidden="true" className="emoji-clues__clue-face emoji-clues__clue-cover">
+                      ?
+                    </span>
+                    <span className="emoji-clues__clue-face emoji-clues__clue-result">
+                      {clue?.type === "emoji" ? (
+                        clue.value
+                      ) : clue ? (
+                        <EmojiClueIcon icon={clue.icon} />
+                      ) : null}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
           {!solved && (
             <form
               className="emoji-clues__search"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (available[0]) void choose(available[0]);
+                if (activeOption) void choose(activeOption);
               }}
             >
               <label htmlFor="emoji-clues-search">Name the answer</label>
@@ -237,24 +275,52 @@ export function EmojiCluesGame() {
                   id="emoji-clues-search"
                   value={query}
                   disabled={busy}
+                  aria-activedescendant={
+                    available.length > 0 ? `emoji-clues-option-${activeOptionIndex}` : undefined
+                  }
+                  aria-autocomplete="list"
+                  aria-controls="emoji-clues-options"
+                  aria-expanded={available.length > 0}
+                  role="combobox"
                   onChange={(event) => {
                     const nextQuery = event.target.value;
                     setQuery(nextQuery);
+                    setActiveOptionIndex(0);
                     const cachedGame = gameCache.current[difficulty];
                     if (cachedGame) {
                       gameCache.current[difficulty] = { ...cachedGame, query: nextQuery };
                     }
                   }}
+                  onKeyDown={(event) => {
+                    if (available.length === 0) return;
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      setActiveOptionIndex((current) => (current + 1) % available.length);
+                    } else if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      setActiveOptionIndex(
+                        (current) => (current - 1 + available.length) % available.length,
+                      );
+                    } else if (event.key === "Enter" && activeOption) {
+                      event.preventDefault();
+                      void choose(activeOption);
+                    }
+                  }}
                   placeholder="GPT, BERT, K-Means…"
                 />
-                <button className="button" disabled={!available[0] || busy}>
+                <button className="autocomplete__confirm" disabled={!activeOption || busy}>
                   Guess
                 </button>
               </div>
               {available.length > 0 && (
-                <ul>
-                  {available.map((entity) => (
-                    <li key={entity.id}>
+                <ul id="emoji-clues-options" role="listbox">
+                  {available.map((entity, index) => (
+                    <li
+                      aria-selected={index === activeOptionIndex}
+                      id={`emoji-clues-option-${index}`}
+                      key={entity.id}
+                      role="option"
+                    >
                       <button type="button" onClick={() => void choose(entity)}>
                         <strong>{entity.name}</strong>
                         <small>{entity.entityKind.replaceAll("-", " ")}</small>

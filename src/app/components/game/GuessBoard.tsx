@@ -22,6 +22,7 @@ type BoardGuess = {
   model: ComparableModel;
   comparison: ClassicComparison;
   matchingCategories: string[];
+  matchingFamily?: string[];
   matchingInputModalities: string[];
   matchingUseCases: string[];
   matchingOutputModalities: string[];
