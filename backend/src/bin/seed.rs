@@ -7,7 +7,7 @@ use serde::Deserialize;
 use sqlx::SqliteConnection;
 use time::OffsetDateTime;
 
-const MODELS: &str = include_str!("../../../data/models.seed.json");
+const MODELS: &str = include_str!("../../../data/classic.seed.json");
 const EMOJI_CLUES: &str = include_str!("../../../data/emoji.seed.json");
 
 #[derive(Deserialize)]
@@ -18,7 +18,7 @@ struct SeedModel {
     min_pool: Option<i64>,
     provider: Option<String>,
     country: Option<String>,
-    family: Option<String>,
+    family: Vec<String>,
     categories: Vec<String>,
     input_modalities: Option<Vec<String>>,
     output_modalities: Option<Vec<String>>,
@@ -85,10 +85,8 @@ async fn seed_model(
 ) -> AppResult<()> {
     let provider_name = model.provider.as_deref().unwrap_or("Unknown");
     let provider_id = slug(provider_name);
-    let family_id = model
-        .family
-        .as_ref()
-        .map(|family| format!("{provider_id}-{}", slug(family)));
+    let primary_family = model.family.first();
+    let family_id = primary_family.map(|family| format!("{provider_id}-{}", slug(family)));
     sqlx::query(
         "INSERT INTO providers (id, name, slug, country_code, is_active, created_at, updated_at) \
          VALUES (?, ?, ?, ?, 1, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, \
@@ -102,7 +100,7 @@ async fn seed_model(
     .bind(now)
     .execute(&mut *connection)
     .await?;
-    if let (Some(family), Some(family_id)) = (&model.family, &family_id) {
+    if let (Some(family), Some(family_id)) = (primary_family, &family_id) {
         sqlx::query(
             "INSERT INTO model_families (id, provider_id, name, slug, created_at, updated_at) \
              VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING",
@@ -122,10 +120,10 @@ async fn seed_model(
         .and_then(|date| date.get(..4))
         .and_then(|year| year.parse::<i64>().ok());
     sqlx::query(
-        "INSERT INTO models (id, provider_id, family_id, name, slug, release_date, release_year, context_window_tokens, \
+        "INSERT INTO models (id, provider_id, family_id, family_tokens_json, name, slug, release_date, release_year, context_window_tokens, \
          open_weights, local_execution, reasoning_support, status, is_guessable, verified_at, source_label, created_at, updated_at) \
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'unknown', ?, 'active', 1, 'seeded', 'Seed data', ?, ?) \
-         ON CONFLICT(id) DO UPDATE SET provider_id = excluded.provider_id, family_id = excluded.family_id, \
+         ON CONFLICT(id) DO UPDATE SET provider_id = excluded.provider_id, family_id = excluded.family_id, family_tokens_json = excluded.family_tokens_json, \
          name = excluded.name, release_date = excluded.release_date, release_year = excluded.release_year, \
          context_window_tokens = excluded.context_window_tokens, open_weights = excluded.open_weights, \
          reasoning_support = excluded.reasoning_support, updated_at = excluded.updated_at",
@@ -133,6 +131,7 @@ async fn seed_model(
     .bind(&model.id)
     .bind(&provider_id)
     .bind(family_id)
+    .bind(serde_json::to_string(&model.family)?)
     .bind(&model.name)
     .bind(&model.id)
     .bind(&model.release_date)

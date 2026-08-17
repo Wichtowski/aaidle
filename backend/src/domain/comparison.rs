@@ -100,7 +100,7 @@ pub struct ComparableModel {
     pub id: String,
     pub provider: Option<String>,
     pub country: Option<String>,
-    pub family: Option<String>,
+    pub family: Vec<String>,
     pub categories: Vec<String>,
     pub input_modalities: Vec<String>,
     pub output_modalities: Vec<String>,
@@ -160,6 +160,15 @@ pub struct ClassicComparison {
     pub output_types: ComparisonResult,
 }
 
+#[derive(Clone, Debug, Default)]
+pub struct MatchingValues {
+    pub family: Vec<String>,
+    pub categories: Vec<String>,
+    pub input_modalities: Vec<String>,
+    pub output_modalities: Vec<String>,
+    pub use_cases: Vec<String>,
+}
+
 impl ClassicComparison {
     pub fn selected(&self, columns: &[&str]) -> BTreeMap<String, ComparisonResult> {
         columns
@@ -213,7 +222,7 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
     ClassicComparison {
         provider: compare_scalar(guessed.provider.as_deref(), answer.provider.as_deref()),
         country: compare_scalar(guessed.country.as_deref(), answer.country.as_deref()),
-        family: compare_scalar(guessed.family.as_deref(), answer.family.as_deref()),
+        family: compare_sets(Some(&guessed.family), Some(&answer.family)),
         categories: compare_sets(Some(&guessed.categories), Some(&answer.categories)),
         input_modalities: compare_sets(
             Some(&guessed.input_modalities),
@@ -248,7 +257,7 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
                 .map(|value| &value.supported_languages)
                 .or_else(|| nlp(answer_details).map(|value| &value.supported_languages)),
         ),
-        tool_use: compare_boolean(
+        tool_use: compare_tool_use(
             language(guessed_details).and_then(|value| value.tool_use),
             language(answer_details).and_then(|value| value.tool_use),
         ),
@@ -349,6 +358,16 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
     }
 }
 
+pub fn matching_values(guessed: &ComparableModel, answer: &ComparableModel) -> MatchingValues {
+    MatchingValues {
+        family: matching_items(&guessed.family, &answer.family),
+        categories: matching_items(&guessed.categories, &answer.categories),
+        input_modalities: matching_items(&guessed.input_modalities, &answer.input_modalities),
+        output_modalities: matching_items(&guessed.output_modalities, &answer.output_modalities),
+        use_cases: matching_items(&guessed.use_cases, &answer.use_cases),
+    }
+}
+
 fn normalized(value: &str) -> String {
     value
         .trim()
@@ -412,6 +431,14 @@ fn compare_boolean(guessed: Option<bool>, answer: Option<bool>) -> ComparisonRes
     }
 }
 
+fn compare_tool_use(guessed: Option<bool>, answer: Option<bool>) -> ComparisonResult {
+        if guessed.unwrap_or(false) == answer.unwrap_or(false) {
+                ComparisonResult::Correct
+        } else {
+                ComparisonResult::Incorrect
+        }
+}
+
 fn compare_sets(guessed: Option<&Vec<String>>, answer: Option<&Vec<String>>) -> ComparisonResult {
     let (Some(guessed), Some(answer)) = (guessed, answer) else {
         return if guessed.is_none() && answer.is_none() {
@@ -454,6 +481,25 @@ fn compare_sets(guessed: Option<&Vec<String>>, answer: Option<&Vec<String>>) -> 
     }
 }
 
+fn matching_items(guessed: &[String], answer: &[String]) -> Vec<String> {
+    if guessed.is_empty()
+        || answer.is_empty()
+        || guessed.iter().any(|value| is_unknown(value))
+        || answer.iter().any(|value| is_unknown(value))
+    {
+        return Vec::new();
+    }
+    let answer = answer
+        .iter()
+        .map(|value| normalized(value))
+        .collect::<BTreeSet<_>>();
+    guessed
+        .iter()
+        .filter(|value| answer.contains(&normalized(value)))
+        .cloned()
+        .collect()
+}
+
 fn compare_number(guessed: Option<i64>, answer: Option<i64>) -> ComparisonResult {
     match (guessed, answer) {
         (None, None) => ComparisonResult::Correct,
@@ -482,7 +528,7 @@ mod tests {
             id: "one".to_owned(),
             provider: Some("OpenAI".to_owned()),
             country: None,
-            family: None,
+            family: Vec::new(),
             categories: vec!["language-model".to_owned(), "coding".to_owned()],
             input_modalities: Vec::new(),
             output_modalities: Vec::new(),
@@ -529,5 +575,30 @@ mod tests {
         assert_eq!(result.release, ComparisonResult::Higher);
         assert_eq!(result.supported_languages, ComparisonResult::Partial);
         assert_eq!(result.tool_use, ComparisonResult::Incorrect);
+    }
+
+    #[test]
+    fn treats_missing_tool_calling_metadata_as_no() {
+        let mut no_tool_use = model();
+        no_tool_use.category_details.language_model = Some(LanguageModelDetails {
+            tool_use: Some(false),
+            ..Default::default()
+        });
+        let mut yes_tool_use = no_tool_use.clone();
+        yes_tool_use.category_details.language_model = Some(LanguageModelDetails {
+            tool_use: Some(true),
+            ..Default::default()
+        });
+
+        let answer = model();
+
+        assert_eq!(
+            compare_models(&no_tool_use, &answer).tool_use,
+            ComparisonResult::Correct
+        );
+        assert_eq!(
+            compare_models(&yes_tool_use, &answer).tool_use,
+            ComparisonResult::Incorrect
+        );
     }
 }

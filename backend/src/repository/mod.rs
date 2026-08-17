@@ -9,11 +9,11 @@ use uuid::Uuid;
 
 use crate::{
     domain::{
-        comparison::{ComparableModel, ComparisonResult, compare_models},
+        comparison::{ComparableModel, ComparisonResult, MatchingValues, compare_models, matching_values},
         selection::{RecentAnswer, select_daily_model},
         streak::{PlayerStreak, update_streak},
     },
-    dto::{GuessedModel, PlayerModeStats, PublicModel},
+    dto::{ClassicGuessHistoryEntry, GuessedModel, PlayerModeStats, PublicModel},
     error::{AppError, AppResult},
 };
 
@@ -44,9 +44,11 @@ struct ModelRow {
     provider: Option<String>,
     country: Option<String>,
     family: Option<String>,
+    family_tokens_json: Option<String>,
     reasoning_support: String,
     weight_availability: Option<String>,
     release_date: Option<String>,
+    release_year: Option<i64>,
     context_window_tokens: Option<i64>,
     category_details_json: Option<String>,
 }
@@ -59,6 +61,16 @@ struct StoredGuessRow {
     attempt_number: i64,
     is_correct: i64,
     comparison_json: String,
+}
+
+#[derive(Clone, Debug, FromRow)]
+struct StoredGuessHistoryRow {
+    request_id: String,
+    guessed_model_id: String,
+    attempt_number: i64,
+    is_correct: i64,
+    comparison_json: String,
+    created_at: i64,
 }
 
 #[derive(Clone, Debug, FromRow)]
@@ -91,6 +103,7 @@ pub struct GuessInput {
 pub struct GuessOutcome {
     pub guessed_model: GuessedModel,
     pub comparison: BTreeMap<String, ComparisonResult>,
+    pub matching: MatchingValues,
     pub is_correct: bool,
     pub attempt_number: u16,
     pub player_stats: PlayerModeStats,
@@ -592,17 +605,19 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
             "Classic challenge not found.".to_owned(),
         ));
     }
-    if sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM guess_events WHERE challenge_id = ? AND player_id = ? AND guessed_model_id = ?)",
+    if let Some(stored) = sqlx::query_as::<_, StoredGuessRow>(
+        "SELECT challenge_id, player_id, guessed_model_id, attempt_number, is_correct, comparison_json \
+         FROM guess_events WHERE challenge_id = ? AND player_id = ? AND guessed_model_id = ?",
     )
     .bind(input.challenge_id.to_string())
     .bind(input.player_id.to_string())
     .bind(&input.guessed_model_id)
-    .fetch_one(&mut *connection)
+    .fetch_optional(&mut *connection)
     .await?
-        != 0
     {
-        return Err(AppError::Conflict("DUPLICATE_GUESS".to_owned()));
+        let outcome = replay_stored_guess(connection, stored, input.challenge_id, input.player_id).await?;
+        transaction.commit().await?;
+        return Ok(outcome);
     }
     if sqlx::query_scalar::<_, i64>(
         "SELECT EXISTS(SELECT 1 FROM guess_events WHERE challenge_id = ? AND player_id = ? AND is_correct = 1)",
@@ -630,6 +645,7 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
         .await?
         .ok_or_else(|| AppError::Unavailable("Challenge answer is unavailable.".to_owned()))?;
     let full_comparison = compare_models(&guessed.comparable, &answer.comparable);
+    let matching = matching_values(&guessed.comparable, &answer.comparable);
     let comparison = parse_classic_mode(&challenge.mode)
         .map(|(category, difficulty)| {
             full_comparison.selected(&classic_columns(category, difficulty))
@@ -711,6 +727,7 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
     Ok(GuessOutcome {
         guessed_model: guessed.public,
         comparison,
+        matching,
         is_correct,
         attempt_number: input.attempt_number,
         player_stats,
@@ -729,6 +746,52 @@ pub async fn challenge_stats(pool: &SqlitePool, challenge_id: Uuid) -> AppResult
     .bind(challenge_id.to_string())
     .fetch_one(pool)
     .await?)
+}
+
+pub async fn classic_guess_history(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+) -> AppResult<Vec<ClassicGuessHistoryEntry>> {
+    let challenge = find_challenge(pool, challenge_id)
+        .await?
+        .ok_or_else(|| AppError::NotFound("Challenge not found.".to_owned()))?;
+    let mut connection = pool.acquire().await?;
+    let answer = load_model(&mut connection, &challenge.answer_model_id, false)
+        .await?
+        .ok_or_else(|| AppError::Unavailable("Challenge answer is unavailable.".to_owned()))?;
+    let stored = sqlx::query_as::<_, StoredGuessHistoryRow>(
+        "SELECT request_id, guessed_model_id, attempt_number, is_correct, comparison_json, created_at \
+         FROM guess_events WHERE challenge_id = ? AND player_id = ? ORDER BY attempt_number, created_at",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .fetch_all(pool)
+    .await?;
+
+    let mut guesses = Vec::with_capacity(stored.len());
+    for stored in stored {
+        let request_id = Uuid::parse_str(&stored.request_id)
+            .map_err(|_| AppError::Unavailable("Stored guess request ID is invalid.".to_owned()))?;
+        let guessed = load_model(&mut connection, &stored.guessed_model_id, false)
+            .await?
+            .ok_or_else(|| AppError::Unavailable("Stored guessed model is unavailable.".to_owned()))?;
+        let matching = matching_values(&guessed.comparable, &answer.comparable);
+        guesses.push(ClassicGuessHistoryEntry {
+            request_id,
+            attempted_at: stored.created_at,
+            guessed_model: guessed.public,
+            comparison: serde_json::from_str(&stored.comparison_json)?,
+            matching_family: matching.family,
+            matching_categories: matching.categories,
+            matching_input_modalities: matching.input_modalities,
+            matching_output_modalities: matching.output_modalities,
+            matching_use_cases: matching.use_cases,
+            is_correct: stored.is_correct != 0,
+            attempt_number: stored.attempt_number as u16,
+        });
+    }
+    Ok(guesses)
 }
 
 pub async fn player_stats(pool: &SqlitePool, player_id: Uuid) -> AppResult<Vec<PlayerModeStats>> {
@@ -909,14 +972,14 @@ async fn load_model(
     must_be_eligible: bool,
 ) -> AppResult<Option<LoadedModel>> {
     let query = if must_be_eligible {
-        "SELECT m.id, m.name, p.name AS provider, COALESCE(g.country, p.country_code) AS country, f.name AS family, \
-         m.reasoning_support, g.weight_availability, m.release_date, m.context_window_tokens, g.category_details_json \
+        "SELECT m.id, m.name, p.name AS provider, COALESCE(g.country, p.country_code) AS country, f.name AS family, m.family_tokens_json, \
+         m.reasoning_support, g.weight_availability, m.release_date, m.release_year, m.context_window_tokens, g.category_details_json \
          FROM models m JOIN providers p ON p.id = m.provider_id LEFT JOIN model_families f ON f.id = m.family_id \
          LEFT JOIN model_game_metadata g ON g.model_id = m.id \
          WHERE m.id = ? AND m.is_guessable = 1 AND m.status = 'active'"
     } else {
-        "SELECT m.id, m.name, p.name AS provider, COALESCE(g.country, p.country_code) AS country, f.name AS family, \
-         m.reasoning_support, g.weight_availability, m.release_date, m.context_window_tokens, g.category_details_json \
+        "SELECT m.id, m.name, p.name AS provider, COALESCE(g.country, p.country_code) AS country, f.name AS family, m.family_tokens_json, \
+         m.reasoning_support, g.weight_availability, m.release_date, m.release_year, m.context_window_tokens, g.category_details_json \
          FROM models m JOIN providers p ON p.id = m.provider_id LEFT JOIN model_families f ON f.id = m.family_id \
          LEFT JOIN model_game_metadata g ON g.model_id = m.id \
          WHERE m.id = ?"
@@ -932,7 +995,7 @@ async fn load_model(
         id: row.id.clone(),
         provider: row.provider.clone(),
         country: row.country.clone(),
-        family: row.family.clone(),
+        family: stored_family_values(row.family_tokens_json.as_deref(), row.family.as_deref())?,
         categories: related_names(
             connection,
             "model_categories",
@@ -978,10 +1041,21 @@ async fn load_model(
     };
     Ok(Some(LoadedModel {
         public: GuessedModel {
-            id: row.id,
+            id: row.id.clone(),
             name: row.name,
             provider: row.provider,
-            family: row.family,
+            country: row.country,
+            family: comparable.family.clone(),
+            categories: comparable.categories.clone(),
+            input_modalities: comparable.input_modalities.clone(),
+            output_modalities: comparable.output_modalities.clone(),
+            use_cases: comparable.use_cases.clone(),
+            reasoning_support: comparable.reasoning_support.clone(),
+            weight_availability: comparable.weight_availability.clone(),
+            category_details: comparable.category_details.clone(),
+            release_year: row.release_year,
+            release_date: comparable.release_date.clone(),
+            context_window_tokens: comparable.context_window_tokens,
         },
         comparable,
     }))
@@ -1040,15 +1114,26 @@ async fn replay_guess(
     {
         return Err(AppError::Conflict("REQUEST_ID_REUSED".to_owned()));
     }
+    replay_stored_guess(connection, stored, input.challenge_id, input.player_id).await
+}
+
+async fn replay_stored_guess(
+    connection: &mut SqliteConnection,
+    stored: StoredGuessRow,
+    challenge_id: Uuid,
+    player_id: Uuid,
+) -> AppResult<GuessOutcome> {
     let guessed = load_model(connection, &stored.guessed_model_id, false)
         .await?
         .ok_or_else(|| AppError::Unavailable("Stored guessed model is unavailable.".to_owned()))?;
-    let mode = sqlx::query_scalar::<_, String>("SELECT mode FROM daily_challenges WHERE id = ?")
-        .bind(input.challenge_id.to_string())
-        .fetch_optional(&mut *connection)
+    let challenge = find_challenge(&mut *connection, challenge_id)
         .await?
         .ok_or_else(|| AppError::NotFound("Challenge not found.".to_owned()))?;
-    let stats = load_player_stats(connection, input.player_id, &mode)
+    let answer = load_model(connection, &challenge.answer_model_id, false)
+        .await?
+        .ok_or_else(|| AppError::Unavailable("Challenge answer is unavailable.".to_owned()))?;
+    let matching = matching_values(&guessed.comparable, &answer.comparable);
+    let stats = load_player_stats(connection, player_id, &challenge.mode)
         .await?
         .ok_or_else(|| {
             AppError::Unavailable("Stored player statistics are unavailable.".to_owned())
@@ -1056,10 +1141,11 @@ async fn replay_guess(
     Ok(GuessOutcome {
         guessed_model: guessed.public,
         comparison: serde_json::from_str(&stored.comparison_json)?,
+        matching,
         is_correct: stored.is_correct != 0,
         attempt_number: stored.attempt_number as u16,
         player_stats: player_stats_dto(stats)?,
-        completion_count: completion_count(connection, &input.challenge_id.to_string()).await?,
+        completion_count: completion_count(connection, &challenge_id.to_string()).await?,
     })
 }
 
@@ -1198,6 +1284,16 @@ fn split_aliases(aliases: String) -> Vec<String> {
     } else {
         aliases.split('\u{1f}').map(ToOwned::to_owned).collect()
     }
+}
+
+fn stored_family_values(json: Option<&str>, primary: Option<&str>) -> AppResult<Vec<String>> {
+    if let Some(json) = json {
+        let values: Vec<String> = serde_json::from_str(json)?;
+        if !values.is_empty() {
+            return Ok(values);
+        }
+    }
+    Ok(primary.into_iter().map(ToOwned::to_owned).collect())
 }
 
 fn now_unix_millis() -> i64 {

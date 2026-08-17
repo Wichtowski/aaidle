@@ -6,7 +6,7 @@ use crate::{
         ResolvedVisualClueVariant, RevealMode, VisualClue, VisualClueEntity, resolve_variant,
         stable_hash, weighted_variant_id,
     },
-    dto::PlayerModeStats,
+    dto::{EmojiCluesGuessHistoryEntry, PlayerModeStats},
     error::{AppError, AppResult},
 };
 
@@ -69,6 +69,13 @@ struct EntityRow {
     entity_json: String,
 }
 
+#[derive(FromRow)]
+struct VisualGuessHistoryRow {
+    guessed_entity_id: String,
+    attempt_number: i64,
+    is_correct: i64,
+}
+
 pub fn difficulty_pool(value: &str) -> Option<u8> {
     match value {
         "normal" => Some(0),
@@ -127,6 +134,39 @@ pub async fn hints(
             1 + wrong
         },
     ))
+}
+
+pub async fn guess_history(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+) -> AppResult<Vec<EmojiCluesGuessHistoryEntry>> {
+    if challenge_by_id(pool, challenge_id).await?.is_none() {
+        return Err(AppError::NotFound("Emoji Clues challenge not found.".to_owned()));
+    }
+    let stored = sqlx::query_as::<_, VisualGuessHistoryRow>(
+        "SELECT guessed_entity_id, attempt_number, is_correct \
+         FROM visual_clue_guess_events WHERE challenge_id = ? AND player_id = ? \
+         ORDER BY attempt_number, created_at",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .fetch_all(pool)
+    .await?;
+
+    let mut guesses = Vec::with_capacity(stored.len());
+    for stored in stored {
+        let entity = entity_by_id(pool, &stored.guessed_entity_id)
+            .await?
+            .ok_or_else(|| AppError::Unavailable("Stored Emoji Clues guess is unavailable.".to_owned()))?;
+        guesses.push(EmojiCluesGuessHistoryEntry {
+            id: entity.id,
+            name: entity.name,
+            is_correct: stored.is_correct != 0,
+            attempt_number: stored.attempt_number as u16,
+        });
+    }
+    Ok(guesses)
 }
 
 pub async fn process_guess(

@@ -102,7 +102,7 @@ pub fn router(state: AppState) -> Router {
         )
         .route(
             "/games/classic/challenges/{challenge_id}/guesses",
-            post(classic::guess),
+            get(classic::guess_history).post(classic::guess),
         )
         .route(
             "/games/classic/challenges/{challenge_id}/stats",
@@ -115,7 +115,7 @@ pub fn router(state: AppState) -> Router {
         .route("/games/emoji-clues/{difficulty}", get(emoji_clues::game))
         .route(
             "/games/emoji-clues/challenges/{challenge_id}/guesses",
-            post(emoji_clues::guess),
+            get(emoji_clues::guess_history).post(emoji_clues::guess),
         )
         .route(
             "/games/emoji-clues/challenges/{challenge_id}/hints",

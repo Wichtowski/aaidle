@@ -1,12 +1,13 @@
 use axum::{
     Json,
-    extract::{Path, State, rejection::JsonRejection},
+    extract::{Path, Query, State, rejection::JsonRejection},
     http::HeaderMap,
 };
+use uuid::Uuid;
 
 use crate::{
     dto::{
-        ChallengeStatsResponse, ClassicGameResponse, GuessRequest, GuessResponse,
+        ChallengeStatsResponse, ClassicGameResponse, ClassicGuessHistoryResponse, GuessRequest, GuessResponse,
         HardcoreAccessResponse, PlayerStatsResponse, PublicChallenge, TrajectoryRequest,
         TrajectoryResponse,
     },
@@ -65,11 +66,33 @@ pub(super) async fn guess(
     Ok(Json(GuessResponse {
         guessed_model: result.guessed_model,
         comparison: result.comparison,
+        matching_family: result.matching.family,
+        matching_categories: result.matching.categories,
+        matching_input_modalities: result.matching.input_modalities,
+        matching_output_modalities: result.matching.output_modalities,
+        matching_use_cases: result.matching.use_cases,
         is_correct: result.is_correct,
         attempt_number: result.attempt_number,
         player_stats: result.player_stats,
         global_completion_count: result.completion_count,
         trajectory_access_token,
+    }))
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct GuessHistoryQuery {
+    player_id: Uuid,
+}
+
+pub(super) async fn guess_history(
+    State(state): State<AppState>,
+    Path(challenge_id): Path<String>,
+    Query(query): Query<GuessHistoryQuery>,
+) -> AppResult<Json<ClassicGuessHistoryResponse>> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    Ok(Json(ClassicGuessHistoryResponse {
+        guesses: repository::classic_guess_history(&state.db, challenge_id, query.player_id).await?,
     }))
 }
 

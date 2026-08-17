@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use uuid::Uuid;
 
-use crate::domain::comparison::ComparisonResult;
+use crate::domain::comparison::{CategoryDetails, ComparisonResult};
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -220,7 +220,18 @@ pub struct GuessedModel {
     pub id: String,
     pub name: String,
     pub provider: Option<String>,
-    pub family: Option<String>,
+    pub country: Option<String>,
+    pub family: Vec<String>,
+    pub categories: Vec<String>,
+    pub input_modalities: Vec<String>,
+    pub output_modalities: Vec<String>,
+    pub use_cases: Vec<String>,
+    pub reasoning_support: Option<String>,
+    pub weight_availability: Option<String>,
+    pub category_details: CategoryDetails,
+    pub release_year: Option<i64>,
+    pub release_date: Option<String>,
+    pub context_window_tokens: Option<i64>,
 }
 
 #[derive(Serialize)]
@@ -228,12 +239,39 @@ pub struct GuessedModel {
 pub struct GuessResponse {
     pub guessed_model: GuessedModel,
     pub comparison: BTreeMap<String, ComparisonResult>,
+    pub matching_family: Vec<String>,
+    pub matching_categories: Vec<String>,
+    pub matching_input_modalities: Vec<String>,
+    pub matching_output_modalities: Vec<String>,
+    pub matching_use_cases: Vec<String>,
     pub is_correct: bool,
     pub attempt_number: u16,
     pub player_stats: PlayerModeStats,
     pub global_completion_count: i64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trajectory_access_token: Option<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClassicGuessHistoryEntry {
+    pub request_id: Uuid,
+    pub attempted_at: i64,
+    pub guessed_model: GuessedModel,
+    pub comparison: BTreeMap<String, ComparisonResult>,
+    pub matching_family: Vec<String>,
+    pub matching_categories: Vec<String>,
+    pub matching_input_modalities: Vec<String>,
+    pub matching_output_modalities: Vec<String>,
+    pub matching_use_cases: Vec<String>,
+    pub is_correct: bool,
+    pub attempt_number: u16,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClassicGuessHistoryResponse {
+    pub guesses: Vec<ClassicGuessHistoryEntry>,
 }
 
 #[derive(Deserialize)]
@@ -303,6 +341,22 @@ pub struct EmojiCluesGuessResponse {
     pub attempt_number: u16,
     pub global_completion_count: i64,
     pub player_stats: PlayerModeStats,
+    pub clues: Vec<crate::domain::visual_clues::VisualClue>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EmojiCluesGuessHistoryEntry {
+    pub id: String,
+    pub name: String,
+    pub is_correct: bool,
+    pub attempt_number: u16,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EmojiCluesGuessHistoryResponse {
+    pub guesses: Vec<EmojiCluesGuessHistoryEntry>,
     pub clues: Vec<crate::domain::visual_clues::VisualClue>,
 }
 

@@ -1,0 +1,1 @@
+ALTER TABLE models ADD COLUMN family_tokens_json TEXT NOT NULL DEFAULT '[]';

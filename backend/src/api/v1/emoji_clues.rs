@@ -9,7 +9,7 @@ use uuid::Uuid;
 use crate::{
     dto::{
         EmojiCluesChallenge, EmojiCluesGameResponse, EmojiCluesGuessRequest,
-        EmojiCluesGuessResponse, EmojiCluesHintsResponse,
+        EmojiCluesGuessHistoryResponse, EmojiCluesGuessResponse, EmojiCluesHintsResponse,
     },
     error::{AppError, AppResult},
     repository,
@@ -77,6 +77,19 @@ pub(super) async fn hints(
 ) -> AppResult<Json<EmojiCluesHintsResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     Ok(Json(EmojiCluesHintsResponse {
+        clues: repository::visual_clues::hints(&state.db, challenge_id, query.player_id).await?,
+    }))
+}
+
+pub(super) async fn guess_history(
+    State(state): State<AppState>,
+    Path(challenge_id): Path<String>,
+    Query(query): Query<EmojiHintsQuery>,
+) -> AppResult<Json<EmojiCluesGuessHistoryResponse>> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    Ok(Json(EmojiCluesGuessHistoryResponse {
+        guesses: repository::visual_clues::guess_history(&state.db, challenge_id, query.player_id)
+            .await?,
         clues: repository::visual_clues::hints(&state.db, challenge_id, query.player_id).await?,
     }))
 }

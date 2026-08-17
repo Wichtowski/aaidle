@@ -1042,6 +1042,8 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
     assert_eq!(first.status(), StatusCode::OK);
     let first = response_json(first).await;
     assert_eq!(first["playerStats"]["gamesPlayed"], 1);
+    assert_eq!(first["guessedModel"]["country"], "US");
+    assert_eq!(first["guessedModel"]["releaseYear"], 2024);
     let comparison_keys = first["comparison"]
         .as_object()
         .expect("comparison object")
@@ -1061,6 +1063,22 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
             .expect("comparison")
             .contains_key("kernelBased")
     );
+    let history = app
+        .clone()
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses?playerId={player_id}"
+            ))
+            .body(Body::empty())
+            .expect("guess history request"),
+        )
+        .await
+        .expect("guess history response");
+    assert_eq!(history.status(), StatusCode::OK);
+    let history = response_json(history).await;
+    assert_eq!(history["guesses"].as_array().expect("guess history").len(), 1);
+    assert_eq!(history["guesses"][0]["guessedModel"]["id"], "model-one");
+    assert_eq!(history["guesses"][0]["attemptNumber"], 1);
     let replay = app
         .clone()
         .oneshot(request())
@@ -1069,7 +1087,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
     assert_eq!(replay.status(), StatusCode::OK);
     assert_eq!(response_json(replay).await["playerStats"]["gamesPlayed"], 1);
 
-    let duplicate = app
+    let recovered = app
         .clone()
         .oneshot(
             Request::post(format!(
@@ -1085,15 +1103,14 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
                 })
                 .to_string(),
             ))
-            .expect("duplicate request"),
+            .expect("recovery request"),
         )
         .await
-        .expect("duplicate response");
-    assert_eq!(duplicate.status(), StatusCode::CONFLICT);
-    assert_eq!(
-        response_json(duplicate).await["error"]["code"],
-        "DUPLICATE_GUESS"
-    );
+        .expect("recovery response");
+    assert_eq!(recovered.status(), StatusCode::OK);
+    let recovered = response_json(recovered).await;
+    assert_eq!(recovered["attemptNumber"], 1);
+    assert_eq!(recovered["guessedModel"]["id"], "model-one");
 
     let stats = app
         .oneshot(
