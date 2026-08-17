@@ -30,3 +30,6 @@ jobs:
         run: |
           pnpm db:validate-seed
           pnpm check
+      - name: Add test summary emoji
+        if: always()
+        run: sed -i 's/^## Vitest Test Report$/## 🧪 Vitest Test Report/' "$GITHUB_STEP_SUMMARY"

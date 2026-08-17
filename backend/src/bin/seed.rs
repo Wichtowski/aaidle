@@ -122,7 +122,7 @@ async fn seed_model(
     sqlx::query(
         "INSERT INTO models (id, provider_id, family_id, family_tokens_json, name, slug, release_date, release_year, context_window_tokens, \
          open_weights, local_execution, reasoning_support, status, is_guessable, verified_at, source_label, created_at, updated_at) \
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'unknown', ?, 'active', 1, 'seeded', 'Seed data', ?, ?) \
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unknown', ?, 'active', 1, 'seeded', 'Seed data', ?, ?) \
          ON CONFLICT(id) DO UPDATE SET provider_id = excluded.provider_id, family_id = excluded.family_id, family_tokens_json = excluded.family_tokens_json, \
          name = excluded.name, release_date = excluded.release_date, release_year = excluded.release_year, \
          context_window_tokens = excluded.context_window_tokens, open_weights = excluded.open_weights, \

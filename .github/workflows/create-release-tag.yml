@@ -145,18 +145,13 @@ jobs:
           TAG_CREATED: ${{ steps.create-tag.outputs.created }}
         run: |
           {
-            echo "## Release version"
+            echo "## 🚀 Release version $RELEASE_TAG"
             echo
-            if [[ -n "$RELEASE_TAG" ]]; then
-              echo "- Version: $RELEASE_TAG"
-              if [[ "$TAG_CREATED" == "true" ]]; then
-                echo "- Status: Created"
-              elif [[ "$TAG_CREATED" == "false" ]]; then
-                echo "- Status: Already existed"
-              else
-                echo "- Status: Not created"
-              fi
+            if [[ "$TAG_CREATED" == "true" ]]; then
+              echo "- Status: Created"
+            elif [[ "$TAG_CREATED" == "false" ]]; then
+              echo "- Status: Already existed"
             else
-              echo "- Version: unavailable"
+              echo "- Status: Not created"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
