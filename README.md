@@ -88,3 +88,13 @@ The canonical model and Emoji-game seed data live in [data](data). After updatin
 ```bash
 pnpm db:validate-seed
 ```
+
+The Classic catalog can be edited in six category-focused files and merged back into the single seed file used by the application:
+
+```bash
+pnpm split-one-to-many
+# edit data/classic.<category>.seed.json files
+pnpm merge-many-to-one
+```
+
+Models without a `categoryDetails` section stay in `data/classic.seed.json` while the category files are split, so the merge remains lossless. `data/models.seed.json` is not modified by either command.
