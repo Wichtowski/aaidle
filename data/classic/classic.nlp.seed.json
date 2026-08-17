@@ -1,0 +1,2043 @@
+[
+  {
+    "id": "roberta-base",
+    "name": "RoBERTa Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Meta",
+    "family": [
+      "RoBERTa",
+      "Base"
+    ],
+    "aliases": [
+      "Facebook RoBERTa"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2019-07-26",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "bart-large",
+    "name": "BART Large",
+    "modelClass": "encoder_decoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Meta",
+    "family": [
+      "BART",
+      "Large"
+    ],
+    "aliases": [
+      "facebook/bart-large"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "general"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2019-10-29",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "bookcorpus",
+          "english-wikipedia",
+          "cc-news",
+          "openwebtext",
+          "stories"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "nllb-200-600m",
+    "name": "NLLB-200 600M",
+    "modelClass": "encoder_decoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Meta",
+    "family": [
+      "NLLB",
+      "200",
+      "600M"
+    ],
+    "aliases": [
+      "facebook/nllb-200-distilled-600M"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "translation"
+    ],
+    "weightAvailability": "restricted",
+    "country": "United States",
+    "releaseDate": "2022-07-06",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "translation"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "parallel-web-data",
+          "common-crawl"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "bert-base-uncased",
+    "name": "BERT Base Uncased",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Google",
+    "family": [
+      "BERT",
+      "Base",
+      "Uncased"
+    ],
+    "aliases": [
+      "bert-base-uncased",
+      "BERT Base"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "books-corpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "bert-large-uncased",
+    "name": "BERT Large Uncased",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Google",
+    "family": [
+      "BERT",
+      "Large",
+      "Uncased"
+    ],
+    "aliases": [
+      "bert-large-uncased",
+      "BERT Large"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "books-corpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "distilbert-base-uncased",
+    "name": "DistilBERT Base Uncased",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Hugging Face",
+    "family": [
+      "DistilBERT",
+      "Base",
+      "Uncased"
+    ],
+    "aliases": [
+      "distilbert-base-uncased"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2019-10-02",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "deberta-v3-base",
+    "name": "DeBERTa v3 Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "family": [
+      "DeBERTa",
+      "v3",
+      "Base"
+    ],
+    "aliases": [
+      "DeBERTa"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2021-12-17",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "t5-base",
+    "name": "T5 Base",
+    "modelClass": "encoder_decoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Google",
+    "family": [
+      "T5",
+      "Base"
+    ],
+    "aliases": [
+      "Text-to-Text Transfer Transformer"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2020-02-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "c4"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "flan-t5-xl",
+    "name": "FLAN-T5 XL",
+    "modelClass": "encoder_decoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Google",
+    "family": [
+      "T5",
+      "XL"
+    ],
+    "aliases": [
+      "Flan T5 XL"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2022-10-20",
+    "contextWindowTokens": 2048,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "translation",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "c4",
+          "flan-collection"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "e5-large-v2",
+    "name": "E5 Large v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "family": [
+      "E5",
+      "Large",
+      "v2"
+    ],
+    "aliases": [
+      "intfloat/e5-large-v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2023-05-25",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bge-large-en-v1-5",
+    "name": "BGE Large EN v1.5",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "BAAI",
+    "family": [
+      "BGE",
+      "Large",
+      "EN",
+      "v1.5"
+    ],
+    "aliases": [
+      "BAAI/bge-large-en-v1.5"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": "2023-09-15",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "all-minilm-l6-v2",
+    "name": "All-MiniLM-L6-v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Hugging Face",
+    "family": [
+      "Sentence Transformers",
+      "All",
+      "MiniLM",
+      "L6",
+      "v2"
+    ],
+    "aliases": [
+      "sentence-transformers/all-MiniLM-L6-v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2021-08-20",
+    "contextWindowTokens": 256,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "text-embedding-3-large",
+    "name": "text-embedding-3-large",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "family": [
+      "Embedding",
+      "3",
+      "large"
+    ],
+    "aliases": [
+      "OpenAI embedding 3 large"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2024-01-25",
+    "contextWindowTokens": 8191,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "unknown"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bielik-11b-v3-0-instruct",
+    "name": "Bielik 11B v3.0 Instruct",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "SpeakLeash",
+    "family": [
+      "Bielik",
+      "11B",
+      "v3.0",
+      "Instruct"
+    ],
+    "aliases": [
+      "Bielik AI",
+      "Bielik 11B",
+      "Bielik v3"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "question-answering",
+      "summarization"
+    ],
+    "weightAvailability": "restricted",
+    "country": "Poland",
+    "releaseDate": "2025-12-31",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "question-answering",
+          "summarization"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "pllum-12b-nc-250715",
+    "name": "PLLuM 12B NC",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "PLLuM",
+    "family": [
+      "PLLuM",
+      "12B",
+      "NC"
+    ],
+    "aliases": [
+      "PLLuM",
+      "PLLuM 12B",
+      "PLLuM 12B NC"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "question-answering",
+      "summarization"
+    ],
+    "weightAvailability": "restricted",
+    "country": "Poland",
+    "releaseDate": "2025-07-15",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 32768,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "question-answering",
+          "summarization"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "herbert-base-cased",
+    "name": "HerBERT Base Cased",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Allegro",
+    "family": [
+      "HerBERT",
+      "Base",
+      "Cased"
+    ],
+    "aliases": [
+      "HerBERT",
+      "Allegro HerBERT",
+      "HerBERT Base"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "classification",
+      "embeddings",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "Poland",
+    "releaseDate": "2020-05-01",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "classification",
+          "embeddings",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "plt5-base",
+    "name": "plT5 Base",
+    "modelClass": "encoder_decoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Allegro",
+    "family": [
+      "plT5",
+      "Base"
+    ],
+    "aliases": [
+      "plT5",
+      "Allegro plT5",
+      "plT5 Base"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "translation",
+      "summarization",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "Poland",
+    "releaseDate": "2022-05-18",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "translation",
+          "summarization",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "polish"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "gpt-2",
+    "name": "GPT-2",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "2"
+    ],
+    "aliases": [
+      "GPT2",
+      "GPT 2"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "text-generation",
+      "general",
+      "zero-shot-learning"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2019-02-14",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "webtext"
+        ]
+      }
+    }
+  },
+  {
+    "id": "albert",
+    "name": "ALBERT",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "Google",
+    "family": [
+      "ALBERT"
+    ],
+    "aliases": [
+      "A Lite BERT",
+      "ALBERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2019-09-26",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "bookcorpus",
+          "english-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "electra",
+    "name": "ELECTRA",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "Google",
+    "family": [
+      "ELECTRA"
+    ],
+    "aliases": [
+      "Efficiently Learning an Encoder that Classifies Token Replacements Accurately"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2020-03-23",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "xlnet",
+    "name": "XLNet",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "Google / Carnegie Mellon University",
+    "family": [
+      "XLNet"
+    ],
+    "aliases": [
+      "XL Net"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "language-modeling"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2019-06-19",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "english-wikipedia",
+          "bookcorpus",
+          "giga5",
+          "clueweb",
+          "common-crawl"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "modernbert",
+    "name": "ModernBERT",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "Answer.AI / LightOn",
+    "family": [
+      "ModernBERT"
+    ],
+    "aliases": [
+      "Modern BERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "retrieval",
+      "text-classification",
+      "embeddings"
+    ],
+    "weightAvailability": "closed",
+    "country": "France / United States",
+    "releaseDate": "2024-12-19",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "retrieval",
+          "text-classification",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "xlm-roberta",
+    "name": "XLM-RoBERTa",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "Meta AI",
+    "family": [
+      "XLM-RoBERTa",
+      "XLM",
+      "RoBERTa"
+    ],
+    "aliases": [
+      "XLM-R",
+      "XLM RoBERTa",
+      "XLMR"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "multilingual-nlp"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2019-11-05",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "multilingual-nlp"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "cc100"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "distilgpt2",
+    "name": "DistilGPT-2",
+    "modelClass": "decoder_llm",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "Hugging Face",
+    "family": [
+      "GPT",
+      "DistilGPT",
+      "2"
+    ],
+    "aliases": [
+      "DistilGPT2",
+      "Distilled GPT-2"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "text-generation",
+      "general"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2019-10-01",
+    "reasoningSupport": "no",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "decoder-only"
+        ],
+        "trainingDatasets": [
+          "webtext"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mbert",
+    "name": "Multilingual BERT",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Google",
+    "family": [
+      "BERT"
+    ],
+    "aliases": [
+      "mBERT",
+      "Multilingual BERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "multilingual-nlp"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2018-10-11",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "multilingual-nlp"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "multilingual-wikipedia"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "pegasus",
+    "name": "PEGASUS",
+    "modelClass": "encoder_decoder",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Google",
+    "family": [
+      "PEGASUS"
+    ],
+    "aliases": [
+      "Pegasus"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "text-generation"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2019-12-18",
+    "contextWindowTokens": 1024,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "summarization",
+          "text-generation"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "longformer",
+    "name": "Longformer",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Allen Institute for AI",
+    "family": [
+      "Longformer"
+    ],
+    "aliases": [
+      "Long Former"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "long-document-understanding",
+      "text-classification",
+      "question-answering"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2020-04-10",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "long-document-understanding",
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "bigbird",
+    "name": "BigBird",
+    "modelClass": "encoder",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Google",
+    "family": [
+      "BigBird"
+    ],
+    "aliases": [
+      "Big Bird"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "long-document-understanding",
+      "text-classification",
+      "question-answering"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2020-07-28",
+    "contextWindowTokens": 4096,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "long-document-understanding",
+          "text-classification",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ]
+      }
+    },
+    "reasoningSupport": "no"
+  },
+  {
+    "id": "bge-m3",
+    "name": "BGE-M3",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "BAAI",
+    "family": [
+      "BGE",
+      "M3"
+    ],
+    "aliases": [
+      "BAAI/bge-m3",
+      "BGE M3"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search"
+    ],
+    "weightAvailability": "open",
+    "country": "China",
+    "releaseDate": null,
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "semantic-search"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder",
+          "xlm-roberta"
+        ],
+        "trainingDatasets": [
+          "bge-m3-data",
+          "mldr"
+        ]
+      }
+    }
+  },
+  {
+    "id": "all-mpnet-base-v2",
+    "name": "all-mpnet-base-v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "family": [
+      "Sentence Transformers",
+      "all",
+      "mpnet",
+      "base",
+      "v2"
+    ],
+    "aliases": [
+      "sentence-transformers/all-mpnet-base-v2",
+      "All MPNet Base v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "clustering"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": "2021-08-30",
+    "contextWindowTokens": 384,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "semantic-similarity",
+          "clustering"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "mpnet"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "paraphrase-multilingual-minilm-l12-v2",
+    "name": "paraphrase-multilingual-MiniLM-L12-v2",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "family": [
+      "Sentence Transformers",
+      "paraphrase",
+      "multilingual",
+      "MiniLM",
+      "L12",
+      "v2"
+    ],
+    "aliases": [
+      "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "Multilingual MiniLM L12 v2"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "semantic-similarity",
+      "clustering"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": null,
+    "contextWindowTokens": 128,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "semantic-similarity",
+          "clustering"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder",
+          "minilm"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "nomic-embed-text-v1-5",
+    "name": "nomic-embed-text-v1.5",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Nomic AI",
+    "family": [
+      "Nomic Embed",
+      "nomic",
+      "embed",
+      "text",
+      "v1.5"
+    ],
+    "aliases": [
+      "nomic-ai/nomic-embed-text-v1.5",
+      "Nomic Embed Text v1.5"
+    ],
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "clustering",
+      "classification"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2024-02-14",
+    "contextWindowTokens": 8192,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "classification"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "nomic-bert"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "embeddinggemma-300m",
+    "name": "EmbeddingGemma 300M",
+    "modelClass": "embedding",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Google",
+    "family": [
+      "Gemma",
+      "EmbeddingGemma",
+      "300M"
+    ],
+    "aliases": [
+      "EmbeddingGemma",
+      "google/embeddinggemma-300m"
+    ],
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "embeddings",
+      "retrieval",
+      "semantic-search",
+      "classification",
+      "clustering"
+    ],
+    "weightAvailability": "restricted",
+    "country": "United States",
+    "releaseDate": "2025-09-04",
+    "contextWindowTokens": 2048,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "embeddings",
+          "retrieval",
+          "classification"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder"
+        ],
+        "trainingDatasets": []
+      }
+    }
+  },
+  {
+    "id": "mdeberta-v3-base",
+    "name": "mDeBERTa v3 Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "family": [
+      "DeBERTa",
+      "mDeBERTa",
+      "v3",
+      "Base"
+    ],
+    "aliases": [
+      "mDeBERTa",
+      "Multilingual DeBERTa v3 Base"
+    ],
+    "categories": [
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": "United States",
+    "releaseDate": "2021-10-27",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "question-answering",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "architecture": [
+          "encoder",
+          "deberta"
+        ],
+        "trainingDatasets": [
+          "cc100"
+        ]
+      }
+    }
+  },
+  {
+    "id": "camembert-base",
+    "name": "CamemBERT Base",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 1,
+    "provider": "ALMAnaCH (Inria)",
+    "family": [
+      "CamemBERT",
+      "Base"
+    ],
+    "aliases": [
+      "CamemBERT"
+    ],
+    "categories": [
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "named-entity-recognition",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
+    "country": "France",
+    "releaseDate": "2019-11-10",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "embeddings",
+          "named-entity-recognition",
+          "question-answering"
+        ],
+        "supportedLanguages": [
+          "french"
+        ],
+        "architecture": [
+          "encoder",
+          "roberta"
+        ],
+        "trainingDatasets": [
+          "oscar"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bio-clinicalbert",
+    "name": "BioClinicalBERT",
+    "modelClass": "encoder",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": null,
+    "family": [
+      "BERT",
+      "BioClinicalBERT"
+    ],
+    "aliases": [
+      "Bio_ClinicalBERT",
+      "ClinicalBERT Bio + Clinical"
+    ],
+    "categories": [
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "clinical-nlp",
+      "text-classification",
+      "named-entity-recognition",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
+    "country": null,
+    "releaseDate": "2019-04-06",
+    "contextWindowTokens": 512,
+    "categoryDetails": {
+      "nlp": {
+        "nlpTasks": [
+          "text-classification",
+          "named-entity-recognition",
+          "embeddings"
+        ],
+        "supportedLanguages": [
+          "english"
+        ],
+        "architecture": [
+          "encoder",
+          "bert"
+        ],
+        "trainingDatasets": [
+          "mimic-iii"
+        ]
+      }
+    }
+  }
+]

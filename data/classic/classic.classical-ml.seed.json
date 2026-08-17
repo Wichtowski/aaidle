@@ -1,0 +1,2059 @@
+[
+  {
+    "id": "random-forest",
+    "name": "Random Forest",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
+    "family": [
+      "Tree Ensembles",
+      "Random",
+      "Forest"
+    ],
+    "aliases": [
+      "Random Forests",
+      "RF"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "feature-importance"
+    ],
+    "weightAvailability": "closed",
+    "country": "China / United States",
+    "releaseDate": "1995-08-14",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "random-forest"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "decision-tree",
+    "name": "Decision Tree",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Ross Quinlan",
+    "family": [
+      "Decision Trees",
+      "Decision",
+      "Tree"
+    ],
+    "aliases": [
+      "Decision Trees",
+      "CART"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "country": "Australia",
+    "releaseDate": "1986-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "decision-tree"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "svm",
+    "name": "Support Vector Machine",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Corinna Cortes, Vladimir Vapnik",
+    "family": [
+      "Kernel Methods",
+      "Support",
+      "Vector",
+      "Machine"
+    ],
+    "aliases": [
+      "SVM",
+      "Support Vector Machines"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "anomaly-detection"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States / Russia",
+    "releaseDate": "1995-09-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "svm"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "anomaly-detection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "knn",
+    "name": "K-Nearest Neighbors",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Evelyn Fix, Joseph Hodges",
+    "family": [
+      "Nearest Neighbors",
+      "K",
+      "Nearest",
+      "Neighbors"
+    ],
+    "aliases": [
+      "KNN",
+      "k-NN",
+      "k Nearest Neighbors"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "nearest-neighbor-search"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "1951-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "knn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "nearest-neighbor-search"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "naive-bayes",
+    "name": "Naive Bayes",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Thomas Bayes",
+    "family": [
+      "Bayesian Classifiers",
+      "Naive",
+      "Bayes"
+    ],
+    "aliases": [
+      "Naive Bayes Classifier"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "text-classification"
+    ],
+    "weightAvailability": "closed",
+    "country": "United Kingdom",
+    "releaseDate": "1763-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "naive-bayes"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "xgboost",
+    "name": "XGBoost",
+    "modelClass": "classical_ml",
+    "entityType": "model_family",
+    "minPool": 1,
+    "provider": "XGBoost Project",
+    "family": [
+      "Gradient Boosting",
+      "XGBoost"
+    ],
+    "aliases": [
+      "Extreme Gradient Boosting",
+      "XGB"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2016-03-09",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "xgboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "xgboost"
+        ]
+      }
+    }
+  },
+  {
+    "id": "adaboost",
+    "name": "AdaBoost",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "AT&T Bell Laboratories",
+    "family": [
+      "Boosting",
+      "AdaBoost"
+    ],
+    "aliases": [
+      "Adaptive Boosting",
+      "Ada Boost"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "1996-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "adaboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gradient-boosting",
+    "name": "Gradient Boosting",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Jerome Friedman",
+    "family": [
+      "Boosting"
+    ],
+    "aliases": [
+      "Gradient Boosted Decision Trees",
+      "GBDT",
+      "GBM"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "gradient-boosting"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "lightgbm",
+    "name": "LightGBM",
+    "modelClass": "classical_ml",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "family": [
+      "Gradient Boosting",
+      "LightGBM"
+    ],
+    "aliases": [
+      "LightGBM",
+      "Light Gradient Boosting Machine"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2017-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "lightgbm"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "lightgbm"
+        ]
+      }
+    }
+  },
+  {
+    "id": "catboost",
+    "name": "CatBoost",
+    "modelClass": "classical_ml",
+    "entityType": "model_family",
+    "minPool": 2,
+    "provider": "Yandex",
+    "family": [
+      "Gradient Boosting",
+      "CatBoost"
+    ],
+    "aliases": [
+      "Cat Boost",
+      "Categorical Boosting"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking",
+      "categorical-data"
+    ],
+    "weightAvailability": "closed",
+    "country": "Russia",
+    "releaseDate": "2017-06-28",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "catboost"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification",
+          "regression",
+          "ranking"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "catboost"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gaussian-process",
+    "name": "Gaussian Process",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 2,
+    "provider": "Danie Krige",
+    "family": [
+      "Gaussian Processes",
+      "Gaussian",
+      "Process"
+    ],
+    "aliases": [
+      "Gaussian Processes",
+      "GP"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "regression",
+      "classification",
+      "uncertainty-estimation"
+    ],
+    "weightAvailability": "closed",
+    "country": "South Africa",
+    "releaseDate": "1951-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "gaussian-process"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "classification",
+          "uncertainty-estimation"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ridge-regression",
+    "name": "Ridge Regression",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 2,
+    "provider": "Arthur Hoerl, Robert Kennard",
+    "family": [
+      "Linear Models",
+      "Ridge",
+      "Regression"
+    ],
+    "aliases": [
+      "Ridge",
+      "L2 Regression",
+      "Tikhonov Regularization"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "1970-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "ridge-regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "lasso",
+    "name": "Lasso",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 2,
+    "provider": "Robert Tibshirani",
+    "family": [
+      "Linear Models",
+      "Lasso"
+    ],
+    "aliases": [
+      "LASSO",
+      "Least Absolute Shrinkage and Selection Operator"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "regression",
+      "feature-selection"
+    ],
+    "weightAvailability": "closed",
+    "country": "Canada / United States",
+    "releaseDate": "1996-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "lasso"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "feature-selection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "elastic-net",
+    "name": "Elastic Net",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 2,
+    "provider": "Hui Zou, Trevor Hastie",
+    "family": [
+      "Linear Models",
+      "Elastic",
+      "Net"
+    ],
+    "aliases": [
+      "ElasticNet",
+      "Elastic Net Regression"
+    ],
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular"
+    ],
+    "outputModalities": [
+      "prediction"
+    ],
+    "useCases": [
+      "regression",
+      "feature-selection"
+    ],
+    "weightAvailability": "closed",
+    "country": "China / United States",
+    "releaseDate": "2005-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "elastic-net"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression",
+          "feature-selection"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "linear-regression",
+    "name": "Linear Regression",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Adrien-Marie Legendre",
+    "family": [
+      "Regression"
+    ],
+    "aliases": [
+      "Linear regression"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "numeric-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "France",
+    "releaseDate": "1805-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "numeric-prediction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "logistic-regression",
+    "name": "Logistic Regression",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "David Cox",
+    "family": [
+      "Regression"
+    ],
+    "aliases": [
+      "Logit regression"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1958-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "regression",
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "k-means",
+    "name": "K-Means",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Stuart Lloyd",
+    "family": [
+      "Clustering",
+      "K",
+      "Means"
+    ],
+    "aliases": [
+      "KMeans"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1957-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "dbscan",
+    "name": "DBSCAN",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Martin Ester",
+    "family": [
+      "Density clustering",
+      "DBSCAN"
+    ],
+    "aliases": [
+      "Density-based clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment",
+      "anomaly-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1996-08-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment",
+          "anomaly-detection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "principal-component-analysis",
+    "name": "PCA",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "family": [
+      "Dimensionality reduction",
+      "PCA"
+    ],
+    "aliases": [
+      "Principal Component Analysis"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1901-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gaussian-mixture-model",
+    "name": "Gaussian Mixture Model",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "family": [
+      "Probabilistic modelling",
+      "Gaussian",
+      "Mixture",
+      "Model"
+    ],
+    "aliases": [
+      "GMM"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "probabilities",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1894-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "density-estimation",
+          "clustering"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "probabilities",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "perceptron",
+    "name": "Perceptron",
+    "modelClass": "neural_network",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Frank Rosenblatt",
+    "family": [
+      "Linear classifier",
+      "Perceptron"
+    ],
+    "aliases": [
+      "Single-layer Perceptron"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1958-07-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "multi-layer-perceptron",
+    "name": "Multi-Layer Perceptron",
+    "modelClass": "neural_network",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "David Rumelhart",
+    "family": [
+      "Neural network",
+      "Multi",
+      "Layer",
+      "Perceptron"
+    ],
+    "aliases": [
+      "MLP"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "predictions"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1986-10-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification",
+          "regression"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "predictions"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "linear-discriminant-analysis",
+    "name": "Linear Discriminant Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Ronald Fisher",
+    "family": [
+      "Discriminant analysis",
+      "Linear",
+      "Discriminant",
+      "Analysis"
+    ],
+    "aliases": [
+      "LDA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "class-labels",
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1936-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "class-labels",
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "isolation-forest",
+    "name": "Isolation Forest",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 0,
+    "provider": "Fei Tony Liu",
+    "family": [
+      "Anomaly detection",
+      "Isolation",
+      "Forest"
+    ],
+    "aliases": [
+      "iForest"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2008-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "agglomerative-clustering",
+    "name": "Agglomerative Clustering",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Robert Sokal",
+    "family": [
+      "Hierarchical clustering",
+      "Agglomerative",
+      "Clustering"
+    ],
+    "aliases": [
+      "Hierarchical clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "dendrogram",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1963-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "hierarchical"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "dendrogram",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "spectral-clustering",
+    "name": "Spectral Clustering",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Andrew Ng",
+    "family": [
+      "Spectral clustering",
+      "Spectral",
+      "Clustering"
+    ],
+    "aliases": [
+      "Normalized cuts"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "spectral"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mean-shift",
+    "name": "Mean Shift",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Keinosuke Fukunaga",
+    "family": [
+      "Mode seeking",
+      "Mean",
+      "Shift"
+    ],
+    "aliases": [
+      "Mean-shift clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Japan",
+    "releaseDate": "1975-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-estimation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "affinity-propagation",
+    "name": "Affinity Propagation",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Brendan Frey",
+    "family": [
+      "Exemplar clustering",
+      "Affinity",
+      "Propagation"
+    ],
+    "aliases": [
+      "AP clustering"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "exemplars",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Canada",
+    "releaseDate": "2007-02-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "message-passing"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "exemplars",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "optics",
+    "name": "OPTICS",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Mihael Ankerst",
+    "family": [
+      "Density clustering",
+      "OPTICS"
+    ],
+    "aliases": [
+      "Ordering Points To Identify the Clustering Structure"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "ordering",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1999-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "clustering",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "ordering",
+          "cluster-assignment"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "kernel-pca",
+    "name": "Kernel PCA",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "family": [
+      "Kernel methods",
+      "Kernel",
+      "PCA"
+    ],
+    "aliases": [
+      "KPCA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "1997-07-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "kernel-method"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "independent-component-analysis",
+    "name": "Independent Component Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Aapo Hyvärinen",
+    "family": [
+      "Blind source separation",
+      "Independent",
+      "Component",
+      "Analysis"
+    ],
+    "aliases": [
+      "ICA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "independent-components"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Finland",
+    "releaseDate": "1994-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "source-separation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "independent-components"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "non-negative-matrix-factorization",
+    "name": "Non-negative Matrix Factorization",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Daniel Lee",
+    "family": [
+      "Matrix factorization",
+      "Non",
+      "negative",
+      "Matrix",
+      "Factorization"
+    ],
+    "aliases": [
+      "NMF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "components"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1999-10-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "matrix-factorization",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "components"
+        ],
+        "featureTypes": [
+          "non-negative"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "truncated-svd",
+    "name": "Truncated SVD",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Gene Golub",
+    "family": [
+      "Matrix factorization",
+      "Truncated",
+      "SVD"
+    ],
+    "aliases": [
+      "TSVD"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1970-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "matrix-factorization",
+          "dimensionality-reduction"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
+        ],
+        "featureTypes": [
+          "sparse"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "t-sne",
+    "name": "t-SNE",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Laurens van der Maaten",
+    "family": [
+      "Visualisation",
+      "t",
+      "SNE"
+    ],
+    "aliases": [
+      "t-distributed Stochastic Neighbor Embedding"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "embedding"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Netherlands",
+    "releaseDate": "2008-12-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "dimensionality-reduction",
+          "visualisation"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "embedding"
+        ],
+        "featureTypes": [
+          "high-dimensional"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "quadratic-discriminant-analysis",
+    "name": "Quadratic Discriminant Analysis",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Ronald Fisher",
+    "family": [
+      "Discriminant analysis",
+      "Quadratic",
+      "Discriminant",
+      "Analysis"
+    ],
+    "aliases": [
+      "QDA"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "class-labels",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United Kingdom",
+    "releaseDate": "1936-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "classification"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "class-labels",
+          "probabilities"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "local-outlier-factor",
+    "name": "Local Outlier Factor",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Markus Breunig",
+    "family": [
+      "Anomaly detection",
+      "Local",
+      "Outlier",
+      "Factor"
+    ],
+    "aliases": [
+      "LOF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "2000-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection",
+          "density-based"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "one-class-svm",
+    "name": "One-Class SVM",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "family": [
+      "Kernel methods",
+      "One",
+      "Class",
+      "SVM"
+    ],
+    "aliases": [
+      "One-class Support Vector Machine"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "inlier-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Germany",
+    "releaseDate": "2001-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "anomaly-detection",
+          "kernel-method"
+        ],
+        "learningParadigms": [
+          "semi-supervised"
+        ],
+        "objectives": [
+          "inlier-prediction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "hidden-markov-model",
+    "name": "Hidden Markov Model",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "Leonard Baum",
+    "family": [
+      "Probabilistic sequence model",
+      "Hidden",
+      "Markov",
+      "Model"
+    ],
+    "aliases": [
+      "HMM"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "state-sequence",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "1966-01-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "sequence-modelling",
+          "probabilistic-modelling"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "state-sequence",
+          "probabilities"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  },
+  {
+    "id": "conditional-random-field",
+    "name": "Conditional Random Field",
+    "modelClass": "classical_ml",
+    "entityType": "algorithm",
+    "minPool": 1,
+    "provider": "John Lafferty",
+    "family": [
+      "Probabilistic sequence model",
+      "Conditional",
+      "Random",
+      "Field"
+    ],
+    "aliases": [
+      "CRF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "outputModalities": [
+      "predictions"
+    ],
+    "useCases": [
+      "label-sequence"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States",
+    "releaseDate": "2001-06-01",
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "sequence-labelling",
+          "probabilistic-modelling"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "label-sequence"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ]
+      }
+    }
+  }
+]

@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 const input = process.argv[2];
 const source = input
   ? new URL(`file://${resolve(input)}`)
-  : new URL("../data/models.seed.json", import.meta.url);
+  : new URL("../data/classic.seed.json", import.meta.url);
 
 const data = JSON.parse(readFileSync(source, "utf8"));
 
@@ -38,7 +38,12 @@ const FOCUSED_CATEGORIES = new Set([
 ]);
 
 const CATEGORY_DETAIL_KEYS = {
-  "language-model": new Set(["supportedLanguages", "architecture", "toolUse", "multimodal"]),
+  "language-model": new Set([
+    "supportedLanguages",
+    "architecture",
+    "toolUse",
+    "multimodal",
+  ]),
   "computer-vision": new Set(["visionTasks", "architecture", "trainingDatasets", "license"]),
   nlp: new Set(["nlpTasks", "supportedLanguages", "architecture", "trainingDatasets"]),
   "object-detection": new Set([
@@ -367,7 +372,7 @@ for (const model of data) {
 
   // General game/provenance metadata
   validateNullableString(model.provider, "provider", model.id);
-  assert(isNonEmptyString(model.family), `Invalid family: ${model.id}`);
+  validateStringArray(model.family, "family", model.id);
   validateStringArray(model.aliases, "aliases", model.id);
   validateSlugArray(model.categories, "categories", model.id);
   validateSlugArray(model.inputModalities, "inputModalities", model.id);

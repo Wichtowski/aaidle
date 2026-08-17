@@ -19,7 +19,9 @@
     "db:validate-seed": "node scripts/validate-model-data.mjs && node scripts/validate-emoji-data.mjs",
     "format": "prettier --write .",
     "format:files": "prettier --write",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "merge-many-to-one": "node scripts/merge-many-to-one.mjs",
+    "split-one-to-many": "node scripts/split-one-to-many.mjs"
   },
   "dependencies": {
     "matter-js": "^0.20.0",

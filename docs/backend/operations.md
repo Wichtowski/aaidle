@@ -23,7 +23,9 @@ cargo run --bin aidle-api
 ```
 
 The API runs its idempotent SQLx migrations before accepting requests.
-The seed command is safe to repeat and imports the existing `data/models.seed.json` catalog into the normalized SQLite tables.
+The seed command is safe to repeat and imports the existing `data/classic.seed.json` catalog into the normalized SQLite tables.
+
+For the local Docker stack, `make fixture-admin` creates or resets the verified superadmin fixture account `admin@test.com` with password `zaq1@WSX`. This fixture is for local development only.
 
 ## Configuration
 

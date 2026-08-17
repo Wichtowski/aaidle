@@ -93,8 +93,8 @@ The Classic catalog can be edited in six category-focused files and merged back 
 
 ```bash
 pnpm split-one-to-many
-# edit data/classic.<category>.seed.json files
+# edit data/classic/classic.<category>.seed.json files
 pnpm merge-many-to-one
 ```
 
-Models without a `categoryDetails` section stay in `data/classic.seed.json` while the category files are split, so the merge remains lossless. `data/models.seed.json` is not modified by either command.
+Models without a `categoryDetails` section stay in `data/classic.seed.json` while the category files are split, so the merge remains lossless
