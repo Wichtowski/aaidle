@@ -3,6 +3,6 @@ export default {
   settings: {
     onlyCategories: ["performance"],
     output: ["html", "json"],
-    chromeFlags: ["--headless", "--no-sandbox"],
+    chromeFlags: ["--headless=new", "--no-sandbox"],
   },
 };

@@ -25,6 +25,11 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Cache Playwright Chromium
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
@@ -44,6 +49,11 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Cache Playwright Chromium
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - env:
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
@@ -102,6 +112,11 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Cache Playwright Chromium
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
       - run: node .github/scripts/build-accessibility-report.mjs

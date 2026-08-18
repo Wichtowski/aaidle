@@ -1,6 +1,6 @@
 #![forbid(unsafe_code)]
 
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use aidle_api::{
     api,
@@ -36,10 +36,14 @@ async fn main() -> AppResult<()> {
         .await
         .map_err(|error| AppError::config(format!("failed to bind AIDLE_BIND_ADDR: {error}")))?;
     info!(address = %config.bind_addr, "aidle API listening");
-    axum::serve(listener, api::router(AppState::new(pool, config)?))
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .map_err(|error| AppError::config(format!("HTTP server failed: {error}")))
+    axum::serve(
+        listener,
+        api::router(AppState::new(pool, config)?)
+            .into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await
+    .map_err(|error| AppError::config(format!("HTTP server failed: {error}")))
 }
 
 async fn shutdown_signal() {

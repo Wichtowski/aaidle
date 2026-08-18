@@ -301,6 +301,14 @@ a {
   border-color: var(--ink);
   margin-top: 20px;
 }
+:is(:root.hell-mode, body.hell-mode) .auth-card__password .button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--ink);
+}
+:is(:root.hell-mode, body.hell-mode) .auth-card__password .button--primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 82%, var(--paper));
+}
 .home-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -381,6 +389,15 @@ a {
   font: inherit;
   font-weight: 400;
   padding: 12px;
+}
+:is(:root.hell-mode, body.hell-mode) .auth-field input {
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--ink);
+}
+:is(:root.hell-mode, body.hell-mode) .auth-field input::placeholder {
+  color: var(--muted);
+  opacity: 1;
 }
 .password-input {
   position: relative;

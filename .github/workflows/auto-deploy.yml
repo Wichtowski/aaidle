@@ -67,3 +67,4 @@ jobs:
       contents: write
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}
+    secrets: inherit
