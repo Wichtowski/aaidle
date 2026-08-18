@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import {
-  ApiError,
   apiClient,
-  isApiUnavailable,
   type EmojiCluesDifficulty,
   type EmojiCluesGamePayload,
   type VisualClue,
@@ -14,6 +12,7 @@ import { SiteNavbar } from "../ui/SiteNavbar";
 import { GameIntro } from "./GameLayout";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
 import { GameLoadingState } from "../ui/GameLoadingState";
+import { Toast } from "../ui/Toast";
 import { EmojiClueIcon } from "./emoji-clue-icons";
 import { EmojiCluesHowToPlayDialog } from "./EmojiCluesHowToPlayDialog";
 
@@ -43,6 +42,7 @@ export function EmojiCluesGame() {
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [hardcore, setHardcore] = useState<{
     signedIn: boolean;
     unlocked: boolean;
@@ -51,6 +51,10 @@ export function EmojiCluesGame() {
   } | null>(null);
   const gameCache = useRef<Partial<Record<EmojiCluesDifficulty, CachedGame>>>({});
   const hydratedHistoryKeys = useRef(new Set<string>());
+  const loadFailureKey = useRef<EmojiCluesDifficulty | null>(null);
+  const loadFailureCount = useRef(0);
+  const guessFailureEntityId = useRef<string | null>(null);
+  const guessFailureCount = useRef(0);
 
   useEffect(() => {
     void apiClient.hardcoreStatus().then(setHardcore).catch(setError);
@@ -70,8 +74,13 @@ export function EmojiCluesGame() {
       setIsLoadingGame(false);
       return;
     }
+    if (loadFailureKey.current !== difficulty) {
+      loadFailureKey.current = difficulty;
+      loadFailureCount.current = 0;
+    }
     const controller = new AbortController();
     let active = true;
+    let retrying = false;
     setGame(null);
     setGuesses([]);
     setError(null);
@@ -80,17 +89,29 @@ export function EmojiCluesGame() {
       .emojiCluesGame(difficulty, controller.signal)
       .then((nextGame) => {
         if (active) {
+          loadFailureCount.current = 0;
           gameCache.current[difficulty] = { game: nextGame, guesses: [], query: "" };
           setGame(nextGame);
         }
       })
       .catch((nextError: unknown) => {
         if (active && !(nextError instanceof DOMException && nextError.name === "AbortError")) {
+          if (loadFailureCount.current === 0) {
+            loadFailureCount.current += 1;
+            retrying = true;
+            setToast(
+              nextError instanceof Error
+                ? nextError.message
+                : "We could not load Emoji Clues. Retrying now.",
+            );
+            setLoadAttempt((attempt) => attempt + 1);
+            return;
+          }
           setError(nextError);
         }
       })
       .finally(() => {
-        if (active) setIsLoadingGame(false);
+        if (active && !retrying) setIsLoadingGame(false);
       });
     return () => {
       active = false;
@@ -178,9 +199,21 @@ export function EmojiCluesGame() {
         }
         return nextGame;
       });
+      guessFailureEntityId.current = null;
+      guessFailureCount.current = 0;
       setQuery("");
     } catch (nextError) {
-      setError(nextError);
+      if (guessFailureEntityId.current !== entity.id) {
+        guessFailureEntityId.current = entity.id;
+        guessFailureCount.current = 0;
+      }
+      guessFailureCount.current += 1;
+      setToast(
+        nextError instanceof Error
+          ? nextError.message
+          : "We could not submit that guess. Please try again.",
+      );
+      if (guessFailureCount.current > 1) setError(nextError);
     } finally {
       setBusy(false);
     }
@@ -354,13 +387,8 @@ export function EmojiCluesGame() {
           {solved && <p className="emoji-clues__solved">Solved — of course.</p>}
         </section>
       ) : null}
-      {Boolean(error) && isApiUnavailable(error) && (
+      {Boolean(error) && (
         <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
-      )}
-      {Boolean(error) && !isApiUnavailable(error) && (
-        <p className="notice" role="alert">
-          {error instanceof ApiError ? error.message : "Could not load Emoji Clues."}
-        </p>
       )}
       <button
         aria-label="Emoji Clues rules"
@@ -374,6 +402,7 @@ export function EmojiCluesGame() {
         <span>How to play</span>
       </button>
       <EmojiCluesHowToPlayDialog open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+      <Toast message={toast} onDismiss={() => setToast(null)} />
     </main>
   );
 }

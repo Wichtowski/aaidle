@@ -1,4 +1,4 @@
-name: Production E2E
+name: Production Quality Reports
 
 on:
   workflow_call:
@@ -8,26 +8,16 @@ on:
         type: string
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  actions: write
+  contents: write
 
 jobs:
-  test:
-    name: Production E2E shard ${{ matrix.id }}
+  readiness:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - id: 1
-            shard: 1/2
-          - id: 2
-            shard: 2/2
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.release_tag }}
+          ref: "${{ inputs.release_tag }}"
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.3
@@ -35,42 +25,46 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Install test dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm exec playwright install --with-deps chromium
-      - name: Test the deployed domain
-        env:
+      - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
+      - env:
           PLAYWRIGHT_BASE_URL: https://aaidle.com
-          PLAYWRIGHT_EXPECTED_VERSION: ${{ inputs.release_tag }}
-        run: pnpm exec playwright test --shard=${{ matrix.shard }}
-      - name: Upload Playwright blob report
-        if: always()
+          AAIDLE_VERSION: "${{ inputs.release_tag }}"
+        run: pnpm exec playwright test --project=release-readiness
+
+  e2e:
+    needs: readiness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: "${{ inputs.release_tag }}"
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 11.5.3
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
+      - env:
+          PLAYWRIGHT_BASE_URL: https://aaidle.com
+          PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
+          PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm exec playwright test --no-deps --project=chromium --project=mobile-chromium --project=cookie-consent
+      - if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-blob-${{ matrix.id }}
-          path: tests/reports/blob
-          if-no-files-found: ignore
-      - name: Upload Allure results
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: allure-results-${{ matrix.id }}
+          name: allure-results
           path: tests/reports/allure-results
           if-no-files-found: ignore
 
-  publish-allure-report:
-    name: Publish Allure report
-    needs: test
-    if: always() && !cancelled()
+  api:
+    needs: readiness
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.release_tag }}
+          ref: "${{ inputs.release_tag }}"
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.3
@@ -78,31 +72,55 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Install report tooling
-        run: pnpm install --frozen-lockfile
-      - name: Download Allure results
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - run: pnpm install --frozen-lockfile
+      - env:
+          PLAYWRIGHT_BASE_URL: https://aaidle.com
+          AAIDLE_VERSION: "${{ inputs.release_tag }}"
+          PLAYWRIGHT_HEALTH_KEY: "${{ secrets.PLAYWRIGHT_HEALTH_KEY }}"
+          PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
+          PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm exec playwright test --config=tests/configs/playwright.api.config.ts --no-deps --project=production-api
+
+  accessibility:
+    needs: readiness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          pattern: allure-results-*
-          path: tests/reports/allure-input
-          merge-multiple: true
-      - name: Build Allure report
-        run: |
-          pnpm exec allure generate tests/reports/allure-input --clean -o tests/reports/allure-html
-          touch tests/reports/allure-html/.nojekyll
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+          ref: "${{ inputs.release_tag }}"
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          path: tests/reports/allure-html
-      - id: deployment
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
-      - name: Write summary
-        env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          RELEASE_TAG: ${{ inputs.release_tag }}
-        run: |
-          {
-            echo "## Production E2E"
-            echo
-            echo "- Release: $RELEASE_TAG"
-            echo "- [Allure report]($PAGE_URL)"
-          } >> "$GITHUB_STEP_SUMMARY"
+          version: 11.5.3
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
+      - env:
+          PLAYWRIGHT_BASE_URL: https://aaidle.com
+        run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
+      - run: node scripts/build-accessibility-report.mjs
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: accessibility-report
+          path: tests/reports/accessibility
+
+  performance:
+    needs: readiness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: "${{ inputs.release_tag }}"
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 11.5.3
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile && mkdir -p tests/reports/performance && pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output-path=tests/reports/performance/home && mv tests/reports/performance/home.report.html tests/reports/performance/index.html
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: performance-report
+          path: tests/reports/performance

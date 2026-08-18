@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCircleQuestion } from "react-icons/fa6";
-import { ApiError, apiClient, isApiUnavailable, type ClassicGamePayload } from "@lib/api/client";
+import { apiClient, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./GuessBoard";
 import { SiteNavbar } from "../ui/SiteNavbar";
 import { HowToPlayDialog } from "./HowToPlayDialog";
@@ -29,6 +29,7 @@ import { HardcoreSoundtrack } from "./HardcoreSoundtrack";
 import { RitualGateDialog } from "./RitualGateDialog";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
 import { GameLoadingState } from "../ui/GameLoadingState";
+import { Toast } from "../ui/Toast";
 import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
@@ -162,16 +163,26 @@ export function ClassicGame({
   const [showRitualGate, setShowRitualGate] = useState(false);
   const [progressReady, setProgressReady] = useState(false);
   const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const animatedGameKey = useRef<string | null>(null);
   const completionGameKey = useRef<string | null>(null);
   const hydratedHistoryKeys = useRef(new Set<string>());
   const loadedDifficultyRef = useRef(difficulty);
+  const loadFailureKey = useRef<string | null>(null);
+  const loadFailureCount = useRef(0);
+  const guessFailureModelId = useRef<string | null>(null);
+  const guessFailureCount = useRef(0);
   const gameCache = useRef<
     Partial<Record<ClassicCategory, Partial<Record<ClassicDifficulty, GamePayload>>>>
   >(initialGame ? { [category]: { [difficulty]: initialGame } } : {});
 
   useEffect(() => {
     if (category === "hardcore" && !hasHardcoreAccess) return;
+    const currentLoadKey = `${category}:${selectedDifficulty}`;
+    if (loadFailureKey.current !== currentLoadKey) {
+      loadFailureKey.current = currentLoadKey;
+      loadFailureCount.current = 0;
+    }
     const cachedGame = gameCache.current[category]?.[selectedDifficulty];
 
     if (cachedGame) {
@@ -187,6 +198,7 @@ export function ClassicGame({
     }
 
     const controller = new AbortController();
+  let retrying = false;
     setIsLoadingGame(true);
     setError(null);
 
@@ -194,6 +206,7 @@ export function ClassicGame({
       .classicGame(category, selectedDifficulty, controller.signal)
       .then((game) => {
         if (controller.signal.aborted) return;
+        loadFailureCount.current = 0;
         (gameCache.current[category] ??= {})[selectedDifficulty] = game;
         setChallenge(game.challenge);
         setModels(game.models);
@@ -204,11 +217,22 @@ export function ClassicGame({
       })
       .catch((fetchError: unknown) => {
         if (controller.signal.aborted) return;
+        if (loadFailureCount.current === 0) {
+          loadFailureCount.current += 1;
+          retrying = true;
+          setToast(
+            fetchError instanceof Error
+              ? fetchError.message
+              : "We could not load today’s game. Retrying now.",
+          );
+          setLoadAttempt((attempt) => attempt + 1);
+          return;
+        }
         setSelectedDifficulty(loadedDifficultyRef.current);
         setError(fetchError);
       })
       .finally(() => {
-        if (!controller.signal.aborted) setIsLoadingGame(false);
+        if (!controller.signal.aborted && !retrying) setIsLoadingGame(false);
       });
 
     return () => controller.abort();
@@ -396,6 +420,8 @@ export function ClassicGame({
       if (payload.globalCompletionCount !== null) {
         setGlobalCompletionCount(payload.globalCompletionCount);
       }
+      guessFailureModelId.current = null;
+      guessFailureCount.current = 0;
 
       const entry: SavedGuess = {
         requestId,
@@ -471,8 +497,18 @@ export function ClassicGame({
       setPendingGuess(null);
     } catch (e) {
       setPendingGuess(null);
-      setRetryGuess({ requestId, model });
-      setError(e);
+      if (guessFailureModelId.current !== model.id) {
+        guessFailureModelId.current = model.id;
+        guessFailureCount.current = 0;
+      }
+      guessFailureCount.current += 1;
+      setToast(
+        e instanceof Error ? e.message : "We could not submit that guess. Please try again.",
+      );
+      if (guessFailureCount.current > 1) {
+        setRetryGuess({ requestId, model });
+        setError(e);
+      }
     } finally {
       setBusy(false);
     }
@@ -521,44 +557,11 @@ export function ClassicGame({
       />
       {category === "hardcore" && <HardcoreSoundtrack />}
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
-      {!challenge && error !== null && isApiUnavailable(error) && (
+      {!challenge && error !== null && (
         <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
       )}
-      {!challenge && error !== null && !isApiUnavailable(error) && (
-        <section className="notice" role="alert">
-          <p>
-            {error instanceof ApiError && error.status === 404
-              ? "Today’s game is not available yet."
-              : error instanceof Error
-                ? error.message
-                : "Could not load today’s game."}
-          </p>
-          <button
-            className="button"
-            onClick={() => setLoadAttempt((attempt) => attempt + 1)}
-            type="button"
-          >
-            Try again
-          </button>
-        </section>
-      )}
-      {challenge && error !== null && isApiUnavailable(error) && retryGuess && (
+      {challenge && error !== null && retryGuess && (
         <ApiUnavailableState onRetry={() => void pick(retryGuess.model, retryGuess.requestId)} />
-      )}
-      {challenge && error !== null && (!isApiUnavailable(error) || !retryGuess) && (
-        <div className="notice" role="alert">
-          <p>{error instanceof Error ? error.message : "Your guess could not be submitted."}</p>
-          {retryGuess && (
-            <button
-              className="button"
-              disabled={busy}
-              onClick={() => void pick(retryGuess.model, retryGuess.requestId)}
-              type="button"
-            >
-              Retry guess
-            </button>
-          )}
-        </div>
       )}
 
       {challenge && (
@@ -639,6 +642,7 @@ export function ClassicGame({
           />
         </Suspense>
       )}
+      <Toast message={toast} onDismiss={() => setToast(null)} />
     </main>
   );
 }

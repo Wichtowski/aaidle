@@ -563,7 +563,7 @@ pub async fn classic_game(
 pub async fn classic_trajectory(
     pool: &SqlitePool,
     challenge_id: Uuid,
-) -> AppResult<(ChallengeRecord, Vec<PublicModel>)> {
+) -> AppResult<(ChallengeRecord, Vec<GuessedModel>)> {
     let challenge = find_challenge(pool, challenge_id)
         .await?
         .filter(|challenge| parse_classic_mode(&challenge.mode).is_some())
@@ -571,7 +571,15 @@ pub async fn classic_trajectory(
     let (category, difficulty) =
         parse_classic_mode(&challenge.mode).expect("classic challenge mode was checked");
     let ids = classic_eligible_model_ids(pool, category, difficulty).await?;
-    Ok((challenge, public_models_by_ids(pool, &ids).await?))
+    let mut connection = pool.acquire().await?;
+    let mut models = Vec::with_capacity(ids.len());
+    for model_id in ids {
+        if let Some(model) = load_model(&mut connection, &model_id, true).await? {
+            models.push(model.public);
+        }
+    }
+    models.sort_by(|left, right| left.name.cmp(&right.name));
+    Ok((challenge, models))
 }
 
 pub async fn process_guess(pool: &SqlitePool, input: GuessInput) -> AppResult<GuessOutcome> {

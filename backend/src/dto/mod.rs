@@ -41,6 +41,7 @@ pub struct AuthMeResponse {
 #[derive(Serialize)]
 pub struct AuthenticatedResponse {
     pub user: AuthUserResponse,
+    pub access_token: String,
 }
 
 #[derive(Serialize)]
@@ -282,7 +283,7 @@ pub struct TrajectoryRequest {
 
 #[derive(Serialize)]
 pub struct TrajectoryResponse {
-    pub models: Vec<PublicModel>,
+    pub models: Vec<GuessedModel>,
 }
 
 #[derive(Serialize)]

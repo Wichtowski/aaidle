@@ -18,7 +18,7 @@ use crate::{
 
 use super::{
     CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_same_origin, auth_user_response,
-    authenticated_user, consume_auth_rate_limit, cookie_header, cookie_value, is_token,
+    authenticated_user, bearer_token, consume_auth_rate_limit, cookie_header, cookie_value, is_token,
     named_cookie_header, no_store_with_cookie, now_millis, parse_json_payload, redirect,
     session_cookie,
 };
@@ -106,11 +106,13 @@ pub(super) async fn password_login(
     .await?;
     let user =
         crate::auth::authenticate_with_password(&state.db, &email, &payload.password).await?;
-    let token = crate::auth::create_session(&state.db, &user.id, now_millis()).await?;
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis()).await?;
+    let access_token = crate::auth::create_access_token(&user, &state.config, now_millis())?;
     Ok((
-        no_store_with_cookie(&state, token)?,
+        no_store_with_cookie(&state, session)?,
         Json(AuthenticatedResponse {
             user: auth_user_response(user),
+            access_token,
         }),
     ))
 }
@@ -486,8 +488,12 @@ pub(super) async fn me(
     State(state): State<AppState>,
     headers: HeaderMap,
 ) -> AppResult<([(&'static str, &'static str); 1], Json<AuthMeResponse>)> {
-    let user =
-        crate::auth::user_for_session(&state.db, session_cookie(&headers), now_millis()).await?;
+    let user = crate::auth::user_for_access_token(
+        &state.db,
+        bearer_token(&headers),
+        &state.config,
+    )
+    .await?;
     Ok((
         [("cache-control", "no-store")],
         Json(AuthMeResponse {
@@ -503,8 +509,12 @@ pub(super) async fn hardcore_status(
     [(&'static str, &'static str); 1],
     Json<HardcoreStatusResponse>,
 )> {
-    let user =
-        crate::auth::user_for_session(&state.db, session_cookie(&headers), now_millis()).await?;
+    let user = crate::auth::user_for_access_token(
+        &state.db,
+        bearer_token(&headers),
+        &state.config,
+    )
+    .await?;
     let Some(user) = user.filter(|user| !user.disabled) else {
         return Ok((
             [("cache-control", "no-store")],

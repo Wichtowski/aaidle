@@ -11,6 +11,15 @@ import type {
 import type { LocalProgress } from "../storage/local-progress-schema";
 
 const apiPath = (path: string) => `/api/v1${path}`;
+const accessTokenKey = "aaidle.access-token";
+
+const getAccessToken = () =>
+  typeof sessionStorage === "undefined" ? null : sessionStorage.getItem(accessTokenKey);
+const setAccessToken = (accessToken: string | null) => {
+  if (typeof sessionStorage === "undefined") return;
+  if (accessToken) sessionStorage.setItem(accessTokenKey, accessToken);
+  else sessionStorage.removeItem(accessTokenKey);
+};
 
 export type AuthUser = {
   id: string;
@@ -163,8 +172,8 @@ export function isApiUnavailable(error: unknown) {
 
 type ComparableModelSource = Pick<PublicGuessedModel, "id" | "name" | "provider"> &
   Partial<Omit<PublicGuessedModel, "id" | "name" | "provider" | "family">> & {
-  family?: unknown;
-};
+    family?: unknown;
+  };
 
 const stringArray = (value: unknown): string[] | null => {
   if (Array.isArray(value)) {
@@ -198,7 +207,11 @@ class ApiClient {
       response = await fetch(apiPath(path), {
         ...init,
         credentials: "include",
-        headers: { Accept: "application/json", ...init.headers },
+        headers: {
+          Accept: "application/json",
+          ...(getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}),
+          ...init.headers,
+        },
       });
     } catch {
       throw new NetworkError();
@@ -208,8 +221,11 @@ class ApiClient {
       response.status === 204 ? undefined : await response.json().catch(() => null)
     ) as (T & ApiErrorPayload) | null;
     if (!response.ok) {
+      const message = payload?.error?.message;
       throw new ApiError(
-        payload?.error?.message ?? "Request failed. Please try again.",
+        message === "Request failed. Please try again."
+          ? "We could not complete that request."
+          : (message ?? "We could not complete that request."),
         response.status,
         payload?.error?.code,
       );
@@ -227,14 +243,19 @@ class ApiClient {
   }
 
   signOut() {
-    return this.request<void>("/auth/logout", { method: "POST" });
+    return this.request<void>("/auth/logout", { method: "POST" }).finally(() =>
+      setAccessToken(null),
+    );
   }
 
   signInWithPassword(email: string, password: string) {
-    return this.request<{ user: AuthUser }>("/auth/password", {
+    return this.request<{ user: AuthUser; accessToken: string }>("/auth/password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
+    }).then((response) => {
+      setAccessToken(response.accessToken);
+      return response;
     });
   }
 
@@ -485,7 +506,7 @@ class ApiClient {
   }
 
   classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {
-    return this.request<{ models: PublicModel[] }>(
+    return this.request<{ models: PublicGuessedModel[] }>(
       `/games/classic/challenges/${challengeId}/trajectory`,
       {
         method: "POST",
@@ -493,16 +514,7 @@ class ApiClient {
         body: JSON.stringify({ trajectoryAccessToken }),
         signal,
       },
-    ).then(({ models }) => ({
-      models: models.map((model) =>
-        toComparableModel({
-          id: model.id,
-          name: model.name,
-          provider: model.providerName,
-          family: model.familyName ? [model.familyName] : null,
-        }),
-      ),
-    }));
+    ).then(({ models }) => ({ models: models.map((model) => toComparableModel(model)) }));
   }
 }
 

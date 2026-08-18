@@ -2,7 +2,8 @@ use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use hmac::{Hmac, Mac};
 use reqwest::{Client, Url};
 use scrypt::{Params, scrypt};
-use serde::Deserialize;
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use sqlx::{SqlitePool, Transaction};
 use uuid::Uuid;
@@ -20,6 +21,16 @@ const ACCOUNT_DELETION_LIFETIME_MILLIS: i64 = 5 * 60 * 1_000;
 
 type HmacSha256 = Hmac<Sha256>;
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AccessTokenClaims {
+    pub sub: String,
+    pub email: String,
+    pub permission: String,
+    pub disabled: bool,
+    pub iat: i64,
+    pub exp: i64,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SessionUser {
     pub id: String,
@@ -28,6 +39,33 @@ pub struct SessionUser {
     pub email_verified: bool,
     pub permission: Permission,
     pub disabled: bool,
+}
+
+pub fn create_access_token(user: &SessionUser, config: &AppConfig, now_millis: i64) -> AppResult<String> {
+    let issued_at = now_millis.div_euclid(1_000);
+    encode(
+        &Header::new(Algorithm::HS256),
+        &AccessTokenClaims {
+            sub: user.id.clone(),
+            email: user.email.clone(),
+            permission: user.permission.as_str().to_owned(),
+            disabled: user.disabled,
+            iat: issued_at,
+            exp: issued_at + SESSION_LIFETIME_MILLIS.div_euclid(1_000),
+        },
+        &EncodingKey::from_secret(config.auth_secret.as_bytes()),
+    )
+    .map_err(|_| AppError::Unavailable("Could not create an access token.".to_owned()))
+}
+
+pub fn verify_access_token(token: &str, config: &AppConfig) -> AppResult<AccessTokenClaims> {
+    decode::<AccessTokenClaims>(
+        token,
+        &DecodingKey::from_secret(config.auth_secret.as_bytes()),
+        &Validation::new(Algorithm::HS256),
+    )
+    .map(|token| token.claims)
+    .map_err(|_| AppError::Unauthorized("Sign in to access this resource.".to_owned()))
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -877,6 +915,30 @@ pub async fn user_for_session(
             .await?;
     }
     user.map(SessionUser::try_from).transpose()
+}
+
+pub async fn user_for_access_token(
+    pool: &SqlitePool,
+    token: Option<&str>,
+    config: &AppConfig,
+) -> AppResult<Option<SessionUser>> {
+    let Some(token) = token else {
+        return Ok(None);
+    };
+    let claims = verify_access_token(token, config)?;
+    let user = sqlx::query_as::<_, UserRow>(
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE id = ?",
+    )
+    .bind(&claims.sub)
+    .fetch_optional(pool)
+    .await?
+    .map(SessionUser::try_from)
+    .transpose()?;
+    Ok(user.filter(|user| {
+        user.email == claims.email
+            && user.permission.as_str() == claims.permission
+            && user.disabled == claims.disabled
+    }))
 }
 
 pub async fn has_hardcore_access(pool: &SqlitePool, user_id: &str) -> AppResult<bool> {

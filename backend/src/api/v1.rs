@@ -260,10 +260,17 @@ pub(super) async fn authenticated_user(
     state: &AppState,
     headers: &HeaderMap,
 ) -> AppResult<crate::auth::SessionUser> {
-    crate::auth::user_for_session(&state.db, session_cookie(headers), now_millis())
+    crate::auth::user_for_access_token(&state.db, bearer_token(headers), &state.config)
         .await?
         .filter(|user| !user.disabled)
         .ok_or_else(|| AppError::Unauthorized("Sign in to access this game mode.".to_owned()))
+}
+
+pub(super) fn bearer_token(headers: &HeaderMap) -> Option<&str> {
+    headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))
 }
 
 pub(super) fn assert_same_origin(state: &AppState, headers: &HeaderMap) -> AppResult<()> {
