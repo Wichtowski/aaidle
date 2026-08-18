@@ -3,16 +3,21 @@ import { env } from "../../env";
 
 const classicCategories = ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
-test("production API health is available with its health key", async ({ request }) => {
+const apiUrl = (path: string) => new URL(path, env.baseURL);
+
+test("production API health is available with its health key", async () => {
   const { healthKey, expectedVersion } = env;
-  test.skip(!healthKey || !expectedVersion, "Production health key or release version is not configured.");
+  test.skip(
+    !healthKey || !expectedVersion,
+    "Production health key or release version is not configured.",
+  );
   if (!healthKey || !expectedVersion) return;
 
-  const response = await request.get("/api/v1/health", {
+  const response = await fetch(apiUrl("/api/v1/health"), {
     headers: { "x-aaidle-health-key": healthKey },
   });
 
-  expect(response.ok()).toBe(true);
+  expect(response.ok).toBe(true);
   expect(await response.json()).toMatchObject({
     status: "ok",
     service: "aidle-api",
@@ -21,34 +26,36 @@ test("production API health is available with its health key", async ({ request 
   });
 });
 
-test("authenticated API exposes Classic, Emoji Clues, and rejects Hardcore access", async ({ request }) => {
+test("authenticated API exposes Classic, Emoji Clues, and rejects Hardcore access", async () => {
   const { email, password } = env.testCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 
-  const login = await request.post("/api/v1/auth/password", {
-    headers: { Origin: env.baseURL },
-    data: { email, password },
+  const login = await fetch(apiUrl("/api/v1/auth/password"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: env.baseURL },
+    body: JSON.stringify({ email, password }),
   });
-  expect(login.ok()).toBe(true);
+  expect(login.ok).toBe(true);
   const { accessToken: token } = await login.json();
   expect(token).toEqual(expect.any(String));
   const headers = { Authorization: `Bearer ${token}` };
 
   for (const category of classicCategories) {
-    const response = await request.get(`/api/v1/games/classic/${category}/normal`, { headers });
-    expect(response.ok()).toBe(true);
+    const response = await fetch(apiUrl(`/api/v1/games/classic/${category}/normal`), { headers });
+    expect(response.ok).toBe(true);
     expect((await response.json()).challenge).toBeTruthy();
   }
 
-  const emoji = await request.get("/api/v1/games/emoji-clues/normal", { headers });
-  expect(emoji.ok()).toBe(true);
+  const emoji = await fetch(apiUrl("/api/v1/games/emoji-clues/normal"), { headers });
+  expect(emoji.ok).toBe(true);
   expect((await emoji.json()).challenge).toBeTruthy();
 
-  const hardcore = await request.post("/api/v1/games/classic/hardcore/access", {
+  const hardcore = await fetch(apiUrl("/api/v1/games/classic/hardcore/access"), {
+    method: "POST",
     headers: { ...headers, Origin: env.baseURL },
   });
-  expect(hardcore.status()).toBe(403);
+  expect(hardcore.status).toBe(403);
   expect((await hardcore.json()).error.message).toBe(
     "Complete every Classic Challenge category to enter Hardcore.",
   );
