@@ -12,6 +12,7 @@ const CreditsPage = lazy(() => import("@app/credits/page"));
 const PrivacyPage = lazy(() => import("@app/privacy/v1/page"));
 const HomePage = lazy(() => import("@app/pages/HomePage"));
 const LoginPage = lazy(() => import("@app/pages/LoginPage"));
+const RegisterPage = lazy(() => import("@app/pages/RegisterPage"));
 const ResetPasswordPage = lazy(() => import("@app/pages/ResetPasswordPage"));
 const ClassicPage = lazy(() => import("@app/pages/ClassicPage"));
 const AccountDisabledPage = lazy(() => import("@app/pages/AccountDisabledPage"));
@@ -41,6 +42,7 @@ function Content() {
           <Route path="/classic/:category" element={<ClassicPage />} />
           <Route path="/emoji" element={<EmojiCluesGame />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/delete-account" element={<DeleteAccountPage />} />
           <Route path="/account-disabled" element={<AccountDisabledPage />} />

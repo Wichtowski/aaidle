@@ -460,7 +460,41 @@ a {
   color: var(--ink);
   font-size: 13px;
   font-weight: 800;
+  text-decoration: underline;
   text-underline-offset: 3px;
+}
+.auth-success-modal {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #17202ccc;
+}
+.auth-success-modal__content {
+  width: min(520px, 100%);
+  padding: 34px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 24px 70px #0005;
+}
+.auth-success-modal__content h2 {
+  margin: 5px 0 12px;
+  font-size: clamp(32px, 6vw, 44px);
+  letter-spacing: -0.05em;
+}
+.auth-success-modal__content > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.55;
+}
+.auth-success-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 26px;
+}
+.auth-success-modal__actions .button {
+  margin: 0;
 }
 .toast {
   position: fixed;

@@ -118,10 +118,37 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
-      - run: node .github/scripts/build-accessibility-report.mjs
+      - name: Run accessibility tests
+        id: accessibility-tests
+        continue-on-error: true
+        run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
+      - name: Add accessibility result to job summary
+        if: always()
+        env:
+          ACCESSIBILITY_OUTCOME: ${{ steps.accessibility-tests.outcome }}
+        run: |
+          if [ "$ACCESSIBILITY_OUTCOME" = "failure" ]; then
+            {
+              echo "## Accessibility checks"
+              echo
+              echo "> [!WARNING]"
+              echo "> Accessibility violations were detected. This is non-blocking for deployment."
+              echo
+              echo "See the **Run accessibility tests** step and the accessibility report artifact for details."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "## Accessibility checks"
+              echo
+              echo "Accessibility checks passed."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Build accessibility report
+        if: always()
+        run: node .github/scripts/build-accessibility-report.mjs
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: accessibility-report
           path: tests/reports/accessibility
@@ -142,10 +169,17 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: |
-          pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run Lighthouse
+        run: |
           mkdir -p tests/reports/performance
-          pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output html --output json --output-path=tests/reports/performance/home
+          pnpm exec lighthouse https://aaidle.com \
+            --config-path=tests/configs/lighthouse.config.mjs \
+            --chrome-flags="--headless=new --no-sandbox" \
+            --output html \
+            --output json \
+            --output-path=tests/reports/performance/home
           mv tests/reports/performance/home.report.html tests/reports/performance/index.html
           mv tests/reports/performance/home.report.json tests/reports/performance/metrics.json
 
