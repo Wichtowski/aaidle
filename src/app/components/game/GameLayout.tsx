@@ -37,7 +37,7 @@ export function GameIntro({
           )}
         </div>
       </div>
-      <h1 id={titleId}>{title}</h1>
+      <h1 data-testid="game-heading" id={titleId}>{title}</h1>
       <p className="lede">{description}</p>
       {navigation}
       {difficulty}

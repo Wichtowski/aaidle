@@ -2,9 +2,7 @@ import type { Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class ProfilePage extends BasePage {
-  get heading(): Locator {
-    return this.page.getByRole("heading", { name: "Profile" });
-  }
+  readonly heading: Locator = this.page.locator('[data-testid="profile-heading"]');
 
   async goto() {
     await super.goto("/profile");

@@ -236,7 +236,11 @@ export function EmojiCluesGame() {
         title="What AI idea do these clues point to?"
         titleId="emoji-clues-title"
       />
-      <nav className="emoji-clues__modes" aria-label="Emoji Clues difficulty">
+      <nav
+        className="emoji-clues__modes"
+        aria-label="Emoji Clues difficulty"
+        data-testid="emoji-difficulty"
+      >
         {(Object.keys(difficultyLabels) as EmojiCluesDifficulty[])
           .filter((mode) => mode !== "hardcore" || hardcore?.unlocked)
           .map((mode) => (

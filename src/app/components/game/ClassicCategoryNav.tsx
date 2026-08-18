@@ -23,6 +23,7 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
             aria-current={item === category ? "page" : undefined}
             to={`/classic/${classicCategoryDetails[item].routeSegment}`}
             key={item}
+            prefetch="intent"
           >
             {classicCategoryDetails[item].label}
           </Link>

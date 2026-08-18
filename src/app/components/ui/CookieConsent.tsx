@@ -36,6 +36,7 @@ export function CookieConsent() {
 
   return (
     <dialog
+      data-testid="cookie-consent-dialog"
       ref={dialogRef}
       className="cookie-consent"
       aria-labelledby="cookie-consent-title"
@@ -59,7 +60,7 @@ export function CookieConsent() {
           Cookies &amp; Privacy page after making your choice.
         </p>
         <div className="cookie-consent__actions">
-          <button className="button" onClick={() => choose("essential")}>
+          <button data-testid="cookie-consent-essential" className="button" onClick={() => choose("essential")}>
             Essential only
           </button>
           <button className="button button--primary" onClick={() => choose("accepted")}>

@@ -7,7 +7,7 @@ export default function HomePage() {
     <AppPageLayout className="home">
       <section className="hero">
         <p className="eyebrow">A daily deduction game</p>
-        <h1>
+        <h1 data-testid="home-heading">
           Can you identify today’s <em>AI model?</em>
         </h1>
         <p className="lede">
@@ -15,7 +15,12 @@ export default function HomePage() {
           and more, one guess at a time.
         </p>
         <div className="hero__actions">
-          <Link className="button button--primary" to="/classic">
+          <Link
+            className="button button--primary"
+            data-testid="home-play-classic"
+            to="/classic"
+            prefetch="render"
+          >
             <span>Play Classic</span> <FaArrowRight aria-hidden />
           </Link>
         </div>
@@ -26,7 +31,7 @@ export default function HomePage() {
           <h2 id="games-title">Choose your challenge</h2>
         </div>
         <div className="game-modes__grid">
-          <Link className="game-mode-card" to="/classic">
+          <Link className="game-mode-card" to="/classic" prefetch="intent">
             <span>Available now</span>
             <h3>Classic</h3>
             <p>Use model metadata and comparison clues to find today’s answer.</p>
@@ -34,7 +39,12 @@ export default function HomePage() {
               Play Classic <FaArrowRight aria-hidden />
             </strong>
           </Link>
-          <Link className="game-mode-card" to="/emoji">
+          <Link
+            className="game-mode-card"
+            data-testid="home-play-emoji"
+            to="/emoji"
+            prefetch="intent"
+          >
             <span>Available now</span>
             <h3>Emoji</h3>
             <p>Recognize AI systems and algorithms from visual associations.</p>

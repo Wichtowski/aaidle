@@ -7,7 +7,7 @@ export default function DeferredIssuePage() {
       <section className="issue-report">
         <div className="issue-report__content">
           <p className="eyebrow">Help improve aAIdle</p>
-          <h1>Report an issue.</h1>
+          <h1 data-testid="issue-report-heading">Report an issue.</h1>
           <p className="lede">Tell us what happened and how we can reproduce it.</p>
           <IssueReportForm />
         </div>

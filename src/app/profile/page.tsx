@@ -185,7 +185,7 @@ export default function Profile() {
     <main className={`page prose profile-page${hellActive ? " profile-page--hell" : ""}`}>
       <SiteNavbar hardcore={hellActive} />
       <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
-      <h1>{hellActive ? "The infernal" : "Profile"}</h1>
+      <h1 data-testid="profile-heading">{hellActive ? "The infernal" : "Profile"}</h1>
       {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
       {showRitualChallenge && !ritualComplete && (
         <section className="hell-meter" aria-labelledby="hell-meter-title">

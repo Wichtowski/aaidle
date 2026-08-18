@@ -148,7 +148,12 @@ export function GuessAutocomplete({
           role="combobox"
           value={query}
         />
-        <button className="autocomplete__confirm" disabled={!canConfirm} type="submit">
+        <button
+          className="autocomplete__confirm"
+          data-testid="classic-guess-submit"
+          disabled={!canConfirm}
+          type="submit"
+        >
           Guess
         </button>
       </div>

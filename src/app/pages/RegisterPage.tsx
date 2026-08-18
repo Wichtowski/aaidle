@@ -6,7 +6,7 @@ export default function RegisterPage() {
     <AppPageLayout className="login-page">
       <section className="login">
         <p className="eyebrow">Your aAIdle account</p>
-        <h1>Create your account.</h1>
+        <h1 data-testid="register-heading">Create your account.</h1>
         <p className="lede">Create your aAIdle profile to keep and synchronize your progress.</p>
         <RegistrationForm />
       </section>

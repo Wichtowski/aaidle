@@ -2,21 +2,10 @@ import type { Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
-  get heading(): Locator {
-    return this.page.getByRole("heading", { name: "Keep your progress." });
-  }
-
-  get emailInput(): Locator {
-    return this.page.getByLabel("Email");
-  }
-
-  get passwordInput(): Locator {
-    return this.page.getByLabel("Password");
-  }
-
-  get signInButton(): Locator {
-    return this.page.getByRole("button", { name: "Sign in" });
-  }
+  readonly heading: Locator = this.page.locator('[data-testid="login-heading"]');
+  readonly emailInput: Locator = this.page.locator('[data-testid="auth-email"]');
+  readonly passwordInput: Locator = this.page.locator('[data-testid="auth-password"]');
+  readonly signInButton: Locator = this.page.locator('[data-testid="auth-submit"]');
 
   async goto() {
     await super.goto("/login");

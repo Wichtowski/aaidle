@@ -45,6 +45,7 @@ export function ResetPasswordForm() {
         <span className="password-input">
           <input
             autoComplete="new-password"
+            data-testid="reset-password"
             minLength={12}
             onChange={(event) => setPassword(event.target.value)}
             required
@@ -66,6 +67,7 @@ export function ResetPasswordForm() {
         <span className="password-input">
           <input
             autoComplete="new-password"
+            data-testid="reset-confirm-password"
             minLength={12}
             onChange={(event) => setConfirmPassword(event.target.value)}
             required
@@ -88,6 +90,7 @@ export function ResetPasswordForm() {
       </label>
       <button
         className="button button--primary"
+        data-testid="reset-submit"
         disabled={busy || !password || !confirmPassword}
         type="submit"
       >

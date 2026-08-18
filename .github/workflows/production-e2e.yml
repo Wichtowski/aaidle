@@ -55,7 +55,8 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
-      - env:
+      - name: Run browser end-to-end tests
+        env:
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm exec playwright test --config=tests/configs/playwright.config.ts --no-deps --project=chromium --project=mobile-chromium
@@ -189,6 +190,7 @@ jobs:
           path: tests/reports/performance
 
   publish-reports:
+    if: always()
     needs: [e2e, api, accessibility, performance]
     runs-on: ubuntu-latest
     steps:

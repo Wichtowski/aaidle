@@ -58,6 +58,7 @@ export function CommonAuthForm({
           Email
           <input
             autoComplete="email"
+            data-testid="auth-email"
             onChange={(event) => onEmailChange(event.target.value)}
             required
             type="email"
@@ -69,6 +70,7 @@ export function CommonAuthForm({
           <span className="password-input">
             <input
               autoComplete={passwordAutoComplete}
+              data-testid="auth-password"
               minLength={passwordMinLength}
               onChange={(event) => onPasswordChange(event.target.value)}
               required
@@ -86,7 +88,12 @@ export function CommonAuthForm({
           </span>
         </label>
         {children}
-        <button className="button button--primary" disabled={busy} type="submit">
+        <button
+          className="button button--primary"
+          data-testid="auth-submit"
+          disabled={busy}
+          type="submit"
+        >
           {submitLabel}
         </button>
       </form>

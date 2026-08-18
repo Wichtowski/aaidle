@@ -76,7 +76,12 @@ export function ClassicGameControls({
         category !== "hardcore" && (
           <div aria-busy={loading} className="game-intro__difficulty">
             <span>Difficulty</span>
-            <div className="difficulty-switch" aria-label="Classic difficulty" role="group">
+            <div
+              className="difficulty-switch"
+              aria-label="Classic difficulty"
+              data-testid="classic-difficulty"
+              role="group"
+            >
               {choices.map((option) => (
                 <button
                   aria-pressed={option === difficulty}

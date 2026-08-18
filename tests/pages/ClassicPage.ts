@@ -2,13 +2,11 @@ import type { Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class ClassicPage extends BasePage {
-  get heading(): Locator {
-    return this.page.getByRole("heading", { name: "Guess today’s AI model" });
-  }
-
-  get guessButton(): Locator {
-    return this.page.getByRole("button", { name: "Guess" });
-  }
+  readonly heading: Locator = this.page.locator('[data-testid="game-heading"]');
+  readonly difficultyNavigation: Locator = this.page.locator(
+    '[data-testid="classic-difficulty"]',
+  );
+  readonly guessButton: Locator = this.page.locator('[data-testid="classic-guess-submit"]');
 
   async goto() {
     await super.goto("/classic");

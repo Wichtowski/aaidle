@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "@components/auth/AuthProvider";
+import { AuthenticatedRoute } from "@components/auth/AuthenticatedRoute";
 import { CookieConsent } from "@components/ui/CookieConsent";
 import { GameLoadingState } from "@components/ui/GameLoadingState";
 import { GlobalHellMode } from "@components/ui/GlobalHellMode";
@@ -43,9 +44,11 @@ function Content() {
           <Route path="/emoji" element={<EmojiCluesGame />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/delete-account" element={<DeleteAccountPage />} />
-          <Route path="/account-disabled" element={<AccountDisabledPage />} />
+          <Route element={<AuthenticatedRoute />}>
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/delete-account" element={<DeleteAccountPage />} />
+            <Route path="/account-disabled" element={<AccountDisabledPage />} />
+          </Route>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/privacy" element={<Navigate replace to="/privacy/v1" />} />

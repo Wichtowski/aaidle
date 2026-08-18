@@ -124,7 +124,7 @@ export function GameCompletedDialog({
             className={`completed__ritual-notice completed__ritual-notice--${corruption}`}
             data-ledger-echo={ledgerEcho[corruption]}
           >
-            <Link to="/profile">{ritualNotice}</Link>
+            <Link to="/profile" prefetch="intent">{ritualNotice}</Link>
           </p>
         )}
         <div className="completed__stats" aria-label="Your game statistics">

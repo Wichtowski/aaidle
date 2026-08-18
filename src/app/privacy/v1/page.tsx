@@ -8,7 +8,7 @@ export default function PrivacyV1Page() {
         <p className="eyebrow">
           Cookies &amp; privacy · Last updated <time dateTime="2026-08-12">12 August 2026</time>
         </p>
-        <h1>The necessary corporate stuff.</h1>
+        <h1 data-testid="privacy-heading">The necessary corporate stuff.</h1>
         <p className="lede">
           aAIdle is a daily game, not a surveillance operation. We collect and use only what is
           needed to run the game, keep accounts secure, and make the experience work on your device.

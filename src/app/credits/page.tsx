@@ -8,7 +8,7 @@ export default function CreditsPage() {
       <SiteNavbar />
       <section className="credits">
         <p className="eyebrow">The people behind the game</p>
-        <h1>Credits</h1>
+        <h1 data-testid="credits-heading">Credits</h1>
         <p className="credits__lede">
           <span>Some games make a prompt the destination</span>
           <span>aAIdle begins somewhere wider</span>

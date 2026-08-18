@@ -1,0 +1,41 @@
+import { env } from "../../../env";
+import { expect, test } from "../../../fixtures/e2e";
+
+// Never publish browser artifacts from tests that receive a production password.
+test.use({ trace: "off", screenshot: "off", video: "off" });
+
+test.beforeEach(async ({ loginPage, profilePage }) => {
+  const { email, password } = env.testCredentials;
+  test.skip(!email || !password, "Production login credentials are not configured.");
+  if (!email || !password) return;
+
+  await loginPage.goto();
+  await loginPage.signIn(email, password);
+  await expect(profilePage.heading).toBeVisible();
+});
+
+test("authenticated user can access the password reset page", async ({ resetPasswordPage }) => {
+  await resetPasswordPage.goto();
+
+  await expect(resetPasswordPage.heading).toBeVisible();
+  await expect(resetPasswordPage.passwordInput).toBeVisible();
+  await expect(resetPasswordPage.confirmPasswordInput).toBeVisible();
+  await expect(resetPasswordPage.submitButton).toBeDisabled();
+});
+
+test("authenticated user can access the account-disabled page", async ({
+  accountDisabledPage,
+}) => {
+  await accountDisabledPage.goto();
+  await expect(accountDisabledPage.heading).toBeVisible();
+});
+
+test("authenticated user can access account deletion confirmation", async ({
+  deleteAccountPage,
+}) => {
+  await deleteAccountPage.goto();
+
+  await expect(deleteAccountPage.heading).toBeVisible();
+  await expect(deleteAccountPage.cancelButton).toBeVisible();
+  await expect(deleteAccountPage.confirmButton).toBeVisible();
+});

@@ -34,6 +34,7 @@ export function IssueReportForm() {
       <label>
         Short title
         <input
+          data-testid="issue-report-title"
           disabled={submitting}
           maxLength={120}
           minLength={8}
@@ -46,6 +47,7 @@ export function IssueReportForm() {
       <label>
         What happened?
         <textarea
+          data-testid="issue-report-description"
           disabled={submitting}
           maxLength={5_000}
           minLength={20}
@@ -70,7 +72,12 @@ export function IssueReportForm() {
           </a>
         </p>
       )}
-      <button className="button button--primary" disabled={submitting} type="submit">
+      <button
+        className="button button--primary"
+        data-testid="issue-report-submit"
+        disabled={submitting}
+        type="submit"
+      >
         {submitting ? "Sending report…" : "Send report"}
       </button>
     </form>

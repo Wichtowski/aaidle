@@ -67,6 +67,7 @@ export function RegistrationForm() {
           <span className="password-input">
             <input
               autoComplete="new-password"
+              data-testid="register-confirm-password"
               minLength={12}
               onChange={(event) => setConfirmPassword(event.target.value)}
               required

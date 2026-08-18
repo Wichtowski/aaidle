@@ -25,7 +25,7 @@ export default function DeleteAccountPage() {
       <section className="delete-account-card">
         <FaTriangleExclamation aria-hidden />
         <p className="eyebrow">Final confirmation</p>
-        <h1>Delete your account?</h1>
+        <h1 data-testid="delete-account-heading">Delete your account?</h1>
         <p>
           This permanently deletes your account, linked identities, active sessions, and unused
           authentication links. This cannot be undone.
@@ -36,11 +36,12 @@ export default function DeleteAccountPage() {
           </p>
         )}
         <div className="danger-modal__actions">
-          <Link className="button" to="/profile">
+          <Link className="button" data-testid="delete-account-cancel" to="/profile">
             Cancel
           </Link>
           <button
             className="button button--danger-solid"
+            data-testid="delete-account-confirm"
             disabled={deleting}
             onClick={() => void deleteAccount()}
             type="button"

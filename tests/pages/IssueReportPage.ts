@@ -2,21 +2,12 @@ import type { Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class IssueReportPage extends BasePage {
-  get heading(): Locator {
-    return this.page.getByRole("heading", { name: "Report an issue." });
-  }
-
-  get titleInput(): Locator {
-    return this.page.getByLabel("Short title");
-  }
-
-  get descriptionInput(): Locator {
-    return this.page.getByLabel("What happened?");
-  }
-
-  get submitButton(): Locator {
-    return this.page.getByRole("button", { name: "Send report" });
-  }
+  readonly heading: Locator = this.page.locator('[data-testid="issue-report-heading"]');
+  readonly titleInput: Locator = this.page.locator('[data-testid="issue-report-title"]');
+  readonly descriptionInput: Locator = this.page.locator(
+    '[data-testid="issue-report-description"]',
+  );
+  readonly submitButton: Locator = this.page.locator('[data-testid="issue-report-submit"]');
 
   async goto() {
     await super.goto("/report-issue");
