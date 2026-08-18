@@ -33,21 +33,13 @@ export default defineConfig({
       name: "chromium",
       dependencies: ["release-readiness"],
       testMatch: "specs/e2e/**/*.spec.ts",
-      testIgnore: "**/cookie-consent.spec.ts",
       use: { ...devices["Desktop Chrome"], storageState: consentState(env.baseURL) },
     },
     {
       name: "mobile-chromium",
       dependencies: ["release-readiness"],
       testMatch: "specs/e2e/**/*.spec.ts",
-      testIgnore: "**/cookie-consent.spec.ts",
       use: { ...devices["Pixel 5"], storageState: consentState(env.baseURL) },
-    },
-    {
-      name: "cookie-consent",
-      dependencies: ["release-readiness"],
-      testMatch: "specs/e2e/cookie-consent.spec.ts",
-      use: { ...devices["Desktop Chrome"] },
     },
   ],
 });

@@ -28,7 +28,7 @@ jobs:
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
-        run: pnpm exec playwright test --project=release-readiness
+        run: pnpm exec playwright test --config=tests/configs/playwright.config.ts --project=release-readiness
 
   e2e:
     needs: readiness
@@ -48,7 +48,7 @@ jobs:
       - env:
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
-        run: pnpm exec playwright test --no-deps --project=chromium --project=mobile-chromium --project=cookie-consent
+        run: pnpm exec playwright test --config=tests/configs/playwright.config.ts --no-deps --project=chromium --project=mobile-chromium
       - if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -79,6 +79,12 @@ jobs:
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm exec playwright test --config=tests/configs/playwright.api.config.ts --no-deps --project=production-api
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: api-allure-results
+          path: tests/reports/api-allure-results
+          if-no-files-found: ignore
 
   accessibility:
     needs: readiness
@@ -121,7 +127,12 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile && mkdir -p tests/reports/performance && pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output-path=tests/reports/performance/home && mv tests/reports/performance/home.report.html tests/reports/performance/index.html
+      - run: |
+          pnpm install --frozen-lockfile
+          mkdir -p tests/reports/performance
+          pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output html --output json --output-path=tests/reports/performance/home
+          mv tests/reports/performance/home.report.html tests/reports/performance/index.html
+          mv tests/reports/performance/home.report.json tests/reports/performance/metrics.json
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -129,7 +140,7 @@ jobs:
           path: tests/reports/performance
 
   publish-reports:
-    needs: [e2e, accessibility, performance]
+    needs: [e2e, api, accessibility, performance]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -149,13 +160,18 @@ jobs:
           path: reports/allure-results
       - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
+          name: api-allure-results
+          path: reports/api-allure-results
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
           name: accessibility-report
           path: reports/accessibility
       - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: performance-report
           path: reports/performance
-      - run: pnpm exec allure generate reports/allure-results --clean --output report-site/allure
+      - run: pnpm exec allure generate reports/allure-results --clean --output report-site/e2e
+      - run: pnpm exec allure generate reports/api-allure-results --clean --output report-site/api
       - name: Publish report history
         env:
           RELEASE_TAG: "${{ inputs.release_tag }}"

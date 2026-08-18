@@ -8,7 +8,9 @@ export default defineConfig({
   retries: env.isCI ? 2 : 0,
   workers: env.isCI ? 1 : undefined,
   outputDir: "tests/results/api",
-  reporter: [["list"]],
+  reporter: env.isCI
+    ? [["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }]]
+    : [["list"]],
   use: { baseURL: env.baseURL },
   projects: [
     {
