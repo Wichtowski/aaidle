@@ -48,7 +48,7 @@ export function CookieConsent() {
       </div>
       <div className="cookie-consent__body">
         <p className="eyebrow">Your privacy</p>
-        <h2 id="cookie-consent-title">Cookies, with no escape hatch</h2>
+        <h2 id="cookie-consent-title">Cookies? Cookies! Cookies...</h2>
         <p id="cookie-consent-description">
           We use essential cookies to keep the site working, remember this choice, and keep
           signed-in sessions secure. Your game progress stays in your browser&apos;s local storage.

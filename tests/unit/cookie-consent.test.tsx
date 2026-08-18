@@ -34,7 +34,7 @@ describe("CookieConsent", () => {
     render(createElement(CookieConsent));
 
     const dialog = (await screen.findByRole("dialog", {
-      name: "Cookies, with no escape hatch",
+      name: "Cookies? Cookies! Cookies...",
     })) as HTMLDialogElement;
     await waitFor(() => expect(dialog.open).toBe(true));
 

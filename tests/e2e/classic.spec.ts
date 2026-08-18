@@ -36,7 +36,7 @@ test.beforeEach(async ({ page }) => {
 test("Cookie consent requires an explicit choice", async ({ page }) => {
   await page.goto("/");
 
-  const dialog = page.getByRole("dialog", { name: "Cookies, with no escape hatch" });
+  const dialog = page.getByRole("dialog", { name: "Cookies? Cookies! Cookies..." });
   await expect(dialog).toBeVisible();
 
   await page.keyboard.press("Escape");

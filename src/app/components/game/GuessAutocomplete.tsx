@@ -11,7 +11,7 @@ const placeholderByCategory: Record<ClassicCategory, string> = {
   "object-detection": "Search YOLO, Faster R-CNN, DETR...",
   "classical-ml": "Search Random Forest, XGBoost, SVM...",
   filters: "Search Gaussian Blur, Sobel, Canny...",
-  hardcore: "Search for all & nothing...",
+  hardcore: "Search for what is beyond...",
 };
 
 export function GuessAutocomplete({

@@ -53,7 +53,7 @@
     "name": "YOLOv8",
     "modelClass": "vision",
     "entityType": "trained_model",
-    "minPool": 1,
+    "minPool": 0,
     "provider": "Ultralytics",
     "family": [
       "YOLO",
@@ -104,7 +104,7 @@
     "name": "YOLO11",
     "modelClass": "vision",
     "entityType": "trained_model",
-    "minPool": 1,
+    "minPool": 0,
     "provider": "Ultralytics",
     "family": [
       "YOLO",
@@ -650,7 +650,7 @@
     "name": "YOLOv3",
     "modelClass": "vision",
     "entityType": "model_family",
-    "minPool": 1,
+    "minPool": 0,
     "provider": "University of Washington",
     "family": [
       "YOLO",
@@ -699,7 +699,7 @@
     "name": "YOLOv5",
     "modelClass": "vision",
     "entityType": "model_family",
-    "minPool": 1,
+    "minPool": 0,
     "provider": "Ultralytics",
     "family": [
       "YOLO",

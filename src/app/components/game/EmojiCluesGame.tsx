@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import {
   ApiError,
@@ -6,6 +6,7 @@ import {
   isApiUnavailable,
   type EmojiCluesDifficulty,
   type EmojiCluesGamePayload,
+  type VisualClue,
 } from "@lib/api/client";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { utcDate } from "@lib/utils/dates";
@@ -24,6 +25,11 @@ const difficultyLabels: Record<EmojiCluesDifficulty, string> = {
 
 type Guess = { id: string; name: string; isCorrect: boolean };
 type CachedGame = { game: EmojiCluesGamePayload; guesses: Guess[]; query: string };
+
+function clueKey(clue: VisualClue | undefined) {
+  if (!clue) return "hidden";
+  return clue.type === "emoji" ? `emoji-${clue.value}` : `icon-${clue.icon}`;
+}
 
 export function EmojiCluesGame() {
   const progress = useLocalProgress();
@@ -243,7 +249,8 @@ export function EmojiCluesGame() {
                   className={`emoji-clues__clue${
                     revealed ? " emoji-clues__clue--revealed" : " emoji-clues__clue--hidden"
                   }`}
-                  key={index}
+                  key={`${index}-${clueKey(clue)}`}
+                  style={{ "--clue-index": index } as CSSProperties}
                 >
                   <div className="emoji-clues__clue-inner">
                     <span aria-hidden="true" className="emoji-clues__clue-face emoji-clues__clue-cover">
@@ -271,64 +278,66 @@ export function EmojiCluesGame() {
             >
               <label htmlFor="emoji-clues-search">Name the answer</label>
               <div>
-                <input
-                  id="emoji-clues-search"
-                  value={query}
-                  disabled={busy}
-                  aria-activedescendant={
-                    available.length > 0 ? `emoji-clues-option-${activeOptionIndex}` : undefined
-                  }
-                  aria-autocomplete="list"
-                  aria-controls="emoji-clues-options"
-                  aria-expanded={available.length > 0}
-                  role="combobox"
-                  onChange={(event) => {
-                    const nextQuery = event.target.value;
-                    setQuery(nextQuery);
-                    setActiveOptionIndex(0);
-                    const cachedGame = gameCache.current[difficulty];
-                    if (cachedGame) {
-                      gameCache.current[difficulty] = { ...cachedGame, query: nextQuery };
+                <div className="emoji-clues__input">
+                  <input
+                    id="emoji-clues-search"
+                    value={query}
+                    disabled={busy}
+                    aria-activedescendant={
+                      available.length > 0 ? `emoji-clues-option-${activeOptionIndex}` : undefined
                     }
-                  }}
-                  onKeyDown={(event) => {
-                    if (available.length === 0) return;
-                    if (event.key === "ArrowDown") {
-                      event.preventDefault();
-                      setActiveOptionIndex((current) => (current + 1) % available.length);
-                    } else if (event.key === "ArrowUp") {
-                      event.preventDefault();
-                      setActiveOptionIndex(
-                        (current) => (current - 1 + available.length) % available.length,
-                      );
-                    } else if (event.key === "Enter" && activeOption) {
-                      event.preventDefault();
-                      void choose(activeOption);
-                    }
-                  }}
-                  placeholder="GPT, BERT, K-Means…"
-                />
+                    aria-autocomplete="list"
+                    aria-controls="emoji-clues-options"
+                    aria-expanded={available.length > 0}
+                    role="combobox"
+                    onChange={(event) => {
+                      const nextQuery = event.target.value;
+                      setQuery(nextQuery);
+                      setActiveOptionIndex(0);
+                      const cachedGame = gameCache.current[difficulty];
+                      if (cachedGame) {
+                        gameCache.current[difficulty] = { ...cachedGame, query: nextQuery };
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (available.length === 0) return;
+                      if (event.key === "ArrowDown") {
+                        event.preventDefault();
+                        setActiveOptionIndex((current) => (current + 1) % available.length);
+                      } else if (event.key === "ArrowUp") {
+                        event.preventDefault();
+                        setActiveOptionIndex(
+                          (current) => (current - 1 + available.length) % available.length,
+                        );
+                      } else if (event.key === "Enter" && activeOption) {
+                        event.preventDefault();
+                        void choose(activeOption);
+                      }
+                    }}
+                    placeholder="GPT, BERT, K-Means…"
+                  />
+                  {available.length > 0 && (
+                    <ul id="emoji-clues-options" role="listbox">
+                      {available.map((entity, index) => (
+                        <li
+                          aria-selected={index === activeOptionIndex}
+                          id={`emoji-clues-option-${index}`}
+                          key={entity.id}
+                          role="option"
+                        >
+                          <button type="button" onClick={() => void choose(entity)}>
+                            <strong>{entity.name}</strong>
+                            <small>{entity.entityKind.replaceAll("-", " ")}</small>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
                 <button className="autocomplete__confirm" disabled={!activeOption || busy}>
                   Guess
                 </button>
               </div>
-              {available.length > 0 && (
-                <ul id="emoji-clues-options" role="listbox">
-                  {available.map((entity, index) => (
-                    <li
-                      aria-selected={index === activeOptionIndex}
-                      id={`emoji-clues-option-${index}`}
-                      key={entity.id}
-                      role="option"
-                    >
-                      <button type="button" onClick={() => void choose(entity)}>
-                        <strong>{entity.name}</strong>
-                        <small>{entity.entityKind.replaceAll("-", " ")}</small>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </form>
           )}
           {guesses.length > 0 && (

@@ -166,13 +166,13 @@ export function ClassicGame({
   const completionGameKey = useRef<string | null>(null);
   const hydratedHistoryKeys = useRef(new Set<string>());
   const loadedDifficultyRef = useRef(difficulty);
-  const gameCache = useRef<Partial<Record<ClassicDifficulty, GamePayload>>>(
-    initialGame ? { [difficulty]: initialGame } : {},
-  );
+  const gameCache = useRef<
+    Partial<Record<ClassicCategory, Partial<Record<ClassicDifficulty, GamePayload>>>>
+  >(initialGame ? { [category]: { [difficulty]: initialGame } } : {});
 
   useEffect(() => {
     if (category === "hardcore" && !hasHardcoreAccess) return;
-    const cachedGame = gameCache.current[selectedDifficulty];
+    const cachedGame = gameCache.current[category]?.[selectedDifficulty];
 
     if (cachedGame) {
       setChallenge(cachedGame.challenge);
@@ -193,7 +193,8 @@ export function ClassicGame({
     void apiClient
       .classicGame(category, selectedDifficulty, controller.signal)
       .then((game) => {
-        gameCache.current[selectedDifficulty] = game;
+        if (controller.signal.aborted) return;
+        (gameCache.current[category] ??= {})[selectedDifficulty] = game;
         setChallenge(game.challenge);
         setModels(game.models);
         setColumns(game.columns);

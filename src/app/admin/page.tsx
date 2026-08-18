@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import "./admin.css";
 import { canManageAdministrators, canManageUsers } from "@lib/auth/permissions";
 import { apiClient, type AdminUserDetail, type AdminUserSummary } from "@lib/api/client";
 import { AdminProgressRecord } from "@components/admin/AdminProgressRecord";
