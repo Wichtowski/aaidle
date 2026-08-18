@@ -2,7 +2,7 @@ type IconDefinition = { kind: "image"; src: string; alt: string };
 
 /** Semantic clue IDs stay in the seed; replace these small raster files without touching game data. */
 export const EMOJI_CLUE_ICONS: Record<string, IconDefinition> = {
-  "keyboard-alt": { kind: "image", src: "/emoji-clues/keyboard-alt.png", alt: "ALT key" },
+  "keystroke": { kind: "image", src: "/emoji-clues/keystroke.png", alt: "ALT key" },
   meta: { kind: "image", src: "/emoji-clues/meta.png", alt: "Meta symbol" },
   alibaba: { kind: "image", src: "/emoji-clues/alibaba.png", alt: "Alibaba symbol" },
   windows: { kind: "image", src: "/emoji-clues/windows.png", alt: "four-pane window" },

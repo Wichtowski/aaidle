@@ -1,4 +1,4 @@
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "https://aaidle.com";
+const baseURL = "https://aaidle.com";
 
 export const env = {
   baseURL,

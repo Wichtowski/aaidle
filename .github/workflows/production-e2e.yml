@@ -9,7 +9,9 @@ on:
 
 permissions:
   actions: write
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   readiness:
@@ -27,7 +29,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - env:
-          PLAYWRIGHT_BASE_URL: https://aaidle.com
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
         run: pnpm exec playwright test --project=release-readiness
 
@@ -47,7 +48,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - env:
-          PLAYWRIGHT_BASE_URL: https://aaidle.com
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm exec playwright test --no-deps --project=chromium --project=mobile-chromium --project=cookie-consent
@@ -65,16 +65,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
+
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.3
+
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - env:
-          PLAYWRIGHT_BASE_URL: https://aaidle.com
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
           PLAYWRIGHT_HEALTH_KEY: "${{ secrets.PLAYWRIGHT_HEALTH_KEY }}"
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
@@ -88,18 +89,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
+
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.3
+
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
-      - env:
-          PLAYWRIGHT_BASE_URL: https://aaidle.com
-        run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
+      - run: pnpm exec playwright test --config=tests/configs/playwright.accessibility.config.ts --no-deps --project=accessibility
       - run: node scripts/build-accessibility-report.mjs
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: accessibility-report
@@ -112,6 +114,32 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 11.5.3
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile && mkdir -p tests/reports/performance && pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output-path=tests/reports/performance/home && mv tests/reports/performance/home.report.html tests/reports/performance/index.html
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: performance-report
+          path: tests/reports/performance
+
+  publish-reports:
+    needs: [e2e, accessibility, performance]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: "${{ inputs.release_tag }}"
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.3
@@ -119,8 +147,46 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile && mkdir -p tests/reports/performance && pnpm exec lighthouse https://aaidle.com --config-path=tests/configs/lighthouse.config.mjs --output-path=tests/reports/performance/home && mv tests/reports/performance/home.report.html tests/reports/performance/index.html
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: allure-results
+          path: reports/allure-results
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: accessibility-report
+          path: reports/accessibility
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: performance-report
-          path: tests/reports/performance
+          path: reports/performance
+      - name: Build quality-report site
+        env:
+          RELEASE_TAG: "${{ inputs.release_tag }}"
+        run: |
+          mkdir -p site
+          pnpm exec allure generate reports/allure-results --clean --output site/allure
+          cp -R reports/accessibility site/accessibility
+          cp -R reports/performance site/performance
+          cat > site/index.html <<EOF
+          <!doctype html>
+          <html lang="en">
+            <meta charset="utf-8">
+            <title>Production quality reports</title>
+            <main>
+              <h1>Production quality reports</h1>
+              <p>Release ${RELEASE_TAG}</p>
+              <ul>
+                <li><a href="allure/">End-to-end test report</a></li>
+                <li><a href="accessibility/">Accessibility report</a></li>
+                <li><a href="performance/">Performance report</a></li>
+              </ul>
+            </main>
+          </html>
+          EOF
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
