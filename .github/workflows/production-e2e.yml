@@ -38,6 +38,7 @@ jobs:
   e2e:
     needs: readiness
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -70,6 +71,7 @@ jobs:
   api:
     needs: readiness
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -86,7 +88,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
-          PLAYWRIGHT_HEALTH_KEY: "${{ secrets.PLAYWRIGHT_HEALTH_KEY }}"
+          PLAYWRIGHT_HEALTH_KEY: "${{ secrets.AAIDLE_HEALTH_KEY }}"
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm exec playwright test --config=tests/configs/playwright.api.config.ts --no-deps --project=production-api
@@ -100,6 +102,7 @@ jobs:
   accessibility:
     needs: readiness
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -156,6 +159,7 @@ jobs:
 
   performance:
     needs: readiness
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -191,6 +195,7 @@ jobs:
 
   publish-reports:
     if: always()
+    environment: production
     needs: [e2e, api, accessibility, performance]
     runs-on: ubuntu-latest
     steps:
