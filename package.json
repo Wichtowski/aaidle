@@ -18,9 +18,9 @@
     "check": "pnpm ci:validate-actions && pnpm typecheck && pnpm lint && pnpm test",
     "ci:validate-actions": "node scripts/validate-workflow-action-pins.mjs",
     "db:validate-seed": "node scripts/validate-model-data.mjs && node scripts/validate-emoji-data.mjs",
-    "format": "prettier --write .",
+    "format": "prettier --write . .github/scripts/**/*.mjs",
     "format:files": "prettier --write",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check . .github/scripts/**/*.mjs",
     "merge-many-to-one": "node scripts/merge-many-to-one.mjs",
     "split-one-to-many": "node scripts/split-one-to-many.mjs"
   },

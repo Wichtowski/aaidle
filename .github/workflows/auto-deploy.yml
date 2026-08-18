@@ -64,8 +64,6 @@ jobs:
     uses: ./.github/workflows/production-e2e.yml
     permissions:
       actions: write
-      contents: read
-      pages: write
-      id-token: write
+      contents: write
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}

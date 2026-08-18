@@ -4,11 +4,11 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["scripts/**/*.mjs"],
+    files: ["scripts/**/*.mjs", ".github/scripts/**/*.mjs", ],
     languageOptions: { globals: { URL: "readonly", process: "readonly", console: "readonly" } },
   },
   {
-    files: ["src/**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}", "tests/**/*.ts"],
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
       curly: ["error", "multi-line"],
