@@ -31,9 +31,9 @@ test("authenticated API exposes Classic, Emoji Clues, and rejects Hardcore acces
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 
-  const login = await fetch(apiUrl("/api/v1/auth/password"), {
+  const login = await fetch(apiUrl("/api/v1/auth/token"), {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: env.baseURL },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
   expect(login.ok).toBe(true);

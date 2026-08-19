@@ -12,8 +12,8 @@ use crate::{
 };
 
 use super::{
-    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_same_origin, authenticated_user, now_millis,
-    parse_json_payload,
+    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf_or_bearer, assert_same_origin_or_bearer,
+    authenticated_user, now_millis, parse_json_payload,
 };
 
 pub(super) async fn get(
@@ -46,7 +46,8 @@ pub(super) async fn put(
     headers: HeaderMap,
     payload: Result<Json<Value>, JsonRejection>,
 ) -> AppResult<([(&'static str, &'static str); 1], Json<ProgressResponse>)> {
-    assert_same_origin(&state, &headers)?;
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
     let incoming = crate::progress::parse_progress(parse_json_payload(payload)?)?;
     let progress = persist_merged_progress(&state, &user.id, incoming).await?;

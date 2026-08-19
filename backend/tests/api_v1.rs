@@ -17,6 +17,9 @@ use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 use tower::ServiceExt;
 use uuid::Uuid;
 
+const CSRF_HEADER: &str = "x-aaidle-csrf-token";
+const CSRF_TOKEN: &str = "test-csrf-token";
+
 async fn test_app() -> (axum::Router, SqlitePool) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
@@ -361,32 +364,24 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
         .await
         .expect("login response");
     assert_eq!(login.status(), StatusCode::OK);
-    let session = login
-        .headers()
-        .get("set-cookie")
-        .expect("session cookie")
-        .to_str()
-        .expect("cookie text")
-        .split(';')
-        .next()
-        .expect("cookie pair")
-        .to_owned();
-    assert_eq!(
-        response_json(login).await["user"]["email"],
-        "person@example.test"
-    );
+    let session = cookie_value(&login, "aaidle_session");
+    let csrf = cookie_value(&login, "aaidle_csrf");
+    let login_body = response_json(login).await;
+    assert_eq!(login_body["user"]["email"], "person@example.test");
+    assert!(login_body.get("accessToken").is_none());
 
     let me = app
         .clone()
         .oneshot(
             Request::get("/api/v1/auth/me")
-                .header("cookie", &session)
+                .header("cookie", format!("aaidle_session={session}"))
                 .body(Body::empty())
                 .expect("me request"),
         )
         .await
         .expect("me response");
     assert_eq!(me.status(), StatusCode::OK);
+    assert!(!cookie_value(&me, "aaidle_csrf").is_empty());
     assert_eq!(
         response_json(me).await["user"]["email"],
         "person@example.test"
@@ -396,7 +391,11 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
         .oneshot(
             Request::post("/api/v1/auth/logout")
                 .header("origin", "http://localhost:3000")
-                .header("cookie", session)
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, csrf)
                 .body(Body::empty())
                 .expect("logout request"),
         )
@@ -494,6 +493,7 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
         .expect("password reset response");
     assert_eq!(reset.status(), StatusCode::OK);
     let reset_session = cookie_value(&reset, "aaidle_session");
+    let reset_csrf = cookie_value(&reset, "aaidle_csrf");
     assert_eq!(
         sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM user_sessions WHERE user_id = ?")
             .bind(&user_id)
@@ -521,18 +521,36 @@ async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions(
     let deletion_token = auth::create_account_deletion_token(&pool, &user_id, current_millis())
         .await
         .expect("deletion token");
+    let deletion_cookies = format!(
+        "aaidle_account_deletion={deletion_token}; aaidle_session={reset_session}; aaidle_csrf={reset_csrf}"
+    );
+    let status = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/auth/account-deletion/status")
+                .header("cookie", &deletion_cookies)
+                .body(Body::empty())
+                .expect("account deletion status request"),
+        )
+        .await
+        .expect("account deletion status response");
+    assert_eq!(status.status(), StatusCode::OK);
+    let status = response_json(status).await;
+    assert_eq!(status["authorized"], true);
+    assert_eq!(status["maskedEmail"], "t***@example.test");
+    assert!(status["expiresAt"].as_i64().is_some());
+
     let deletion = app
         .clone()
         .oneshot(
             Request::post("/api/v1/auth/account-deletion/complete")
                 .header("origin", "http://localhost:3000")
-                .header(
-                    "cookie",
-                    format!(
-                        "aaidle_account_deletion={deletion_token}; aaidle_session={reset_session}"
-                    ),
-                )
-                .body(Body::empty())
+                .header("cookie", deletion_cookies)
+                .header(CSRF_HEADER, reset_csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({"confirmation": "DELETE t***@example.test"}).to_string(),
+                ))
                 .expect("account deletion request"),
         )
         .await
@@ -584,6 +602,7 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .await
         .expect("login response");
     let session = cookie_value(&login, "aaidle_session");
+    let csrf = cookie_value(&login, "aaidle_csrf");
     let classic = app
         .clone()
         .oneshot(
@@ -622,7 +641,11 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .oneshot(
             Request::put("/api/v1/auth/progress")
                 .header("origin", "http://localhost:3000")
-                .header("cookie", format!("aaidle_session={session}"))
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
                 .header("content-type", "application/json")
                 .body(Body::from(progress.to_string()))
                 .expect("forged progress request"),
@@ -684,7 +707,11 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .oneshot(
             Request::put("/api/v1/auth/progress")
                 .header("origin", "http://localhost:3000")
-                .header("cookie", format!("aaidle_session={session}"))
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
                 .header("content-type", "application/json")
                 .body(Body::from(progress.to_string()))
                 .expect("progress request"),
@@ -712,7 +739,11 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
     let loaded = app
         .oneshot(
             Request::get("/api/v1/auth/progress")
-                .header("cookie", format!("aaidle_session={session}"))
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={CSRF_TOKEN}"),
+                )
+                .header(CSRF_HEADER, CSRF_TOKEN)
                 .body(Body::empty())
                 .expect("progress load request"),
         )
@@ -817,7 +848,11 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
         .oneshot(
             Request::put("/api/v1/admin/settings/hardcore-soundtrack")
                 .header("origin", "http://localhost:3000")
-                .header("cookie", format!("aaidle_session={superadmin_session}"))
+                .header(
+                    "cookie",
+                    format!("aaidle_session={superadmin_session}; aaidle_csrf={CSRF_TOKEN}"),
+                )
+                .header(CSRF_HEADER, CSRF_TOKEN)
                 .header("content-type", "application/json")
                 .body(Body::from(
                     serde_json::json!({"url": "https://soundcloud.com/example/track"}).to_string(),
@@ -939,7 +974,11 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
         .oneshot(
             Request::post("/api/v1/games/classic/hardcore/access")
                 .header("origin", "http://localhost:3000")
-                .header("cookie", format!("aaidle_session={session}"))
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={CSRF_TOKEN}"),
+                )
+                .header(CSRF_HEADER, CSRF_TOKEN)
                 .body(Body::empty())
                 .expect("locked access request"),
         )
@@ -978,14 +1017,22 @@ async fn hardcore_ritual_uses_six_distinct_current_challenge_completions() {
     let first = app.clone().oneshot(
         Request::post("/api/v1/games/classic/hardcore/access")
             .header("origin", "http://localhost:3000")
-            .header("cookie", format!("aaidle_session={session}"))
+            .header(
+                "cookie",
+                format!("aaidle_session={session}; aaidle_csrf={CSRF_TOKEN}"),
+            )
+            .header(CSRF_HEADER, CSRF_TOKEN)
             .body(Body::empty())
             .expect("first access request"),
     );
     let second = app.oneshot(
         Request::post("/api/v1/games/classic/hardcore/access")
             .header("origin", "http://localhost:3000")
-            .header("cookie", format!("aaidle_session={session}"))
+            .header(
+                "cookie",
+                format!("aaidle_session={session}; aaidle_csrf={CSRF_TOKEN}"),
+            )
+            .header(CSRF_HEADER, CSRF_TOKEN)
             .body(Body::empty())
             .expect("second access request"),
     );
@@ -1076,7 +1123,10 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
         .expect("guess history response");
     assert_eq!(history.status(), StatusCode::OK);
     let history = response_json(history).await;
-    assert_eq!(history["guesses"].as_array().expect("guess history").len(), 1);
+    assert_eq!(
+        history["guesses"].as_array().expect("guess history").len(),
+        1
+    );
     assert_eq!(history["guesses"][0]["guessedModel"]["id"], "model-one");
     assert_eq!(history["guesses"][0]["attemptNumber"], 1);
     let replay = app

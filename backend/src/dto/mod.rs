@@ -41,12 +41,35 @@ pub struct AuthMeResponse {
 #[derive(Serialize)]
 pub struct AuthenticatedResponse {
     pub user: AuthUserResponse,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiTokenResponse {
     pub access_token: String,
+    pub token_type: &'static str,
+    pub expires_in: i64,
 }
 
 #[derive(Serialize)]
 pub struct AcceptedResponse {
     pub accepted: bool,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountDeletionStatusResponse {
+    pub authorized: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub masked_email: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub expires_at: Option<i64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct AccountDeletionCompletionRequest {
+    pub confirmation: String,
 }
 
 #[derive(Serialize)]

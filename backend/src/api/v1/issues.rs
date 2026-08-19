@@ -12,7 +12,10 @@ use crate::{
     state::AppState,
 };
 
-use super::{assert_same_origin, authenticated_user, consume_auth_rate_limit, parse_json_payload};
+use super::{
+    assert_csrf_or_bearer, assert_same_origin_or_bearer, authenticated_user,
+    consume_auth_rate_limit, parse_json_payload,
+};
 
 pub(super) async fn create(
     State(state): State<AppState>,
@@ -20,7 +23,8 @@ pub(super) async fn create(
     ConnectInfo(peer): ConnectInfo<SocketAddr>,
     payload: Result<Json<IssueReportRequest>, JsonRejection>,
 ) -> AppResult<Json<IssueReportResponse>> {
-    assert_same_origin(&state, &headers)?;
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
     let payload = parse_json_payload(payload)?;
     let title = payload.title.trim();

@@ -30,12 +30,11 @@ test("authenticated user can access the account-disabled page", async ({
   await expect(accountDisabledPage.heading).toBeVisible();
 });
 
-test("authenticated user can access account deletion confirmation", async ({
+test("account deletion confirmation requires the emailed single-use link", async ({
   deleteAccountPage,
+  profilePage,
 }) => {
   await deleteAccountPage.goto();
 
-  await expect(deleteAccountPage.heading).toBeVisible();
-  await expect(deleteAccountPage.cancelButton).toBeVisible();
-  await expect(deleteAccountPage.confirmButton).toBeVisible();
+  await expect(profilePage.heading).toBeVisible();
 });

@@ -11,14 +11,22 @@ import type {
 import type { LocalProgress } from "../storage/local-progress-schema";
 
 const apiPath = (path: string) => `/api/v1${path}`;
-const accessTokenKey = "aaidle.access-token";
 
-const getAccessToken = () =>
-  typeof sessionStorage === "undefined" ? null : sessionStorage.getItem(accessTokenKey);
-const setAccessToken = (accessToken: string | null) => {
-  if (typeof sessionStorage === "undefined") return;
-  if (accessToken) sessionStorage.setItem(accessTokenKey, accessToken);
-  else sessionStorage.removeItem(accessTokenKey);
+try {
+  if (typeof sessionStorage !== "undefined") {
+    sessionStorage.removeItem("aaidle.access-token");
+  }
+} catch {
+  // Storage may be unavailable in privacy-restricted browser contexts.
+}
+
+const csrfToken = () => {
+  if (typeof document === "undefined") return null;
+  return document.cookie
+    .split(";")
+    .map((entry) => entry.trim())
+    .find((entry) => entry.startsWith("aaidle_csrf="))
+    ?.slice("aaidle_csrf=".length) ?? null;
 };
 
 export type AuthUser = {
@@ -202,6 +210,8 @@ const toComparableModel = (model: ComparableModelSource): ComparableModel => ({
 
 class ApiClient {
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const method = init.method?.toUpperCase() ?? "GET";
+    const csrf = method === "GET" || method === "HEAD" ? null : csrfToken();
     let response: Response;
     try {
       response = await fetch(apiPath(path), {
@@ -209,7 +219,7 @@ class ApiClient {
         credentials: "include",
         headers: {
           Accept: "application/json",
-          ...(getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}),
+          ...(csrf ? { "X-AAIdle-CSRF-Token": csrf } : {}),
           ...init.headers,
         },
       });
@@ -243,19 +253,14 @@ class ApiClient {
   }
 
   signOut() {
-    return this.request<void>("/auth/logout", { method: "POST" }).finally(() =>
-      setAccessToken(null),
-    );
+    return this.request<void>("/auth/logout", { method: "POST" });
   }
 
   signInWithPassword(email: string, password: string) {
-    return this.request<{ user: AuthUser; accessToken: string }>("/auth/password", {
+    return this.request<{ user: AuthUser }>("/auth/password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-    }).then((response) => {
-      setAccessToken(response.accessToken);
-      return response;
     });
   }
 
@@ -276,7 +281,7 @@ class ApiClient {
   }
 
   completePasswordReset(password: string) {
-    return this.request<{ user: AuthUser }>("/auth/password-reset/complete", {
+    return this.request<{ ok: true }>("/auth/password-reset/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
@@ -287,8 +292,20 @@ class ApiClient {
     return this.request<{ accepted: true }>("/auth/account-deletion", { method: "POST" });
   }
 
-  completeAccountDeletion() {
-    return this.request<void>("/auth/account-deletion/complete", { method: "POST" });
+  accountDeletionStatus() {
+    return this.request<{
+      authorized: boolean;
+      maskedEmail?: string;
+      expiresAt?: number;
+    }>("/auth/account-deletion/status", { cache: "no-store" });
+  }
+
+  completeAccountDeletion(confirmation: string) {
+    return this.request<void>("/auth/account-deletion/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirmation }),
+    });
   }
 
   resendActivationEmail(email: string) {

@@ -7,9 +7,9 @@ use uuid::Uuid;
 
 use crate::{
     dto::{
-        ChallengeStatsResponse, ClassicGameResponse, ClassicGuessHistoryResponse, GuessRequest, GuessResponse,
-        HardcoreAccessResponse, PlayerStatsResponse, PublicChallenge, TrajectoryRequest,
-        TrajectoryResponse,
+        ChallengeStatsResponse, ClassicGameResponse, ClassicGuessHistoryResponse, GuessRequest,
+        GuessResponse, HardcoreAccessResponse, PlayerStatsResponse, PublicChallenge,
+        TrajectoryRequest, TrajectoryResponse,
     },
     error::{AppError, AppResult},
     repository::{self, GuessInput},
@@ -17,9 +17,9 @@ use crate::{
 };
 
 use super::{
-    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_same_origin, authenticated_user,
-    current_utc_date, format_next_midnight, is_model_id, now_millis, parse_json_payload,
-    parse_uuid, session_cookie,
+    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf_or_bearer, assert_same_origin,
+    assert_same_origin_or_bearer, authenticated_user, current_utc_date, format_next_midnight,
+    is_model_id, now_millis, parse_json_payload, parse_uuid, session_cookie,
 };
 
 pub(super) async fn guess(
@@ -92,7 +92,8 @@ pub(super) async fn guess_history(
 ) -> AppResult<Json<ClassicGuessHistoryResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     Ok(Json(ClassicGuessHistoryResponse {
-        guesses: repository::classic_guess_history(&state.db, challenge_id, query.player_id).await?,
+        guesses: repository::classic_guess_history(&state.db, challenge_id, query.player_id)
+            .await?,
     }))
 }
 
@@ -171,7 +172,8 @@ pub(super) async fn hardcore_access(
     [(&'static str, &'static str); 1],
     Json<HardcoreAccessResponse>,
 )> {
-    assert_same_origin(&state, &headers)?;
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
     if !crate::auth::has_hardcore_access(&state.db, &user.id).await? {
         let completed = sqlx::query_scalar::<_, i64>(

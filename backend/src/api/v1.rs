@@ -46,6 +46,7 @@ pub fn router(state: AppState) -> Router {
         .route("/health/ready", get(ready))
         .route("/auth/register", post(auth::register))
         .route("/auth/password", post(auth::password_login))
+        .route("/auth/token", post(auth::api_token))
         .route("/auth/password-reset", post(auth::password_reset))
         .route(
             "/auth/password-reset/verify",
@@ -64,6 +65,10 @@ pub fn router(state: AppState) -> Router {
         .route(
             "/auth/account-deletion/verify",
             get(auth::account_deletion_verify),
+        )
+        .route(
+            "/auth/account-deletion/status",
+            get(auth::account_deletion_status),
         )
         .route(
             "/auth/account-deletion/complete",
@@ -256,11 +261,22 @@ pub(super) fn auth_user_response(user: crate::auth::SessionUser) -> AuthUserResp
     }
 }
 
+pub(super) async fn optional_authenticated_user(
+    state: &AppState,
+    headers: &HeaderMap,
+) -> AppResult<Option<crate::auth::SessionUser>> {
+    if let Some(token) = bearer_token(headers) {
+        crate::auth::user_for_access_token(&state.db, Some(token), &state.config).await
+    } else {
+        crate::auth::user_for_session(&state.db, session_cookie(headers), now_millis()).await
+    }
+}
+
 pub(super) async fn authenticated_user(
     state: &AppState,
     headers: &HeaderMap,
 ) -> AppResult<crate::auth::SessionUser> {
-    crate::auth::user_for_access_token(&state.db, bearer_token(headers), &state.config)
+    optional_authenticated_user(state, headers)
         .await?
         .filter(|user| !user.disabled)
         .ok_or_else(|| AppError::Unauthorized("Sign in to access this game mode.".to_owned()))
@@ -273,6 +289,14 @@ pub(super) fn bearer_token(headers: &HeaderMap) -> Option<&str> {
         .and_then(|value| value.strip_prefix("Bearer "))
 }
 
+pub(super) fn assert_same_origin_or_bearer(state: &AppState, headers: &HeaderMap) -> AppResult<()> {
+    if bearer_token(headers).is_some() {
+        Ok(())
+    } else {
+        assert_same_origin(state, headers)
+    }
+}
+
 pub(super) fn assert_same_origin(state: &AppState, headers: &HeaderMap) -> AppResult<()> {
     let origin = headers
         .get(header::ORIGIN)
@@ -283,6 +307,28 @@ pub(super) fn assert_same_origin(state: &AppState, headers: &HeaderMap) -> AppRe
         ));
     }
     Ok(())
+}
+
+pub(super) fn assert_csrf(headers: &HeaderMap) -> AppResult<()> {
+    let cookie = cookie_value(headers, "aaidle_csrf").unwrap_or_default();
+    let header = headers
+        .get("x-aaidle-csrf-token")
+        .and_then(|value| value.to_str().ok())
+        .unwrap_or_default();
+    if cookie.is_empty() || !constant_time_eq(cookie.as_bytes(), header.as_bytes()) {
+        return Err(AppError::Forbidden(
+            "The CSRF token is invalid or missing.".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+pub(super) fn assert_csrf_or_bearer(headers: &HeaderMap) -> AppResult<()> {
+    if bearer_token(headers).is_some() {
+        Ok(())
+    } else {
+        assert_csrf(headers)
+    }
 }
 
 pub(super) fn session_cookie(headers: &HeaderMap) -> Option<&str> {
@@ -298,21 +344,38 @@ fn cookie_value<'a>(headers: &'a HeaderMap, name: &str) -> Option<&'a str> {
         .find_map(|entry| entry.strip_prefix(&format!("{name}=")))
 }
 
-pub(super) fn no_store_with_cookie(
-    state: &AppState,
-    token: String,
-) -> AppResult<[(header::HeaderName, HeaderValue); 2]> {
-    Ok([
-        (header::CACHE_CONTROL, HeaderValue::from_static("no-store")),
-        (
-            header::SET_COOKIE,
-            cookie_header(state, &token, 30 * 24 * 60 * 60)?,
-        ),
-    ])
+pub(super) fn no_store_with_cookie(state: &AppState, token: String) -> AppResult<HeaderMap> {
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    headers.append(
+        header::SET_COOKIE,
+        cookie_header(state, &token, 30 * 24 * 60 * 60)?,
+    );
+    headers.append(
+        header::SET_COOKIE,
+        csrf_cookie_header(state, &crate::auth::random_token(), 30 * 24 * 60 * 60)?,
+    );
+    Ok(headers)
 }
 
 pub(super) fn cookie_header(state: &AppState, token: &str, max_age: i64) -> AppResult<HeaderValue> {
     named_cookie_header(state, "aaidle_session", token, max_age)
+}
+
+pub(super) fn csrf_cookie_header(
+    state: &AppState,
+    token: &str,
+    max_age: i64,
+) -> AppResult<HeaderValue> {
+    let secure = if state.config.secure_cookies {
+        "; Secure"
+    } else {
+        ""
+    };
+    HeaderValue::from_str(&format!(
+        "aaidle_csrf={token}; Path=/; Max-Age={max_age}; SameSite=Strict{secure}"
+    ))
+    .map_err(|_| AppError::config("CSRF cookie could not be encoded"))
 }
 
 pub(super) fn named_cookie_header(

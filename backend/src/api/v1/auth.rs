@@ -9,7 +9,8 @@ use std::net::SocketAddr;
 
 use crate::{
     dto::{
-        AcceptedResponse, AuthMeResponse, AuthenticatedResponse, EmailAcceptedResponse,
+        AcceptedResponse, AccountDeletionCompletionRequest, AccountDeletionStatusResponse,
+        ApiTokenResponse, AuthMeResponse, AuthenticatedResponse, EmailAcceptedResponse,
         HardcoreStatusResponse, PasswordCredentialsRequest,
     },
     error::{AppError, AppResult},
@@ -17,10 +18,10 @@ use crate::{
 };
 
 use super::{
-    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_same_origin, auth_user_response,
-    authenticated_user, bearer_token, consume_auth_rate_limit, cookie_header, cookie_value, is_token,
-    named_cookie_header, no_store_with_cookie, now_millis, parse_json_payload, redirect,
-    session_cookie,
+    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf, assert_same_origin, auth_user_response,
+    authenticated_user, consume_auth_rate_limit, cookie_header, cookie_value, csrf_cookie_header,
+    is_token, named_cookie_header, no_store_with_cookie, now_millis, optional_authenticated_user,
+    parse_json_payload, redirect, session_cookie,
 };
 
 pub(super) async fn register(
@@ -87,10 +88,7 @@ pub(super) async fn password_login(
     headers: HeaderMap,
     ConnectInfo(peer): ConnectInfo<SocketAddr>,
     payload: Result<Json<PasswordCredentialsRequest>, JsonRejection>,
-) -> AppResult<(
-    [(header::HeaderName, HeaderValue); 2],
-    Json<AuthenticatedResponse>,
-)> {
+) -> AppResult<(HeaderMap, Json<AuthenticatedResponse>)> {
     assert_same_origin(&state, &headers)?;
     let payload = parse_json_payload(payload)?;
     let email = crate::auth::normalize_email(&payload.email)?;
@@ -106,13 +104,44 @@ pub(super) async fn password_login(
     .await?;
     let user =
         crate::auth::authenticate_with_password(&state.db, &email, &payload.password).await?;
-    let session = crate::auth::create_session(&state.db, &user.id, now_millis()).await?;
-    let access_token = crate::auth::create_access_token(&user, &state.config, now_millis())?;
+    let session =
+        crate::auth::rotate_session(&state.db, &user.id, session_cookie(&headers), now_millis())
+            .await?;
     Ok((
         no_store_with_cookie(&state, session)?,
         Json(AuthenticatedResponse {
             user: auth_user_response(user),
+        }),
+    ))
+}
+
+pub(super) async fn api_token(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
+    payload: Result<Json<PasswordCredentialsRequest>, JsonRejection>,
+) -> AppResult<([(&'static str, &'static str); 1], Json<ApiTokenResponse>)> {
+    let payload = parse_json_payload(payload)?;
+    let email = crate::auth::normalize_email(&payload.email)?;
+    consume_auth_rate_limit(
+        &state,
+        &headers,
+        Some(peer),
+        "api-token",
+        &email,
+        10,
+        5 * 60 * 1_000,
+    )
+    .await?;
+    let user =
+        crate::auth::authenticate_with_password(&state.db, &email, &payload.password).await?;
+    let access_token = crate::auth::create_access_token(&user, &state.config, now_millis())?;
+    Ok((
+        [("cache-control", "no-store")],
+        Json(ApiTokenResponse {
             access_token,
+            token_type: "Bearer",
+            expires_in: crate::auth::API_ACCESS_TOKEN_LIFETIME_SECONDS,
         }),
     ))
 }
@@ -297,6 +326,10 @@ pub(super) async fn password_reset_complete(
         header::SET_COOKIE,
         cookie_header(&state, &session, 30 * 24 * 60 * 60)?,
     );
+    response_headers.append(
+        header::SET_COOKIE,
+        csrf_cookie_header(&state, &crate::auth::random_token(), 30 * 24 * 60 * 60)?,
+    );
     Ok((response_headers, Json(serde_json::json!({"ok": true}))).into_response())
 }
 
@@ -310,7 +343,13 @@ pub(super) async fn account_deletion(
     Json<AcceptedResponse>,
 )> {
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
+    if !crate::auth::session_is_recent(&state.db, session_cookie(&headers), now_millis()).await? {
+        return Err(AppError::Forbidden(
+            "Sign in again before requesting account deletion.".to_owned(),
+        ));
+    }
     consume_auth_rate_limit(
         &state,
         &headers,
@@ -358,19 +397,75 @@ pub(super) async fn account_deletion_verify(
     )
 }
 
+pub(super) async fn account_deletion_status(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<(
+    [(&'static str, &'static str); 1],
+    Json<AccountDeletionStatusResponse>,
+)> {
+    let now = now_millis();
+    let session = session_cookie(&headers);
+    let user = crate::auth::user_for_session(&state.db, session, now).await?;
+    let recent = crate::auth::session_is_recent(&state.db, session, now).await?;
+    let authorization = match (
+        user.as_ref(),
+        recent,
+        cookie_value(&headers, "aaidle_account_deletion"),
+    ) {
+        (Some(user), true, Some(token)) if !user.disabled => {
+            crate::auth::account_deletion_expiry_for_user(&state.db, token, &user.id, now)
+                .await?
+                .map(|expires_at| (mask_email(&user.email), expires_at))
+        }
+        _ => None,
+    };
+    let (masked_email, expires_at) = authorization
+        .map(|(email, expires_at)| (Some(email), Some(expires_at)))
+        .unwrap_or((None, None));
+    Ok((
+        [("cache-control", "no-store")],
+        Json(AccountDeletionStatusResponse {
+            authorized: masked_email.is_some(),
+            masked_email,
+            expires_at,
+        }),
+    ))
+}
+
 pub(super) async fn account_deletion_complete(
     State(state): State<AppState>,
     headers: HeaderMap,
+    payload: Result<Json<AccountDeletionCompletionRequest>, JsonRejection>,
 ) -> AppResult<Response> {
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
+    let payload = parse_json_payload(payload)?;
+    let now = now_millis();
+    let session = session_cookie(&headers);
+    let user = crate::auth::user_for_session(&state.db, session, now)
+        .await?
+        .filter(|user| !user.disabled)
+        .ok_or_else(|| AppError::Unauthorized("Sign in to delete this account.".to_owned()))?;
+    if !crate::auth::session_is_recent(&state.db, session, now).await? {
+        return Err(AppError::Forbidden(
+            "Sign in again before deleting this account.".to_owned(),
+        ));
+    }
     let Some(token) = cookie_value(&headers, "aaidle_account_deletion") else {
         return Err(AppError::Validation(
             "This deletion link is invalid or has expired.".to_owned(),
         ));
     };
-    if !crate::auth::delete_account_with_token(&state.db, token, now_millis()).await? {
+    let expected_confirmation = format!("DELETE {}", mask_email(&user.email));
+    if payload.confirmation != expected_confirmation {
         return Err(AppError::Validation(
-            "This deletion link is invalid or has expired.".to_owned(),
+            "Enter the confirmation phrase exactly as shown.".to_owned(),
+        ));
+    }
+    if !crate::auth::delete_account_with_token(&state.db, token, &user.id, now).await? {
+        return Err(AppError::Validation(
+            "This deletion link is invalid, expired, or belongs to another account.".to_owned(),
         ));
     }
     let mut response_headers = HeaderMap::new();
@@ -380,6 +475,7 @@ pub(super) async fn account_deletion_complete(
         named_cookie_header(&state, "aaidle_account_deletion", "", 0)?,
     );
     response_headers.append(header::SET_COOKIE, cookie_header(&state, "", 0)?);
+    response_headers.append(header::SET_COOKIE, csrf_cookie_header(&state, "", 0)?);
     Ok((StatusCode::NO_CONTENT, response_headers).into_response())
 }
 
@@ -444,7 +540,13 @@ pub(super) async fn oauth_callback(
                 "This account has been disabled.".to_owned(),
             ));
         }
-        let session = crate::auth::create_session(&state.db, &user.id, now_millis()).await?;
+        let session = crate::auth::rotate_session(
+            &state.db,
+            &user.id,
+            session_cookie(&headers),
+            now_millis(),
+        )
+        .await?;
         Ok::<_, AppError>(session)
     }
     .await;
@@ -465,6 +567,14 @@ pub(super) async fn oauth_callback(
     }
 }
 
+fn mask_email(email: &str) -> String {
+    let Some((local, domain)) = email.rsplit_once('@') else {
+        return "***".to_owned();
+    };
+    let first = local.chars().next().unwrap_or('*');
+    format!("{first}***@{domain}")
+}
+
 fn oauth_success_redirect(state: &AppState, session: String) -> AppResult<Response> {
     let mut headers = HeaderMap::new();
     headers.insert(
@@ -481,21 +591,31 @@ fn oauth_success_redirect(state: &AppState, session: String) -> AppResult<Respon
         header::SET_COOKIE,
         cookie_header(state, &session, 30 * 24 * 60 * 60)?,
     );
+    headers.append(
+        header::SET_COOKIE,
+        csrf_cookie_header(state, &crate::auth::random_token(), 30 * 24 * 60 * 60)?,
+    );
     Ok((StatusCode::SEE_OTHER, headers).into_response())
 }
 
 pub(super) async fn me(
     State(state): State<AppState>,
     headers: HeaderMap,
-) -> AppResult<([(&'static str, &'static str); 1], Json<AuthMeResponse>)> {
-    let user = crate::auth::user_for_access_token(
-        &state.db,
-        bearer_token(&headers),
-        &state.config,
-    )
-    .await?;
+) -> AppResult<(HeaderMap, Json<AuthMeResponse>)> {
+    let user = optional_authenticated_user(&state, &headers).await?;
+    let mut response_headers = HeaderMap::new();
+    response_headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    if user.is_some()
+        && session_cookie(&headers).is_some()
+        && cookie_value(&headers, "aaidle_csrf").is_none()
+    {
+        response_headers.append(
+            header::SET_COOKIE,
+            csrf_cookie_header(&state, &crate::auth::random_token(), 30 * 24 * 60 * 60)?,
+        );
+    }
     Ok((
-        [("cache-control", "no-store")],
+        response_headers,
         Json(AuthMeResponse {
             user: user.map(auth_user_response),
         }),
@@ -509,12 +629,7 @@ pub(super) async fn hardcore_status(
     [(&'static str, &'static str); 1],
     Json<HardcoreStatusResponse>,
 )> {
-    let user = crate::auth::user_for_access_token(
-        &state.db,
-        bearer_token(&headers),
-        &state.config,
-    )
-    .await?;
+    let user = optional_authenticated_user(&state, &headers).await?;
     let Some(user) = user.filter(|user| !user.disabled) else {
         return Ok((
             [("cache-control", "no-store")],
@@ -553,14 +668,13 @@ pub(super) async fn hardcore_status(
 pub(super) async fn logout(
     State(state): State<AppState>,
     headers: HeaderMap,
-) -> AppResult<([(header::HeaderName, HeaderValue); 2], StatusCode)> {
+) -> AppResult<(HeaderMap, StatusCode)> {
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
     crate::auth::delete_session(&state.db, session_cookie(&headers)).await?;
-    Ok((
-        [
-            (header::CACHE_CONTROL, HeaderValue::from_static("no-store")),
-            (header::SET_COOKIE, cookie_header(&state, "", 0)?),
-        ],
-        StatusCode::NO_CONTENT,
-    ))
+    let mut response_headers = HeaderMap::new();
+    response_headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response_headers.append(header::SET_COOKIE, cookie_header(&state, "", 0)?);
+    response_headers.append(header::SET_COOKIE, csrf_cookie_header(&state, "", 0)?);
+    Ok((response_headers, StatusCode::NO_CONTENT))
 }

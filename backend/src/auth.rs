@@ -1,8 +1,8 @@
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use hmac::{Hmac, Mac};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use reqwest::{Client, Url};
 use scrypt::{Params, scrypt};
-use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use sqlx::{SqlitePool, Transaction};
@@ -15,9 +15,11 @@ use crate::{
 
 const PASSWORD_KEY_LENGTH: usize = 64;
 const SESSION_LIFETIME_MILLIS: i64 = 30 * 24 * 60 * 60 * 1_000;
+pub const API_ACCESS_TOKEN_LIFETIME_SECONDS: i64 = 15 * 60;
 const EMAIL_VERIFICATION_LIFETIME_MILLIS: i64 = 30 * 60 * 1_000;
 const PASSWORD_RESET_LIFETIME_MILLIS: i64 = 15 * 60 * 1_000;
 const ACCOUNT_DELETION_LIFETIME_MILLIS: i64 = 5 * 60 * 1_000;
+pub const RECENT_AUTHENTICATION_MILLIS: i64 = 15 * 60 * 1_000;
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -41,7 +43,11 @@ pub struct SessionUser {
     pub disabled: bool,
 }
 
-pub fn create_access_token(user: &SessionUser, config: &AppConfig, now_millis: i64) -> AppResult<String> {
+pub fn create_access_token(
+    user: &SessionUser,
+    config: &AppConfig,
+    now_millis: i64,
+) -> AppResult<String> {
     let issued_at = now_millis.div_euclid(1_000);
     encode(
         &Header::new(Algorithm::HS256),
@@ -51,7 +57,7 @@ pub fn create_access_token(user: &SessionUser, config: &AppConfig, now_millis: i
             permission: user.permission.as_str().to_owned(),
             disabled: user.disabled,
             iat: issued_at,
-            exp: issued_at + SESSION_LIFETIME_MILLIS.div_euclid(1_000),
+            exp: issued_at + API_ACCESS_TOKEN_LIFETIME_SECONDS,
         },
         &EncodingKey::from_secret(config.auth_secret.as_bytes()),
     )
@@ -439,6 +445,15 @@ pub async fn authenticate_with_password(
 }
 
 pub async fn create_session(pool: &SqlitePool, user_id: &str, now: i64) -> AppResult<String> {
+    rotate_session(pool, user_id, None, now).await
+}
+
+pub async fn rotate_session(
+    pool: &SqlitePool,
+    user_id: &str,
+    previous_token: Option<&str>,
+    now: i64,
+) -> AppResult<String> {
     let active = sqlx::query_scalar::<_, i64>(
         "SELECT EXISTS(SELECT 1 FROM users WHERE id = ? AND disabled_at IS NULL)",
     )
@@ -451,6 +466,13 @@ pub async fn create_session(pool: &SqlitePool, user_id: &str, now: i64) -> AppRe
         ));
     }
     let token = random_token();
+    let mut transaction = pool.begin().await?;
+    if let Some(previous_token) = previous_token {
+        sqlx::query("DELETE FROM user_sessions WHERE token_hash = ?")
+            .bind(token_hash(previous_token))
+            .execute(&mut *transaction)
+            .await?;
+    }
     sqlx::query(
         "INSERT INTO user_sessions (id, user_id, token_hash, expires_at, created_at, last_seen_at) VALUES (?, ?, ?, ?, ?, ?)",
     )
@@ -460,8 +482,9 @@ pub async fn create_session(pool: &SqlitePool, user_id: &str, now: i64) -> AppRe
     .bind(now + SESSION_LIFETIME_MILLIS)
     .bind(now)
     .bind(now)
-    .execute(pool)
+    .execute(&mut *transaction)
     .await?;
+    transaction.commit().await?;
     Ok(token)
 }
 
@@ -618,15 +641,34 @@ pub async fn reset_password_with_token(
     Ok(Some(user_id))
 }
 
+pub async fn account_deletion_expiry_for_user(
+    pool: &SqlitePool,
+    token: &str,
+    user_id: &str,
+    now: i64,
+) -> AppResult<Option<i64>> {
+    Ok(sqlx::query_scalar::<_, i64>(
+        "SELECT expires_at FROM auth_email_tokens WHERE token_hash = ? AND purpose = 'account-deletion' AND user_id = ? AND expires_at > ?",
+    )
+    .bind(token_hash(token))
+    .bind(user_id)
+    .bind(now)
+    .fetch_optional(pool)
+    .await?)
+}
+
 pub async fn delete_account_with_token(
     pool: &SqlitePool,
     token: &str,
+    user_id: &str,
     now: i64,
 ) -> AppResult<bool> {
     Ok(sqlx::query_scalar::<_, String>(
-        "DELETE FROM users WHERE id = (SELECT user_id FROM auth_email_tokens WHERE token_hash = ? AND purpose = 'account-deletion' AND expires_at > ?) RETURNING id",
+        "DELETE FROM users WHERE id = ? AND id = (SELECT user_id FROM auth_email_tokens WHERE token_hash = ? AND purpose = 'account-deletion' AND user_id = ? AND expires_at > ?) RETURNING id",
     )
+    .bind(user_id)
     .bind(token_hash(token))
+    .bind(user_id)
     .bind(now)
     .fetch_optional(pool)
     .await?
@@ -888,6 +930,25 @@ pub async fn delete_session(pool: &SqlitePool, token: Option<&str>) -> AppResult
         .execute(pool)
         .await?;
     Ok(())
+}
+
+pub async fn session_is_recent(
+    pool: &SqlitePool,
+    token: Option<&str>,
+    now: i64,
+) -> AppResult<bool> {
+    let Some(token) = token else {
+        return Ok(false);
+    };
+    Ok(sqlx::query_scalar::<_, i64>(
+        "SELECT EXISTS(SELECT 1 FROM user_sessions WHERE token_hash = ? AND expires_at > ? AND created_at > ?)",
+    )
+    .bind(token_hash(token))
+    .bind(now)
+    .bind(now - RECENT_AUTHENTICATION_MILLIS)
+    .fetch_one(pool)
+    .await?
+        != 0)
 }
 
 pub async fn user_for_session(

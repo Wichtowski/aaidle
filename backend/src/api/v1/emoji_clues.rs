@@ -8,8 +8,8 @@ use uuid::Uuid;
 
 use crate::{
     dto::{
-        EmojiCluesChallenge, EmojiCluesGameResponse, EmojiCluesGuessRequest,
-        EmojiCluesGuessHistoryResponse, EmojiCluesGuessResponse, EmojiCluesHintsResponse,
+        EmojiCluesChallenge, EmojiCluesGameResponse, EmojiCluesGuessHistoryResponse,
+        EmojiCluesGuessRequest, EmojiCluesGuessResponse, EmojiCluesHintsResponse,
     },
     error::{AppError, AppResult},
     repository,

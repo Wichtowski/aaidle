@@ -130,6 +130,24 @@ describe("v1 API client", () => {
     });
   });
 
+  it("sends the double-submit CSRF token without a browser bearer token", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("document", { cookie: "theme=dark; aaidle_csrf=csrf-token" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiClient.signOut();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/auth/logout",
+      expect.objectContaining({
+        credentials: "include",
+        headers: expect.objectContaining({ "X-AAIdle-CSRF-Token": "csrf-token" }),
+        method: "POST",
+      }),
+    );
+    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty("Authorization");
+  });
+
   it("keeps unauthenticated auth checks anonymous and distinguishes connectivity failures", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
     await expect(apiClient.currentUser()).resolves.toBeNull();

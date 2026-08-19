@@ -17,7 +17,7 @@ use crate::{
     state::AppState,
 };
 
-use super::{assert_same_origin, now_millis, parse_json_payload, session_cookie};
+use super::{assert_csrf, assert_same_origin, now_millis, parse_json_payload, session_cookie};
 
 #[derive(FromRow)]
 struct AdminUserRow {
@@ -118,6 +118,7 @@ pub(super) async fn user_update(
 ) -> AppResult<Json<AdminUserDetailResponse>> {
     let administrator = admin_user_for_request(&state, &headers, true).await?;
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
     if user_id == administrator.id {
         return Err(AppError::validation(
             "You cannot change your own administrator access.",
@@ -173,6 +174,10 @@ pub(super) async fn user_update(
                 .await?;
         }
     }
+    sqlx::query("DELETE FROM user_sessions WHERE user_id = ?")
+        .bind(&user_id)
+        .execute(&mut *transaction)
+        .await?;
     transaction.commit().await?;
     Ok(Json(AdminUserDetailResponse {
         user: load_admin_user_detail(&state, &user_id).await?,
@@ -187,6 +192,7 @@ pub(super) async fn delete_guess(
 ) -> AppResult<Json<AdminUserDetailResponse>> {
     let administrator = admin_user_for_request(&state, &headers, true).await?;
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
     if user_id == administrator.id {
         return Err(AppError::validation(
             "You cannot remove your own saved guesses.",
@@ -280,6 +286,7 @@ pub(super) async fn update_hardcore_soundtrack(
 ) -> AppResult<Json<SoundtrackResponse>> {
     admin_user_for_request(&state, &headers, true).await?;
     assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
     let payload = parse_json_payload(payload)?;
     if payload.url.len() > 2_048 {
         return Err(AppError::validation("url must not exceed 2048 characters"));

@@ -88,31 +88,34 @@ Emoji Clues supports curated `emoji`, `architecture`, `algorithm`, and `operator
 
 ## Session routes
 
-All account mutations require an `Origin` exactly matching `APP_ORIGIN`.
-Session and one-time-token cookies are `HttpOnly`, `SameSite=Lax`, and marked `Secure` in production.
+All browser account mutations require an `Origin` exactly matching `APP_ORIGIN`.
+Authenticated browser mutations additionally use double-submit CSRF protection: the frontend copies the readable `aaidle_csrf` cookie into the `X-AAIdle-CSRF-Token` header. The opaque `aaidle_session` and one-time-token cookies remain `HttpOnly` and `SameSite=Lax`; all authentication cookies are marked `Secure` in production.
 Authentication request limits are persisted in SQLite and keyed by an HMAC of the validated client IP and normalized email address.
 
 `POST /api/v1/auth/register` creates an unverified password account and sends a verification message through Resend.
 It always returns `202` for an existing account to avoid account enumeration.
 In non-production without `RESEND_API_KEY`, the response includes `activationUrl` for local development.
 
-`POST /api/v1/auth/password` creates an `aaidle_session` cookie after password verification.
+`POST /api/v1/auth/password` rotates any existing browser session and creates new `aaidle_session` and CSRF cookies after password verification. It does not return a bearer token.
 `GET /api/v1/auth/me` returns the session account or `null`.
-`POST /api/v1/auth/logout` deletes the session and clears its cookie.
+`POST /api/v1/auth/logout` deletes the session and clears both authentication cookies.
+
+External API clients can exchange password credentials at `POST /api/v1/auth/token`. This endpoint returns a short-lived, 15-minute bearer JWT and does not create a browser session or refresh token. Browser code does not call this endpoint or store JWTs.
 
 `POST /api/v1/auth/email-verification` requests another email-verification message.
 `GET /api/v1/auth/email-verification/verify?token={token}` consumes the one-time token and redirects to the login page.
 
 `POST /api/v1/auth/password-reset` accepts an email address and always responds with `202` after rate limiting.
 `GET /api/v1/auth/password-reset/verify?token={token}` stores the short-lived reset token in an HTTP-only cookie and redirects to the password reset page.
-`POST /api/v1/auth/password-reset/complete` consumes that token, invalidates old sessions, and starts a new session.
+`POST /api/v1/auth/password-reset/complete` consumes that token, invalidates old sessions, and starts a newly rotated session.
 
-`POST /api/v1/auth/account-deletion` requires a session and sends a five-minute confirmation message.
+`POST /api/v1/auth/account-deletion` requires authentication within the previous 15 minutes and sends a five-minute confirmation message.
 `GET /api/v1/auth/account-deletion/verify?token={token}` stores the short-lived confirmation token in an HTTP-only cookie and redirects to the deletion page.
-`POST /api/v1/auth/account-deletion/complete` consumes that token, permanently deletes the account, and clears account cookies.
+`GET /api/v1/auth/account-deletion/status` verifies that the active recent session and deletion token belong to the same account. It returns only authorization state, token expiry, and a masked email address; direct visits to the deletion page redirect back to the profile when authorization is absent.
+`POST /api/v1/auth/account-deletion/complete` requires the exact `DELETE {maskedEmail}` confirmation phrase, same-account recent session, one-time token, Origin, and CSRF token. It atomically deletes the account and clears account cookies.
 
 `GET /api/v1/auth/oauth/github` and `GET /api/v1/auth/oauth/google` start OAuth using a signed state cookie.
-`GET /api/v1/auth/oauth/{provider}/callback` validates that state, exchanges the authorization code, links or creates the persisted identity, and starts a session.
+`GET /api/v1/auth/oauth/{provider}/callback` validates that state, exchanges the authorization code, links or creates the persisted identity, and starts a newly rotated session.
 Both provider credentials must be configured together for a provider to be available.
 
 `GET /api/v1/auth/progress` returns the authenticated account's persisted progress or `null`.
