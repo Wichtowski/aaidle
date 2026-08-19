@@ -16,18 +16,24 @@ import { Toast } from "../ui/Toast";
 import { EmojiClueIcon } from "./emoji-clue-icons";
 import { EmojiCluesHowToPlayDialog } from "./EmojiCluesHowToPlayDialog";
 
-const difficultyLabels: Record<EmojiCluesDifficulty, string> = {
-  normal: "Normal",
-  challenge: "Challenge",
-  hardcore: "Hardcore",
-};
+const emojiCluePools: ReadonlyArray<{
+  difficulty: EmojiCluesDifficulty;
+  pool: 0 | 1 | 2;
+  label: string;
+}> = [
+  { difficulty: "normal", pool: 0, label: "Normal" },
+  { difficulty: "challenge", pool: 1, label: "Challenge" },
+  { difficulty: "hardcore", pool: 2, label: "Hardcore" },
+];
 
 type Guess = { id: string; name: string; isCorrect: boolean };
 type CachedGame = { game: EmojiCluesGamePayload; guesses: Guess[]; query: string };
 
 function clueKey(clue: VisualClue | undefined) {
   if (!clue) return "hidden";
-  return clue.type === "emoji" ? `emoji-${clue.value}` : `icon-${clue.icon}`;
+  if (clue.type === "emoji") return `emoji-${clue.value}`;
+  if (clue.type === "icon") return `icon-${clue.icon}`;
+  return `image-${clue.src}`;
 }
 
 export function EmojiCluesGame() {
@@ -221,6 +227,7 @@ export function EmojiCluesGame() {
 
   const completed = hardcore?.completedCategories ?? [];
   const date = game?.challenge.date ?? utcDate();
+  const selectedPool = emojiCluePools.find((pool) => pool.difficulty === difficulty)!;
   return (
     <main className="page game-page emoji-clues-page">
       <SiteNavbar />
@@ -230,7 +237,7 @@ export function EmojiCluesGame() {
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
           <>
-            Emoji Clues · {date} · {difficultyLabels[difficulty]}
+            Emoji Clues · {date} · {selectedPool.label}
           </>
         }
         title="What AI idea do these clues point to?"
@@ -241,16 +248,16 @@ export function EmojiCluesGame() {
         aria-label="Emoji Clues difficulty"
         data-testid="emoji-difficulty"
       >
-        {(Object.keys(difficultyLabels) as EmojiCluesDifficulty[])
-          .filter((mode) => mode !== "hardcore" || hardcore?.unlocked)
-          .map((mode) => (
+        {emojiCluePools
+          .filter((pool) => pool.difficulty !== "hardcore" || hardcore?.unlocked)
+          .map((pool) => (
             <button
-              className={mode === difficulty ? "is-selected" : undefined}
-              key={mode}
+              className={pool.difficulty === difficulty ? "is-selected" : undefined}
+              key={pool.pool}
               type="button"
-              onClick={() => setDifficulty(mode)}
+              onClick={() => setDifficulty(pool.difficulty)}
             >
-              {difficultyLabels[mode]}
+              {pool.label}
             </button>
           ))}
       </nav>
@@ -296,8 +303,10 @@ export function EmojiCluesGame() {
                     <span className="emoji-clues__clue-face emoji-clues__clue-result">
                       {clue?.type === "emoji" ? (
                         clue.value
-                      ) : clue ? (
+                      ) : clue?.type === "icon" ? (
                         <EmojiClueIcon icon={clue.icon} />
+                      ) : clue?.type === "image" ? (
+                        <img alt={clue.alt ?? ""} loading="lazy" src={clue.src} />
                       ) : null}
                     </span>
                   </div>

@@ -87,73 +87,65 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "anthropic-safety",
-                "minPool": 0,
-                "weight": 4,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🛡️",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📜",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 3
-                    }
-                ]
+            "id": "french-artist",
+            "minPool": 0,
+            "weight": 3,
+            "initialRevealCount": 2,
+            "clues": [
+                {
+                "type": "image",
+                "src": "/emoji-clues/monet.png.webp",
+                "alt": "An impressionist painter",
+                "revealPriority": 1
+                },
+                {
+                "type": "emoji",
+                "value": "🎨",
+                "revealPriority": 2
+                },
+                {
+                "type": "emoji",
+                "value": "💬",
+                "revealPriority": 3
+                },
+                {
+                "type": "emoji",
+                "value": "🧠",
+                "revealPriority": 4
+                }
+            ]
             },
             {
-                "id": "anthropic-human",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🧑",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤝",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "constitution",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "⚖️",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📜",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 3
-                    }
-                ]
+            "id": "constitution",
+            "minPool": 1,
+            "weight": 3,
+            "initialRevealCount": 2,
+            "clues": [
+                {
+                "type": "image",
+                "src": "/emoji-clues/banger-game-2004.png",
+                "alt": "2004 Banger Game",
+                "revealPriority": 1
+                },
+                {
+                "type": "emoji",
+                "value": "⚖️",
+                "revealPriority": 2
+                },
+                {
+                "type": "emoji",
+                "value": "🛡️",
+                "revealPriority": 3
+                },
+                {
+                "type": "emoji",
+                "value": "💬",
+                "revealPriority": 4
+                }
+            ]
             }
         ]
-    },
+        },
     {
         "id": "gemini",
         "name": "Gemini",
@@ -851,45 +843,64 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "cohere-command",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎖️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤝"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    }
-                ]
+            "id": "terminal",
+            "minPool": 0,
+            "weight": 4,
+            "initialRevealCount": 2,
+            "clues": [
+                {
+                "type": "icon",
+                "icon": "command-line",
+                "revealPriority": 1
+                },
+                {
+                "type": "emoji",
+                "value": "⌨️",
+                "revealPriority": 2
+                },
+                {
+                "type": "emoji",
+                "value": "🏢",
+                "revealPriority": 3
+                },
+                {
+                "type": "emoji",
+                "value": "💬",
+                "revealPriority": 4
+                }
+            ]
             },
             {
-                "id": "enterprise",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🏢"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎖️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔗"
-                    }
-                ]
+            "id": "officer",
+            "minPool": 1,
+            "weight": 2,
+            "initialRevealCount": 2,
+            "clues": [
+                {
+                "type": "emoji",
+                "value": "🎖️",
+                "revealPriority": 1
+                },
+                {
+                "type": "image",
+                "src": "/emoji-clues/keyboard-key.webp",
+                "alt": "A keyboard modifier key",
+                "revealPriority": 2
+                },
+                {
+                "type": "emoji",
+                "value": "🏢",
+                "revealPriority": 3
+                },
+                {
+                "type": "emoji",
+                "value": "🤖",
+                "revealPriority": 4
+                }
+            ]
             }
         ]
-    },
+        },
     {
         "id": "aya",
         "name": "Aya",
@@ -1099,56 +1110,76 @@
         ]
     },
     {
-        "id": "pllum",
-        "name": "PLLuM",
-        "aliases": [
-            "Polish Large Language Model"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
+    "id": "pllum",
+    "name": "PLLuM",
+    "aliases": [
+        "Polish Large Language Model"
+    ],
+    "entityKind": "emoji",
+    "categories": [
+        "language-model"
+    ],
+    "minPool": 0,
+    "variants": [
+        {
+        "id": "polish-fruit",
         "minPool": 0,
-        "variants": [
+        "weight": 4,
+        "initialRevealCount": 2,
+        "clues": [
             {
-                "id": "polish-plum",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🍑"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    }
-                ]
+            "type": "image",
+            "src": "/emoji-clues/purple-fruit.png",
+            "alt": "A purple stone fruit",
+            "revealPriority": 1
             },
             {
-                "id": "polish-language",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🗣️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
+            "type": "emoji",
+            "value": "🇵🇱",
+            "revealPriority": 2
+            },
+            {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 3
+            },
+            {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 4
             }
         ]
+        },
+        {
+        "id": "polish-language",
+        "minPool": 1,
+        "weight": 2,
+        "initialRevealCount": 2,
+        "clues": [
+            {
+            "type": "image",
+            "src": "/emoji-clues/polish-text.png",
+            "alt": "bober kurwa",
+            "revealPriority": 1
+            },
+            {
+            "type": "emoji",
+            "value": "🗣️",
+            "revealPriority": 2
+            },
+            {
+            "type": "emoji",
+            "value": "🇵🇱",
+            "revealPriority": 3
+            },
+            {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 4
+            }
+        ]
+        }
+    ]
     },
     {
         "id": "bert",
@@ -2189,6 +2220,50 @@
                         "type": "emoji",
                         "value": "🖼️"
                     }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "nvidia",
+        "name": "NVIDIA",
+        "aliases": ["Nvidia"],
+        "entityKind": "technology",
+        "categories": ["computer-vision", "hardware"],
+        "minPool": 0,
+        "variants": [
+            {
+                "id": "jensen-green",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 3,
+                "clues": [
+                    {"type": "image", "src": "/emoji-clues/jacket.png", "alt": "Black leather jacket", "revealPriority": 1},
+                    {"type": "emoji", "value": "🟢", "revealPriority": 2},
+                    {"type": "emoji", "value": "👁️", "revealPriority": 3},
+                    {"type": "image", "src": "/emoji-clues/rtx.png", "alt": "GPU close-up", "revealPriority": 4}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "cuda",
+        "name": "CUDA",
+        "aliases": ["NVIDIA CUDA"],
+        "entityKind": "technology",
+        "categories": ["hardware"],
+        "minPool": 0,
+        "variants": [
+            {
+                "id": "barracuda",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {"type": "image", "src": "/emoji-clues/barra.png", "alt": "Barracuda fish", "revealPriority": 1},
+                    {"type": "emoji", "value": "🟢", "revealPriority": 2},
+                    {"type": "emoji", "value": "⚡", "revealPriority": 3},
+                    {"type": "image", "src": "/emoji-clues/rtx.png", "alt": "Parallel GPU compute", "revealPriority": 4}
                 ]
             }
         ]

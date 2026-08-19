@@ -131,7 +131,7 @@ pub async fn hints(
         if solved {
             resolved.clues.len()
         } else {
-            1 + wrong
+            resolved.initial_reveal_count + wrong
         },
     ))
 }
@@ -246,7 +246,8 @@ pub async fn process_guess(
         if is_correct {
             resolved.clues.len()
         } else {
-            1 + wrong_guess_count(&mut *connection, input.challenge_id, input.player_id).await?
+            resolved.initial_reveal_count
+                + wrong_guess_count(&mut *connection, input.challenge_id, input.player_id).await?
         },
     );
     transaction.commit().await?;
@@ -360,7 +361,7 @@ fn entity_pool(entity: &VisualEntity) -> AppResult<u8> {
     Ok(entity.min_pool)
 }
 fn initial_clues(resolved: &ResolvedVisualClueVariant) -> Vec<VisualClue> {
-    revealed_clues(resolved, 1)
+    revealed_clues(resolved, resolved.initial_reveal_count)
 }
 fn revealed_clues(resolved: &ResolvedVisualClueVariant, count: usize) -> Vec<VisualClue> {
     match resolved.reveal_mode {

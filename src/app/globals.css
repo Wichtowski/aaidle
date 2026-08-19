@@ -4120,8 +4120,26 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   transform: rotateY(180deg);
 }
 .emoji-clues__clue-result img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.emoji-clues__clue-result > img:not([src*="/emoji-clues/"]) {
   width: min(72px, 72%);
+  height: auto;
   max-height: 70px;
+}
+@media (max-width: 520px) {
+  .emoji-clues__clues {
+    grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+    gap: 8px;
+  }
+  .emoji-clues__clue,
+  .emoji-clues__clue-inner {
+    min-height: 96px;
+  }
 }
 .emoji-clues__clue--hidden {
   font-family: inherit;

@@ -571,6 +571,8 @@ body.hell-mode .admin-soundtrack-settings__saved {
   margin: 12px 0 0;
   touch-action: none;
   cursor: grab;
+  -webkit-user-select: none;
+  -moz-user-select: none;
   user-select: none;
 }
 .admin-trajectory:active {

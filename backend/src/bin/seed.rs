@@ -48,6 +48,7 @@ async fn main() -> AppResult<()> {
     }
     let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
         serde_json::from_str(EMOJI_CLUES)?;
+    aidle_api::domain::visual_clues::validate_seed(&visual_clues)?;
     for entity in visual_clues {
         sqlx::query(
             "INSERT INTO visual_clue_entities \
@@ -65,6 +66,7 @@ async fn main() -> AppResult<()> {
             aidle_api::domain::visual_clues::EntityKind::Architecture => "architecture",
             aidle_api::domain::visual_clues::EntityKind::Algorithm => "algorithm",
             aidle_api::domain::visual_clues::EntityKind::Operator => "operator",
+            aidle_api::domain::visual_clues::EntityKind::Technology => "technology",
         })
         .bind(serde_json::to_string(&entity.categories)?)
         .bind(i64::from(entity.min_pool))

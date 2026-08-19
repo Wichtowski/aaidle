@@ -14,12 +14,6 @@ test("homepage meets the Lighthouse performance threshold", async ({ lighthouseP
     port,
     thresholds: { performance: performanceThreshold },
     opts: { disableStorageReset: true },
-    config: {
-      extends: "lighthouse:default",
-      settings: {
-        onlyCategories: ["performance"],
-      },
-    },
     reports: {
       formats: { html: true, json: true },
       name: "homepage",

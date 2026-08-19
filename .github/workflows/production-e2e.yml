@@ -46,13 +46,18 @@ jobs:
           cache: ${{ env.PACKAGE_MANAGER }}
 
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
+        id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ env.PW_CACHE_DIR }}
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: ${{ env.INSTALL_DEPENDENCIES }} and Playwright browsers
-        run: pnpm run test:install
+      - name: ${{ env.INSTALL_DEPENDENCIES }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium and system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run release readiness tests
         env:
@@ -81,11 +86,17 @@ jobs:
           cache: ${{ env.PACKAGE_MANAGER }}
 
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
+        id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ env.PW_CACHE_DIR }}
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm run test:install
+      - name: ${{ env.INSTALL_DEPENDENCIES }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium and system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run browser end-to-end tests
         env:
@@ -167,12 +178,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
+        id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ env.PW_CACHE_DIR }}
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: ${{ env.INSTALL_DEPENDENCIES }} and Playwright browsers
-        run: pnpm run test:install
+      - name: ${{ env.INSTALL_DEPENDENCIES }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium and system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run accessibility tests
         id: accessibility-tests
