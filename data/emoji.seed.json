@@ -38,7 +38,7 @@
                 "id": "altman",
                 "minPool": 0,
                 "weight": 1,
-                "revealMode": "all-at-once",
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "icon",
@@ -87,65 +87,65 @@
         "minPool": 0,
         "variants": [
             {
-            "id": "french-artist",
-            "minPool": 0,
-            "weight": 3,
-            "initialRevealCount": 2,
-            "clues": [
-                {
-                "type": "image",
-                "src": "/emoji-clues/monet.png.webp",
-                "alt": "An impressionist painter",
-                "revealPriority": 1
-                },
-                {
-                "type": "emoji",
-                "value": "🎨",
-                "revealPriority": 2
-                },
-                {
-                "type": "emoji",
-                "value": "💬",
-                "revealPriority": 3
-                },
-                {
-                "type": "emoji",
-                "value": "🧠",
-                "revealPriority": 4
-                }
-            ]
+                "id": "french-artist",
+                "minPool": 0,
+                "weight": 3,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/monet.png.webp",
+                        "alt": "An impressionist painter",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🎨",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "💬",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🧠",
+                        "revealPriority": 4
+                    }
+                ]
             },
             {
-            "id": "constitution",
-            "minPool": 1,
-            "weight": 3,
-            "initialRevealCount": 2,
-            "clues": [
-                {
-                "type": "image",
-                "src": "/emoji-clues/banger-game-2004.png",
-                "alt": "2004 Banger Game",
-                "revealPriority": 1
-                },
-                {
-                "type": "emoji",
-                "value": "⚖️",
-                "revealPriority": 2
-                },
-                {
-                "type": "emoji",
-                "value": "🛡️",
-                "revealPriority": 3
-                },
-                {
-                "type": "emoji",
-                "value": "💬",
-                "revealPriority": 4
-                }
-            ]
+                "id": "constitution",
+                "minPool": 1,
+                "weight": 3,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/banger-game-2004.png",
+                        "alt": "2004 Banger Game",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "⚖️",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🛡️",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "💬",
+                        "revealPriority": 4
+                    }
+                ]
             }
         ]
-        },
+    },
     {
         "id": "gemini",
         "name": "Gemini",
@@ -159,68 +159,74 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "twins-vision",
+                "id": "twins",
                 "minPool": 0,
-                "weight": 4,
+                "weight": 5,
+                "initialRevealCount": 2,
                 "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/stars.webp",
+                        "alt": "A pair of identical stars",
+                        "revealPriority": 1
+                    },
                     {
                         "type": "emoji",
                         "value": "♊",
-                        "revealPriority": 1
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🔎",
+                        "revealPriority": 3
                     },
                     {
                         "type": "emoji",
                         "value": "👁️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎥",
-                        "revealPriority": 3
+                        "revealPriority": 4
                     }
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": "google",
+        "name": "Google",
+        "aliases": [
+            "Google Bard",
+            "Google Gemini"
+        ],
+        "entityKind": "emoji",
+        "categories": [
+            "language-model"
+        ],
+        "minPool": 0,
+        "variants": [
             {
-                "id": "search-us",
+                "id": "google-gemini",
                 "minPool": 0,
                 "weight": 3,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🔎",
+                        "value": "🔵",
                         "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "🇺🇸",
+                        "value": "🔴",
                         "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "♊",
+                        "value": "🟡",
                         "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "multimodal",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔎",
-                        "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "🎧",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎥",
-                        "revealPriority": 3
+                        "value": "🟢",
+                        "revealPriority": 4
                     }
                 ]
             }
@@ -291,60 +297,155 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "llama-meta",
+                "id": "andes-wool",
                 "minPool": 0,
                 "weight": 4,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🦙",
+                        "value": "🧶",
                         "revealPriority": 1
                     },
                     {
-                        "type": "icon",
-                        "icon": "meta",
-                        "revealPriority": 2
-                    }
-                ]
-            },
-            {
-                "id": "open-llama",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
                         "type": "emoji",
-                        "value": "🦙",
-                        "revealPriority": 1
+                        "value": "∞",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
                         "value": "🔓",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💻",
                         "revealPriority": 3
                     }
                 ]
             },
             {
-                "id": "infinity-book",
-                "minPool": 1,
-                "weight": 2,
+                "id": "herd-meta",
+                "minPool": 0,
+                "weight": 3,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "♾️"
+                        "value": "🦙",
+                        "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "📖"
+                        "value": "🦙",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "🧠"
+                        "value": "∞",
+                        "revealPriority": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "meta",
+        "name": "Meta",
+        "aliases": [
+            "Facebook",
+            "Meta AI",
+            "Meta Platforms"
+        ],
+        "entityKind": "emoji",
+        "categories": [
+            "language-model",
+            "technology"
+        ],
+        "minPool": 0,
+        "variants": [
+            {
+                "id": "zuck-meme",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🦎",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "♾️",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🥽",
+                        "revealPriority": 4
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "👥",
+                        "revealPriority": 5
+                    }
+                ]
+            },
+            {
+                "id": "metaverse",
+                "minPool": 0,
+                "weight": 3,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/vr.png",
+                        "alt": "A person using a VR headset",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "♾️",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🌐",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "👤",
+                        "revealPriority": 4
+                    }
+                ]
+            },
+            {
+                "id": "social-empire",
+                "minPool": 0,
+                "weight": 2,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "🟦",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "𝐟",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "♾️",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🤖",
+                        "revealPriority": 4
                     }
                 ]
             }
@@ -437,40 +538,30 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "mixture-experts",
+                "id": "mixed-experts",
                 "minPool": 0,
-                "weight": 3,
+                "weight": 4,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🥣"
+                        "value": "🎛️",
+                        "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "👥"
+                        "value": "👨‍🔬👩‍🔬",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "🇫🇷"
-                    }
-                ]
-            },
-            {
-                "id": "wind-mixture",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌬️"
+                        "value": "🇫🇷",
+                        "revealPriority": 3
                     },
                     {
                         "type": "emoji",
-                        "value": "🔀"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
+                        "value": "🎨",
+                        "revealPriority": 3
                     }
                 ]
             }
@@ -489,67 +580,35 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "china-whale",
+                "id": "deep-seek",
                 "minPool": 0,
-                "weight": 4,
+                "weight": 5,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🇨🇳",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
+                        "value": "⏬",
                         "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "🔍",
+                        "value": "🤿",
                         "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🔭",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
                         "value": "🐋",
                         "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "whale-coding",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "💻"
                     },
                     {
                         "type": "emoji",
-                        "value": "🇨🇳"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🐳"
-                    }
-                ]
-            },
-            {
-                "id": "search-china",
-                "minPool": 1,
-                "weight": 1,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🐋"
+                        "value": "🇨🇳",
+                        "revealPriority": 5
                     }
                 ]
             }
@@ -717,9 +776,10 @@
         "minPool": 0,
         "variants": [
             {
-                "id": "moonshot-china",
+                "id": "moon-shot",
                 "minPool": 0,
-                "weight": 4,
+                "weight": 5,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
@@ -728,51 +788,46 @@
                     },
                     {
                         "type": "emoji",
-                        "value": "🇨🇳",
+                        "value": "🏀",
                         "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "🤖",
+                        "value": "🇨🇳",
                         "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🧠",
+                        "revealPriority": 4
                     }
                 ]
             },
             {
-                "id": "rocket-moon",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🚀"
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "moon"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳"
-                    }
-                ]
-            },
-            {
-                "id": "moon-code",
+                "id": "lunar-launch",
                 "minPool": 1,
-                "weight": 1,
+                "weight": 3,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🌙"
+                        "value": "🌕",
+                        "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "🧠"
+                        "value": "🚀",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "💻"
+                        "value": "🇨🇳",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "💻",
+                        "revealPriority": 4
                     }
                 ]
             }
@@ -800,27 +855,8 @@
                         "value": "φ"
                     },
                     {
-                        "type": "icon",
-                        "icon": "windows"
-                    },
-                    {
                         "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            },
-            {
-                "id": "small-language",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "windows"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤏"
+                        "value": "🪟"
                     },
                     {
                         "type": "emoji",
@@ -843,64 +879,64 @@
         "minPool": 0,
         "variants": [
             {
-            "id": "terminal",
-            "minPool": 0,
-            "weight": 4,
-            "initialRevealCount": 2,
-            "clues": [
-                {
-                "type": "icon",
-                "icon": "command-line",
-                "revealPriority": 1
-                },
-                {
-                "type": "emoji",
-                "value": "⌨️",
-                "revealPriority": 2
-                },
-                {
-                "type": "emoji",
-                "value": "🏢",
-                "revealPriority": 3
-                },
-                {
-                "type": "emoji",
-                "value": "💬",
-                "revealPriority": 4
-                }
-            ]
+                "id": "terminal",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "icon",
+                        "icon": "command-line",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "⌨️",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🏢",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "💬",
+                        "revealPriority": 4
+                    }
+                ]
             },
             {
-            "id": "officer",
-            "minPool": 1,
-            "weight": 2,
-            "initialRevealCount": 2,
-            "clues": [
-                {
-                "type": "emoji",
-                "value": "🎖️",
-                "revealPriority": 1
-                },
-                {
-                "type": "image",
-                "src": "/emoji-clues/keyboard-key.webp",
-                "alt": "A keyboard modifier key",
-                "revealPriority": 2
-                },
-                {
-                "type": "emoji",
-                "value": "🏢",
-                "revealPriority": 3
-                },
-                {
-                "type": "emoji",
-                "value": "🤖",
-                "revealPriority": 4
-                }
-            ]
+                "id": "officer",
+                "minPool": 1,
+                "weight": 2,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "🎖️",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/keyboard-key.png",
+                        "alt": "A keyboard modifier key",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🏢",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🤖",
+                        "revealPriority": 4
+                    }
+                ]
             }
         ]
-        },
+    },
     {
         "id": "aya",
         "name": "Aya",
@@ -1110,76 +1146,76 @@
         ]
     },
     {
-    "id": "pllum",
-    "name": "PLLuM",
-    "aliases": [
-        "Polish Large Language Model"
-    ],
-    "entityKind": "emoji",
-    "categories": [
-        "language-model"
-    ],
-    "minPool": 0,
-    "variants": [
-        {
-        "id": "polish-fruit",
+        "id": "pllum",
+        "name": "PLLuM",
+        "aliases": [
+            "Polish Large Language Model"
+        ],
+        "entityKind": "emoji",
+        "categories": [
+            "language-model"
+        ],
         "minPool": 0,
-        "weight": 4,
-        "initialRevealCount": 2,
-        "clues": [
+        "variants": [
             {
-            "type": "image",
-            "src": "/emoji-clues/purple-fruit.png",
-            "alt": "A purple stone fruit",
-            "revealPriority": 1
+                "id": "polish-fruit",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/purple-fruit.png",
+                        "alt": "A purple stone fruit",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🇵🇱",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "💬",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🧠",
+                        "revealPriority": 4
+                    }
+                ]
             },
             {
-            "type": "emoji",
-            "value": "🇵🇱",
-            "revealPriority": 2
-            },
-            {
-            "type": "emoji",
-            "value": "💬",
-            "revealPriority": 3
-            },
-            {
-            "type": "emoji",
-            "value": "🧠",
-            "revealPriority": 4
+                "id": "polish-language",
+                "minPool": 1,
+                "weight": 2,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/polish-text.png",
+                        "alt": "bober kurwa",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🗣️",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🇵🇱",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🤖",
+                        "revealPriority": 4
+                    }
+                ]
             }
         ]
-        },
-        {
-        "id": "polish-language",
-        "minPool": 1,
-        "weight": 2,
-        "initialRevealCount": 2,
-        "clues": [
-            {
-            "type": "image",
-            "src": "/emoji-clues/polish-text.png",
-            "alt": "bober kurwa",
-            "revealPriority": 1
-            },
-            {
-            "type": "emoji",
-            "value": "🗣️",
-            "revealPriority": 2
-            },
-            {
-            "type": "emoji",
-            "value": "🇵🇱",
-            "revealPriority": 3
-            },
-            {
-            "type": "emoji",
-            "value": "🤖",
-            "revealPriority": 4
-            }
-        ]
-        }
-    ]
     },
     {
         "id": "bert",
@@ -1299,26 +1335,34 @@
         "variants": [
             {
                 "id": "speech-quiet",
-                "minPool": 1,
-                "weight": 3,
+                "minPool": 0,
+                "weight": 4,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "🤫"
+                        "value": "🤫",
+                        "revealPriority": 1
                     },
                     {
                         "type": "emoji",
-                        "value": "🎙️"
+                        "value": "📝",
+                        "revealPriority": 2
                     },
                     {
                         "type": "emoji",
-                        "value": "📝"
+                        "value": "🎙️",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "📝",
+                        "revealPriority": 4
                     }
                 ]
             },
             {
                 "id": "audio-transcribe",
-                "minPool": 1,
+                "minPool": 0,
                 "weight": 2,
                 "clues": [
                     {
@@ -1458,7 +1502,12 @@
                 "id": "look-once",
                 "minPool": 1,
                 "weight": 3,
+                "initialRevealCount": 2,
                 "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "🫵"
+                    },
                     {
                         "type": "emoji",
                         "value": "👁️"
@@ -1475,20 +1524,29 @@
             },
             {
                 "id": "fast-boxes",
-                "minPool": 1,
+                "minPool": 0,
                 "weight": 2,
+                "initialRevealCount": 1,
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "⚡"
+                        "value": "🤙"
                     },
                     {
                         "type": "emoji",
-                        "value": "📦"
+                        "value": "𝐘"
                     },
                     {
                         "type": "emoji",
-                        "value": "🖼️"
+                        "value": "𝐎"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "𝑳"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "𝒪"
                     }
                 ]
             }
@@ -1913,58 +1971,6 @@
         ]
     },
     {
-        "id": "vae",
-        "name": "VAE",
-        "aliases": [
-            "Variational Autoencoder"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "neural-network"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "variational-autoencoder",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎲"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📦"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "↔️"
-                    }
-                ]
-            },
-            {
-                "id": "latent-space",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌌"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "id": "random-forest",
         "name": "Random Forest",
         "aliases": [
@@ -2227,9 +2233,14 @@
     {
         "id": "nvidia",
         "name": "NVIDIA",
-        "aliases": ["Nvidia"],
+        "aliases": [
+            "Nvidia"
+        ],
         "entityKind": "technology",
-        "categories": ["computer-vision", "hardware"],
+        "categories": [
+            "computer-vision",
+            "hardware"
+        ],
         "minPool": 0,
         "variants": [
             {
@@ -2238,10 +2249,28 @@
                 "weight": 4,
                 "initialRevealCount": 3,
                 "clues": [
-                    {"type": "image", "src": "/emoji-clues/jacket.png", "alt": "Black leather jacket", "revealPriority": 1},
-                    {"type": "emoji", "value": "🟢", "revealPriority": 2},
-                    {"type": "emoji", "value": "👁️", "revealPriority": 3},
-                    {"type": "image", "src": "/emoji-clues/rtx.png", "alt": "GPU close-up", "revealPriority": 4}
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/jacket.png",
+                        "alt": "Black leather jacket",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🟢",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "👁️",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/rtx.png",
+                        "alt": "GPU close-up",
+                        "revealPriority": 4
+                    }
                 ]
             }
         ]
@@ -2249,9 +2278,13 @@
     {
         "id": "cuda",
         "name": "CUDA",
-        "aliases": ["NVIDIA CUDA"],
+        "aliases": [
+            "NVIDIA CUDA"
+        ],
         "entityKind": "technology",
-        "categories": ["hardware"],
+        "categories": [
+            "hardware"
+        ],
         "minPool": 0,
         "variants": [
             {
@@ -2260,10 +2293,28 @@
                 "weight": 4,
                 "initialRevealCount": 2,
                 "clues": [
-                    {"type": "image", "src": "/emoji-clues/barra.png", "alt": "Barracuda fish", "revealPriority": 1},
-                    {"type": "emoji", "value": "🟢", "revealPriority": 2},
-                    {"type": "emoji", "value": "⚡", "revealPriority": 3},
-                    {"type": "image", "src": "/emoji-clues/rtx.png", "alt": "Parallel GPU compute", "revealPriority": 4}
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/barra.png",
+                        "alt": "Barracuda fish",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🟢",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "⚡",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "image",
+                        "src": "/emoji-clues/rtx.png",
+                        "alt": "Parallel GPU compute",
+                        "revealPriority": 4
+                    }
                 ]
             }
         ]

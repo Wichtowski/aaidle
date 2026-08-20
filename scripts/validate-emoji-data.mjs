@@ -33,7 +33,6 @@ for (const entity of pool) {
     variants.add(variant.id);
     if (!Number.isInteger(variant.weight) || variant.weight <= 0) fail(`${entity.id}/${variant.id} has non-positive weight`);
     if (![0, 1, 2].includes(variant.minPool) || variant.minPool < entity.minPool) fail(`${entity.id}/${variant.id} has invalid minPool`);
-    if (variant.revealMode && !["progressive", "all-at-once"].includes(variant.revealMode)) fail(`${entity.id}/${variant.id} has invalid revealMode`);
     if (!Array.isArray(variant.clues) || variant.clues.length < 2) fail(`${entity.id}/${variant.id} needs at least two clues`);
     if (variant.initialRevealCount !== undefined && (!Number.isInteger(variant.initialRevealCount) || variant.initialRevealCount <= 0 || variant.initialRevealCount > variant.clues.length)) fail(`${entity.id}/${variant.id} has invalid initialRevealCount`);
     const sequence = variant.clues.map((clue) => {

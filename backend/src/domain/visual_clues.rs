@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, AppResult};
@@ -15,6 +17,45 @@ pub struct VisualClueEntity {
     pub variants: Vec<VisualClueVariant>,
 }
 
+#[derive(Clone, Debug)]
+pub struct VisualClueCatalog {
+    entities: Vec<VisualClueEntity>,
+    entity_indexes: HashMap<String, usize>,
+}
+
+impl VisualClueCatalog {
+    pub fn load() -> AppResult<Self> {
+        let entities: Vec<VisualClueEntity> =
+            serde_json::from_str(include_str!("../../../data/emoji.seed.json"))?;
+        validate_seed(&entities)?;
+        let mut entity_indexes = HashMap::with_capacity(entities.len());
+        for (index, entity) in entities.iter().enumerate() {
+            if entity_indexes.insert(entity.id.clone(), index).is_some() {
+                return Err(AppError::config(format!(
+                    "Duplicate Emoji Clues entity ID: {}",
+                    entity.id
+                )));
+            }
+        }
+        Ok(Self {
+            entities,
+            entity_indexes,
+        })
+    }
+
+    pub fn entity(&self, id: &str) -> Option<&VisualClueEntity> {
+        self.entity_indexes
+            .get(id)
+            .and_then(|index| self.entities.get(*index))
+    }
+
+    pub fn eligible(&self, pool: u8) -> impl Iterator<Item = &VisualClueEntity> {
+        self.entities
+            .iter()
+            .filter(move |entity| entity.min_pool <= pool)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 pub enum EntityKind {
@@ -23,6 +64,18 @@ pub enum EntityKind {
     Algorithm,
     Operator,
     Technology,
+}
+
+impl EntityKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Emoji => "emoji",
+            Self::Architecture => "architecture",
+            Self::Algorithm => "algorithm",
+            Self::Operator => "operator",
+            Self::Technology => "technology",
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -46,19 +99,9 @@ pub struct VisualClueVariant {
     #[serde(default)]
     pub min_pool: u8,
     pub weight: u32,
-    #[serde(default)]
-    pub reveal_mode: RevealMode,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub initial_reveal_count: Option<usize>,
     pub clues: Vec<VisualClue>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
-#[serde(rename_all = "kebab-case")]
-pub enum RevealMode {
-    #[default]
-    Progressive,
-    AllAtOnce,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -68,6 +111,7 @@ pub enum VisualClue {
         value: String,
         #[serde(skip_serializing)]
         meaning: Option<String>,
+        #[serde(rename = "revealPriority")]
         #[serde(skip_serializing_if = "Option::is_none")]
         reveal_priority: Option<i32>,
     },
@@ -75,6 +119,7 @@ pub enum VisualClue {
         icon: String,
         #[serde(skip_serializing)]
         meaning: Option<String>,
+        #[serde(rename = "revealPriority")]
         #[serde(skip_serializing_if = "Option::is_none")]
         reveal_priority: Option<i32>,
     },
@@ -82,6 +127,7 @@ pub enum VisualClue {
         src: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         alt: Option<String>,
+        #[serde(rename = "revealPriority")]
         #[serde(skip_serializing_if = "Option::is_none")]
         reveal_priority: Option<i32>,
     },
@@ -106,7 +152,6 @@ impl VisualClue {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ResolvedVisualClueVariant {
     pub variant_id: String,
-    pub reveal_mode: RevealMode,
     pub initial_reveal_count: usize,
     pub clues: Vec<VisualClue>,
 }
@@ -122,11 +167,15 @@ pub fn resolve_variant(
         .ok_or_else(|| AppError::Unavailable("Visual Clue variant is unavailable.".to_owned()))?;
     // A missing priority falls back to its position in the seed. Stable sorting preserves ties.
     let mut indexed_clues = variant.clues.iter().cloned().enumerate().collect::<Vec<_>>();
-    indexed_clues.sort_by_key(|(index, clue)| clue.reveal_priority().unwrap_or(*index as i32 + 1));
+    indexed_clues.sort_by_key(|(index, clue)| {
+        (
+            clue.reveal_priority().is_none(),
+            clue.reveal_priority().unwrap_or(*index as i32 + 1),
+        )
+    });
     let clues = indexed_clues.into_iter().map(|(_, clue)| clue).collect();
     Ok(ResolvedVisualClueVariant {
         variant_id: variant.id.clone(),
-        reveal_mode: variant.reveal_mode.clone(),
         initial_reveal_count: variant.initial_reveal_count.unwrap_or(1),
         clues,
     })
@@ -232,6 +281,18 @@ mod tests {
     }
 
     #[test]
+    fn catalog_loads_entities_once_and_filters_by_pool() {
+        let catalog = VisualClueCatalog::load().expect("catalog loads");
+
+        let nvidia = catalog.entity("nvidia").expect("NVIDIA is seeded");
+        assert_eq!(nvidia.name, "NVIDIA");
+        assert!(catalog
+            .eligible(0)
+            .all(|entity| entity.min_pool == 0));
+        assert!(catalog.eligible(2).count() > catalog.eligible(0).count());
+    }
+
+    #[test]
     fn weighted_variant_selection_is_deterministic_and_respects_the_pool() {
         let entity = VisualClueEntity {
             id: "test".to_owned(),
@@ -245,7 +306,6 @@ mod tests {
                     id: "normal".to_owned(),
                     min_pool: 0,
                     weight: 4,
-                    reveal_mode: RevealMode::Progressive,
                     initial_reveal_count: None,
                     clues: vec![],
                 },
@@ -253,7 +313,6 @@ mod tests {
                     id: "hard".to_owned(),
                     min_pool: 1,
                     weight: 1,
-                    reveal_mode: RevealMode::Progressive,
                     initial_reveal_count: None,
                     clues: vec![],
                 },

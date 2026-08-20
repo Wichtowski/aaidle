@@ -106,7 +106,6 @@ export type EmojiCluesGamePayload = {
     difficulty: EmojiCluesDifficulty;
     expiresAt: string;
     clues: VisualClue[];
-    revealMode: "progressive" | "all-at-once";
     maximumClues: number;
   };
   entities: Array<{ id: string; name: string; aliases: string[]; entityKind: string }>;

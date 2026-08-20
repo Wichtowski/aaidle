@@ -774,7 +774,7 @@ pub async fn classic_guess_history(
     )
     .bind(challenge_id.to_string())
     .bind(player_id.to_string())
-    .fetch_all(pool)
+    .fetch_all(&mut *connection)
     .await?;
 
     let mut guesses = Vec::with_capacity(stored.len());

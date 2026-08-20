@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use crate::{
     domain::visual_clues::{
-        ResolvedVisualClueVariant, RevealMode, VisualClue, VisualClueEntity, resolve_variant,
-        stable_hash, weighted_variant_id,
+        ResolvedVisualClueVariant, VisualClue, VisualClueCatalog, VisualClueEntity,
+        resolve_variant, stable_hash, weighted_variant_id,
     },
     dto::{EmojiCluesGuessHistoryEntry, PlayerModeStats},
     error::{AppError, AppResult},
@@ -23,22 +23,11 @@ pub struct VisualChallengeRecord {
     pub variant_id: String,
 }
 
-#[derive(Clone, Debug)]
-pub struct VisualEntity {
-    pub id: String,
-    pub name: String,
-    pub aliases: Vec<String>,
-    pub entity_kind: String,
-    pub min_pool: u8,
-    definition: VisualClueEntity,
-}
-
 pub struct VisualGameData {
     pub challenge: VisualChallengeRecord,
     pub clues: Vec<VisualClue>,
-    pub reveal_mode: RevealMode,
     pub maximum_clues: usize,
-    pub entities: Vec<VisualEntity>,
+    pub entities: Vec<VisualClueEntity>,
     pub completion_count: i64,
 }
 
@@ -51,22 +40,12 @@ pub struct VisualGuessInput {
 }
 
 pub struct VisualGuessOutcome {
-    pub entity: VisualEntity,
+    pub entity: VisualClueEntity,
     pub is_correct: bool,
     pub attempt_number: u16,
     pub completion_count: i64,
     pub player_stats: PlayerModeStats,
     pub clues: Vec<VisualClue>,
-}
-
-#[derive(FromRow)]
-struct EntityRow {
-    id: String,
-    name: String,
-    aliases_json: String,
-    entity_kind: String,
-    min_pool: i64,
-    entity_json: String,
 }
 
 #[derive(FromRow)]
@@ -87,22 +66,22 @@ pub fn difficulty_pool(value: &str) -> Option<u8> {
 
 pub async fn game(
     pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
     date: &str,
     difficulty: &str,
     secret: &str,
 ) -> AppResult<VisualGameData> {
-    let challenge = ensure_challenge(pool, date, difficulty, secret).await?;
-    let entity = entity_by_id(pool, &challenge.answer_entity_id)
-        .await?
+    let challenge = ensure_challenge(pool, catalog, date, difficulty, secret).await?;
+    let entity = catalog
+        .entity(&challenge.answer_entity_id)
         .ok_or_else(|| AppError::Unavailable("Visual Clue answer is unavailable.".to_owned()))?;
-    let resolved = resolve_variant(&entity.definition, &challenge.variant_id)?;
+    let resolved = resolve_variant(entity, &challenge.variant_id)?;
     let pool_rank = difficulty_pool(difficulty).expect("validated difficulty");
-    let entities = eligible_entities(pool, pool_rank).await?;
+    let entities = catalog.eligible(pool_rank).cloned().collect();
     Ok(VisualGameData {
         completion_count: completion_count(pool, &challenge.id).await?,
         challenge,
         clues: initial_clues(&resolved),
-        reveal_mode: resolved.reveal_mode,
         maximum_clues: resolved.clues.len(),
         entities,
     })
@@ -110,16 +89,17 @@ pub async fn game(
 
 pub async fn hints(
     pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
     challenge_id: Uuid,
     player_id: Uuid,
 ) -> AppResult<Vec<VisualClue>> {
     let challenge = challenge_by_id(pool, challenge_id)
         .await?
         .ok_or_else(|| AppError::NotFound("Emoji Clues challenge not found.".to_owned()))?;
-    let entity = entity_by_id(pool, &challenge.answer_entity_id)
-        .await?
+    let entity = catalog
+        .entity(&challenge.answer_entity_id)
         .ok_or_else(|| AppError::Unavailable("Visual Clue answer is unavailable.".to_owned()))?;
-    let resolved = resolve_variant(&entity.definition, &challenge.variant_id)?;
+    let resolved = resolve_variant(entity, &challenge.variant_id)?;
     let solved = sqlx::query_scalar::<_, i64>(
         "SELECT EXISTS(SELECT 1 FROM visual_clue_guess_events WHERE challenge_id = ? AND player_id = ? AND is_correct = 1)",
     ).bind(challenge_id.to_string()).bind(player_id.to_string()).fetch_one(pool).await? != 0;
@@ -138,6 +118,7 @@ pub async fn hints(
 
 pub async fn guess_history(
     pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
     challenge_id: Uuid,
     player_id: Uuid,
 ) -> AppResult<Vec<EmojiCluesGuessHistoryEntry>> {
@@ -156,12 +137,12 @@ pub async fn guess_history(
 
     let mut guesses = Vec::with_capacity(stored.len());
     for stored in stored {
-        let entity = entity_by_id(pool, &stored.guessed_entity_id)
-            .await?
+        let entity = catalog
+            .entity(&stored.guessed_entity_id)
             .ok_or_else(|| AppError::Unavailable("Stored Emoji Clues guess is unavailable.".to_owned()))?;
         guesses.push(EmojiCluesGuessHistoryEntry {
-            id: entity.id,
-            name: entity.name,
+            id: entity.id.clone(),
+            name: entity.name.clone(),
             is_correct: stored.is_correct != 0,
             attempt_number: stored.attempt_number as u16,
         });
@@ -171,6 +152,7 @@ pub async fn guess_history(
 
 pub async fn process_guess(
     pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
     input: VisualGuessInput,
 ) -> AppResult<VisualGuessOutcome> {
     let mut transaction = pool.begin().await?;
@@ -196,8 +178,9 @@ pub async fn process_guess(
         .bind(input.challenge_id.to_string()).bind(input.player_id.to_string()).fetch_one(&mut *connection).await? != 0 {
         return Err(AppError::Conflict("CHALLENGE_COMPLETED".to_owned()));
     }
-    let entity = entity_by_id(&mut *connection, &input.guessed_entity_id)
-        .await?
+    let entity = catalog
+        .entity(&input.guessed_entity_id)
+        .cloned()
         .ok_or_else(|| AppError::validation("This answer is not in the Emoji Clues pool."))?;
     let difficulty = challenge
         .mode
@@ -206,7 +189,7 @@ pub async fn process_guess(
         .ok_or_else(|| {
             AppError::Unavailable("Emoji Clues challenge has an invalid mode.".to_owned())
         })?;
-    if entity_pool(&entity)? > difficulty {
+    if entity.min_pool > difficulty {
         return Err(AppError::validation(
             "This answer is not in the Emoji Clues pool.",
         ));
@@ -237,10 +220,10 @@ pub async fn process_guess(
     } else {
         completion_count(&mut *connection, &challenge.id).await?
     };
-    let answer = entity_by_id(&mut *connection, &challenge.answer_entity_id)
-        .await?
+    let answer = catalog
+        .entity(&challenge.answer_entity_id)
         .ok_or_else(|| AppError::Unavailable("Visual Clue answer is unavailable.".to_owned()))?;
-    let resolved = resolve_variant(&answer.definition, &challenge.variant_id)?;
+    let resolved = resolve_variant(answer, &challenge.variant_id)?;
     let clues = revealed_clues(
         &resolved,
         if is_correct {
@@ -263,6 +246,7 @@ pub async fn process_guess(
 
 async fn ensure_challenge(
     pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
     date: &str,
     difficulty: &str,
     secret: &str,
@@ -273,30 +257,29 @@ async fn ensure_challenge(
     }
     let rank = difficulty_pool(difficulty)
         .ok_or_else(|| AppError::validation("Unknown Emoji Clues difficulty."))?;
-    let entities = eligible_entity_rows(pool, rank).await?;
+    let entities = catalog.eligible(rank).collect::<Vec<_>>();
     let recent = sqlx::query_scalar::<_, String>("SELECT answer_entity_id FROM visual_clue_challenges WHERE mode = ? ORDER BY challenge_date DESC LIMIT 8").bind(&mode).fetch_all(pool).await?;
     let entity = entities
         .iter()
-        .min_by_key(|row| {
+        .min_by_key(|entity| {
             (
-                recent.contains(&row.id),
-                stable_hash(&format!("{secret}:{date}:{mode}:{}", row.id)),
+                recent.contains(&entity.id),
+                stable_hash(&format!("{secret}:{date}:{mode}:{}", entity.id)),
             )
         })
         .ok_or_else(|| {
             AppError::Unavailable("No Emoji Clues are configured for this difficulty.".to_owned())
         })?;
-    let visual: VisualClueEntity = serde_json::from_str(&entity.entity_json)?;
     let recent_variant = sqlx::query_scalar::<_, String>("SELECT variant_id FROM visual_clue_challenges WHERE answer_entity_id = ? ORDER BY challenge_date DESC LIMIT 1").bind(&entity.id).fetch_optional(pool).await?;
     let mut variant_id = weighted_variant_id(
-        &visual,
+        entity,
         rank,
         &format!("{secret}:{date}:{mode}:{}", entity.id),
     )?;
     if recent_variant.as_deref() == Some(&variant_id) {
         for salt in 1..=8 {
             let candidate = weighted_variant_id(
-                &visual,
+                entity,
                 rank,
                 &format!("{secret}:{date}:{mode}:{}:{salt}", entity.id),
             )?;
@@ -326,53 +309,16 @@ async fn challenge_by_id<'e, E: sqlx::Executor<'e, Database = sqlx::Sqlite>>(
 ) -> AppResult<Option<VisualChallengeRecord>> {
     Ok(sqlx::query_as("SELECT id, challenge_date, mode, answer_entity_id, variant_id FROM visual_clue_challenges WHERE id = ?").bind(id.to_string()).fetch_optional(executor).await?)
 }
-async fn entity_by_id<'e, E: sqlx::Executor<'e, Database = sqlx::Sqlite>>(
-    executor: E,
-    id: &str,
-) -> AppResult<Option<VisualEntity>> {
-    sqlx::query_as::<_, EntityRow>("SELECT id, name, aliases_json, entity_kind, min_pool, entity_json FROM visual_clue_entities WHERE id = ?")
-        .bind(id)
-        .fetch_optional(executor)
-        .await?
-        .map(row_entity)
-        .transpose()
-}
-async fn eligible_entity_rows(pool: &SqlitePool, rank: u8) -> AppResult<Vec<EntityRow>> {
-    Ok(sqlx::query_as("SELECT id, name, aliases_json, entity_kind, min_pool, entity_json FROM visual_clue_entities WHERE min_pool <= ? ORDER BY id").bind(i64::from(rank)).fetch_all(pool).await?)
-}
-async fn eligible_entities(pool: &SqlitePool, rank: u8) -> AppResult<Vec<VisualEntity>> {
-    eligible_entity_rows(pool, rank)
-        .await?
-        .into_iter()
-        .map(row_entity)
-        .collect()
-}
-fn row_entity(row: EntityRow) -> AppResult<VisualEntity> {
-    Ok(VisualEntity {
-        id: row.id,
-        name: row.name,
-        aliases: serde_json::from_str(&row.aliases_json)?,
-        entity_kind: row.entity_kind,
-        min_pool: row.min_pool as u8,
-        definition: serde_json::from_str(&row.entity_json)?,
-    })
-}
-fn entity_pool(entity: &VisualEntity) -> AppResult<u8> {
-    Ok(entity.min_pool)
-}
 fn initial_clues(resolved: &ResolvedVisualClueVariant) -> Vec<VisualClue> {
     revealed_clues(resolved, resolved.initial_reveal_count)
 }
 fn revealed_clues(resolved: &ResolvedVisualClueVariant, count: usize) -> Vec<VisualClue> {
-    match resolved.reveal_mode {
-        RevealMode::AllAtOnce => resolved.clues.clone(),
-        RevealMode::Progressive => resolved
-            .clues
-            .iter()
-            .take(count.min(resolved.clues.len()))
-            .cloned()
-            .collect(),
-    }
+    resolved
+        .clues
+        .iter()
+        .take(count.min(resolved.clues.len()))
+        .cloned()
+        .collect()
 }
 async fn wrong_guess_count(
     connection: &mut SqliteConnection,

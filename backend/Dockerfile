@@ -2,7 +2,7 @@ FROM rust:1.94-bookworm AS builder
 
 WORKDIR /build
 
-COPY backend/Cargo.toml backend/Cargo.lock ./backend/
+COPY backend/Cargo.toml backend/Cargo.lock backend/build.rs ./backend/
 COPY backend/src ./backend/src
 COPY backend/migrations ./backend/migrations
 COPY data/classic.seed.json ./data/classic.seed.json

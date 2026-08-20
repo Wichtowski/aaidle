@@ -336,7 +336,6 @@ pub struct EmojiCluesChallenge {
     pub difficulty: String,
     pub expires_at: String,
     pub clues: Vec<crate::domain::visual_clues::VisualClue>,
-    pub reveal_mode: crate::domain::visual_clues::RevealMode,
     pub maximum_clues: usize,
 }
 
