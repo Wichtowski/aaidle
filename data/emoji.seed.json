@@ -193,8 +193,7 @@
         "id": "google",
         "name": "Google",
         "aliases": [
-            "Google Bard",
-            "Google Gemini"
+            "Google Bard"
         ],
         "entityKind": "emoji",
         "categories": [
@@ -367,7 +366,7 @@
                 "clues": [
                     {
                         "type": "emoji",
-                        "value": "",
+                        "value": "👀",
                         "revealPriority": 1
                     },
                     {
@@ -1331,7 +1330,7 @@
         "categories": [
             "language-model"
         ],
-        "minPool": 1,
+        "minPool": 0,
         "variants": [
             {
                 "id": "speech-quiet",
@@ -1392,7 +1391,7 @@
             "computer-vision",
             "nlp"
         ],
-        "minPool": 1,
+        "minPool": 0,
         "variants": [
             {
                 "id": "image-text",
@@ -1496,7 +1495,7 @@
         "categories": [
             "object-detection"
         ],
-        "minPool": 1,
+        "minPool": 0,
         "variants": [
             {
                 "id": "look-once",
