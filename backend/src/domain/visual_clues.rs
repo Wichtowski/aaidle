@@ -89,6 +89,7 @@ pub enum VisualClueCategory {
     ImageProcessing,
     NeuralNetwork,
     Hardware,
+    Technology,
     Other,
 }
 
@@ -286,6 +287,8 @@ mod tests {
 
         let nvidia = catalog.entity("nvidia").expect("NVIDIA is seeded");
         assert_eq!(nvidia.name, "NVIDIA");
+        let meta = catalog.entity("meta").expect("Meta is seeded");
+        assert!(meta.categories.contains(&VisualClueCategory::Technology));
         assert!(catalog
             .eligible(0)
             .all(|entity| entity.min_pool == 0));
