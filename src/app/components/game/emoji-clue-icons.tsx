@@ -7,9 +7,7 @@ type IconDefinition =
 /** Semantic clue IDs stay in the seed; raster assets and React icons share one renderer. */
 export const EMOJI_CLUE_ICONS: Record<string, IconDefinition> = {
   "keystroke": { kind: "image", src: "/emoji-clues/keystroke.png", alt: "ALT key" },
-  meta: { kind: "image", src: "/emoji-clues/meta.png", alt: "Meta symbol" },
   alibaba: { kind: "image", src: "/emoji-clues/alibaba.png", alt: "Alibaba symbol" },
-  windows: { kind: "image", src: "/emoji-clues/windows.png", alt: "four-pane window" },
   ibm: { kind: "image", src: "/emoji-clues/ibm.png", alt: "IBM letters" },
   bird: { kind: "image", src: "/emoji-clues/bird.png", alt: "bird" },
   moon: { kind: "image", src: "/emoji-clues/moon.png", alt: "moon" },

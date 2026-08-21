@@ -39,6 +39,7 @@ pub(super) async fn game(
     }
     let game = repository::visual_clues::game(
         &state.db,
+        &state.visual_clues,
         &current_utc_date()?,
         &difficulty,
         &state.config.daily_selection_secret,
@@ -52,7 +53,6 @@ pub(super) async fn game(
             difficulty,
             expires_at: format_next_midnight()?,
             clues: game.clues,
-            reveal_mode: game.reveal_mode,
             maximum_clues: game.maximum_clues,
         },
         entities: game
@@ -77,7 +77,13 @@ pub(super) async fn hints(
 ) -> AppResult<Json<EmojiCluesHintsResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     Ok(Json(EmojiCluesHintsResponse {
-        clues: repository::visual_clues::hints(&state.db, challenge_id, query.player_id).await?,
+        clues: repository::visual_clues::hints(
+            &state.db,
+            &state.visual_clues,
+            challenge_id,
+            query.player_id,
+        )
+        .await?,
     }))
 }
 
@@ -88,9 +94,20 @@ pub(super) async fn guess_history(
 ) -> AppResult<Json<EmojiCluesGuessHistoryResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     Ok(Json(EmojiCluesGuessHistoryResponse {
-        guesses: repository::visual_clues::guess_history(&state.db, challenge_id, query.player_id)
-            .await?,
-        clues: repository::visual_clues::hints(&state.db, challenge_id, query.player_id).await?,
+        guesses: repository::visual_clues::guess_history(
+            &state.db,
+            &state.visual_clues,
+            challenge_id,
+            query.player_id,
+        )
+        .await?,
+        clues: repository::visual_clues::hints(
+            &state.db,
+            &state.visual_clues,
+            challenge_id,
+            query.player_id,
+        )
+        .await?,
     }))
 }
 
@@ -111,6 +128,7 @@ pub(super) async fn guess(
     }
     let outcome = repository::visual_clues::process_guess(
         &state.db,
+        &state.visual_clues,
         repository::visual_clues::VisualGuessInput {
             challenge_id,
             player_id: payload.player_id,
@@ -131,12 +149,12 @@ pub(super) async fn guess(
 }
 
 fn emoji_clues_entity_response(
-    entity: repository::visual_clues::VisualEntity,
+    entity: crate::domain::visual_clues::VisualClueEntity,
 ) -> crate::dto::VisualClueEntityResponse {
     crate::dto::VisualClueEntityResponse {
         id: entity.id,
         name: entity.name,
         aliases: entity.aliases,
-        entity_kind: entity.entity_kind,
+        entity_kind: entity.entity_kind.as_str().to_owned(),
     }
 }

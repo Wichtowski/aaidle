@@ -5,6 +5,7 @@ use sqlx::SqlitePool;
 
 use crate::{
     config::AppConfig,
+    domain::visual_clues::VisualClueCatalog,
     error::{AppError, AppResult},
 };
 
@@ -13,6 +14,7 @@ pub struct AppState {
     pub db: SqlitePool,
     pub config: Arc<AppConfig>,
     pub http: Client,
+    pub visual_clues: Arc<VisualClueCatalog>,
 }
 
 impl AppState {
@@ -24,6 +26,11 @@ impl AppState {
             .map_err(|error| {
                 AppError::config(format!("failed to create outbound HTTP client: {error}"))
             })?;
-        Ok(Self { db, config, http })
+        Ok(Self {
+            db,
+            config,
+            http,
+            visual_clues: Arc::new(VisualClueCatalog::load()?),
+        })
     }
 }
