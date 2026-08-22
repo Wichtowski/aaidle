@@ -1,5 +1,13 @@
 import { expect, test } from "../../fixtures/e2e";
 
+test("robots.txt is served as a valid crawler policy", async ({ page }) => {
+  const response = await page.request.get("/robots.txt");
+
+  expect(response.ok()).toBe(true);
+  expect(response.headers()["content-type"]).toContain("text/plain");
+  expect(await response.text()).toBe("User-agent: *\nAllow: /\n");
+});
+
 test("Home page exposes both playable game modes", async ({ homePage }) => {
   await homePage.goto();
 

@@ -5,7 +5,7 @@
   --paper: #f6f5f0;
   --panel: #fffefa;
   --line: #d8ddd7;
-  --accent: #e84f33;
+  --accent: #b83e28;
   --lime: #2e7d5b;
   --amber: #d8901e;
   --sky: #3f7da8;
@@ -644,6 +644,9 @@ a {
 .game-mode-card--in-progress {
   border-color: var(--line);
   background: #f0f1ec;
+}
+.game-mode-card--in-progress p {
+  color: #586776;
 }
 .game-mode-card--in-progress:not(a) {
   cursor: default;
@@ -1923,9 +1926,9 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid #de6b22;
+  border: 1px solid #87340f;
   border-radius: 999px;
-  background: #ff813f;
+  background: #a54412;
   color: #fff;
   padding: 12px 17px;
   font-size: 14px;
@@ -1937,8 +1940,8 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     transform 160ms ease;
 }
 .coffee-button:hover {
-  background: #e96c29;
-  box-shadow: 0 2px 0 #a54412;
+  background: #87340f;
+  box-shadow: 0 2px 0 #6c280a;
   transform: translateY(2px);
 }
 .coffee-button:focus-visible {

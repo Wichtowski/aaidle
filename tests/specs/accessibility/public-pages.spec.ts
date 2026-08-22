@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const routes = ["/", "/classic", "/emoji-clues", "/privacy", "/credits"];
+const routes = ["/", "/classic", "/emoji", "/privacy", "/credits"];
 
 test("public pages have no serious accessibility violations", async ({ page }) => {
   const reports = [];

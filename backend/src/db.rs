@@ -28,11 +28,20 @@ pub async fn connect(config: &AppConfig) -> AppResult<SqlitePool> {
 }
 
 pub async fn migrate(pool: &SqlitePool) -> AppResult<()> {
-    sqlx::migrate!("./migrations")
-        .run(pool)
-        .await
-        .map_err(|error| {
-            crate::error::AppError::config(format!("database migration failed: {error}"))
-        })?;
+    let mut connection = pool.acquire().await?;
+    sqlx::query("PRAGMA foreign_keys = OFF")
+        .execute(&mut *connection)
+        .await?;
+
+    let migration_result = sqlx::migrate!("./migrations").run(&mut *connection).await;
+    let foreign_key_result = sqlx::query("PRAGMA foreign_keys = ON")
+        .execute(&mut *connection)
+        .await;
+
+    migration_result.map_err(|error| {
+        crate::error::AppError::config(format!("database migration failed: {error}"))
+    })?;
+    foreign_key_result?;
+
     Ok(())
 }
