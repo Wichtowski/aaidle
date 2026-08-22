@@ -6,16 +6,6 @@ on:
       release_tag:
         required: true
         type: string
-    secrets:
-      AAIDLE_HEALTH_KEY:
-        required: true
-      PLAYWRIGHT_TEST_EMAIL:
-        required: true
-      PLAYWRIGHT_TEST_PASSWORD:
-        required: true
-      AAIDLE_CF_E2E_TOKEN:
-        required: true
-
 permissions:
   actions: write
   contents: write
@@ -112,7 +102,12 @@ jobs:
           AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
-        run: pnpm run test:e2e
+        run: |
+          if [[ -z "$AAIDLE_CF_E2E_TOKEN" ]]; then
+            echo "::error::AAIDLE_CF_E2E_TOKEN must be configured in the production environment."
+            exit 1
+          fi
+          pnpm run test:e2e
 
       - name: Redact Cloudflare E2E token from test artifacts
         if: always()
@@ -281,7 +276,7 @@ jobs:
           path: tests/reports/performance
 
   publish-reports:
-    if: always()
+    if: ${{ !cancelled() }}
     environment: production
     needs: [e2e, api, accessibility, performance]
     runs-on: ubuntu-latest
