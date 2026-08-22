@@ -41,6 +41,24 @@ test("Login page exposes password sign-in", async ({ loginPage }) => {
   await expect(loginPage.signInButton).toBeVisible();
 });
 
+test("mobile navigation menu exposes site links", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile navigation is only shown on mobile");
+
+  await page.goto("/");
+
+  const menuButton = page.getByRole("button", { name: "Open navigation menu" });
+  await expect(menuButton).toBeVisible();
+  await expect(page.getByRole("link", { name: "Profile", exact: true })).toBeHidden();
+
+  await menuButton.click();
+
+  await expect(menuButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("link", { name: "Profile", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Privacy", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Credits", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+});
+
 test("protected account routes redirect anonymous users to login", async ({
   accountDisabledPage,
   deleteAccountPage,

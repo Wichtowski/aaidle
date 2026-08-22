@@ -6,6 +6,15 @@ on:
       release_tag:
         required: true
         type: string
+    secrets:
+      AAIDLE_HEALTH_KEY:
+        required: true
+      PLAYWRIGHT_TEST_EMAIL:
+        required: true
+      PLAYWRIGHT_TEST_PASSWORD:
+        required: true
+      AAIDLE_CF_E2E_TOKEN:
+        required: true
 
 permissions:
   actions: write
@@ -100,9 +109,14 @@ jobs:
 
       - name: Run browser end-to-end tests
         env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
           PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
           PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm run test:e2e
+
+      - name: Redact Cloudflare E2E token from test artifacts
+        if: always()
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken
 
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
@@ -276,12 +290,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-      
+
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-      
+
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:

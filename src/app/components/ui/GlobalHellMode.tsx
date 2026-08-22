@@ -1,45 +1,36 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalProgress, useLocalProgressReady } from "@lib/storage/use-local-progress";
 
-const hellModeCookieName = "aaidle_hell_mode";
 const hellModeStorageKey = "aaidle:hell-mode:v1";
 
-function savedHellMode(): boolean | null {
-  if (typeof window === "undefined") return null;
+function savedHellMode(): boolean {
+  if (typeof window === "undefined") return false;
 
-  const value = window.localStorage.getItem(hellModeStorageKey);
-  if (value === null) return null;
-  return value === "1";
+  return window.localStorage.getItem(hellModeStorageKey) === "1";
 }
 
 export function GlobalHellMode() {
-  const progress = useLocalProgress();
-  const ready = useLocalProgressReady();
-  const [appearanceEnabled, setAppearanceEnabled] = useState<boolean | null>(null);
-  const enabled =
-    appearanceEnabled ?? (progress.preferences.hardcoreUnlocked && progress.preferences.hellMode);
+  const [enabled, setEnabled] = useState(savedHellMode);
 
   useLayoutEffect(() => {
-    setAppearanceEnabled(savedHellMode());
-  }, [progress.preferences.hellMode]);
+    const sync = () => setEnabled(savedHellMode());
+    window.addEventListener("storage", sync);
+    window.addEventListener("aaidle:hell-mode-change", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("aaidle:hell-mode-change", sync);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!ready) return;
     document.documentElement.classList.toggle("hell-mode", enabled);
     document.body.classList.toggle("hell-mode", enabled);
-    document.cookie = [
-      `${hellModeCookieName}=${enabled ? "1" : "0"}`,
-      "Path=/",
-      "Max-Age=31536000",
-      "SameSite=Lax",
-    ].join("; ");
     return () => {
       document.documentElement.classList.remove("hell-mode");
       document.body.classList.remove("hell-mode");
     };
-  }, [enabled, ready]);
+  }, [enabled]);
 
   return null;
 }

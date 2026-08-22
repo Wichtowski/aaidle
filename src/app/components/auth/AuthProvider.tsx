@@ -1,31 +1,59 @@
-import { useMemo, type ReactNode } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient, isApiUnavailable } from "@lib/api/client";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { apiClient, isApiUnavailable, type AuthUser } from "@lib/api/client";
 import { AuthContext, type AuthContextValue } from "./auth-context";
 
+type AuthState = {
+  loading: boolean;
+  unavailable: boolean;
+  user: AuthUser | null;
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
-  const currentUser = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => apiClient.currentUser(),
-    retry: 1,
-    staleTime: 60_000,
-  });
+  const [retryKey, setRetryKey] = useState(0);
+  const [state, setState] = useState<AuthState>({ loading: true, unavailable: false, user: null });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void apiClient
+      .currentUser()
+      .then((user) => {
+        if (!cancelled) setState({ loading: false, unavailable: false, user });
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setState({ loading: false, unavailable: isApiUnavailable(error), user: null });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [retryKey]);
+
+  const setAuthenticatedUser = useCallback((user: AuthUser | null) => {
+    setState({ loading: false, unavailable: false, user });
+  }, []);
+
+  const retry = useCallback(() => {
+    setState((current) => ({ ...current, loading: true, unavailable: false }));
+    setRetryKey((current) => current + 1);
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      loading: currentUser.isPending,
-      unavailable: currentUser.isError && isApiUnavailable(currentUser.error),
-      user: currentUser.data ?? null,
-      setAuthenticatedUser: (user) => queryClient.setQueryData(["auth", "me"], user),
+      loading: state.loading,
+      unavailable: state.unavailable,
+      user: state.user,
+      setAuthenticatedUser,
       signOut: async () => {
         await apiClient.signOut();
-        queryClient.setQueryData(["auth", "me"], null);
+        setAuthenticatedUser(null);
         window.location.assign("/");
       },
-      retry: () => void currentUser.refetch(),
+      retry,
     }),
-    [currentUser.data, currentUser.error, currentUser.isError, currentUser.isPending, currentUser.refetch, queryClient],
+    [retry, setAuthenticatedUser, state],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,3 @@
-import { FaArrowRight, FaImage, FaTimeline } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
@@ -21,7 +20,7 @@ export default function HomePage() {
             to="/classic"
             prefetch="render"
           >
-            <span>Play Classic</span> <FaArrowRight aria-hidden />
+            <span>Play Classic</span> <span aria-hidden>→</span>
           </Link>
         </div>
       </section>
@@ -36,7 +35,7 @@ export default function HomePage() {
             <h3>Classic</h3>
             <p>Use model metadata and comparison clues to find today’s answer.</p>
             <strong>
-              Play Classic <FaArrowRight aria-hidden />
+              Play Classic <span aria-hidden>→</span>
             </strong>
           </Link>
           <Link
@@ -49,12 +48,12 @@ export default function HomePage() {
             <h3>Emoji</h3>
             <p>Recognize AI systems and algorithms from visual associations.</p>
             <strong>
-              Play Emoji <FaArrowRight aria-hidden />
+              Play Emoji <span aria-hidden>→</span>
             </strong>
           </Link>
           <article className="game-mode-card game-mode-card--in-progress">
             <span>
-              <FaTimeline aria-hidden /> In progress
+              <span aria-hidden>◷</span> In progress
             </span>
             <h3>Timeline</h3>
             <p>Arrange a limited set of AI models in release order.</p>
@@ -62,7 +61,7 @@ export default function HomePage() {
           </article>
           <article className="game-mode-card game-mode-card--in-progress">
             <span>
-              <FaImage aria-hidden /> In progress
+              <span aria-hidden>▧</span> In progress
             </span>
             <h3>Logo</h3>
             <p>Identify a model from a distorted logo.</p>

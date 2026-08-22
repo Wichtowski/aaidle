@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FaCookieBite } from "react-icons/fa6";
 
 const consentCookie = "aaidle_cookie_consent";
 
@@ -45,7 +44,7 @@ export function CookieConsent() {
       onClose={keepOpen}
     >
       <div className="cookie-consent__icon" aria-hidden="true">
-        <FaCookieBite focusable="false" />
+        🍪
       </div>
       <div className="cookie-consent__body">
         <p className="eyebrow">Your privacy</p>

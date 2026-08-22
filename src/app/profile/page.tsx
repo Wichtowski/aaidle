@@ -173,6 +173,7 @@ export default function Profile() {
       "Max-Age=31536000",
       "SameSite=Lax",
     ].join("; ");
+    window.dispatchEvent(new Event("aaidle:hell-mode-change"));
     updateProgress(() => nextProgress);
   };
 

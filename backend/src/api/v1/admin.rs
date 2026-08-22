@@ -174,10 +174,12 @@ pub(super) async fn user_update(
                 .await?;
         }
     }
-    sqlx::query("DELETE FROM user_sessions WHERE user_id = ?")
-        .bind(&user_id)
-        .execute(&mut *transaction)
-        .await?;
+    if payload.disabled != Some(true) {
+        sqlx::query("DELETE FROM user_sessions WHERE user_id = ?")
+            .bind(&user_id)
+            .execute(&mut *transaction)
+            .await?;
+    }
     transaction.commit().await?;
     Ok(Json(AdminUserDetailResponse {
         user: load_admin_user_detail(&state, &user_id).await?,

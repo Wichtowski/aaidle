@@ -2,9 +2,9 @@ import { SiteNavbar } from "../../components/ui/SiteNavbar";
 
 export default function PrivacyV1Page() {
   return (
-    <main className="page">
+    <main className="page privacy-page">
       <SiteNavbar />
-      <article className="prose privacy-page">
+      <article className="prose privacy-page__content">
         <p className="eyebrow">
           Cookies &amp; privacy · Last updated <time dateTime="2026-08-12">12 August 2026</time>
         </p>

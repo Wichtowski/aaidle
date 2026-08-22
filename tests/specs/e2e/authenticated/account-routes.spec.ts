@@ -23,11 +23,13 @@ test("authenticated user can access the password reset page", async ({ resetPass
   await expect(resetPasswordPage.submitButton).toBeDisabled();
 });
 
-test("authenticated user can access the account-disabled page", async ({
+test("active users cannot access the account-disabled page", async ({
   accountDisabledPage,
+  profilePage,
 }) => {
   await accountDisabledPage.goto();
-  await expect(accountDisabledPage.heading).toBeVisible();
+
+  await expect(profilePage.heading).toBeVisible();
 });
 
 test("account deletion confirmation requires the emailed single-use link", async ({

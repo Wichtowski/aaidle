@@ -3,6 +3,7 @@ import path from "node:path";
 
 const targetDirectory = "tests";
 const redactionSuffixes = {
+  CloudflareE2EToken: "14cb2fa26b",
   HealthKey: "9d5cfe746a",
 };
 const requestedRedactions = process.argv.slice(2);

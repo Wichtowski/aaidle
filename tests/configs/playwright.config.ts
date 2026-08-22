@@ -17,7 +17,10 @@ export default defineConfig({
     : [["list"], ["html", { open: "never", outputFolder: "tests/reports/playwright" }]],
   use: {
     baseURL: env.baseURL,
-    trace: "on-first-retry",
+    extraHTTPHeaders: env.cloudflareE2EToken
+      ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken }
+      : undefined,
+    trace: env.cloudflareE2EToken ? "off" : "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },

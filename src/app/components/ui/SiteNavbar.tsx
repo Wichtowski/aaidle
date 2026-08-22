@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { canManageUsers } from "@lib/auth/permissions";
 import { useAuth } from "../auth/useAuth";
@@ -12,6 +12,8 @@ export function SiteNavbar({
   hardcore?: boolean;
 }) {
   const { unavailable, user, signOut, retry } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuId = useId();
   const labels = hardcore
     ? {
         profile: "Soul",
@@ -31,11 +33,27 @@ export function SiteNavbar({
       };
 
   return (
-    <nav className="site-navbar">
+    <nav aria-label="Main navigation" className="site-navbar">
       <Link aria-label="aAIdle home" className="brand" to="/" prefetch="render">
         a<span>AI</span>dle
       </Link>
-      <div className="site-navbar__actions">
+      <button
+        aria-controls={menuId}
+        aria-expanded={menuOpen}
+        aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+        className="site-navbar__menu-toggle"
+        onClick={() => setMenuOpen((open) => !open)}
+        type="button"
+      >
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+      </button>
+      <div
+        className={`site-navbar__actions${menuOpen ? " site-navbar__actions--open" : ""}`}
+        id={menuId}
+        onClick={() => setMenuOpen(false)}
+      >
         {children}
         {unavailable && (
           <button className="site-navbar__auth" onClick={retry} type="button">

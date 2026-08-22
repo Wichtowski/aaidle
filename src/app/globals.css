@@ -94,6 +94,9 @@ body.profile-hell {
 .site-navbar__auth {
   white-space: nowrap;
 }
+.site-navbar__menu-toggle {
+  display: none;
+}
 .difficulty-switch {
   display: flex;
   align-items: center;
@@ -237,6 +240,7 @@ a {
   font-family: Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.075em;
+  word-spacing: -0.3em;
   white-space: nowrap;
 }
 .home .hero {
@@ -986,6 +990,9 @@ body.hell-mode .game-placeholder__status {
 .profile-page {
   max-width: 960px;
 }
+.privacy-page {
+  max-width: 960px;
+}
 .profile-page > :not(.site-navbar) {
   max-width: 850px;
   margin-inline: auto;
@@ -1016,6 +1023,17 @@ body.hell-mode .game-placeholder__status {
 }
 .account-disabled-card p:not(.eyebrow) {
   line-height: 1.55;
+}
+:is(:root.hell-mode, body.hell-mode) .account-disabled-card {
+  border-color: #69372f;
+  background: #201014;
+  box-shadow: 0 22px 54px #0006;
+}
+:is(:root.hell-mode, body.hell-mode) .account-disabled-card h1 {
+  color: #fff2e9;
+}
+:is(:root.hell-mode, body.hell-mode) .account-disabled-card p:not(.eyebrow) {
+  color: #d8b9af;
 }
 .stat-grid {
   display: grid;
@@ -1697,7 +1715,7 @@ body.hell-mode .game-placeholder__status {
   border-radius: 8px;
 }
 .credits-page {
-  max-width: 880px;
+  max-width: 960px;
 }
 .credits {
   position: relative;
@@ -1991,14 +2009,59 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     width: 66.6667%;
   }
   .site-navbar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 14px;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .site-navbar__menu-toggle {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    place-content: center;
+    gap: 5px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .site-navbar__menu-toggle span {
+    display: block;
+    width: 19px;
+    height: 2px;
+    background: currentColor;
+  }
+  .site-navbar__menu-toggle:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
   }
   .site-navbar__actions {
+    display: none;
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .site-navbar__actions--open {
+    display: grid;
+  }
+  .site-navbar__actions > a,
+  .site-navbar__actions > button {
+    min-height: 44px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .site-navbar__actions > :last-child {
+    border-bottom: 0;
+  }
+  .site-navbar__actions > .coffee-button {
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    justify-content: center;
   }
   .login {
     padding: 54px 0;

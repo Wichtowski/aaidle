@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { GameLoadingState } from "../ui/GameLoadingState";
 import { useAuth } from "./useAuth";
 
-export function AuthenticatedRoute() {
+export function DisabledAccountRoute() {
   const { loading, user } = useAuth();
 
   if (loading) {
@@ -13,13 +13,8 @@ export function AuthenticatedRoute() {
     );
   }
 
-  if (!user) {
-    return <Navigate replace to="/login" />;
-  }
-
-  if (user.disabled) {
-    return <Navigate replace to="/account-disabled" />;
-  }
+  if (!user) return <Navigate replace to="/login" />;
+  if (!user.disabled) return <Navigate replace to="/profile" />;
 
   return <Outlet />;
 }
