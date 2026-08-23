@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "@components/auth/AuthProvider";
 import { AuthenticatedRoute } from "@components/auth/AuthenticatedRoute";
 import { DisabledAccountRoute } from "@components/auth/DisabledAccountRoute";
@@ -30,6 +30,13 @@ const EmojiCluesGame = lazy(() =>
 );
 
 function Content() {
+  const { loading, user } = useAuth();
+  const location = useLocation();
+
+  if (!loading && user?.disabled && location.pathname !== "/account-disabled") {
+    return <Navigate replace to="/account-disabled" />;
+  }
+
   return (
     <>
       <ProgressSyncLoader />

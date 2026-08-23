@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CompletionTrajectory } from "../../../src/app/components/game/CompletionTrajectory";
@@ -33,7 +33,10 @@ const model = (id: string, name: string): ComparableModel => ({
 });
 
 describe("CompletionTrajectory", () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
 
   it("shows the player’s clue-alignment path to the winning guess", () => {
     const comparison: ClassicComparison = {
@@ -113,7 +116,7 @@ describe("CompletionTrajectory", () => {
       }),
     );
 
-    expect(screen.getByRole("status")).toHaveTextContent("Preparing your trajectory…");
+    expect(screen.getByRole("status").textContent).toContain("Preparing your trajectory…");
     expect(classicTrajectory).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole("button", { name: "Finish celebration" }));

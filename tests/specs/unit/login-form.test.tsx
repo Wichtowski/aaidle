@@ -19,7 +19,9 @@ function renderLoginForm() {
       AuthContext.Provider,
       {
         value: {
+          hardcoreUnlocked: false,
           loading: false,
+          refreshHardcoreAccess: async () => {},
           unavailable: false,
           user: null,
           setAuthenticatedUser: () => {},

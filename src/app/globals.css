@@ -1024,6 +1024,14 @@ body.hell-mode .game-placeholder__status {
 .account-disabled-card p:not(.eyebrow) {
   line-height: 1.55;
 }
+.account-disabled-card__reason {
+  padding: 14px 16px;
+  border-left: 3px solid #e7563b;
+  background: #fff1dc;
+}
+.account-disabled-card .button {
+  margin-top: 12px;
+}
 :is(:root.hell-mode, body.hell-mode) .account-disabled-card {
   border-color: #69372f;
   background: #201014;
@@ -1034,6 +1042,10 @@ body.hell-mode .game-placeholder__status {
 }
 :is(:root.hell-mode, body.hell-mode) .account-disabled-card p:not(.eyebrow) {
   color: #d8b9af;
+}
+:is(:root.hell-mode, body.hell-mode) .account-disabled-card__reason {
+  border-left-color: #ff6b4a;
+  background: #34171b;
 }
 .stat-grid {
   display: grid;
@@ -2055,13 +2067,6 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   }
   .site-navbar__actions > :last-child {
     border-bottom: 0;
-  }
-  .site-navbar__actions > .coffee-button {
-    width: auto;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    justify-content: center;
   }
   .login {
     padding: 54px 0;

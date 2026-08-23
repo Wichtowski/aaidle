@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
+import { useAuth } from "../auth/useAuth";
 
 const hellModeStorageKey = "aaidle:hell-mode:v1";
 
@@ -11,17 +12,19 @@ function savedHellMode(): boolean {
 }
 
 export function GlobalHellMode() {
-  const [enabled, setEnabled] = useState(savedHellMode);
+  const { hardcoreUnlocked, user } = useAuth();
+  const [enabled, setEnabled] = useState(false);
 
   useLayoutEffect(() => {
-    const sync = () => setEnabled(savedHellMode());
+    const sync = () => setEnabled(Boolean(user && hardcoreUnlocked && savedHellMode()));
     window.addEventListener("storage", sync);
     window.addEventListener("aaidle:hell-mode-change", sync);
+    sync();
     return () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener("aaidle:hell-mode-change", sync);
     };
-  }, []);
+  }, [hardcoreUnlocked, user]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("hell-mode", enabled);

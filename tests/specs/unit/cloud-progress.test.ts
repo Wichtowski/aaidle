@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { mergeCloudProgress } from "../../../src/lib/domain/players/cloud-progress";
+import {
+  mergeCloudProgress,
+  mergeServerProgress,
+} from "../../../src/lib/domain/players/cloud-progress";
 import { classicChallengeMode } from "../../../src/lib/domain/models/model-types";
 import { freshProgress } from "../../../src/lib/storage/local-progress-store";
 
@@ -68,5 +71,25 @@ describe("cloud progress", () => {
 
     expect(mergeCloudProgress(inactive, active).preferences.innerCircleActive).toBe(true);
     expect(mergeCloudProgress(active, inactive).preferences.innerCircleActive).toBe(false);
+  });
+
+  it("uses the server identity, statistics, and authorization-backed preferences", () => {
+    const server = freshProgress();
+    const local = freshProgress();
+    server.playerId = "11111111-1111-4111-8111-111111111111";
+    local.playerId = "22222222-2222-4222-8222-222222222222";
+    server.stats.classic.gamesWon = 42;
+    server.stats.classic.gamesPlayed = 42;
+    server.preferences.hardcoreUnlocked = false;
+    server.preferences.hellMode = false;
+    local.preferences.hardcoreUnlocked = true;
+    local.preferences.hellMode = true;
+
+    const merged = mergeServerProgress(server, local);
+
+    expect(merged.playerId).toBe(server.playerId);
+    expect(merged.stats.classic.gamesWon).toBe(42);
+    expect(merged.preferences.hardcoreUnlocked).toBe(false);
+    expect(merged.preferences.hellMode).toBe(false);
   });
 });

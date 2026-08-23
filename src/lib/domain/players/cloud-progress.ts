@@ -77,3 +77,16 @@ export function mergeCloudProgress(
     },
   });
 }
+
+export function mergeServerProgress(server: LocalProgress, local: LocalProgress): LocalProgress {
+  const merged = mergeCloudProgress(server, local);
+  return localProgressSchema.parse({
+    ...merged,
+    playerId: server.playerId,
+    stats: server.stats,
+    preferences: {
+      ...local.preferences,
+      ...server.preferences,
+    },
+  });
+}

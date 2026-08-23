@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { ApiError, apiClient } from "@lib/api/client";
 import { CommonAuthForm } from "./CommonAuthForm";
+import { useAuth } from "./useAuth";
 import type { ToastVariant } from "../ui/Toast";
 
 type ToastState = { message: string; variant: ToastVariant } | null;
 
 export function LoginForm() {
+  const { setAuthenticatedUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
@@ -67,8 +69,9 @@ export function LoginForm() {
     setToast(null);
     setSignInErrorCode(null);
     try {
-      await apiClient.signInWithPassword(email, password);
-      window.location.assign("/profile");
+      const { user } = await apiClient.signInWithPassword(email, password);
+      setAuthenticatedUser(user);
+      window.location.assign(user.disabled ? "/account-disabled" : "/profile");
     } catch (error) {
       setSignInErrorCode(error instanceof ApiError ? (error.code ?? "UNKNOWN") : "UNKNOWN");
       setToast({
@@ -124,4 +127,3 @@ export function LoginForm() {
     />
   );
 }
-

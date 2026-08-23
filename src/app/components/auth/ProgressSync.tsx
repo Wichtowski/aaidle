@@ -8,7 +8,7 @@ import {
   replaceProgress,
   startCloudProgress,
 } from "@lib/storage/local-progress-store";
-import { mergeCloudProgress } from "@lib/domain/players/cloud-progress";
+import { mergeServerProgress } from "@lib/domain/players/cloud-progress";
 import { useAuth } from "./useAuth";
 
 export function ProgressSync() {
@@ -31,20 +31,17 @@ function AuthenticatedProgressSync() {
 
     let cancelled = false;
     let retryTimer: number | undefined;
+    const localProgress = getSnapshot();
     void apiClient
-      .cloudProgress()
+      .syncProgress(localProgress)
       .then(({ progress: cloudProgress }) => {
         if (cancelled) return;
-
-        const nextProgress = cloudProgress
-          ? mergeCloudProgress(cloudProgress, getSnapshot())
-          : getSnapshot();
-        const cloudSerialized = cloudProgress ? JSON.stringify(cloudProgress) : null;
+        const nextProgress = mergeServerProgress(cloudProgress, localProgress);
         const nextSerialized = JSON.stringify(nextProgress);
 
         replaceProgress(nextProgress);
         startCloudProgress();
-        lastSynced.current = cloudSerialized === nextSerialized ? nextSerialized : null;
+        lastSynced.current = nextSerialized;
         setCloudReady(true);
       })
       .catch(() => {
@@ -72,9 +69,10 @@ function AuthenticatedProgressSync() {
         .syncProgress(progress)
         .then(({ progress: synced }) => {
           if (cancelled) return;
-          const syncedSerialized = JSON.stringify(synced);
+          const merged = mergeServerProgress(synced, getSnapshot());
+          const syncedSerialized = JSON.stringify(merged);
           lastSynced.current = syncedSerialized;
-          if (syncedSerialized !== serialized) replaceProgress(synced);
+          if (syncedSerialized !== serialized) replaceProgress(merged);
         })
         .catch(() => {
           if (!cancelled && retry < 2) {

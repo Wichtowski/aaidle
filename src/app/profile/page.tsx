@@ -19,7 +19,8 @@ import {
   solvedChallengeCategoriesForDate,
 } from "../../lib/domain/games/classic/hardcore-unlock";
 import { updateProgress } from "../../lib/storage/local-progress-store";
-import { apiClient } from "../../lib/api/client";
+import { apiClient, type ProgressHistory } from "../../lib/api/client";
+import { mergeServerProgress } from "../../lib/domain/players/cloud-progress";
 
 const historyPageSize = 3;
 const ritualHints = [
@@ -79,7 +80,7 @@ function RitualContent({
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { hardcoreUnlocked, refreshHardcoreAccess, user } = useAuth();
   const progress = useLocalProgress();
   const today = new Date().toISOString().slice(0, 10);
   const ritualCategories = solvedChallengeCategoriesForDate(progress, today);
@@ -90,18 +91,41 @@ export default function Profile() {
   );
   const canSeeInnerCircle = Boolean(user);
   const showRitualChallenge = canSeeInnerCircle && !hasCompletedHardcore;
-  const hellAwake = canSeeInnerCircle && ritualComplete && !progress.preferences.hardcoreUnlocked;
-  const hellModeEnabled =
-    canSeeInnerCircle && progress.preferences.hardcoreUnlocked && progress.preferences.hellMode;
+  const hellAwake = canSeeInnerCircle && ritualComplete && !hardcoreUnlocked;
+  const hellModeEnabled = canSeeInnerCircle && hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
   const [category, setCategory] = useState<ClassicCategory>("llm");
+  const [cloudHistory, setCloudHistory] = useState<ProgressHistory | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setCloudHistory(null);
+      return;
+    }
+    let cancelled = false;
+    setCloudHistory(null);
+    void apiClient
+      .progressHistory(category, historyPage)
+      .then((history) => {
+        if (!cancelled) setCloudHistory(history);
+      })
+      .catch(() => {
+        if (!cancelled) setCloudHistory(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [category, historyPage, user]);
+
   const allHistory = Object.values(progress.games).sort((a, b) =>
     b.challengeDate.localeCompare(a.challengeDate),
   );
   const categoryModePrefix = classicChallengeMode(category, "normal").replace(/normal$/, "");
-  const categoryHistory = allHistory.filter((game) => game.mode.startsWith(categoryModePrefix));
-  const solved = categoryHistory.filter((game) => game.status === "solved");
+  const localCategoryHistory = allHistory.filter((game) =>
+    game.mode.startsWith(categoryModePrefix),
+  );
+  const solved = localCategoryHistory.filter((game) => game.status === "solved");
   const guessDistribution = distribution();
   for (const game of solved) {
     const bucket = game.guesses.length > 9 ? "10+" : String(game.guesses.length);
@@ -117,26 +141,39 @@ export default function Profile() {
       new Date(`${dates[index - 1]}T00:00:00Z`).getTime() -
         new Date(`${dates[index]}T00:00:00Z`).getTime() ===
         86_400_000
-    )
-      {runningStreak += 1;}
-    else runningStreak = 1;
+    ) {
+      runningStreak += 1;
+    } else runningStreak = 1;
     if (index === 0) currentStreak = runningStreak;
     else if (currentStreak === index) currentStreak = runningStreak;
     bestStreak = Math.max(bestStreak, runningStreak);
   }
-  const stats = {
+  const localStats = {
     currentStreak,
     bestStreak,
     gamesPlayed: solved.length,
     gamesWon: solved.length,
     guessDistribution,
   };
+  const stats = user && cloudHistory ? cloudHistory.stats : localStats;
   const distributionValues = Object.entries(stats.guessDistribution);
   const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
   const totalWins = distributionValues.reduce((total, [, value]) => total + value, 0);
-  const totalPages = Math.max(1, Math.ceil(categoryHistory.length / historyPageSize));
+  const historyCount = user ? (cloudHistory?.total ?? 0) : localCategoryHistory.length;
+  const totalPages = Math.max(1, Math.ceil(historyCount / historyPageSize));
   const page = Math.min(historyPage, totalPages);
-  const historyGames = categoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
+  const historyGames = user
+    ? (cloudHistory?.games ?? []).map((game) => ({
+        challengeId: game.challengeId,
+        challengeDate: game.challengeDate,
+        mode: game.mode,
+        status: game.status,
+        guesses: game.guessedModelNames.map((modelName, index) => ({
+          modelId: `${game.challengeId}:${index}`,
+          modelName,
+        })),
+      }))
+    : localCategoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
   const enterInnerCircle = () => {
     if (!user) {
       navigate("/login");
@@ -156,9 +193,10 @@ export default function Profile() {
       .enableHardcoreAccess()
       .then(() => apiClient.syncProgress(nextProgress))
       .then(({ progress: syncedProgress }) => {
-        updateProgress(() => syncedProgress);
-        navigate("/classic/hardcore");
-      });
+        updateProgress(() => mergeServerProgress(syncedProgress, nextProgress));
+        return refreshHardcoreAccess();
+      })
+      .then(() => navigate("/classic/hardcore"));
   };
   const toggleHellMode = () => {
     const hellMode = !progress.preferences.hellMode;
@@ -209,7 +247,7 @@ export default function Profile() {
           />
         </section>
       )}
-      {showRitualChallenge && ritualComplete && !progress.preferences.hardcoreUnlocked && (
+      {showRitualChallenge && ritualComplete && !hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete" open>
           <summary>
             <span>
@@ -232,9 +270,7 @@ export default function Profile() {
       )}
       <div className="classic-category-nav" role="tablist" aria-label="Classic category statistics">
         {classicCategories
-          .filter(
-            (item) => item !== "hardcore" || Boolean(user && progress.preferences.hardcoreUnlocked),
-          )
+          .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
           .map((item) => (
             <button
               aria-selected={category === item}
@@ -300,10 +336,10 @@ export default function Profile() {
       <section className="stats-section" aria-labelledby="history-title">
         <div className="stats-section__heading">
           <div>
-            <p className="eyebrow">Stored on this device</p>
+            <p className="eyebrow">{user ? "Stored on your account" : "Stored on this device"}</p>
             <h2 id="history-title">Saved guesses</h2>
           </div>
-          <span>{categoryHistory.length} games</span>
+          <span>{historyCount} games</span>
         </div>
         {historyGames.length ? (
           <>
@@ -357,7 +393,7 @@ export default function Profile() {
           <p className="stats-empty">Play a game and your guesses will appear here.</p>
         )}
       </section>
-      {showRitualChallenge && ritualComplete && progress.preferences.hardcoreUnlocked && (
+      {showRitualChallenge && ritualComplete && hardcoreUnlocked && (
         <details className="hell-meter hell-meter--complete">
           <summary>
             <span>
@@ -378,7 +414,7 @@ export default function Profile() {
           </div>
         </details>
       )}
-      {canSeeInnerCircle && progress.preferences.hardcoreUnlocked && (
+      {canSeeInnerCircle && hardcoreUnlocked && (
         <section className="hell-mode-control" aria-labelledby="hell-mode-title">
           <div className="hell-mode-control__copy">
             <p className="eyebrow">Inner circle</p>

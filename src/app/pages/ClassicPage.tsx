@@ -5,13 +5,11 @@ import {
   classicCategoryFromRouteSegment,
   isClassicDifficulty,
 } from "@lib/domain/models/model-types";
-import { useLocalProgress } from "@lib/storage/use-local-progress";
 
 export default function ClassicPage() {
   const { category: routeCategory } = useParams();
   const category = classicCategoryFromRouteSegment(routeCategory);
-  const progress = useLocalProgress();
-  const { user } = useAuth();
+  const { hardcoreUnlocked, user } = useAuth();
   if (!category) return <Navigate replace to="/classic/llm" />;
   const saved = document.cookie.match(/(?:^|; )aaidle_classic_difficulty=([^;]+)/)?.[1];
   const difficulty =
@@ -22,11 +20,10 @@ export default function ClassicPage() {
         : "normal";
   return (
     <ClassicGame
+      key={`${category}:${difficulty}`}
       category={category}
       difficulty={difficulty}
-      hasHardcoreAccess={
-        category !== "hardcore" || Boolean(user && progress.preferences.hardcoreUnlocked)
-      }
+      hasHardcoreAccess={category !== "hardcore" || Boolean(user && hardcoreUnlocked)}
     />
   );
 }

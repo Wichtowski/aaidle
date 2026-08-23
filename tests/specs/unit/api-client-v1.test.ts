@@ -157,4 +157,29 @@ describe("v1 API client", () => {
     expect(isApiUnavailable(new NetworkError())).toBe(true);
     expect(isApiUnavailable(new ApiError("Duplicate", 409, "DUPLICATE_GUESS"))).toBe(false);
   });
+
+  it("shows a readable Retry-After duration for rate-limited requests", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            error: { code: "RATE_LIMITED", message: "Try again later." },
+          }),
+          {
+            status: 429,
+            headers: { "Content-Type": "application/json", "Retry-After": "120" },
+          },
+        ),
+      ),
+    );
+
+    await expect(apiClient.currentUser()).rejects.toMatchObject({
+      name: "ApiError",
+      status: 429,
+      code: "RATE_LIMITED",
+      retryAfterSeconds: 120,
+      message: "Too many requests. Try again in 2 minutes.",
+    });
+  });
 });

@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCircleQuestion } from "react-icons/fa6";
-import { apiClient, type ClassicGamePayload } from "@lib/api/client";
+import { apiClient, isApiUnavailable, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./GuessBoard";
 import { SiteNavbar } from "../ui/SiteNavbar";
 import { HowToPlayDialog } from "./HowToPlayDialog";
@@ -140,7 +140,7 @@ export function ClassicGame({
   hasHardcoreAccess: boolean;
 }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { hardcoreUnlocked, user } = useAuth();
   const progress = useLocalProgress();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
@@ -217,7 +217,7 @@ export function ClassicGame({
       })
       .catch((fetchError: unknown) => {
         if (controller.signal.aborted) return;
-        if (loadFailureCount.current === 0) {
+        if (isApiUnavailable(fetchError) && loadFailureCount.current === 0) {
           loadFailureCount.current += 1;
           retrying = true;
           setToast(
@@ -355,7 +355,7 @@ export function ClassicGame({
     category !== "hardcore" &&
     loadedDifficulty === "challenge" &&
     game?.status === "solved" &&
-    !progress.preferences.hardcoreUnlocked &&
+    !hardcoreUnlocked &&
     hasCompletedChallengeRitual(progress, challenge.date),
   );
 
@@ -557,9 +557,18 @@ export function ClassicGame({
       />
       {category === "hardcore" && <HardcoreSoundtrack />}
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
-      {!challenge && error !== null && (
-        <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
-      )}
+      {!challenge && error !== null &&
+        (isApiUnavailable(error) ? (
+          <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
+        ) : (
+          <section className="api-unavailable" role="alert">
+            <div>
+              <p className="eyebrow">Game unavailable</p>
+              <h2>We couldn’t load this game.</h2>
+              <p>{error instanceof Error ? error.message : "Please choose another game mode."}</p>
+            </div>
+          </section>
+        ))}
       {challenge && error !== null && retryGuess && (
         <ApiUnavailableState onRetry={() => void pick(retryGuess.model, retryGuess.requestId)} />
       )}

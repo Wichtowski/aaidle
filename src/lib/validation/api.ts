@@ -3,11 +3,11 @@ import { readRequestText } from "./request-body";
 export const modeSchema = z.literal("classic");
 export const guessRequestSchema = z.object({
   guessedModelId: z.string().min(1).max(120),
-  attemptNumber: z.number().int().min(1).max(100),
+  attemptNumber: z.number().int().min(1).max(65_535),
 });
 export const emojiGuessRequestSchema = z.object({
   guessedFamilyId: z.string().min(1).max(120),
-  attemptNumber: z.number().int().min(1).max(100),
+  attemptNumber: z.number().int().min(1).max(65_535),
 });
 export const dateSchema = z.iso.date();
 export const errorResponse = (code: string, message: string, status = 400) =>

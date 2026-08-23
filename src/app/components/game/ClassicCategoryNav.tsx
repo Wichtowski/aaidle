@@ -8,15 +8,16 @@ import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { useAuth } from "../auth/useAuth";
 
 export function ClassicCategoryNav({ category }: { category: ClassicCategory }) {
-  const { user } = useAuth();
+  const { hardcoreUnlocked, user } = useAuth();
   const progress = useLocalProgress();
+  const showOnlyHardcore = progress.preferences.innerCircleActive && hardcoreUnlocked;
   return (
     <nav aria-label="Classic category" className="classic-category-nav">
       {classicCategories
         .filter((item) =>
-          progress.preferences.innerCircleActive
+          showOnlyHardcore
             ? item === "hardcore"
-            : item !== "hardcore" || Boolean(user && progress.preferences.hardcoreUnlocked),
+            : item !== "hardcore" || Boolean(user && hardcoreUnlocked),
         )
         .map((item) => (
           <Link

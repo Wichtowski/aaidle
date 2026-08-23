@@ -5,7 +5,7 @@ import { expect, test } from "../../../fixtures/e2e";
 test.use({ trace: "off", screenshot: "off", video: "off" });
 
 test.beforeEach(async ({ loginPage, profilePage }) => {
-  const { email, password } = env.testCredentials;
+  const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 

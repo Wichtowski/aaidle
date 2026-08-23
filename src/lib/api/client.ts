@@ -22,11 +22,13 @@ try {
 
 const csrfToken = () => {
   if (typeof document === "undefined") return null;
-  return document.cookie
-    .split(";")
-    .map((entry) => entry.trim())
-    .find((entry) => entry.startsWith("aaidle_csrf="))
-    ?.slice("aaidle_csrf=".length) ?? null;
+  return (
+    document.cookie
+      .split(";")
+      .map((entry) => entry.trim())
+      .find((entry) => entry.startsWith("aaidle_csrf="))
+      ?.slice("aaidle_csrf=".length) ?? null
+  );
 };
 
 export type AuthUser = {
@@ -36,6 +38,7 @@ export type AuthUser = {
   emailVerified: boolean;
   permission: UserPermission;
   disabled: boolean;
+  disabledReason: string | null;
 };
 
 export type AdminUserSummary = {
@@ -117,6 +120,26 @@ export type HardcoreStatus = {
   completedCategories: string[];
   requiredCategories: string[];
 };
+export type ProgressHistory = {
+  games: Array<{
+    challengeId: string;
+    challengeDate: string;
+    mode: string;
+    status: "in-progress" | "solved";
+    guessCount: number;
+    guessedModelNames: string[];
+  }>;
+  total: number;
+  page: number;
+  pageSize: number;
+  stats: {
+    currentStreak: number;
+    bestStreak: number;
+    gamesPlayed: number;
+    gamesWon: number;
+    guessDistribution: Record<string, number>;
+  };
+};
 
 type ApiErrorPayload = { error?: { code?: string; message?: string } };
 type PublicModel = {
@@ -161,11 +184,32 @@ export class ApiError extends Error {
     message: string,
     public readonly status: number,
     public readonly code?: string,
+    public readonly retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = "ApiError";
   }
 }
+
+const retryAfterSeconds = (response: Response): number | undefined => {
+  const value = response.headers?.get("retry-after")?.trim();
+  if (!value) return undefined;
+  const deltaSeconds = Number(value);
+  if (Number.isFinite(deltaSeconds) && deltaSeconds >= 0) return Math.ceil(deltaSeconds);
+  const retryAt = Date.parse(value);
+  if (!Number.isFinite(retryAt)) return undefined;
+  return Math.max(0, Math.ceil((retryAt - Date.now()) / 1_000));
+};
+
+const retryAfterDuration = (seconds: number) => {
+  if (seconds < 60) return `${seconds} second${seconds === 1 ? "" : "s"}`;
+  if (seconds < 3_600) {
+    const minutes = Math.ceil(seconds / 60);
+    return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+  }
+  const hours = Math.ceil(seconds / 3_600);
+  return `${hours} hour${hours === 1 ? "" : "s"}`;
+};
 
 export class NetworkError extends Error {
   constructor(message = "The service could not be reached. Check your connection and retry.") {
@@ -232,12 +276,16 @@ class ApiClient {
     ) as (T & ApiErrorPayload) | null;
     if (!response.ok) {
       const message = payload?.error?.message;
+      const retryAfter = response.status === 429 ? retryAfterSeconds(response) : undefined;
       throw new ApiError(
-        message === "Request failed. Please try again."
-          ? "We could not complete that request."
-          : (message ?? "We could not complete that request."),
+        retryAfter === undefined
+          ? message === "Request failed. Please try again."
+            ? "We could not complete that request."
+            : (message ?? "We could not complete that request.")
+          : `Too many requests. Try again in ${retryAfterDuration(retryAfter)}.`,
         response.status,
         payload?.error?.code,
+        retryAfter,
       );
     }
     return payload as T;
@@ -320,12 +368,36 @@ class ApiClient {
     return this.request<{ progress: LocalProgress }>("/auth/progress", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(progress),
+      body: JSON.stringify({
+        version: 1,
+        playerId: progress.playerId,
+        preferences: {
+          reducedMotion: progress.preferences.reducedMotion,
+          highContrast: progress.preferences.highContrast,
+          hasSeenClassicPrivacy: progress.preferences.hasSeenClassicPrivacy,
+          hasSeenClassicHowToPlay: progress.preferences.hasSeenClassicHowToPlay ?? false,
+          innerCircleActive: progress.preferences.innerCircleActive,
+          hellMode: progress.preferences.hellMode,
+          hasAutoplayedHardcoreSoundtrack: progress.preferences.hasAutoplayedHardcoreSoundtrack,
+        },
+        activeGames: Object.values(progress.games)
+          .filter((game) => game.status === "in-progress")
+          .sort((left, right) => right.startedAt.localeCompare(left.startedAt))
+          .slice(0, 16)
+          .map((game) => ({ challengeId: game.challengeId, startedAt: game.startedAt })),
+      }),
     });
   }
 
   cloudProgress() {
     return this.request<{ progress: LocalProgress | null }>("/auth/progress", {
+      cache: "no-store",
+    });
+  }
+
+  progressHistory(category: string, page: number) {
+    const query = new URLSearchParams({ category, page: String(page) });
+    return this.request<ProgressHistory>(`/auth/progress/history?${query}`, {
       cache: "no-store",
     });
   }

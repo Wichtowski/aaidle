@@ -5,7 +5,7 @@ import { env } from "../../env";
 test.use({ trace: "off", screenshot: "off", video: "off" });
 
 test("Password login reaches the profile", async ({ loginPage, profilePage }) => {
-  const { email, password } = env.testCredentials;
+  const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 

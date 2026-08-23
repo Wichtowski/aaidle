@@ -5,6 +5,18 @@ const classicCategories = ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
 const apiUrl = (path: string) => new URL(path, env.baseURL);
 
+async function accessToken(email: string, password: string) {
+  const login = await fetch(apiUrl("/api/v1/auth/token"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  expect(login.ok).toBe(true);
+  const { accessToken: token } = await login.json();
+  expect(token).toEqual(expect.any(String));
+  return token as string;
+}
+
 test("production API health is available with its health key", async () => {
   const { healthKey, expectedVersion } = env;
   test.skip(
@@ -26,19 +38,12 @@ test("production API health is available with its health key", async () => {
   });
 });
 
-test("authenticated API exposes Classic, Emoji Clues, and rejects Hardcore access", async () => {
-  const { email, password } = env.testCredentials;
+test("normal account can access public game modes but not unlock Hardcore", async () => {
+  const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 
-  const login = await fetch(apiUrl("/api/v1/auth/token"), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  expect(login.ok).toBe(true);
-  const { accessToken: token } = await login.json();
-  expect(token).toEqual(expect.any(String));
+  const token = await accessToken(email, password);
   const headers = { Authorization: `Bearer ${token}` };
 
   for (const category of classicCategories) {
@@ -59,4 +64,33 @@ test("authenticated API exposes Classic, Emoji Clues, and rejects Hardcore acces
   expect((await hardcore.json()).error.message).toBe(
     "Complete every Classic Challenge category to enter Hardcore.",
   );
+});
+
+test("Hardcore account can load the Hardcore game", async () => {
+  const { email, password } = env.hardcoreTestCredentials;
+  test.skip(!email || !password, "Production Hardcore credentials are not configured.");
+  if (!email || !password) return;
+
+  const token = await accessToken(email, password);
+  const response = await fetch(apiUrl("/api/v1/games/classic/hardcore"), {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  expect(response.ok).toBe(true);
+  expect((await response.json()).challenge).toBeTruthy();
+});
+
+test("deactivated account cannot obtain an access token", async () => {
+  const { email, password } = env.deactivatedTestCredentials;
+  test.skip(!email || !password, "Production deactivated-account credentials are not configured.");
+  if (!email || !password) return;
+
+  const login = await fetch(apiUrl("/api/v1/auth/token"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  expect(login.status).toBe(403);
+  expect((await login.json()).error.message).toBe("This account has been disabled.");
 });
