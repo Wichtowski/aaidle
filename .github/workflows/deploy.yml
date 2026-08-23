@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        default: production
+        type: choice
+        options: [production]
+
+concurrency:
+  group: aaidle-${{ inputs.environment }}-deploy
+  cancel-in-progress: false
+
+jobs:
+  validate-ref:
+    name: Validate release ref
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require a release tag
+        if: github.ref_type != 'tag' || !startsWith(github.ref_name, 'v')
+        run: |
+          echo "This workflow must be started using a release tag (for example, v1.2.3) via Use workflow from." >> $GITHUB_STEP_SUMMARY
+          echo "Current ref: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+  unit-tests:
+    needs: validate-ref
+    uses: ./.github/workflows/unit-test.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.ref_name }}
+
+  docker-build:
+    needs: validate-ref
+    uses: ./.github/workflows/docker-build.yml
+    permissions:
+      contents: read
+      packages: write
+    with:
+      release_tag: ${{ github.ref_name }}
+
+  publish-release:
+    needs: [unit-tests, docker-build]
+    uses: ./.github/workflows/publish-release.yml
+    permissions:
+      contents: write
+    with:
+      release_tag: ${{ github.ref_name }}
+
+  deploy:
+    needs: publish-release
+    uses: ./.github/workflows/deploy-vps.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.ref_name }}
+      environment: ${{ inputs.environment }}
+    secrets: inherit
+
+  quality-reports:
+    needs: [deploy, publish-release]
+    uses: ./.github/workflows/quality-reports.yml
+    permissions:
+      actions: write
+      contents: write
+    with:
+      release_tag: ${{ github.ref_name }}
+      environment: ${{ inputs.environment }}
+    secrets: inherit

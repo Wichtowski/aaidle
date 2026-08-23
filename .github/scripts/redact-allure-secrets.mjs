@@ -2,9 +2,10 @@ import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const targetDirectory = "tests";
-const redactionSuffixes = {
-  CloudflareE2EToken: "14cb2fa26b",
-  HealthKey: "9d5cfe746a",
+const redactions = {
+  CloudflareE2EToken: { suffix: "14cb2fa26b" },
+  HealthKey: { suffix: "9d5cfe746a" },
+  PlaywrightTestPassword: { environmentVariable: "AAIDLE_PLAYWRIGHT_TEST_PASSWORD" },
 };
 const requestedRedactions = process.argv.slice(2);
 
@@ -14,13 +15,24 @@ if (requestedRedactions.length === 0) {
 
 const escapeRegularExpression = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const patterns = requestedRedactions.map((name) => {
-  const suffix = redactionSuffixes[name];
-  if (!suffix) {
+  const redaction = redactions[name];
+  if (!redaction) {
     throw new Error(
-      `Unknown redaction ${name}. Available redactions: ${Object.keys(redactionSuffixes).join(", ")}`,
+      `Unknown redaction ${name}. Available redactions: ${Object.keys(redactions).join(", ")}`,
     );
   }
-  return new RegExp(`[a-fA-F0-9]{${64 - suffix.length}}${escapeRegularExpression(suffix)}`, "g");
+  if (redaction.suffix) {
+    return new RegExp(
+      `[a-fA-F0-9]{${64 - redaction.suffix.length}}${escapeRegularExpression(redaction.suffix)}`,
+      "g",
+    );
+  }
+
+  const secret = process.env[redaction.environmentVariable];
+  if (!secret) {
+    throw new Error(`Missing ${redaction.environmentVariable} for ${name} redaction.`);
+  }
+  return new RegExp(escapeRegularExpression(secret), "g");
 });
 let replacementCount = 0;
 

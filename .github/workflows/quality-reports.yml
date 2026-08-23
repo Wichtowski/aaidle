@@ -1,9 +1,12 @@
-name: Production Quality Reports
+name: Quality Reports
 
 on:
   workflow_call:
     inputs:
       release_tag:
+        required: true
+        type: string
+      environment:
         required: true
         type: string
 permissions:
@@ -23,7 +26,6 @@ env:
   UPLOAD_ARTIFACTS: "Upload artifacts"
   DOWNLOAD_ARTIFACTS: "Download artifacts"
 
-
 jobs:
   readiness:
     runs-on: ubuntu-latest
@@ -32,32 +34,26 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
-
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
         id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ env.PW_CACHE_DIR }}
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
-
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
-
       - name: Install Playwright Chromium and system dependencies
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
-
       - name: Run release readiness tests
         env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
@@ -66,24 +62,21 @@ jobs:
   e2e:
     needs: readiness
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ inputs.environment }}
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
-
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
         id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -92,27 +85,22 @@ jobs:
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
-
       - name: Install Playwright Chromium and system dependencies
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
-
       - name: Run browser end-to-end tests
         env:
           AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
-          PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
-          PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
-        run: |
-          if [[ -z "$AAIDLE_CF_E2E_TOKEN" ]]; then
-            echo "::error::AAIDLE_CF_E2E_TOKEN must be configured in the production environment."
-            exit 1
-          fi
-          pnpm run test:e2e
-
-      - name: Redact Cloudflare E2E token from test artifacts
+          AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm run test:e2e
+      - name: Redact E2E secrets from test artifacts
         if: always()
-        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken
-
+        env:
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -124,40 +112,39 @@ jobs:
   api:
     needs: readiness
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ inputs.environment }}
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
-
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
-      
       - name: Run API end-to-end tests
-        id: api-tests 
+        id: api-tests
         env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
-          PLAYWRIGHT_HEALTH_KEY: "${{ secrets.AAIDLE_HEALTH_KEY }}"
-          PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
-          PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
-        run: pnpm exec playwright test --config=tests/configs/playwright.api.config.ts --no-deps --project=production-api
-
-      - name: Redact health key from test artifacts
+          AAIDLE_PLAYWRIGHT_HEALTH_KEY: "${{ secrets.AAIDLE_HEALTH_KEY }}"
+          AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm run test:api
+      - name: Redact API test secrets from test artifacts
         if: always()
-        run: node .github/scripts/redact-allure-secrets.mjs HealthKey
-
+        env:
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: node .github/scripts/redact-allure-secrets.mjs HealthKey PlaywrightTestPassword
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -169,18 +156,15 @@ jobs:
   accessibility:
     needs: readiness
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -194,16 +178,13 @@ jobs:
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
-
       - name: Install Playwright Chromium and system dependencies
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
-
       - name: Run accessibility tests
         id: accessibility-tests
         continue-on-error: true
         run: pnpm run test:accessibility
-
       - name: Add accessibility result to job summary
         if: always()
         env:
@@ -225,11 +206,9 @@ jobs:
               echo "Accessibility checks passed."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Build accessibility report
         if: always()
         run: node .github/scripts/build-accessibility-report.mjs
-
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -239,17 +218,14 @@ jobs:
 
   performance:
     needs: readiness
-    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -267,7 +243,6 @@ jobs:
             --output-path=tests/reports/performance/home
           mv tests/reports/performance/home.report.html tests/reports/performance/index.html
           mv tests/reports/performance/home.report.json tests/reports/performance/metrics.json
-
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -277,7 +252,6 @@ jobs:
 
   publish-reports:
     if: ${{ !cancelled() }}
-    environment: production
     needs: [e2e, api, accessibility, performance]
     runs-on: ubuntu-latest
     steps:
@@ -285,27 +259,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: "${{ inputs.release_tag }}"
-
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ env.PNPM_VERSION }}
-
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
-
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
-
-      - name : ${{ env.DOWNLOAD_ARTIFACTS }} E2E
+      - name: ${{ env.DOWNLOAD_ARTIFACTS }} E2E
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: allure-results
           path: reports/allure-results
-
       - name: ${{ env.DOWNLOAD_ARTIFACTS }} API
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
@@ -321,13 +290,10 @@ jobs:
         with:
           name: performance-report
           path: reports/performance
-
       - name: Publish E2E report history
         run: pnpm run allure:e2e
-
       - name: Publish API report history
         run: pnpm run allure:api
-
       - name: Publish report history
         env:
           RELEASE_TAG: "${{ inputs.release_tag }}"

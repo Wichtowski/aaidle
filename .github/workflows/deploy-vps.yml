@@ -6,6 +6,9 @@ on:
       release_tag:
         required: true
         type: string
+      environment:
+        required: true
+        type: string
     secrets:
       AAIDLE_VPS_HOST:
         required: true
@@ -42,7 +45,7 @@ jobs:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     environment:
-      name: production
+      name: ${{ inputs.environment }}
       url: https://aaidle.com
     env:
       DEPLOY_PATH: ${{ secrets.AAIDLE_DEPLOY_PATH }}

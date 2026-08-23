@@ -57,14 +57,16 @@ jobs:
       contents: read
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}
+      environment: production
     secrets: inherit
 
-  production-e2e:
+  quality-reports:
     needs: [deploy, publish-release]
-    uses: ./.github/workflows/production-e2e.yml
+    uses: ./.github/workflows/quality-reports.yml
     permissions:
       actions: write
       contents: write
     with:
       release_tag: ${{ needs.publish-release.outputs.tag }}
+      environment: production
     secrets: inherit
