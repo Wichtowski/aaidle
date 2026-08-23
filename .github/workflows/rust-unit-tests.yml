@@ -1,0 +1,48 @@
+name: Rust Unit Tests
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: Rust unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.release_tag }}
+      - name: Install Rust
+        run: rustup toolchain install 1.94.0 --profile minimal
+      - name: Run Rust unit tests
+        run: |
+          set -o pipefail
+          cargo +1.94.0 test --locked 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
+      - name: Add Rust test report to summary
+        if: always()
+        run: |
+          read -r test_passed test_failed test_ignored < <(
+            awk '/test result:/ {
+              for (i = 1; i <= NF; i++) {
+                if ($(i) == "passed;") passed += $(i - 1)
+                if ($(i) == "failed;") failed += $(i - 1)
+                if ($(i) == "ignored;") ignored += $(i - 1)
+              }
+            } END { print passed + 0, failed + 0, ignored + 0 }' \
+            "$RUNNER_TEMP/rust-test-output"
+          )
+          test_total=$((test_passed + test_failed))
+          test_status="✅"
+          if [[ "$test_failed" -gt 0 ]]; then
+            test_status="❌"
+          fi
+          {
+            echo "## 🦀 Unit Test Report"
+            echo
+            echo "${test_status} ${test_passed} passed · ${test_total} total"
+          } >> "$GITHUB_STEP_SUMMARY"

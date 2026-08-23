@@ -26,9 +26,17 @@ jobs:
           echo "Current ref: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
           exit 1
 
-  unit-tests:
+  vitest-unit-tests:
     needs: validate-ref
-    uses: ./.github/workflows/unit-test.yml
+    uses: ./.github/workflows/vitest-unit-tests.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.ref_name }}
+
+  rust-unit-tests:
+    needs: validate-ref
+    uses: ./.github/workflows/rust-unit-tests.yml
     permissions:
       contents: read
     with:
@@ -44,7 +52,7 @@ jobs:
       release_tag: ${{ github.ref_name }}
 
   publish-release:
-    needs: [unit-tests, docker-build]
+    needs: [vitest-unit-tests, rust-unit-tests, docker-build]
     uses: ./.github/workflows/publish-release.yml
     permissions:
       contents: write
@@ -63,7 +71,7 @@ jobs:
 
   tests:
     needs: [deploy, publish-release]
-    uses: ./.github/workflows/tests.yml
+    uses: ./.github/workflows/playwright-tests.yml
     permissions:
       actions: write
       contents: write
