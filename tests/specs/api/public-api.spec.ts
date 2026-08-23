@@ -4,11 +4,15 @@ import { env } from "../../env";
 const classicCategories = ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
 const apiUrl = (path: string) => new URL(path, env.baseURL);
+const apiHeaders = (headers: HeadersInit = {}) => ({
+  ...headers,
+  ...(env.cloudflareE2EToken ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken } : {}),
+});
 
 async function accessToken(email: string, password: string) {
   const login = await fetch(apiUrl("/api/v1/auth/token"), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ email, password }),
   });
   expect(login.ok).toBe(true);
@@ -26,7 +30,7 @@ test("production API health is available with its health key", async () => {
   if (!healthKey || !expectedVersion) return;
 
   const response = await fetch(apiUrl("/api/v1/health"), {
-    headers: { "x-aaidle-health-key": healthKey },
+    headers: apiHeaders({ "x-aaidle-health-key": healthKey }),
   });
 
   expect(response.ok).toBe(true);
@@ -44,7 +48,7 @@ test("normal account can access public game modes but not unlock Hardcore", asyn
   if (!email || !password) return;
 
   const token = await accessToken(email, password);
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = apiHeaders({ Authorization: `Bearer ${token}` });
 
   for (const category of classicCategories) {
     const response = await fetch(apiUrl(`/api/v1/games/classic/${category}/normal`), { headers });
@@ -58,7 +62,7 @@ test("normal account can access public game modes but not unlock Hardcore", asyn
 
   const hardcore = await fetch(apiUrl("/api/v1/games/classic/hardcore/access"), {
     method: "POST",
-    headers: { ...headers, Origin: env.baseURL },
+    headers: apiHeaders({ ...headers, Origin: env.baseURL }),
   });
   expect(hardcore.status).toBe(403);
   expect((await hardcore.json()).error.message).toBe(
@@ -73,7 +77,7 @@ test("Hardcore account can load the Hardcore game", async () => {
 
   const token = await accessToken(email, password);
   const response = await fetch(apiUrl("/api/v1/games/classic/hardcore"), {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: apiHeaders({ Authorization: `Bearer ${token}` }),
   });
 
   expect(response.ok).toBe(true);

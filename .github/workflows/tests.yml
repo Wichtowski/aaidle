@@ -131,6 +131,7 @@ jobs:
         id: api-tests
         env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
           AAIDLE_PLAYWRIGHT_HEALTH_KEY: "${{ secrets.AAIDLE_HEALTH_KEY }}"
           AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
