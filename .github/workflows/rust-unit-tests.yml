@@ -20,6 +20,7 @@ jobs:
       - name: Install Rust
         run: rustup toolchain install 1.94.0 --profile minimal
       - name: Run Rust unit tests
+        working-directory: backend
         run: |
           set -o pipefail
           cargo +1.94.0 test --locked 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
