@@ -1,8 +1,9 @@
 use axum::{
     Json,
-    extract::{Path, Query, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
     http::HeaderMap,
 };
+use std::net::SocketAddr;
 use uuid::Uuid;
 
 use crate::{
@@ -24,6 +25,8 @@ use super::{
 
 pub(super) async fn guess(
     State(state): State<AppState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
     Path(challenge_id): Path<String>,
     payload: Result<Json<GuessRequest>, JsonRejection>,
 ) -> AppResult<Json<GuessResponse>> {
@@ -37,22 +40,55 @@ pub(super) async fn guess(
     if !is_model_id(&payload.guessed_model_id) {
         return Err(AppError::validation("guessedModelId is invalid"));
     }
-    if !(1..=100).contains(&payload.attempt_number) {
-        return Err(AppError::validation(
-            "attemptNumber must be between 1 and 100",
+    if payload.attempt_number == 0 {
+        return Err(AppError::validation("attemptNumber must be positive"));
+    }
+    let user = super::optional_authenticated_user(&state, &headers).await?;
+    if user.as_ref().is_some_and(|user| user.disabled) {
+        return Err(AppError::Forbidden(
+            "This account has been disabled.".to_owned(),
         ));
     }
+    if user.is_some() {
+        assert_same_origin_or_bearer(&state, &headers)?;
+        assert_csrf_or_bearer(&headers)?;
+    }
+    let player_id = match &user {
+        Some(user) => {
+            crate::progress::canonical_player_id(
+                &state.db,
+                &user.id,
+                payload.player_id,
+                now_millis(),
+            )
+            .await?
+        }
+        None => payload.player_id,
+    };
+    super::consume_guess_rate_limits(&state, &headers, Some(peer), player_id, challenge_id).await?;
     let result = repository::process_guess(
         &state.db,
         GuessInput {
             challenge_id,
-            player_id: payload.player_id,
+            player_id,
+            user_id: user.as_ref().map(|user| user.id.clone()),
             request_id: payload.request_id,
             guessed_model_id: payload.guessed_model_id,
             attempt_number: payload.attempt_number,
         },
     )
     .await?;
+    if result.is_correct
+        && let Some(user) = &user
+    {
+        crate::progress::record_authenticated_classic_completion(
+            &state.db,
+            &user.id,
+            challenge_id,
+            now_millis(),
+        )
+        .await?;
+    }
     let trajectory_access_token = if result.is_correct {
         let (challenge, _) = repository::classic_trajectory(&state.db, challenge_id).await?;
         Some(crate::domain::trajectory::create_access_token(

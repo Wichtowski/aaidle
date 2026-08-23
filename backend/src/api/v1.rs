@@ -29,6 +29,10 @@ use crate::{
 const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 const MAX_BODY_BYTES: usize = 16 * 1024;
 const HEALTH_KEY_HEADER: &str = "x-aaidle-health-key";
+const GUESS_PLAYER_CHALLENGE_PER_MINUTE: i64 = 360;
+const GUESS_PLAYER_PER_HOUR: i64 = 1_500;
+const GUESS_IP_PER_MINUTE: i64 = 600;
+const GUESS_IP_PER_HOUR: i64 = 5_000;
 pub(super) const CLASSIC_CHALLENGE_COMPLETION_CATEGORIES: [&str; 6] =
     ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
@@ -74,12 +78,8 @@ pub fn router(state: AppState) -> Router {
             "/auth/account-deletion/complete",
             post(auth::account_deletion_complete),
         )
-        .route(
-            "/auth/progress",
-            get(progress::get)
-                .put(progress::put)
-                .layer(DefaultBodyLimit::max(1_000_000)),
-        )
+        .route("/auth/progress", get(progress::get).put(progress::put))
+        .route("/auth/progress/history", get(progress::history))
         .route("/auth/oauth/{provider}", get(auth::oauth_start))
         .route("/auth/oauth/{provider}/callback", get(auth::oauth_callback))
         .route("/auth/me", get(auth::me))
@@ -251,6 +251,7 @@ pub(super) fn current_utc_date() -> AppResult<String> {
 }
 
 pub(super) fn auth_user_response(user: crate::auth::SessionUser) -> AuthUserResponse {
+    let disabled_reason = user.disabled.then_some(user.disabled_reason).flatten();
     AuthUserResponse {
         id: user.id,
         email: user.email,
@@ -258,6 +259,7 @@ pub(super) fn auth_user_response(user: crate::auth::SessionUser) -> AuthUserResp
         email_verified: user.email_verified,
         permission: user.permission.as_str(),
         disabled: user.disabled,
+        disabled_reason,
     }
 }
 
@@ -449,9 +451,73 @@ pub(super) async fn consume_auth_rate_limit(
     )
     .await?
     {
-        return Err(AppError::TooManyRequests("Try again later.".to_owned()));
+        return Err(AppError::rate_limited(
+            "Try again later.",
+            (window_millis / 1_000).max(1) as u64,
+        ));
     }
     Ok(())
+}
+
+pub(super) async fn consume_guess_rate_limits(
+    state: &AppState,
+    headers: &HeaderMap,
+    peer: Option<SocketAddr>,
+    player_id: Uuid,
+    challenge_id: Uuid,
+) -> AppResult<()> {
+    let client_ip = client_ip_for_request(state.config.environment, headers, peer);
+    let rate_limit_ip = guess_rate_limit_ip(&client_ip);
+    let ip_subject =
+        crate::auth::rate_limit_subject(&state.config.auth_secret, "guess-ip", &rate_limit_ip)?;
+    let player_subject = crate::auth::rate_limit_subject(
+        &state.config.auth_secret,
+        "guess-player",
+        &player_id.to_string(),
+    )?;
+    let player_challenge_subject = crate::auth::rate_limit_subject(
+        &state.config.auth_secret,
+        &player_id.to_string(),
+        &challenge_id.to_string(),
+    )?;
+    let now = now_millis();
+    for (scope, subject, limit, window_millis) in [
+        ("guess-ip-minute", &ip_subject, GUESS_IP_PER_MINUTE, 60_000),
+        ("guess-ip-hour", &ip_subject, GUESS_IP_PER_HOUR, 3_600_000),
+        (
+            "guess-player-challenge-minute",
+            &player_challenge_subject,
+            GUESS_PLAYER_CHALLENGE_PER_MINUTE,
+            60_000,
+        ),
+        (
+            "guess-player-hour",
+            &player_subject,
+            GUESS_PLAYER_PER_HOUR,
+            3_600_000,
+        ),
+    ] {
+        if !crate::auth::consume_rate_limit(&state.db, scope, subject, limit, window_millis, now)
+            .await?
+        {
+            return Err(AppError::rate_limited(
+                "Guesses are being submitted too frequently.",
+                (window_millis / 1_000) as u64,
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn guess_rate_limit_ip(client_ip: &str) -> String {
+    match client_ip.parse::<IpAddr>() {
+        Ok(IpAddr::V6(address)) => IpAddr::V6(std::net::Ipv6Addr::from(
+            u128::from(address) & (u128::MAX << 64),
+        ))
+        .to_string(),
+        Ok(address) => address.to_string(),
+        Err(_) => client_ip.to_owned(),
+    }
 }
 
 fn client_ip_for_request(
@@ -499,6 +565,15 @@ mod tests {
     fn validates_known_modes_and_model_ids() {
         assert!(is_model_id("gpt-4o"));
         assert!(!is_model_id("gpt 4o"));
+    }
+
+    #[test]
+    fn guess_rate_limits_group_ipv6_privacy_addresses_by_prefix() {
+        assert_eq!(
+            guess_rate_limit_ip("2001:db8:1234:5678:1111:2222:3333:4444"),
+            "2001:db8:1234:5678::"
+        );
+        assert_eq!(guess_rate_limit_ip("203.0.113.10"), "203.0.113.10");
     }
 
     #[test]

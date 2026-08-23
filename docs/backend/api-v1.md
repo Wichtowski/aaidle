@@ -17,7 +17,7 @@ Errors use this structure:
 }
 ```
 
-The API returns `400` for invalid input, `404` for missing resources, `409` for conflicting guesses, `413` for a request body over 16 KB, `429` is intentionally delegated to the reverse proxy, and `500` without internal details for unexpected errors.
+The API returns `400` for invalid input, `404` for missing resources, `409` for conflicting guesses, `413` for a request body over 16 KB, `429` for persisted application rate limits, and `500` without internal details for unexpected errors. A `429` response includes `Retry-After`; the reverse proxy or CDN may enforce additional coarse limits before a request reaches the API.
 
 ## `GET /api/v1/health`
 
@@ -75,6 +75,7 @@ Hardcore is the seventh legacy Classic category and an access-controlled configu
 The legacy data records it as `classic:hardcore:hardcore`, which is an internal storage mode rather than a public route shape.
 
 `POST /api/v1/games/classic/challenges/{challengeId}/guesses` accepts a typed Classic guess with `guessedModelId`.
+Accepted attempts must be sequential relative to server-persisted history. The maximum number of stored guesses for one player and challenge is the exact eligible model-pool size, not a fixed client-provided value.
 `GET /api/v1/games/classic/challenges/{challengeId}/stats` returns answer-safe aggregate statistics.
 `POST /api/v1/games/classic/challenges/{challengeId}/trajectory` returns the exact eligible model space only after the caller has a persisted account completion or a HMAC-signed trajectory token issued with a correct Classic guess.
 The signed token is bound to that challenge and answer model and does not disclose either value.
@@ -84,7 +85,10 @@ Generic `/challenges/*` routes are not part of the public v2 contract.
 `GET /api/v1/games/emoji-clues/{difficulty}` returns an answer-safe Emoji Clues challenge, its initially available clues, public entity choices, and global completion count. Supported difficulties are `normal`, `challenge`, and access-controlled `hardcore`.
 `GET /api/v1/games/emoji-clues/challenges/{challengeId}/hints?playerId={uuid}` returns the clues earned by that player.
 `POST /api/v1/games/emoji-clues/challenges/{challengeId}/guesses` accepts retry-safe `playerId`, `requestId`, `attemptNumber`, and `guessedEntityId` fields. The server validates and records every accepted guess, so rejected or duplicate requests cannot change progress.
+Attempts must be sequential, and their hard limit is the eligible entity-pool size for the challenge difficulty.
 Emoji Clues supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
+
+Classic and Emoji guess requests share persisted abuse limits: 360 requests per minute for a player and challenge, 1,500 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
 ## Session routes
 
@@ -121,7 +125,7 @@ Both provider credentials must be configured together for a provider to be avail
 `GET /api/v1/auth/progress` returns the authenticated account's persisted progress or `null`.
 `PUT /api/v1/auth/progress` validates and merges local progress from another device.
 The account retains its original player ID, deduplicates guesses by request ID, keeps solved games solved, preserves the earliest completion timestamp, and recalculates Classic saved-game statistics. A progress entry creates an account completion only when the persisted player ID has a matching server-accepted correct guess; client preferences never grant Hardcore access.
-The request body limit for this route is 1 MB.
+The request body limit for this route is 16 KB.
 
 ## Admin and public configuration
 

@@ -1,9 +1,10 @@
 use axum::{
     Json,
-    extract::{Path, Query, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
     http::HeaderMap,
 };
 use serde::Deserialize;
+use std::net::SocketAddr;
 use uuid::Uuid;
 
 use crate::{
@@ -113,6 +114,8 @@ pub(super) async fn guess_history(
 
 pub(super) async fn guess(
     State(state): State<AppState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
     Path(challenge_id): Path<String>,
     payload: Result<Json<EmojiCluesGuessRequest>, JsonRejection>,
 ) -> AppResult<Json<EmojiCluesGuessResponse>> {
@@ -121,17 +124,39 @@ pub(super) async fn guess(
     if !is_model_id(&payload.guessed_entity_id) {
         return Err(AppError::validation("guessedEntityId is invalid"));
     }
-    if !(1..=100).contains(&payload.attempt_number) {
-        return Err(AppError::validation(
-            "attemptNumber must be between 1 and 100",
+    if payload.attempt_number == 0 {
+        return Err(AppError::validation("attemptNumber must be positive"));
+    }
+    let user = super::optional_authenticated_user(&state, &headers).await?;
+    if user.as_ref().is_some_and(|user| user.disabled) {
+        return Err(AppError::Forbidden(
+            "This account has been disabled.".to_owned(),
         ));
     }
+    if user.is_some() {
+        super::assert_same_origin_or_bearer(&state, &headers)?;
+        super::assert_csrf_or_bearer(&headers)?;
+    }
+    let player_id = match &user {
+        Some(user) => {
+            crate::progress::canonical_player_id(
+                &state.db,
+                &user.id,
+                payload.player_id,
+                super::now_millis(),
+            )
+            .await?
+        }
+        None => payload.player_id,
+    };
+    super::consume_guess_rate_limits(&state, &headers, Some(peer), player_id, challenge_id).await?;
     let outcome = repository::visual_clues::process_guess(
         &state.db,
         &state.visual_clues,
         repository::visual_clues::VisualGuessInput {
             challenge_id,
-            player_id: payload.player_id,
+            player_id,
+            user_id: user.as_ref().map(|user| user.id.clone()),
             request_id: payload.request_id,
             guessed_entity_id: payload.guessed_entity_id,
             attempt_number: payload.attempt_number,

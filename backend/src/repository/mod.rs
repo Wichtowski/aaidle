@@ -9,7 +9,9 @@ use uuid::Uuid;
 
 use crate::{
     domain::{
-        comparison::{ComparableModel, ComparisonResult, MatchingValues, compare_models, matching_values},
+        comparison::{
+            ComparableModel, ComparisonResult, MatchingValues, compare_models, matching_values,
+        },
         selection::{RecentAnswer, select_daily_model},
         streak::{PlayerStreak, update_streak},
     },
@@ -86,6 +88,13 @@ struct PlayerStatsRow {
 }
 
 #[derive(FromRow)]
+struct RebuildPlayerGameRow {
+    challenge_date: String,
+    guess_count: i64,
+    solved: i64,
+}
+
+#[derive(FromRow)]
 pub struct AggregateStats {
     pub total_guesses: i64,
     pub unique_players: i64,
@@ -95,6 +104,7 @@ pub struct AggregateStats {
 pub struct GuessInput {
     pub challenge_id: Uuid,
     pub player_id: Uuid,
+    pub user_id: Option<String>,
     pub request_id: Uuid,
     pub guessed_model_id: String,
     pub attempt_number: u16,
@@ -649,6 +659,24 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
             "This model is not available in this Classic difficulty.",
         ));
     }
+    let pool_size = classic_pool_size(connection, &challenge).await?;
+    let accepted_attempts = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM guess_events WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(input.challenge_id.to_string())
+    .bind(input.player_id.to_string())
+    .fetch_one(&mut *connection)
+    .await?;
+    if accepted_attempts >= pool_size {
+        return Err(AppError::Conflict("ATTEMPT_LIMIT_REACHED".to_owned()));
+    }
+    let expected_attempt = u16::try_from(accepted_attempts + 1)
+        .map_err(|_| AppError::Unavailable("Classic attempt limit is invalid.".to_owned()))?;
+    if input.attempt_number != expected_attempt {
+        return Err(AppError::validation(format!(
+            "attemptNumber must be {expected_attempt}",
+        )));
+    }
     let answer = load_model(connection, &challenge.answer_model_id, false)
         .await?
         .ok_or_else(|| AppError::Unavailable("Challenge answer is unavailable.".to_owned()))?;
@@ -675,13 +703,14 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
     let comparison_json = serde_json::to_string(&comparison)?;
     let inserted = sqlx::query(
         "INSERT INTO guess_events \
-         (id, request_id, challenge_id, player_id, guessed_model_id, attempt_number, is_correct, comparison_json, created_at) \
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
+         (id, request_id, challenge_id, player_id, user_id, guessed_model_id, attempt_number, is_correct, comparison_json, created_at) \
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
     )
     .bind(Uuid::new_v4().to_string())
     .bind(input.request_id.to_string())
     .bind(input.challenge_id.to_string())
     .bind(input.player_id.to_string())
+    .bind(&input.user_id)
     .bind(&input.guessed_model_id)
     .bind(i64::from(input.attempt_number))
     .bind(i64::from(u8::from(is_correct)))
@@ -783,7 +812,9 @@ pub async fn classic_guess_history(
             .map_err(|_| AppError::Unavailable("Stored guess request ID is invalid.".to_owned()))?;
         let guessed = load_model(&mut connection, &stored.guessed_model_id, false)
             .await?
-            .ok_or_else(|| AppError::Unavailable("Stored guessed model is unavailable.".to_owned()))?;
+            .ok_or_else(|| {
+                AppError::Unavailable("Stored guessed model is unavailable.".to_owned())
+            })?;
         let matching = matching_values(&guessed.comparable, &answer.comparable);
         guesses.push(ClassicGuessHistoryEntry {
             request_id,
@@ -815,6 +846,93 @@ pub async fn player_stats(pool: &SqlitePool, player_id: Uuid) -> AppResult<Vec<P
         .collect::<AppResult<_>>()
 }
 
+pub async fn rebuild_classic_player_stats(
+    pool: &SqlitePool,
+    player_id: Uuid,
+    mode: &str,
+    now: i64,
+) -> AppResult<()> {
+    rebuild_player_stats(pool, player_id, mode, now, PlayerEventTable::Classic).await
+}
+
+pub async fn rebuild_visual_player_stats(
+    pool: &SqlitePool,
+    player_id: Uuid,
+    mode: &str,
+    now: i64,
+) -> AppResult<()> {
+    rebuild_player_stats(pool, player_id, mode, now, PlayerEventTable::VisualClues).await
+}
+
+async fn rebuild_player_stats(
+    pool: &SqlitePool,
+    player_id: Uuid,
+    mode: &str,
+    now: i64,
+    event_table: PlayerEventTable,
+) -> AppResult<()> {
+    let query = match event_table {
+        PlayerEventTable::Classic => {
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+             FROM guess_events g JOIN daily_challenges d ON d.id = g.challenge_id \
+             WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
+        }
+        PlayerEventTable::VisualClues => {
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+             FROM visual_clue_guess_events g JOIN visual_clue_challenges d ON d.id = g.challenge_id \
+             WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
+        }
+    };
+    let rows = sqlx::query_as::<_, RebuildPlayerGameRow>(query)
+        .bind(player_id.to_string())
+        .bind(mode)
+        .fetch_all(pool)
+        .await?;
+    if rows.is_empty() {
+        sqlx::query("DELETE FROM player_mode_stats WHERE player_id = ? AND mode = ?")
+            .bind(player_id.to_string())
+            .bind(mode)
+            .execute(pool)
+            .await?;
+        return Ok(());
+    }
+    let mut streak = PlayerStreak {
+        current_streak: 0,
+        best_streak: 0,
+        last_solved_date: None,
+    };
+    let mut distribution: BTreeMap<String, i64> = BTreeMap::new();
+    for row in rows.iter().filter(|row| row.solved != 0) {
+        streak = update_streak(&streak, parse_date(&row.challenge_date)?);
+        *distribution.entry(row.guess_count.to_string()).or_default() += 1;
+    }
+    let games_won = rows.iter().filter(|row| row.solved != 0).count() as i64;
+    let last_played_date = rows.last().map(|row| row.challenge_date.clone());
+    let last_solved_date = streak.last_solved_date.map(format_date).transpose()?;
+    sqlx::query(
+        "INSERT INTO player_mode_stats \
+         (player_id, mode, current_streak, best_streak, games_played, games_won, last_played_date, last_solved_date, guess_distribution_json, updated_at) \
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(player_id, mode) DO UPDATE SET \
+         current_streak = excluded.current_streak, best_streak = excluded.best_streak, \
+         games_played = excluded.games_played, games_won = excluded.games_won, \
+         last_played_date = excluded.last_played_date, last_solved_date = excluded.last_solved_date, \
+         guess_distribution_json = excluded.guess_distribution_json, updated_at = excluded.updated_at",
+    )
+    .bind(player_id.to_string())
+    .bind(mode)
+    .bind(streak.current_streak)
+    .bind(streak.best_streak)
+    .bind(rows.len() as i64)
+    .bind(games_won)
+    .bind(last_played_date)
+    .bind(last_solved_date)
+    .bind(serde_json::to_string(&distribution)?)
+    .bind(now)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
 async fn find_challenge_by_date_and_mode(
     pool: &SqlitePool,
     date: &str,
@@ -829,7 +947,7 @@ async fn find_challenge_by_date_and_mode(
     .await?)
 }
 
-fn is_sqlite_busy(error: &AppError) -> bool {
+pub(super) fn is_sqlite_busy(error: &AppError) -> bool {
     match error {
         AppError::Database(sqlx::Error::Database(database_error)) => {
             matches!(
@@ -972,6 +1090,54 @@ async fn is_model_eligible_for_challenge(
     .fetch_one(&mut *connection)
     .await?
         != 0)
+}
+
+async fn classic_pool_size(
+    connection: &mut SqliteConnection,
+    challenge: &ChallengeRecord,
+) -> AppResult<i64> {
+    let Some((category, difficulty)) = parse_classic_mode(&challenge.mode) else {
+        return Ok(sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM models WHERE is_guessable = 1 AND status = 'active'",
+        )
+        .fetch_one(connection)
+        .await?);
+    };
+    let total_count = match category.catalog_slug() {
+        Some(category_slug) => {
+            sqlx::query_scalar::<_, i64>(
+                "SELECT COUNT(*) FROM models m JOIN model_categories mc ON mc.model_id = m.id \
+             JOIN categories c ON c.id = mc.category_id \
+             WHERE m.is_guessable = 1 AND m.status = 'active' AND c.slug = ?",
+            )
+            .bind(category_slug)
+            .fetch_one(&mut *connection)
+            .await?
+        }
+        None => {
+            sqlx::query_scalar::<_, i64>(
+                "SELECT COUNT(*) FROM models WHERE is_guessable = 1 AND status = 'active'",
+            )
+            .fetch_one(&mut *connection)
+            .await?
+        }
+    };
+    if category == ClassicCategory::Hardcore || difficulty != ClassicDifficulty::Normal {
+        return Ok(total_count);
+    }
+    let normal_count = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM models m JOIN model_categories mc ON mc.model_id = m.id \
+         JOIN categories c ON c.id = mc.category_id LEFT JOIN model_game_metadata g ON g.model_id = m.id \
+         WHERE m.is_guessable = 1 AND m.status = 'active' AND c.slug = ? \
+         AND COALESCE(g.min_pool_rank, 0) <= 0",
+    )
+    .bind(category.catalog_slug().expect("focused category has a slug"))
+    .fetch_one(&mut *connection)
+    .await?;
+    if normal_count >= 8 {
+        return Ok(normal_count);
+    }
+    Ok(total_count.min(8_i64.max((total_count * 2 + 4) / 5)))
 }
 
 async fn load_model(

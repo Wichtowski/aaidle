@@ -4,7 +4,6 @@ use axum::{
     http::HeaderMap,
 };
 use serde::Deserialize;
-use serde_json::Value;
 use sqlx::FromRow;
 
 use crate::{
@@ -34,7 +33,6 @@ struct AdminUserRow {
     password_hash: Option<String>,
     identity_providers: Option<String>,
     last_seen_at: Option<i64>,
-    progress_json: Option<String>,
     progress_updated_at: Option<i64>,
     completion_count: i64,
 }
@@ -81,9 +79,9 @@ pub(super) async fn users(
          u.disabled_at, u.disabled_reason, NULL AS disabled_by_email, u.password_hash, \
          (SELECT GROUP_CONCAT(i.provider, ',') FROM user_identities i WHERE i.user_id = u.id) AS identity_providers, \
          (SELECT MAX(s.last_seen_at) FROM user_sessions s WHERE s.user_id = u.id) AS last_seen_at, \
-         NULL AS progress_json, p.updated_at AS progress_updated_at, \
+         p.updated_at AS progress_updated_at, \
          (SELECT COUNT(*) FROM user_challenge_completions c WHERE c.user_id = u.id) AS completion_count \
-         FROM users u LEFT JOIN user_progress p ON p.user_id = u.id \
+         FROM users u LEFT JOIN user_progress_profiles p ON p.user_id = u.id \
          WHERE u.email_normalized LIKE ? ESCAPE '\\' OR LOWER(COALESCE(u.display_name, '')) LIKE ? ESCAPE '\\' \
          ORDER BY u.created_at DESC, u.id DESC LIMIT 50 OFFSET ?",
     )
@@ -205,63 +203,84 @@ pub(super) async fn delete_guess(
         return Err(AppError::validation("gameKey is invalid"));
     }
     let mut transaction = state.db.begin().await?;
-    let progress_json = sqlx::query_scalar::<_, String>(
-        "SELECT progress_json FROM user_progress WHERE user_id = ?",
+    let removed = sqlx::query_as::<_, (String, String, String, String)>(
+        "SELECT g.challenge_id, g.player_id, g.guessed_model_id, d.mode \
+         FROM guess_events g JOIN daily_challenges d ON d.id = g.challenge_id \
+         WHERE g.request_id = ? AND g.user_id = ?",
     )
+    .bind(payload.request_id.to_string())
     .bind(&user_id)
     .fetch_optional(&mut *transaction)
     .await?
-    .ok_or_else(|| AppError::NotFound("Saved progress was not found.".to_owned()))?;
-    let mut progress = crate::progress::parse_progress(serde_json::from_str(&progress_json)?)?;
-    let game = progress
-        .pointer_mut(&format!(
-            "/games/{}",
-            payload.game_key.replace('~', "~0").replace('/', "~1")
-        ))
-        .and_then(Value::as_object_mut)
-        .ok_or_else(|| AppError::NotFound("The saved game was not found.".to_owned()))?;
-    let challenge_id = game
-        .get("challengeId")
-        .and_then(Value::as_str)
-        .ok_or_else(|| AppError::Unavailable("Stored progress is invalid.".to_owned()))?
-        .to_owned();
-    let guesses = game
-        .get_mut("guesses")
-        .and_then(Value::as_array_mut)
-        .ok_or_else(|| AppError::Unavailable("Stored progress is invalid.".to_owned()))?;
-    let initial_len = guesses.len();
-    guesses.retain(|guess| {
-        guess.get("requestId").and_then(Value::as_str) != Some(&payload.request_id.to_string())
-    });
-    if guesses.len() == initial_len {
-        return Err(AppError::NotFound(
-            "The saved guess was not found.".to_owned(),
-        ));
-    }
-    let solved = guesses
-        .iter()
-        .any(|guess| guess.get("isCorrect").and_then(Value::as_bool) == Some(true));
-    if !solved {
-        game.insert("status".to_owned(), Value::String("in-progress".to_owned()));
-        game.insert("completedAt".to_owned(), Value::Null);
-    }
-    let progress = crate::progress::parse_progress(progress)?;
-    sqlx::query("UPDATE user_progress SET progress_json = ?, updated_at = ? WHERE user_id = ?")
-        .bind(serde_json::to_string(&progress)?)
-        .bind(now_millis())
+    .ok_or_else(|| AppError::NotFound("The saved guess was not found.".to_owned()))?;
+    sqlx::query("DELETE FROM guess_events WHERE request_id = ? AND user_id = ?")
+        .bind(payload.request_id.to_string())
         .bind(&user_id)
         .execute(&mut *transaction)
         .await?;
-    if !solved {
-        sqlx::query(
-            "DELETE FROM user_challenge_completions WHERE user_id = ? AND challenge_id = ?",
-        )
-        .bind(&user_id)
-        .bind(&challenge_id)
+    sqlx::query("DELETE FROM challenge_guess_stats WHERE challenge_id = ?")
+        .bind(&removed.0)
         .execute(&mut *transaction)
         .await?;
+    sqlx::query(
+        "INSERT INTO challenge_guess_stats \
+         (challenge_id, guessed_model_id, total_guess_count, unique_player_count, correct_guess_count, updated_at) \
+         SELECT challenge_id, guessed_model_id, COUNT(*), COUNT(DISTINCT player_id), SUM(is_correct), ? \
+         FROM guess_events WHERE challenge_id = ? GROUP BY challenge_id, guessed_model_id",
+    )
+    .bind(now_millis())
+    .bind(&removed.0)
+    .execute(&mut *transaction)
+    .await?;
+    sqlx::query(
+        "DELETE FROM user_challenge_completions WHERE user_id = ? AND challenge_id = ? AND NOT EXISTS (\
+           SELECT 1 FROM guess_events WHERE user_id = ? AND challenge_id = ? AND is_correct = 1\
+         )",
+    )
+    .bind(&user_id)
+    .bind(&removed.0)
+    .bind(&user_id)
+    .bind(&removed.0)
+    .execute(&mut *transaction)
+    .await?;
+    sqlx::query(
+        "DELETE FROM user_game_progress WHERE user_id = ? AND game_type = 'classic' AND difficulty = 'challenge'",
+    )
+    .bind(&user_id)
+    .execute(&mut *transaction)
+    .await?;
+    sqlx::query(
+        "INSERT OR IGNORE INTO user_game_progress (user_id, game_type, difficulty, category, completed_at) \
+         SELECT ?, 'classic', 'challenge', substr(d.mode, 9, length(d.mode) - 18), MIN(c.completed_at) \
+         FROM user_challenge_completions c JOIN daily_challenges d ON d.id = c.challenge_id \
+         WHERE c.user_id = ? AND d.mode LIKE 'classic:%:challenge' GROUP BY substr(d.mode, 9, length(d.mode) - 18)",
+    )
+    .bind(&user_id)
+    .bind(&user_id)
+    .execute(&mut *transaction)
+    .await?;
+    let completed_categories = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM user_game_progress WHERE user_id = ? AND game_type = 'classic' \
+         AND difficulty = 'challenge' AND category IN ('llm', 'cv', 'nlp', 'od', 'classical-ml', 'filters')",
+    )
+    .bind(&user_id)
+    .fetch_one(&mut *transaction)
+    .await?;
+    if completed_categories < 6 {
+        sqlx::query("DELETE FROM user_hardcore_access WHERE user_id = ?")
+            .bind(&user_id)
+            .execute(&mut *transaction)
+            .await?;
     }
     transaction.commit().await?;
+    crate::repository::rebuild_classic_player_stats(
+        &state.db,
+        uuid::Uuid::parse_str(&removed.1)
+            .map_err(|_| AppError::Unavailable("Stored player ID is invalid.".to_owned()))?,
+        &removed.3,
+        now_millis(),
+    )
+    .await?;
     Ok(Json(AdminUserDetailResponse {
         user: load_admin_user_detail(&state, &user_id).await?,
     }))
@@ -352,9 +371,9 @@ async fn load_admin_user_detail(state: &AppState, user_id: &str) -> AppResult<Ad
          u.disabled_at, u.disabled_reason, disabled_by.email AS disabled_by_email, u.password_hash, \
          (SELECT GROUP_CONCAT(i.provider, ',') FROM user_identities i WHERE i.user_id = u.id) AS identity_providers, \
          (SELECT MAX(s.last_seen_at) FROM user_sessions s WHERE s.user_id = u.id) AS last_seen_at, \
-         p.progress_json, p.updated_at AS progress_updated_at, \
+         p.updated_at AS progress_updated_at, \
          (SELECT COUNT(*) FROM user_challenge_completions c WHERE c.user_id = u.id) AS completion_count \
-         FROM users u LEFT JOIN user_progress p ON p.user_id = u.id \
+         FROM users u LEFT JOIN user_progress_profiles p ON p.user_id = u.id \
          LEFT JOIN users disabled_by ON disabled_by.id = u.disabled_by_user_id WHERE u.id = ?",
     )
     .bind(user_id)
@@ -380,13 +399,7 @@ async fn load_admin_user_detail(state: &AppState, user_id: &str) -> AppResult<Ad
     .collect();
     let hardcore_unlocked = crate::auth::has_hardcore_access(&state.db, user_id).await?;
     let disabled_by_email = row.disabled_by_email.clone();
-    let progress = row
-        .progress_json
-        .as_deref()
-        .map(serde_json::from_str::<Value>)
-        .transpose()?
-        .map(crate::progress::parse_progress)
-        .transpose()?;
+    let progress = crate::progress::load(&state.db, user_id).await?;
     Ok(AdminUserDetail {
         user: admin_user_summary(row),
         disabled_by_email,

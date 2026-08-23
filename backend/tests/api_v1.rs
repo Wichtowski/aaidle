@@ -165,6 +165,26 @@ async fn seed(pool: &SqlitePool) {
         .await
         .expect("seed additional model");
     }
+    let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
+        serde_json::from_str(include_str!("../../data/emoji.seed.json"))
+            .expect("parse visual clue seed");
+    for entity in visual_clues {
+        sqlx::query(
+            "INSERT INTO visual_clue_entities \
+             (id, name, aliases_json, entity_kind, categories_json, min_pool, entity_json, updated_at) \
+             VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
+        )
+        .bind(&entity.id)
+        .bind(&entity.name)
+        .bind(serde_json::to_string(&entity.aliases).expect("serialize aliases"))
+        .bind(entity.entity_kind.as_str())
+        .bind(serde_json::to_string(&entity.categories).expect("serialize categories"))
+        .bind(i64::from(entity.min_pool))
+        .bind(serde_json::to_string(&entity).expect("serialize visual clue entity"))
+        .execute(pool)
+        .await
+        .expect("seed visual clue entity");
+    }
 }
 
 async fn response_json(response: axum::response::Response) -> serde_json::Value {
@@ -405,6 +425,109 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
 }
 
 #[tokio::test]
+async fn disabled_password_accounts_receive_restricted_sessions() {
+    let (app, pool) = test_app().await;
+    let email = "disabled@example.test";
+    let password = "correct horse battery staple";
+    let user = auth::register_with_password(&pool, email, password, current_millis())
+        .await
+        .expect("disabled user");
+    sqlx::query(
+        "UPDATE users SET email_verified_at = ?, disabled_at = ?, disabled_reason = ? WHERE id = ?",
+    )
+    .bind(current_millis())
+    .bind(current_millis())
+    .bind("Repeated abuse of the service")
+    .bind(&user.id)
+    .execute(&pool)
+    .await
+    .expect("disable user");
+
+    let credentials = serde_json::json!({
+        "email": email,
+        "password": password,
+    })
+    .to_string();
+    let login = app
+        .clone()
+        .oneshot(
+            Request::post("/api/v1/auth/password")
+                .header("origin", "http://localhost:3000")
+                .header("content-type", "application/json")
+                .body(Body::from(credentials.clone()))
+                .expect("disabled login request"),
+        )
+        .await
+        .expect("disabled login response");
+    assert_eq!(login.status(), StatusCode::OK);
+    let session = cookie_value(&login, "aaidle_session");
+    let csrf = cookie_value(&login, "aaidle_csrf");
+    let login_body = response_json(login).await;
+    assert_eq!(login_body["user"]["disabled"], true);
+    assert_eq!(
+        login_body["user"]["disabledReason"],
+        "Repeated abuse of the service"
+    );
+
+    let me = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/auth/me")
+                .header("cookie", format!("aaidle_session={session}"))
+                .body(Body::empty())
+                .expect("disabled me request"),
+        )
+        .await
+        .expect("disabled me response");
+    let me_body = response_json(me).await;
+    assert_eq!(me_body["user"]["disabled"], true);
+    assert_eq!(
+        me_body["user"]["disabledReason"],
+        "Repeated abuse of the service"
+    );
+
+    let progress = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/auth/progress")
+                .header("cookie", format!("aaidle_session={session}"))
+                .body(Body::empty())
+                .expect("disabled progress request"),
+        )
+        .await
+        .expect("disabled progress response");
+    assert_eq!(progress.status(), StatusCode::UNAUTHORIZED);
+
+    let token = app
+        .clone()
+        .oneshot(
+            Request::post("/api/v1/auth/token")
+                .header("content-type", "application/json")
+                .body(Body::from(credentials))
+                .expect("disabled token request"),
+        )
+        .await
+        .expect("disabled token response");
+    assert_eq!(token.status(), StatusCode::FORBIDDEN);
+
+    let logout = app
+        .oneshot(
+            Request::post("/api/v1/auth/logout")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, csrf)
+                .body(Body::empty())
+                .expect("disabled logout request"),
+        )
+        .await
+        .expect("disabled logout response");
+    assert_eq!(logout.status(), StatusCode::NO_CONTENT);
+}
+
+#[tokio::test]
 async fn auth_email_tokens_are_single_use_and_account_deletion_revokes_sessions() {
     let (app, pool) = test_app().await;
     let email = "tokens@example.test";
@@ -606,7 +729,7 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
     let classic = app
         .clone()
         .oneshot(
-            Request::get("/api/v1/games/classic/llm/normal")
+            Request::get("/api/v1/games/classic/llm/challenge")
                 .body(Body::empty())
                 .expect("classic game request"),
         )
@@ -618,7 +741,7 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .to_owned();
     let player_id = Uuid::new_v4();
     let request_id = Uuid::new_v4();
-    let progress = serde_json::json!({
+    let forged_progress = serde_json::json!({
         "version": 1,
         "playerId": player_id,
         "activeMode": "classic",
@@ -647,12 +770,93 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
                 )
                 .header(CSRF_HEADER, &csrf)
                 .header("content-type", "application/json")
-                .body(Body::from(progress.to_string()))
+                .body(Body::from(forged_progress.to_string()))
                 .expect("forged progress request"),
         )
         .await
         .expect("forged progress response");
-    assert_eq!(forged_sync.status(), StatusCode::OK);
+    assert_eq!(forged_sync.status(), StatusCode::BAD_REQUEST);
+    let progress = serde_json::json!({
+        "version": 1,
+        "playerId": player_id,
+        "preferences": {
+            "reducedMotion": false,
+            "highContrast": false,
+            "hasSeenClassicPrivacy": false,
+            "hasSeenClassicHowToPlay": false,
+            "innerCircleActive": false,
+            "hellMode": false,
+            "hasAutoplayedHardcoreSoundtrack": false
+        },
+        "activeGames": [{
+            "challengeId": challenge_id,
+            "startedAt": "2026-08-16T11:00:00Z"
+        }]
+    });
+    let initial_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(progress.to_string()))
+                .expect("initial progress request"),
+        )
+        .await
+        .expect("initial progress response");
+    assert_eq!(initial_sync.status(), StatusCode::OK);
+    let mut excessive_progress = progress.clone();
+    excessive_progress["activeGames"] = serde_json::Value::Array(
+        (0..17)
+            .map(|_| {
+                serde_json::json!({
+                    "challengeId": challenge_id,
+                    "startedAt": "2026-08-16T11:00:00Z"
+                })
+            })
+            .collect(),
+    );
+    let excessive_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(excessive_progress.to_string()))
+                .expect("excessive progress request"),
+        )
+        .await
+        .expect("excessive progress response");
+    assert_eq!(excessive_sync.status(), StatusCode::BAD_REQUEST);
+    let oversized_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({"padding": "x".repeat(20_000)}).to_string(),
+                ))
+                .expect("oversized progress request"),
+        )
+        .await
+        .expect("oversized progress response");
+    assert_eq!(oversized_sync.status(), StatusCode::PAYLOAD_TOO_LARGE);
     let user_id =
         sqlx::query_scalar::<_, String>("SELECT id FROM users WHERE email_normalized = ?")
             .bind(email)
@@ -687,6 +891,12 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
             Request::post(format!(
                 "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
+            .header(
+                "cookie",
+                format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+            )
+            .header(CSRF_HEADER, &csrf)
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -702,6 +912,52 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .await
         .expect("guess response");
     assert_eq!(accepted_guess.status(), StatusCode::OK);
+    assert_eq!(
+        sqlx::query_scalar::<_, Option<String>>(
+            "SELECT user_id FROM guess_events WHERE request_id = ?"
+        )
+        .bind(request_id.to_string())
+        .fetch_one(&pool)
+        .await
+        .expect("guess owner"),
+        Some(user_id.clone())
+    );
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM user_challenge_completions WHERE user_id = ?"
+        )
+        .bind(&user_id)
+        .fetch_one(&pool)
+        .await
+        .expect("immediate completion count"),
+        1
+    );
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM user_game_progress WHERE user_id = ? AND game_type = 'classic' \
+             AND difficulty = 'challenge' AND category = 'llm'"
+        )
+        .bind(&user_id)
+        .fetch_one(&pool)
+        .await
+        .expect("challenge category progress"),
+        1
+    );
+    let history = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/auth/progress/history?category=llm&page=1")
+                .header("cookie", format!("aaidle_session={session}"))
+                .body(Body::empty())
+                .expect("progress history request"),
+        )
+        .await
+        .expect("progress history response");
+    assert_eq!(history.status(), StatusCode::OK);
+    let history = response_json(history).await;
+    assert_eq!(history["total"], 1);
+    assert_eq!(history["games"][0]["status"], "solved");
+    assert_eq!(history["games"][0]["guessCount"], 1);
     let synced = app
         .clone()
         .oneshot(
@@ -1241,6 +1497,282 @@ async fn oversized_guess_bodies_are_rejected() {
 }
 
 #[tokio::test]
+async fn classic_attempts_are_sequential_and_bounded_by_the_eligible_pool() {
+    let (app, pool) = test_app().await;
+    sqlx::query(
+        "INSERT INTO model_categories (model_id, category_id) VALUES ('model-3', 'language-model')",
+    )
+    .execute(&pool)
+    .await
+    .expect("attach second LLM");
+    sqlx::query("INSERT INTO model_game_metadata (model_id, min_pool_rank, category_details_json, updated_at) VALUES ('model-3', 0, '{}', 0)")
+        .execute(&pool)
+        .await
+        .expect("second LLM metadata");
+    let challenge_id = Uuid::new_v4();
+    sqlx::query("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, '2026-08-23', 'classic:llm:normal', 'model-3', 1, 0, 'test')")
+        .bind(challenge_id.to_string())
+        .execute(&pool)
+        .await
+        .expect("classic challenge");
+    let player_id = Uuid::new_v4();
+    let guess = |model: &str, attempt_number: u16| {
+        Request::post(format!(
+            "/api/v1/games/classic/challenges/{challenge_id}/guesses"
+        ))
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::json!({
+                "playerId": player_id,
+                "requestId": Uuid::new_v4(),
+                "guessedModelId": model,
+                "attemptNumber": attempt_number
+            })
+            .to_string(),
+        ))
+        .expect("guess request")
+    };
+
+    let skipped = app
+        .clone()
+        .oneshot(guess("model-one", 2))
+        .await
+        .expect("skipped attempt response");
+    assert_eq!(skipped.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(
+        response_json(skipped).await["error"]["message"],
+        "attemptNumber must be 1"
+    );
+
+    let first = app
+        .clone()
+        .oneshot(guess("model-one", 1))
+        .await
+        .expect("first attempt response");
+    assert_eq!(first.status(), StatusCode::OK);
+    assert!(
+        !response_json(first).await["isCorrect"]
+            .as_bool()
+            .expect("correct flag")
+    );
+
+    let skipped = app
+        .clone()
+        .oneshot(guess("model-3", 3))
+        .await
+        .expect("second skipped attempt response");
+    assert_eq!(skipped.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(
+        response_json(skipped).await["error"]["message"],
+        "attemptNumber must be 2"
+    );
+
+    let second = app
+        .oneshot(guess("model-3", 2))
+        .await
+        .expect("second attempt response");
+    assert_eq!(second.status(), StatusCode::OK);
+    assert!(
+        response_json(second).await["isCorrect"]
+            .as_bool()
+            .expect("correct flag")
+    );
+}
+
+#[tokio::test]
+async fn attempt_numbers_above_the_legacy_limit_reach_dynamic_validation() {
+    let (app, _) = test_app().await;
+    let game = response_json(
+        app.clone()
+            .oneshot(
+                Request::get("/api/v1/games/classic/llm/normal")
+                    .body(Body::empty())
+                    .expect("classic request"),
+            )
+            .await
+            .expect("classic response"),
+    )
+    .await;
+    let challenge_id = game["challenge"]["id"].as_str().expect("challenge ID");
+    let response = app
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses"
+            ))
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": Uuid::new_v4(),
+                    "requestId": Uuid::new_v4(),
+                    "guessedModelId": "model-one",
+                    "attemptNumber": 101
+                })
+                .to_string(),
+            ))
+            .expect("guess request"),
+        )
+        .await
+        .expect("guess response");
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(
+        response_json(response).await["error"]["message"],
+        "attemptNumber must be 1"
+    );
+}
+
+#[tokio::test]
+async fn emoji_attempts_must_follow_the_server_accepted_history() {
+    let (app, _) = test_app().await;
+    let game = response_json(
+        app.clone()
+            .oneshot(
+                Request::get("/api/v1/games/emoji-clues/normal")
+                    .body(Body::empty())
+                    .expect("Emoji request"),
+            )
+            .await
+            .expect("Emoji response"),
+    )
+    .await;
+    let challenge_id = game["challenge"]["id"].as_str().expect("challenge ID");
+    let entity_id = game["entities"][0]["id"].as_str().expect("entity ID");
+    let player_id = Uuid::new_v4();
+    let response = app
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/emoji-clues/challenges/{challenge_id}/guesses"
+            ))
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": player_id,
+                    "requestId": Uuid::new_v4(),
+                    "guessedEntityId": entity_id,
+                    "attemptNumber": 2
+                })
+                .to_string(),
+            ))
+            .expect("Emoji guess request"),
+        )
+        .await
+        .expect("Emoji guess response");
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(
+        response_json(response).await["error"]["message"],
+        "attemptNumber must be 1"
+    );
+}
+
+#[tokio::test]
+async fn guess_rate_limits_are_shared_across_game_modes_and_return_retry_after() {
+    let (app, pool) = test_app().await;
+    let classic = response_json(
+        app.clone()
+            .oneshot(
+                Request::get("/api/v1/games/classic/llm/normal")
+                    .body(Body::empty())
+                    .expect("classic request"),
+            )
+            .await
+            .expect("classic response"),
+    )
+    .await;
+    let classic_challenge_id = classic["challenge"]["id"]
+        .as_str()
+        .expect("classic challenge ID");
+    let first = app
+        .clone()
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/classic/challenges/{classic_challenge_id}/guesses"
+            ))
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": Uuid::new_v4(),
+                    "requestId": Uuid::new_v4(),
+                    "guessedModelId": "model-one",
+                    "attemptNumber": 1
+                })
+                .to_string(),
+            ))
+            .expect("classic guess request"),
+        )
+        .await
+        .expect("classic guess response");
+    assert_eq!(first.status(), StatusCode::OK);
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM request_rate_limits")
+            .fetch_one(&pool)
+            .await
+            .expect("rate limit count"),
+        4
+    );
+
+    let ip_subject = auth::rate_limit_subject(
+        "test secret that is longer than thirty two bytes",
+        "guess-ip",
+        "127.0.0.1",
+    )
+    .expect("IP subject");
+    sqlx::query("UPDATE request_rate_limits SET count = 600 WHERE scope = 'guess-ip-minute' AND subject_hash = ?")
+        .bind(ip_subject)
+        .execute(&pool)
+        .await
+        .expect("exhaust IP limit");
+
+    let emoji = response_json(
+        app.clone()
+            .oneshot(
+                Request::get("/api/v1/games/emoji-clues/normal")
+                    .body(Body::empty())
+                    .expect("Emoji request"),
+            )
+            .await
+            .expect("Emoji response"),
+    )
+    .await;
+    assert!(
+        emoji["challenge"].is_object(),
+        "unexpected Emoji game response: {emoji}"
+    );
+    let emoji_challenge_id = emoji["challenge"]["id"]
+        .as_str()
+        .expect("Emoji challenge ID");
+    let limited = app
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/emoji-clues/challenges/{emoji_challenge_id}/guesses"
+            ))
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": Uuid::new_v4(),
+                    "requestId": Uuid::new_v4(),
+                    "guessedEntityId": "gpt",
+                    "attemptNumber": 1
+                })
+                .to_string(),
+            ))
+            .expect("Emoji guess request"),
+        )
+        .await
+        .expect("Emoji guess response");
+    assert_eq!(limited.status(), StatusCode::TOO_MANY_REQUESTS);
+    assert_eq!(
+        limited
+            .headers()
+            .get("retry-after")
+            .and_then(|value| value.to_str().ok()),
+        Some("60")
+    );
+    assert_eq!(
+        response_json(limited).await["error"]["code"],
+        "RATE_LIMITED"
+    );
+}
+
+#[tokio::test]
 async fn daily_creation_is_safe_when_called_concurrently() {
     let (_, pool) = test_app().await;
     let mut tasks = Vec::with_capacity(8);
@@ -1290,6 +1822,7 @@ async fn sqlite_wal_pool_handles_concurrent_daily_creation_and_guess_writes() {
                 repository::GuessInput {
                     challenge_id,
                     player_id: Uuid::new_v4(),
+                    user_id: None,
                     request_id: Uuid::new_v4(),
                     guessed_model_id: "model-one".to_owned(),
                     attempt_number: 1,

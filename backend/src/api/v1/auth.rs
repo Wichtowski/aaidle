@@ -103,7 +103,7 @@ pub(super) async fn password_login(
     )
     .await?;
     let user =
-        crate::auth::authenticate_with_password(&state.db, &email, &payload.password).await?;
+        crate::auth::verify_password_credentials(&state.db, &email, &payload.password).await?;
     let session =
         crate::auth::rotate_session(&state.db, &user.id, session_cookie(&headers), now_millis())
             .await?;
@@ -134,7 +134,12 @@ pub(super) async fn api_token(
     )
     .await?;
     let user =
-        crate::auth::authenticate_with_password(&state.db, &email, &payload.password).await?;
+        crate::auth::verify_password_credentials(&state.db, &email, &payload.password).await?;
+    if user.disabled {
+        return Err(AppError::Forbidden(
+            "This account has been disabled.".to_owned(),
+        ));
+    }
     let access_token = crate::auth::create_access_token(&user, &state.config, now_millis())?;
     Ok((
         [("cache-control", "no-store")],
@@ -535,11 +540,7 @@ pub(super) async fn oauth_callback(
         let user =
             crate::auth::find_or_create_oauth_user(&state.db, provider, identity, now_millis())
                 .await?;
-        if user.disabled {
-            return Err(AppError::Forbidden(
-                "This account has been disabled.".to_owned(),
-            ));
-        }
+        let disabled = user.disabled;
         let session = crate::auth::rotate_session(
             &state.db,
             &user.id,
@@ -547,17 +548,12 @@ pub(super) async fn oauth_callback(
             now_millis(),
         )
         .await?;
-        Ok::<_, AppError>(session)
+        Ok::<_, AppError>((session, disabled))
     }
     .await;
     match result {
-        Ok(session) => oauth_success_redirect(&state, session),
-        Err(AppError::Forbidden(_)) => redirect(
-            &state,
-            "/login?error=account-disabled",
-            Some(("aaidle_oauth_state", "".to_owned(), 0)),
-            StatusCode::SEE_OTHER,
-        ),
+        Ok((session, true)) => oauth_success_redirect(&state, session, "/account-disabled"),
+        Ok((session, false)) => oauth_success_redirect(&state, session, "/classic"),
         Err(_) => redirect(
             &state,
             "/login?error=oauth",
@@ -575,11 +571,11 @@ fn mask_email(email: &str) -> String {
     format!("{first}***@{domain}")
 }
 
-fn oauth_success_redirect(state: &AppState, session: String) -> AppResult<Response> {
+fn oauth_success_redirect(state: &AppState, session: String, path: &str) -> AppResult<Response> {
     let mut headers = HeaderMap::new();
     headers.insert(
         header::LOCATION,
-        HeaderValue::from_str(&format!("{}/classic", state.config.app_origin))
+        HeaderValue::from_str(&format!("{}{path}", state.config.app_origin))
             .map_err(|_| AppError::validation("Invalid redirect location."))?,
     );
     headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));

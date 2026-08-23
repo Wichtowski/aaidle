@@ -31,6 +31,7 @@ pub struct AuthUserResponse {
     pub email_verified: bool,
     pub permission: &'static str,
     pub disabled: bool,
+    pub disabled_reason: Option<String>,
 }
 
 #[derive(Serialize)]

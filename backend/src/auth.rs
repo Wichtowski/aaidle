@@ -41,6 +41,7 @@ pub struct SessionUser {
     pub email_verified: bool,
     pub permission: Permission,
     pub disabled: bool,
+    pub disabled_reason: Option<String>,
 }
 
 pub fn create_access_token(
@@ -192,6 +193,7 @@ struct UserRow {
     email_verified_at: Option<i64>,
     permission: String,
     disabled_at: Option<i64>,
+    disabled_reason: Option<String>,
 }
 
 impl TryFrom<UserRow> for SessionUser {
@@ -205,6 +207,7 @@ impl TryFrom<UserRow> for SessionUser {
             email_verified: value.email_verified_at.is_some(),
             permission: Permission::parse(&value.permission)?,
             disabled: value.disabled_at.is_some(),
+            disabled_reason: value.disabled_reason,
         })
     }
 }
@@ -352,11 +355,11 @@ pub async fn consume_rate_limit(
 ) -> AppResult<bool> {
     let threshold = now - window_millis;
     Ok(sqlx::query_scalar::<_, i64>(
-        "INSERT INTO auth_rate_limits (scope, subject_hash, window_started_at, count) VALUES (?, ?, ?, 1) \
+        "INSERT INTO request_rate_limits (scope, subject_hash, window_started_at, count) VALUES (?, ?, ?, 1) \
          ON CONFLICT(scope, subject_hash) DO UPDATE SET \
-         window_started_at = CASE WHEN auth_rate_limits.window_started_at <= ? THEN excluded.window_started_at ELSE auth_rate_limits.window_started_at END, \
-         count = CASE WHEN auth_rate_limits.window_started_at <= ? THEN 1 ELSE auth_rate_limits.count + 1 END \
-         WHERE auth_rate_limits.window_started_at <= ? OR auth_rate_limits.count < ? RETURNING count",
+         window_started_at = CASE WHEN request_rate_limits.window_started_at <= ? THEN excluded.window_started_at ELSE request_rate_limits.window_started_at END, \
+         count = CASE WHEN request_rate_limits.window_started_at <= ? THEN 1 ELSE request_rate_limits.count + 1 END \
+         WHERE request_rate_limits.window_started_at <= ? OR request_rate_limits.count < ? RETURNING count",
     )
     .bind(scope)
     .bind(subject_hash)
@@ -368,6 +371,16 @@ pub async fn consume_rate_limit(
     .fetch_optional(pool)
     .await?
     .is_some())
+}
+
+pub async fn purge_expired_rate_limits(pool: &SqlitePool, before: i64) -> AppResult<u64> {
+    Ok(
+        sqlx::query("DELETE FROM request_rate_limits WHERE window_started_at < ?")
+            .bind(before)
+            .execute(pool)
+            .await?
+            .rows_affected(),
+    )
 }
 
 pub async fn register_with_password(
@@ -403,10 +416,11 @@ pub async fn register_with_password(
         email_verified: false,
         permission: Permission::User,
         disabled: false,
+        disabled_reason: None,
     })
 }
 
-pub async fn authenticate_with_password(
+pub async fn verify_password_credentials(
     pool: &SqlitePool,
     email: &str,
     password: &str,
@@ -414,7 +428,7 @@ pub async fn authenticate_with_password(
     validate_password(password, 1)?;
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at \
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason \
          FROM users WHERE email_normalized = ?",
     )
     .bind(email)
@@ -435,13 +449,7 @@ pub async fn authenticate_with_password(
             "Email or password is incorrect.".to_owned(),
         ));
     }
-    let user = SessionUser::try_from(user)?;
-    if user.disabled {
-        return Err(AppError::Forbidden(
-            "This account has been disabled.".to_owned(),
-        ));
-    }
-    Ok(user)
+    SessionUser::try_from(user)
 }
 
 pub async fn create_session(pool: &SqlitePool, user_id: &str, now: i64) -> AppResult<String> {
@@ -454,17 +462,6 @@ pub async fn rotate_session(
     previous_token: Option<&str>,
     now: i64,
 ) -> AppResult<String> {
-    let active = sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM users WHERE id = ? AND disabled_at IS NULL)",
-    )
-    .bind(user_id)
-    .fetch_one(pool)
-    .await?;
-    if active == 0 {
-        return Err(AppError::Forbidden(
-            "This account has been disabled.".to_owned(),
-        ));
-    }
     let token = random_token();
     let mut transaction = pool.begin().await?;
     if let Some(previous_token) = previous_token {
@@ -510,7 +507,7 @@ pub async fn create_email_verification_token_for_email(
 ) -> AppResult<Option<(String, String)>> {
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE email_normalized = ?",
     )
     .bind(email)
     .fetch_optional(pool)
@@ -531,7 +528,7 @@ pub async fn create_password_reset_token(
 ) -> AppResult<Option<(String, String)>> {
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE email_normalized = ?",
     )
     .bind(email)
     .fetch_optional(pool)
@@ -700,7 +697,7 @@ pub async fn find_or_create_oauth_user(
     let normalized_email = normalize_email(&identity.email)?;
     let mut transaction = pool.begin().await?;
     if let Some(user) = sqlx::query_as::<_, UserRow>(
-        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at FROM user_identities i JOIN users u ON u.id = i.user_id WHERE i.provider = ? AND i.provider_user_id = ?",
+        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason FROM user_identities i JOIN users u ON u.id = i.user_id WHERE i.provider = ? AND i.provider_user_id = ?",
     )
     .bind(provider.as_str())
     .bind(&identity.provider_user_id)
@@ -710,7 +707,7 @@ pub async fn find_or_create_oauth_user(
         return SessionUser::try_from(user);
     }
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE email_normalized = ?",
     )
     .bind(&normalized_email)
     .fetch_optional(&mut *transaction)
@@ -749,7 +746,7 @@ pub async fn find_or_create_oauth_user(
         .execute(&mut *transaction)
         .await?;
     let result = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE id = ?",
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE id = ?",
     )
     .bind(&user)
     .fetch_one(&mut *transaction)
@@ -961,7 +958,7 @@ pub async fn user_for_session(
     };
     let token_hash = token_hash(token);
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at \
+        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason \
          FROM user_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ?",
     )
     .bind(&token_hash)
@@ -988,7 +985,7 @@ pub async fn user_for_access_token(
     };
     let claims = verify_access_token(token, config)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at FROM users WHERE id = ?",
+        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason FROM users WHERE id = ?",
     )
     .bind(&claims.sub)
     .fetch_optional(pool)

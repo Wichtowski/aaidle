@@ -1,6 +1,6 @@
 use axum::{
     Json,
-    http::StatusCode,
+    http::{HeaderValue, StatusCode, header},
     response::{IntoResponse, Response},
 };
 use serde::Serialize;
@@ -27,8 +27,11 @@ pub enum AppError {
     Unavailable(String),
     #[error("request body too large")]
     PayloadTooLarge,
-    #[error("rate limit exceeded: {0}")]
-    TooManyRequests(String),
+    #[error("rate limit exceeded: {message}")]
+    TooManyRequests {
+        message: String,
+        retry_after_seconds: u64,
+    },
     #[error(transparent)]
     Database(#[from] sqlx::Error),
     #[error(transparent)]
@@ -42,6 +45,13 @@ impl AppError {
 
     pub fn validation(message: impl Into<String>) -> Self {
         Self::Validation(message.into())
+    }
+
+    pub fn rate_limited(message: impl Into<String>, retry_after_seconds: u64) -> Self {
+        Self::TooManyRequests {
+            message: message.into(),
+            retry_after_seconds,
+        }
     }
 }
 
@@ -60,6 +70,13 @@ struct ErrorBody<'a> {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
+        let retry_after_seconds = match &self {
+            Self::TooManyRequests {
+                retry_after_seconds,
+                ..
+            } => Some(*retry_after_seconds),
+            _ => None,
+        };
         let (status, code, message) = match &self {
             Self::Validation(message) => (
                 StatusCode::BAD_REQUEST,
@@ -89,6 +106,11 @@ impl IntoResponse for AppError {
                     "REQUEST_ID_REUSED",
                     "This request ID was used for a different guess.",
                 ),
+                "ATTEMPT_LIMIT_REACHED" => (
+                    StatusCode::CONFLICT,
+                    "ATTEMPT_LIMIT_REACHED",
+                    "Every available answer for this challenge has already been guessed.",
+                ),
                 _ => (
                     StatusCode::CONFLICT,
                     "CONFLICT",
@@ -105,7 +127,7 @@ impl IntoResponse for AppError {
                 "PAYLOAD_TOO_LARGE",
                 "The request body exceeds the 16 KB limit.",
             ),
-            Self::TooManyRequests(message) => (
+            Self::TooManyRequests { message, .. } => (
                 StatusCode::TOO_MANY_REQUESTS,
                 "RATE_LIMITED",
                 message.as_str(),
@@ -120,12 +142,18 @@ impl IntoResponse for AppError {
             }
         };
 
-        (
+        let mut response = (
             status,
             Json(ErrorResponse {
                 error: ErrorBody { code, message },
             }),
         )
-            .into_response()
+            .into_response();
+        if let Some(seconds) = retry_after_seconds
+            && let Ok(value) = HeaderValue::from_str(&seconds.to_string())
+        {
+            response.headers_mut().insert(header::RETRY_AFTER, value);
+        }
+        response
     }
 }

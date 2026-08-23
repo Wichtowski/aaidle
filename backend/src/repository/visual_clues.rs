@@ -34,6 +34,7 @@ pub struct VisualGameData {
 pub struct VisualGuessInput {
     pub challenge_id: Uuid,
     pub player_id: Uuid,
+    pub user_id: Option<String>,
     pub request_id: Uuid,
     pub guessed_entity_id: String,
     pub attempt_number: u16,
@@ -123,7 +124,9 @@ pub async fn guess_history(
     player_id: Uuid,
 ) -> AppResult<Vec<EmojiCluesGuessHistoryEntry>> {
     if challenge_by_id(pool, challenge_id).await?.is_none() {
-        return Err(AppError::NotFound("Emoji Clues challenge not found.".to_owned()));
+        return Err(AppError::NotFound(
+            "Emoji Clues challenge not found.".to_owned(),
+        ));
     }
     let stored = sqlx::query_as::<_, VisualGuessHistoryRow>(
         "SELECT guessed_entity_id, attempt_number, is_correct \
@@ -137,9 +140,9 @@ pub async fn guess_history(
 
     let mut guesses = Vec::with_capacity(stored.len());
     for stored in stored {
-        let entity = catalog
-            .entity(&stored.guessed_entity_id)
-            .ok_or_else(|| AppError::Unavailable("Stored Emoji Clues guess is unavailable.".to_owned()))?;
+        let entity = catalog.entity(&stored.guessed_entity_id).ok_or_else(|| {
+            AppError::Unavailable("Stored Emoji Clues guess is unavailable.".to_owned())
+        })?;
         guesses.push(EmojiCluesGuessHistoryEntry {
             id: entity.id.clone(),
             name: entity.name.clone(),
@@ -154,6 +157,22 @@ pub async fn process_guess(
     pool: &SqlitePool,
     catalog: &VisualClueCatalog,
     input: VisualGuessInput,
+) -> AppResult<VisualGuessOutcome> {
+    for attempt in 0..12 {
+        match process_guess_once(pool, catalog, &input).await {
+            Err(error) if super::is_sqlite_busy(&error) && attempt < 11 => {
+                tokio::time::sleep(std::time::Duration::from_millis(10_u64 << attempt)).await;
+            }
+            result => return result,
+        }
+    }
+    unreachable!("the retry loop always returns")
+}
+
+async fn process_guess_once(
+    pool: &SqlitePool,
+    catalog: &VisualClueCatalog,
+    input: &VisualGuessInput,
 ) -> AppResult<VisualGuessOutcome> {
     let mut transaction = pool.begin().await?;
     let connection = &mut *transaction;
@@ -194,11 +213,30 @@ pub async fn process_guess(
             "This answer is not in the Emoji Clues pool.",
         ));
     }
+    let pool_size = i64::try_from(catalog.eligible(difficulty).count())
+        .map_err(|_| AppError::Unavailable("Emoji Clues attempt limit is invalid.".to_owned()))?;
+    let accepted_attempts = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM visual_clue_guess_events WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(input.challenge_id.to_string())
+    .bind(input.player_id.to_string())
+    .fetch_one(&mut *connection)
+    .await?;
+    if accepted_attempts >= pool_size {
+        return Err(AppError::Conflict("ATTEMPT_LIMIT_REACHED".to_owned()));
+    }
+    let expected_attempt = u16::try_from(accepted_attempts + 1)
+        .map_err(|_| AppError::Unavailable("Emoji Clues attempt limit is invalid.".to_owned()))?;
+    if input.attempt_number != expected_attempt {
+        return Err(AppError::validation(format!(
+            "attemptNumber must be {expected_attempt}",
+        )));
+    }
     let is_correct = entity.id == challenge.answer_entity_id;
     let now = now_unix_millis();
     ensure_anonymous_player(&mut *connection, input.player_id, now).await?;
-    sqlx::query("INSERT INTO visual_clue_guess_events (id, request_id, challenge_id, player_id, guessed_entity_id, attempt_number, is_correct, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-        .bind(Uuid::new_v4().to_string()).bind(input.request_id.to_string()).bind(input.challenge_id.to_string()).bind(input.player_id.to_string()).bind(&entity.id).bind(i64::from(input.attempt_number)).bind(i64::from(u8::from(is_correct))).bind(now).execute(&mut *connection).await?;
+    sqlx::query("INSERT INTO visual_clue_guess_events (id, request_id, challenge_id, player_id, user_id, guessed_entity_id, attempt_number, is_correct, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .bind(Uuid::new_v4().to_string()).bind(input.request_id.to_string()).bind(input.challenge_id.to_string()).bind(input.player_id.to_string()).bind(&input.user_id).bind(&entity.id).bind(i64::from(input.attempt_number)).bind(i64::from(u8::from(is_correct))).bind(now).execute(&mut *connection).await?;
     let classic_record = super::ChallengeRecord {
         id: challenge.id.clone(),
         challenge_date: challenge.challenge_date.clone(),
