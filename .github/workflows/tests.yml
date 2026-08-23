@@ -1,4 +1,4 @@
-name: Quality Reports
+name: Playwright Tests
 
 on:
   workflow_call:
@@ -62,7 +62,6 @@ jobs:
   e2e:
     needs: readiness
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -112,7 +111,6 @@ jobs:
   api:
     needs: readiness
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

@@ -61,9 +61,9 @@ jobs:
       environment: ${{ inputs.environment }}
     secrets: inherit
 
-  quality-reports:
+  tests:
     needs: [deploy, publish-release]
-    uses: ./.github/workflows/quality-reports.yml
+    uses: ./.github/workflows/tests.yml
     permissions:
       actions: write
       contents: write
