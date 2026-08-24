@@ -10,8 +10,6 @@ type IconDefinition =
 /** Semantic clue IDs stay in the seed; raster assets and React icons share one renderer. */
 export const EMOJI_CLUE_ICONS: Record<string, IconDefinition> = {
   "keystroke": { kind: "image", src: "/emoji-clues/keystroke.png", alt: "ALT key" },
-  alibaba: { kind: "image", src: "/emoji-clues/alibaba.png", alt: "Alibaba symbol" },
-  ibm: { kind: "image", src: "/emoji-clues/ibm.png", alt: "IBM letters" },
   bird: { kind: "image", src: "/emoji-clues/bird.png", alt: "bird" },
   moon: { kind: "image", src: "/emoji-clues/moon.png", alt: "moon" },
   "point-cloud": { kind: "image", src: "/emoji-clues/point-cloud.png", alt: "point cloud" },
@@ -19,11 +17,11 @@ export const EMOJI_CLUE_ICONS: Record<string, IconDefinition> = {
   clown: { kind: "image", src: "/emoji-clues/clown.png", alt: "clown" },
   "is-this-true": { kind: "image", src: "/emoji-clues/is-this-true.png", alt: "is this true?" },
   "red-planet": { kind: "image", src: "/emoji-clues/red-planet.png", alt: "red planet" },
-  "tesla-cybertruck": { kind: "image", src: "/emoji-clues/tesla-cybertruck.png", alt: "Tesla Cybertruck" },
+  "tesla-cybertruck": { kind: "image", src: "/emoji-clues/cybertruck.webp", alt: "Tesla Cybertruck" },
 
   "command-line": { kind: "component", component: HiMiniCommandLine, alt: "command line" },
   grok: { kind: "component", component: RiGrokAiFill, alt: "grok logo" },
-  tesla: { kind: "component", component: SiTesla , alt: "Tesla logo" },
+  tesla: { kind: "component", component: SiTesla, alt: "Tesla logo" },
   x: { kind: "component", component: FaSquareXTwitter, alt: "X (prev twitter) logo" },
   doge: { kind: "component", component: SiDogecoin, alt: "Doge logo" },
 };

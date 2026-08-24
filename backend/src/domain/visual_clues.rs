@@ -90,6 +90,7 @@ pub enum VisualClueCategory {
     NeuralNetwork,
     Hardware,
     Technology,
+    Creator,
     Other,
 }
 

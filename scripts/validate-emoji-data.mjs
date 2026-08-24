@@ -2,9 +2,28 @@ import { readFileSync } from "node:fs";
 
 const source = new URL("../data/emoji.seed.json", import.meta.url);
 const pool = JSON.parse(readFileSync(source, "utf8"));
-const iconKeys = new Set(["keystroke", "meta", "alibaba", "moon", "bird", "windows", "ibm", "point-cloud", "projection-axis", "command-line"]);
+const iconKeys = new Set([
+  "keystroke",
+  "meta",
+  "alibaba",
+  "moon",
+  "bird",
+  "windows",
+  "ibm",
+  "point-cloud",
+  "projection-axis",
+  "command-line",
+  "clown",
+  "is-this-true",
+  "red-planet",
+  "tesla-cybertruck",
+  "grok",
+  "tesla",
+  "x",
+  "doge",
+]);
 const entityKinds = new Set(["emoji", "architecture", "algorithm", "operator", "technology"]);
-const categories = new Set(["language-model", "computer-vision", "nlp", "object-detection", "classical-ml", "image-processing", "neural-network", "hardware", "technology", "other"]);
+const categories = new Set(["language-model", "computer-vision", "nlp", "object-detection", "classical-ml", "image-processing", "neural-network", "hardware", "technology", "creator", "other"]);
 const normalize = (value) => value.toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, "").trim();
 const fail = (message) => { throw new Error(`Emoji seed: ${message}`); };
 const entityIds = new Set();
