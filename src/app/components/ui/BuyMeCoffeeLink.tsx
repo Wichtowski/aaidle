@@ -8,7 +8,9 @@ export function BuyMeCoffeeLink({ hardcore = false }: { hardcore?: boolean }) {
       rel="noreferrer"
       target="_blank"
     >
-      <FaMugHot aria-hidden="true" /> Buy me a {hardcore ? <>Monster&trade;</> : "coffee"}
+      <span className="coffee-button__face">
+        <FaMugHot aria-hidden="true" /> Buy me a {hardcore ? <>Monster&trade;</> : "coffee"}
+      </span>
     </a>
   );
 }

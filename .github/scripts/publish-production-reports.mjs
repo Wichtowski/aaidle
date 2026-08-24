@@ -40,6 +40,7 @@ await Promise.all(sortedReleases.slice(7).map(({ name }) => rm(resolve(site, nam
 
 await writeFile(resolve(site, ".nojekyll"), "");
 await writeFile(resolve(site, "CNAME"), `${customDomain}\n`);
+await cp(resolve("public/favicon.ico"), resolve(site, "favicon.ico"));
 runNode(["scripts/build-report-dashboard.mjs", site]);
 
 runGit(["-C", site, "config", "user.name", "github-actions[bot]"]);

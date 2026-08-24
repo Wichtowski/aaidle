@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa6";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
 export default function HomePage() {
@@ -20,7 +21,7 @@ export default function HomePage() {
             to="/classic"
             prefetch="render"
           >
-            <span>Play Classic</span> <span aria-hidden>→</span>
+            <span>Play Classic</span> <FaArrowRight aria-hidden="true" />
           </Link>
         </div>
       </section>
@@ -35,7 +36,7 @@ export default function HomePage() {
             <h3>Classic</h3>
             <p>Use model metadata and comparison clues to find today’s answer.</p>
             <strong>
-              Play Classic <span aria-hidden>→</span>
+              Play Classic <FaArrowRight aria-hidden="true" />
             </strong>
           </Link>
           <Link
@@ -48,7 +49,7 @@ export default function HomePage() {
             <h3>Emoji</h3>
             <p>Recognize AI systems and algorithms from visual associations.</p>
             <strong>
-              Play Emoji <span aria-hidden>→</span>
+              Play Emoji <FaArrowRight aria-hidden="true" />
             </strong>
           </Link>
           <article className="game-mode-card game-mode-card--in-progress">

@@ -704,10 +704,127 @@
                 "id": "x-rocket",
                 "minPool": 0,
                 "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "🔞",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🤖",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "grok",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "is-this-true",
+                        "revealPriority": 4
+                    },
+                    {
+
+                    }
+                ]
+            },
+            {
+                "id": "space-us",
+                "minPool": 0,
+                "weight": 2,
+                "initialRevealCount": 2,
                 "clues": [
                     {
                         "type": "icon",
+                        "icon": "is-this-true",
+                        "revealPriority": 1
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🇺🇸",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🍆",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🛰️",
+                        "revealPriority": 4
+                    },
+                    {
+                        "type": "icon",
                         "icon": "bird",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "clown",
+                        "revealPriority": 4
+                    }
+                ]
+            },
+            {
+                "id": "super heavy",
+                "minPool": 1,
+                "weight": 1,
+                "initialRevealCount": 3,
+                "clues": [
+                    {
+                        "type": "emoji",
+                        "value": "🤖"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🦸"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🏋️‍♂️"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🏋️‍♂️"
+                    },
+                    {
+                        "type": "emoji",
+                        "value": "🏋️‍♂️"
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "grok"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "elon-musk",
+        "name": "Elon Musk",
+        "aliases": [
+            "Elon",
+            "Musk"
+        ],
+        "entityKind": "emoji",
+        "categories": [
+            "creator"
+        ],
+        "minPool": 0,
+        "variants": [
+            {
+                "id": "tesla-space",
+                "minPool": 0,
+                "weight": 4,
+                "initialRevealCount": 2,
+                "clues": [
+                    {
+                        "type": "icon",
+                        "icon": "tesla",
                         "revealPriority": 1
                     },
                     {
@@ -716,47 +833,70 @@
                         "revealPriority": 2
                     },
                     {
-                        "type": "emoji",
-                        "value": "🧠",
+                        "type": "icon",
+                        "icon": "x",
                         "revealPriority": 3
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "red-planet",
+                        "revealPriority": 4
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "grok",
+                        "revealPriority": 5
                     }
                 ]
             },
             {
-                "id": "space-us",
+                "id": "mars-doge",
                 "minPool": 0,
-                "weight": 2,
+                "weight": 3,
+                "initialRevealCount": 1,
                 "clues": [
                     {
-                        "type": "emoji",
-                        "value": "🚀"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇺🇸"
+                        "type": "icon",
+                        "icon": "doge",
+                        "revealPriority": 1
                     },
                     {
                         "type": "icon",
-                        "icon": "bird"
+                        "icon": "red-planet",
+                        "revealPriority": 2
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "tesla",
+                        "revealPriority": 3
+                    },
+                    {
+                        "type": "icon",
+                        "icon": "x",
+                        "revealPriority": 4
                     }
                 ]
             },
             {
-                "id": "cowboy",
+                "id": "cybertruck-x",
                 "minPool": 1,
-                "weight": 1,
+                "weight": 2,
+                "initialRevealCount": 1,
                 "clues": [
                     {
                         "type": "icon",
-                        "icon": "bird"
+                        "icon": "tesla-cybertruck",
+                        "revealPriority": 1
                     },
                     {
-                        "type": "emoji",
-                        "value": "🤠"
+                        "type": "icon",
+                        "icon": "tesla",
+                        "revealPriority": 2
                     },
                     {
-                        "type": "emoji",
-                        "value": "🤖"
+                        "type": "icon",
+                        "icon": "clown",
+                        "revealPriority": 3
                     }
                 ]
             }

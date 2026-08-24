@@ -5,10 +5,11 @@
   --paper: #f6f5f0;
   --panel: #fffefa;
   --line: #d8ddd7;
-  --accent: #b83e28;
+  --accent: #e05a38;
   --lime: #2e7d5b;
   --amber: #d8901e;
   --sky: #3f7da8;
+  --api-unavailable-border: #d8b06c;
 }
 * {
   box-sizing: border-box;
@@ -29,6 +30,7 @@ body {
   --lime: #63ad83;
   --amber: #f0a746;
   --sky: #7bb8df;
+  --api-unavailable-border: #b7783c;
 }
 :is(:root.hell-mode, body.hell-mode),
 :root.hell-mode body {
@@ -48,7 +50,7 @@ body.profile-hell {
   gap: 18px;
   max-width: 680px;
   margin: 28px auto;
-  border: 1px solid color-mix(in srgb, var(--amber) 58%, var(--line));
+  border: 1px solid var(--api-unavailable-border);
   border-radius: 16px;
   padding: 24px;
   background: var(--panel);
@@ -240,7 +242,7 @@ a {
   font-family: Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.075em;
-  word-spacing: -0.3em;
+  word-spacing: -0.3vh;
   white-space: nowrap;
 }
 .home .hero {
@@ -1953,36 +1955,48 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   transform: translateY(2px);
 }
 .coffee-button {
+  position: relative;
+  display: inline-flex;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: #9d2e20;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 9px 18px rgb(157 46 32 / 22%);
+  letter-spacing: 0.01em;
+}
+.coffee-button__face {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid #87340f;
-  border-radius: 999px;
-  background: #a54412;
+  border: 1px solid #c83f27;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #ef6548, #d94029);
   color: #fff;
   padding: 12px 17px;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: 0 4px 0 #ba5018;
+  transform: translateY(-4px);
   transition:
     background 160ms ease,
-    box-shadow 160ms ease,
     transform 160ms ease;
 }
-.coffee-button:hover {
-  background: #87340f;
-  box-shadow: 0 2px 0 #6c280a;
-  transform: translateY(2px);
+.coffee-button__face svg {
+  width: 1.2em;
+  height: 1.2em;
+  flex: 0 0 auto;
+  transform: translateY(-1px);
+}
+.coffee-button:hover .coffee-button__face {
+  background: linear-gradient(135deg, #df5136, #b93622);
+  transform: translateY(-2px);
 }
 .coffee-button:focus-visible {
   outline: 3px solid #f2b04d;
-  outline-offset: 4px;
+  outline-offset: 3px;
 }
-.coffee-button--header {
+.coffee-button--header .coffee-button__face {
   padding: 8px 11px;
   font-size: 12px;
   line-height: 1.2;
-  box-shadow: 0 2px 0 #ba5018;
 }
 @media (max-width: 700px) {
   .page {
@@ -1990,6 +2004,19 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   }
   .hero {
     padding: 12vh 0 8vh;
+  }
+  .home .hero {
+    padding: 36px 0 24px;
+  }
+  .home {
+    text-align: center;
+  }
+  .home .hero__actions,
+  .home .game-mode-card strong {
+    justify-content: center;
+  }
+  .home .game-modes {
+    margin-top: 12px;
   }
   .home-grid {
     grid-template-columns: 1fr;
@@ -2022,13 +2049,15 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   }
   .site-navbar {
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 12px;
   }
   .site-navbar__menu-toggle {
+    position: relative;
+    z-index: 1;
     display: grid;
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     flex: 0 0 auto;
     place-content: center;
     gap: 5px;
@@ -2037,12 +2066,14 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     background: var(--panel);
     color: var(--ink);
     cursor: pointer;
+    touch-action: manipulation;
   }
   .site-navbar__menu-toggle span {
     display: block;
     width: 19px;
     height: 2px;
     background: currentColor;
+    pointer-events: none;
   }
   .site-navbar__menu-toggle:focus-visible {
     outline: 3px solid var(--accent);
@@ -2051,10 +2082,13 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   .site-navbar__actions {
     display: none;
     width: 100%;
+    flex: 0 0 100%;
     grid-column: 1 / -1;
     grid-template-columns: 1fr;
     gap: 0;
     border-top: 1px solid var(--line);
+    font-size: 17px;
+    text-align: center;
   }
   .site-navbar__actions--open {
     display: grid;
@@ -2067,6 +2101,13 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   }
   .site-navbar__actions > :last-child {
     border-bottom: 0;
+  }
+  .site-navbar__actions > .coffee-button {
+    width: max-content;
+    min-height: 0;
+    justify-self: center;
+    margin: 16px auto 0;
+    padding: 0;
   }
   .login {
     padding: 54px 0;
@@ -4145,8 +4186,8 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 .emoji-clues__clue {
   --clue-index: 0;
   position: relative;
+  height: 112px;
   min-width: 0;
-  min-height: 112px;
   perspective: 900px;
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   font-size: clamp(42px, 8vw, 70px);
@@ -4154,9 +4195,8 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   animation-delay: calc(var(--clue-index) * 90ms);
 }
 .emoji-clues__clue-inner {
-  height: 100%;
   position: relative;
-  min-height: 112px;
+  height: 100%;
   transform: rotateY(0);
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
@@ -4187,29 +4227,25 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   background: color-mix(in srgb, var(--panel) 75%, var(--paper));
 }
 .emoji-clues__clue-result {
+  overflow: hidden;
   background: var(--panel);
   transform: rotateY(180deg);
 }
 .emoji-clues__clue-result img {
+  display: block;
   width: 100%;
   height: 100%;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
-.emoji-clues__clue-result > img:not([src*="/emoji-clues/"]) {
-  width: min(72px, 72%);
-  height: auto;
-  max-height: 70px;
-}
 @media (max-width: 520px) {
   .emoji-clues__clues {
     grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
     gap: 8px;
   }
-  .emoji-clues__clue,
-  .emoji-clues__clue-inner {
-    min-height: 96px;
+  .emoji-clues__clue {
+    height: 96px;
   }
 }
 .emoji-clues__clue--hidden {
