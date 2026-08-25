@@ -7,10 +7,10 @@ export default defineConfig({
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
   workers: env.isCI ? 1 : undefined,
-  outputDir: "tests/results/api",
+  outputDir: "../results/api",
   reporter: env.isCI
-    ? [["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }]]
-    : [["list"]],
+    ? [["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }], ["../env.ts"]]
+    : [["list"], ["../env.ts"]],
   use: { baseURL: env.baseURL },
   projects: [
     {

@@ -6,8 +6,8 @@ export default defineConfig({
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
   workers: env.isCI ? 1 : undefined,
-  outputDir: "tests/results/performance",
-  reporter: [["list"]],
+  outputDir: "../results/performance",
+  reporter: [["list"], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
     trace: "on-first-retry",

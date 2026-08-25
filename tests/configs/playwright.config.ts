@@ -8,13 +8,18 @@ export default defineConfig({
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
   workers: env.isCI ? 1 : undefined,
-  outputDir: "tests/results/e2e",
+  outputDir: "../results/e2e",
   reporter: env.isCI
     ? [
         ["blob", { outputDir: "tests/reports/blob" }],
         ["allure-playwright", { resultsDir: "tests/reports/allure-results" }],
+        ["../env.ts"],
       ]
-    : [["list"], ["html", { open: "never", outputFolder: "tests/reports/playwright" }]],
+    : [
+        ["list"],
+        ["html", { open: "never", outputFolder: "tests/reports/playwright" }],
+        ["../env.ts"],
+      ],
   use: {
     baseURL: env.baseURL,
     extraHTTPHeaders: env.cloudflareE2EToken

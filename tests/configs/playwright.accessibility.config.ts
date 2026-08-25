@@ -7,8 +7,8 @@ export default defineConfig({
   forbidOnly: env.isCI,
   retries: 0,
   workers: 1,
-  outputDir: "tests/results/accessibility",
-  reporter: [["list"]],
+  outputDir: "../results/accessibility",
+  reporter: [["list"], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
     trace: "off",
