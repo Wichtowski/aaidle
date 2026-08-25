@@ -4,7 +4,7 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { apiClient, isApiUnavailable, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./GuessBoard";
 import { SiteNavbar } from "../ui/SiteNavbar";
-import { HowToPlayDialog } from "./HowToPlayDialog";
+import { ClassicHTP } from "./ClassicHTP";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { updateProgress } from "@lib/storage/local-progress-store";
 import { useAuth } from "../auth/useAuth";
@@ -198,7 +198,7 @@ export function ClassicGame({
     }
 
     const controller = new AbortController();
-  let retrying = false;
+    let retrying = false;
     setIsLoadingGame(true);
     setError(null);
 
@@ -557,7 +557,8 @@ export function ClassicGame({
       />
       {category === "hardcore" && <HardcoreSoundtrack />}
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
-      {!challenge && error !== null &&
+      {!challenge &&
+        error !== null &&
         (isApiUnavailable(error) ? (
           <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
         ) : (
@@ -627,7 +628,7 @@ export function ClassicGame({
         <span>How to play</span>
       </button>
 
-      <HowToPlayDialog category={category} open={showHowToPlay} onClose={closeHowToPlay} />
+      <ClassicHTP category={category} open={showHowToPlay} onClose={closeHowToPlay} />
       {showRitualGate && <RitualGateDialog />}
       {challenge && game?.status === "solved" && showCompletion && (
         <Suspense fallback={null}>

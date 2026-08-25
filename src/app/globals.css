@@ -2386,7 +2386,6 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   min-width: 0;
   min-height: 112px;
   position: relative;
-  perspective: 900px;
 }
 .comparison-card__inner {
   height: 100%;
@@ -3844,9 +3843,19 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
     scrollbar-width: auto;
   }
   html:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar,
-  html:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar-track,
+  html:has(
+      .how-to-play-modal,
+      .completed-modal,
+      .danger-modal,
+      dialog[open]
+    )::-webkit-scrollbar-track,
   body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar,
-  body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar-track {
+  body:has(
+      .how-to-play-modal,
+      .completed-modal,
+      .danger-modal,
+      dialog[open]
+    )::-webkit-scrollbar-track {
     background: #17202c !important;
     background-color: #17202c !important;
   }
@@ -4209,6 +4218,22 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   animation: emoji-clues-card-flip 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   animation-delay: calc(160ms + var(--clue-index) * 90ms);
 }
+.emoji-clues__clue--revealed .emoji-clues__clue-face {
+  animation: emoji-clues-reveal-corners 1.3s linear both;
+  animation-delay: calc(160ms + var(--clue-index) * 90ms);
+}
+.emoji-clues__clue--revealed .emoji-clues__clue-cover {
+  animation:
+    emoji-clues-reveal-corners 1.3s linear both,
+    emoji-clues-reveal-cover-visibility 1.3s linear both;
+  animation-delay: calc(160ms + var(--clue-index) * 90ms);
+}
+.emoji-clues__clue--revealed .emoji-clues__clue-result {
+  animation:
+    emoji-clues-reveal-corners 1.3s linear both,
+    emoji-clues-reveal-result-visibility 1.3s linear both;
+  animation-delay: calc(160ms + var(--clue-index) * 90ms);
+}
 .emoji-clues__clue-face {
   position: absolute;
   inset: 0;
@@ -4225,11 +4250,27 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   color: var(--muted);
   font-family: inherit;
   background: color-mix(in srgb, var(--panel) 75%, var(--paper));
+  transform: rotateY(0);
 }
 .emoji-clues__clue-result {
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--panel);
+  line-height: 1;
+  text-align: center;
   transform: rotateY(180deg);
+}
+.emoji-clues__glyph,
+.emoji-clues__clue-result > span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  line-height: 1;
+}
+.emoji-clues__clue-result svg {
+  display: block;
 }
 .emoji-clues__clue-result img {
   display: block;
@@ -4273,6 +4314,172 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   }
 }
 
+@keyframes emoji-clues-reveal-corners {
+  0%,
+  43.99%,
+  51.01%,
+  100% {
+    border-width: 1px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgb(26 37 55 / 7%);
+  }
+  44%,
+  51% {
+    border-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+@keyframes emoji-clues-reveal-cover-visibility {
+  0%,
+  46.49% {
+    visibility: visible;
+  }
+  46.5%,
+  100% {
+    visibility: hidden;
+  }
+}
+
+@keyframes emoji-clues-reveal-result-visibility {
+  0%,
+  47.5% {
+    visibility: hidden;
+  }
+  47.51%,
+  100% {
+    visibility: visible;
+  }
+}
+
+.emoji-clues__clue--winning .emoji-clues__clue-inner {
+  animation: emoji-clues-winning-turn 2.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: calc(var(--clue-index) * 80ms);
+}
+.emoji-clues__clue--winning .emoji-clues__clue-face {
+  animation:
+    emoji-clues-winning-colour 2.4s linear both,
+    emoji-clues-winning-corners 2.4s linear both;
+  animation-delay: calc(var(--clue-index) * 80ms);
+}
+.emoji-clues__clue--winning .emoji-clues__clue-cover {
+  animation:
+    emoji-clues-winning-colour 2.4s linear both,
+    emoji-clues-winning-corners 2.4s linear both,
+    emoji-clues-winning-cover-visibility 2.4s linear both;
+  animation-delay: calc(var(--clue-index) * 80ms);
+}
+.emoji-clues__clue--winning .emoji-clues__clue-result {
+  animation:
+    emoji-clues-winning-colour 2.4s linear both,
+    emoji-clues-winning-corners 2.4s linear both,
+    emoji-clues-winning-result-visibility 2.4s linear both;
+  animation-delay: calc(var(--clue-index) * 80ms);
+}
+.emoji-clues__clue--solved .emoji-clues__clue-face {
+  border-color: color-mix(in srgb, var(--lime) 60%, var(--line));
+  background: color-mix(in srgb, var(--lime) 20%, var(--panel));
+}
+.emoji-clues__clue-cover {
+  --winning-card-start: color-mix(in srgb, var(--panel) 75%, var(--paper));
+}
+.emoji-clues__clue-result {
+  --winning-card-start: var(--panel);
+}
+@keyframes emoji-clues-winning-turn {
+  0% {
+    transform: rotateY(0);
+  }
+  33% {
+    transform: rotateY(180deg);
+  }
+  40% {
+    transform: rotateY(180deg);
+  }
+  70% {
+    transform: rotateY(360deg);
+  }
+  100% {
+    transform: rotateY(540deg);
+  }
+}
+@keyframes emoji-clues-winning-colour {
+  0%,
+  69.99% {
+    border-color: var(--line);
+    background: var(--winning-card-start);
+  }
+  70%,
+  100% {
+    border-color: color-mix(in srgb, var(--lime) 60%, var(--line));
+    background: color-mix(in srgb, var(--lime) 20%, var(--panel));
+  }
+}
+
+@keyframes emoji-clues-winning-corners {
+  0%,
+  8.99%,
+  14.51%,
+  47.99%,
+  53.51%,
+  77.99%,
+  83.51%,
+  100% {
+    border-width: 1px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgb(26 37 55 / 7%);
+  }
+  9%,
+  14.5%,
+  48%,
+  53.5%,
+  78%,
+  83.5% {
+    border-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+@keyframes emoji-clues-winning-cover-visibility {
+  0%,
+  11% {
+    visibility: visible;
+  }
+  12%,
+  49.9% {
+    visibility: hidden;
+  }
+  51.1%,
+  79.9% {
+    visibility: visible;
+  }
+  81.1%,
+  100% {
+    visibility: hidden;
+  }
+}
+
+@keyframes emoji-clues-winning-result-visibility {
+  0%,
+  12% {
+    visibility: hidden;
+  }
+  13%,
+  49.9% {
+    visibility: visible;
+  }
+  51.1%,
+  79.9% {
+    visibility: hidden;
+  }
+  81.1%,
+  100% {
+    visibility: visible;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .emoji-clues__clue {
     animation: none;
@@ -4280,6 +4487,18 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   .emoji-clues__clue--revealed .emoji-clues__clue-inner {
     animation: none;
     transform: rotateY(180deg);
+  }
+  .emoji-clues__clue--revealed .emoji-clues__clue-face,
+  .emoji-clues__clue--winning .emoji-clues__clue-inner,
+  .emoji-clues__clue--winning .emoji-clues__clue-face {
+    animation: none;
+  }
+  .emoji-clues__clue--winning .emoji-clues__clue-inner {
+    transform: rotateY(180deg);
+  }
+  .emoji-clues__clue--winning .emoji-clues__clue-face {
+    border-color: color-mix(in srgb, var(--lime) 60%, var(--line));
+    background: color-mix(in srgb, var(--lime) 20%, var(--panel));
   }
 }
 .emoji-clues__search {
@@ -4359,26 +4578,38 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 }
 .emoji-clues__history li {
   display: grid;
-  grid-template-columns: 32px 1fr auto;
+  grid-template-columns: 32px 1fr;
   gap: 12px;
   padding: 12px 14px;
   border-radius: 10px;
   background: var(--panel);
 }
-.emoji-clues__history li.is-correct,
-.emoji-clues__solved {
+.emoji-clues__history li.is-correct {
   border: 1px solid color-mix(in srgb, var(--lime) 46%, var(--line));
   background: color-mix(in srgb, var(--lime) 16%, var(--panel));
   color: color-mix(in srgb, var(--lime) 78%, var(--ink));
 }
-.emoji-clues__history em {
-  color: var(--muted);
-  font-style: normal;
+.emoji-clues__history li.is-incorrect {
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel));
 }
-.emoji-clues__solved {
-  margin-top: 28px;
-  padding: 18px;
-  border-radius: 12px;
-  text-align: center;
-  font-weight: 800;
+.emoji-clues__history li.is-correct strong,
+.emoji-result-key--correct {
+  color: color-mix(in srgb, var(--lime) 78%, var(--ink));
+}
+.emoji-clues__history li.is-incorrect strong,
+.emoji-result-key--incorrect {
+  color: color-mix(in srgb, var(--accent) 84%, var(--ink));
+}
+.completed--emoji {
+  width: min(620px, 100%);
+  min-height: 0;
+}
+
+.completed--emoji .completed__message {
+  color: var(--muted);
+}
+
+.completed--emoji .completed__stats strong {
+  text-transform: capitalize;
 }

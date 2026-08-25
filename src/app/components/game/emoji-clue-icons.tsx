@@ -18,6 +18,8 @@ export const EMOJI_CLUE_ICONS: Record<string, IconDefinition> = {
   "is-this-true": { kind: "image", src: "/emoji-clues/is-this-true.png", alt: "is this true?" },
   "red-planet": { kind: "image", src: "/emoji-clues/red-planet.png", alt: "red planet" },
   "tesla-cybertruck": { kind: "image", src: "/emoji-clues/cybertruck.webp", alt: "Tesla Cybertruck" },
+  ayaya: { kind: "image", src: "/emoji-clues/ayaya.png", alt: "Ayaya" },
+  gemma: { kind: "image", src: "/emoji-clues/gemma.png", alt: "Gemma" },
 
   "command-line": { kind: "component", component: HiMiniCommandLine, alt: "command line" },
   grok: { kind: "component", component: RiGrokAiFill, alt: "grok logo" },

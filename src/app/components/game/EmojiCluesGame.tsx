@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import {
   apiClient,
@@ -14,7 +14,13 @@ import { ApiUnavailableState } from "../ui/ApiUnavailableState";
 import { GameLoadingState } from "../ui/GameLoadingState";
 import { Toast } from "../ui/Toast";
 import { EmojiClueIcon } from "./emoji-clue-icons";
-import { EmojiCluesHowToPlayDialog } from "./EmojiCluesHowToPlayDialog";
+import { EmojiHTP } from "./EmojiHTP";
+
+const EmojiCluesCompletedDialog = lazy(() =>
+  import("./EmojiCluesCompletedDialog").then(({ EmojiCluesCompletedDialog }) => ({
+    default: EmojiCluesCompletedDialog,
+  })),
+);
 
 const emojiCluePools: ReadonlyArray<{
   difficulty: EmojiCluesDifficulty;
@@ -47,6 +53,8 @@ export function EmojiCluesGame() {
   const [isLoadingGame, setIsLoadingGame] = useState(true);
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showCompletion, setShowCompletion] = useState(false);
+  const [winAnimation, setWinAnimation] = useState(false);
   const [error, setError] = useState<unknown>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [hardcore, setHardcore] = useState<{
@@ -61,11 +69,24 @@ export function EmojiCluesGame() {
   const loadFailureCount = useRef(0);
   const guessFailureEntityId = useRef<string | null>(null);
   const guessFailureCount = useRef(0);
+  const completionTimer = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     void apiClient.hardcoreStatus().then(setHardcore).catch(setError);
   }, [loadAttempt]);
   useEffect(() => {
+    if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
+    completionTimer.current = null;
+    setShowCompletion(false);
+    setWinAnimation(false);
+
     if (difficulty === "hardcore" && !hardcore?.unlocked) {
       setGame(null);
       setIsLoadingGame(false);
@@ -148,7 +169,10 @@ export function EmojiCluesGame() {
         gameCache.current[difficulty] = {
           ...cachedGame,
           guesses: restoredGuesses,
-          game: { ...cachedGame.game, challenge: { ...cachedGame.game.challenge, clues: history.clues } },
+          game: {
+            ...cachedGame.game,
+            challenge: { ...cachedGame.game.challenge, clues: history.clues },
+          },
         };
       }
     });
@@ -208,6 +232,16 @@ export function EmojiCluesGame() {
       guessFailureEntityId.current = null;
       guessFailureCount.current = 0;
       setQuery("");
+      if (response.isCorrect) {
+        setWinAnimation(true);
+        const animationDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? 0
+          : 3_200;
+        completionTimer.current = window.setTimeout(() => {
+          setShowCompletion(true);
+          completionTimer.current = null;
+        }, animationDuration);
+      }
     } catch (nextError) {
       if (guessFailureEntityId.current !== entity.id) {
         guessFailureEntityId.current = entity.id;
@@ -233,14 +267,14 @@ export function EmojiCluesGame() {
       <SiteNavbar />
       <GameIntro
         completionCount={solved ? (game?.globalCompletionCount ?? null) : null}
-        description="Visual associations unlock one clue at a time. Name the AI system, architecture, algorithm, or operator."
+        description="Use the visual clues to identify the hidden AI system, architecture, algorithm, or operator. Wrong guesses can reveal more clues."
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
           <>
             Emoji Clues · {date} · {selectedPool.label}
           </>
         }
-        title="What AI idea do these clues point to?"
+        title="Guess today’s hidden AI idea"
         titleId="emoji-clues-title"
       />
       <nav
@@ -290,19 +324,39 @@ export function EmojiCluesGame() {
               const revealed = Boolean(clue);
               return (
                 <li
-                  className={`emoji-clues__clue${
-                    revealed ? " emoji-clues__clue--revealed" : " emoji-clues__clue--hidden"
-                  }`}
+                  className={[
+                    "emoji-clues__clue",
+                    revealed ? " emoji-clues__clue--revealed" : " emoji-clues__clue--hidden",
+                    winAnimation ? " emoji-clues__clue--winning" : "",
+                    solved && !winAnimation ? " emoji-clues__clue--solved" : "",
+                  ].join("")}
                   key={`${index}-${clueKey(clue)}`}
                   style={{ "--clue-index": index } as CSSProperties}
                 >
-                  <div className="emoji-clues__clue-inner">
-                    <span aria-hidden="true" className="emoji-clues__clue-face emoji-clues__clue-cover">
+                  <div
+                    className="emoji-clues__clue-inner"
+                    onAnimationEnd={(event) => {
+                      if (
+                        index === game.challenge.maximumClues - 1 &&
+                        event.animationName === "emoji-clues-winning-turn"
+                      ) {
+                        if (completionTimer.current !== null) {
+                          window.clearTimeout(completionTimer.current);
+                          completionTimer.current = null;
+                        }
+                        setShowCompletion(true);
+                      }
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="emoji-clues__clue-face emoji-clues__clue-cover"
+                    >
                       ?
                     </span>
                     <span className="emoji-clues__clue-face emoji-clues__clue-result">
                       {clue?.type === "emoji" ? (
-                        clue.value
+                        <span className="emoji-clues__glyph">{clue.value}</span>
                       ) : clue?.type === "icon" ? (
                         <EmojiClueIcon icon={clue.icon} />
                       ) : clue?.type === "image" ? (
@@ -389,15 +443,31 @@ export function EmojiCluesGame() {
           {guesses.length > 0 && (
             <ol className="emoji-clues__history">
               {guesses.map((guess, index) => (
-                <li className={guess.isCorrect ? "is-correct" : ""} key={guess.id}>
+                <li
+                  aria-label={
+                    "Guess " +
+                    (index + 1) +
+                    ": " +
+                    guess.name +
+                    ", " +
+                    (guess.isCorrect ? "correct" : "incorrect")
+                  }
+                  className={guess.isCorrect ? "is-correct" : "is-incorrect"}
+                  key={guess.id}
+                >
                   <span>{index + 1}</span>
                   <strong>{guess.name}</strong>
-                  <em>{guess.isCorrect ? "Correct" : "Not this one"}</em>
                 </li>
               ))}
             </ol>
           )}
-          {solved && <p className="emoji-clues__solved">Solved — of course.</p>}
+          {solved && !showCompletion && (
+            <div className="game-completion-action">
+              <button className="button" onClick={() => setShowCompletion(true)} type="button">
+                Show winning guess
+              </button>
+            </div>
+          )}
         </section>
       ) : null}
       {Boolean(error) && (
@@ -414,7 +484,18 @@ export function EmojiCluesGame() {
         <FaCircleQuestion aria-hidden />
         <span>How to play</span>
       </button>
-      <EmojiCluesHowToPlayDialog open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+      <EmojiHTP open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+      {game && solved && showCompletion && (
+        <Suspense fallback={null}>
+          <EmojiCluesCompletedDialog
+            difficulty={difficulty}
+            guessCount={guesses.length}
+            clueCount={game.challenge.clues.length}
+            globalCompletionCount={game.globalCompletionCount}
+            onClose={() => setShowCompletion(false)}
+          />
+        </Suspense>
+      )}
       <Toast message={toast} onDismiss={() => setToast(null)} />
     </main>
   );

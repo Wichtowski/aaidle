@@ -257,8 +257,8 @@
                         "value": "🔓"
                     },
                     {
-                        "type": "emoji",
-                        "value": "🔎"
+                        "type": "icon",
+                        "value": "gemma"
                     }
                 ]
             },
@@ -1090,6 +1090,10 @@
                 "minPool": 0,
                 "weight": 3,
                 "clues": [
+                    {
+                        "type": "icon",
+                        "icon": "ayaya"
+                    },
                     {
                         "type": "emoji",
                         "value": "🌍"
