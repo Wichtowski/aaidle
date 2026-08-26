@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
+pub mod emoji;
 pub mod timeline;
-pub mod visual_clues;
 
 use sqlx::{FromRow, SqliteConnection, SqlitePool};
 use time::macros::format_description;
@@ -185,31 +185,7 @@ impl ClassicCategory {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum ClassicDifficulty {
-    Normal,
-    Challenge,
-    Hardcore,
-}
-
-impl ClassicDifficulty {
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            "normal" => Some(Self::Normal),
-            "challenge" => Some(Self::Challenge),
-            "hardcore" => Some(Self::Hardcore),
-            _ => None,
-        }
-    }
-
-    fn as_str(self) -> &'static str {
-        match self {
-            Self::Normal => "normal",
-            Self::Challenge => "challenge",
-            Self::Hardcore => "hardcore",
-        }
-    }
-}
+pub use crate::domain::difficulty::Difficulty as ClassicDifficulty;
 
 pub struct ClassicGameData {
     pub challenge: ChallengeRecord,

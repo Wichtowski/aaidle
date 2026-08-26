@@ -3,7 +3,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { GuessBoard } from "../../../src/app/components/game/GuessBoard";
+import { GuessBoard } from "../../../src/app/components/game/classic/board/GuessBoard";
 import type { ClassicComparison } from "../../../src/lib/domain/guesses/comparison-types";
 import type { ComparableModel } from "../../../src/lib/domain/models/model-types";
 

@@ -5,6 +5,7 @@ import {
   moveTimelineModel,
   restoreTimelinePositions,
   timelineArrangementIsComplete,
+  timelineVisualPosition,
 } from "@lib/domain/games/timeline/timeline-arrangement";
 import type { TimelineGamePayload } from "@lib/domain/games/timeline/timeline-types";
 
@@ -50,6 +51,131 @@ const game: TimelineGamePayload = {
 };
 
 describe("Timeline arrangement", () => {
+  it.each([
+    [
+      6,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+      ],
+    ],
+    [
+      7,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+        [2, 6],
+      ],
+    ],
+    [
+      9,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+        [2, 6],
+        [2, 5],
+        [2, 4],
+      ],
+    ],
+    [
+      11,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+        [2, 6],
+        [2, 5],
+        [2, 4],
+        [2, 3],
+        [2, 2],
+      ],
+    ],
+    [
+      12,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+        [2, 6],
+        [2, 5],
+        [2, 4],
+        [2, 3],
+        [2, 2],
+        [2, 1],
+      ],
+    ],
+    [
+      18,
+      [
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+        [2, 6],
+        [2, 5],
+        [2, 4],
+        [2, 3],
+        [2, 2],
+        [2, 1],
+        [3, 1],
+        [3, 2],
+        [3, 3],
+        [3, 4],
+        [3, 5],
+        [3, 6],
+      ],
+    ],
+  ])("maps %i positions into a serpentine grid", (total, expected) => {
+    expect(
+      Array.from({ length: total }, (_, position) => {
+        const visual = timelineVisualPosition(position, 6);
+        return visual ? [visual.row, visual.column] : null;
+      }),
+    ).toEqual(expected);
+  });
+
+  it("supports serpentine mapping with three columns", () => {
+    expect(Array.from({ length: 9 }, (_, position) => timelineVisualPosition(position, 3))).toEqual(
+      [
+        { row: 1, column: 1 },
+        { row: 1, column: 2 },
+        { row: 1, column: 3 },
+        { row: 2, column: 3 },
+        { row: 2, column: 2 },
+        { row: 2, column: 1 },
+        { row: 3, column: 1 },
+        { row: 3, column: 2 },
+        { row: 3, column: 3 },
+      ],
+    );
+  });
+
+  it("preserves logical position ordering independently of visual columns", () => {
+    expect(Array.from({ length: 9 }, (_, position) => position + 1)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8, 9,
+    ]);
+  });
+
   it("keeps anchors fixed while placing and swapping movable items", () => {
     const anchors = new Set([0, 3]);
     const initial = initialTimelinePositions(game);

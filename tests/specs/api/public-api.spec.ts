@@ -56,7 +56,7 @@ test("normal account can access public game modes but not unlock Hardcore", asyn
     expect((await response.json()).challenge).toBeTruthy();
   }
 
-  const emoji = await fetch(apiUrl("/api/v1/games/emoji-clues/normal"), { headers });
+  const emoji = await fetch(apiUrl("/api/v1/games/emoji/normal"), { headers });
   expect(emoji.ok).toBe(true);
   expect((await emoji.json()).challenge).toBeTruthy();
 

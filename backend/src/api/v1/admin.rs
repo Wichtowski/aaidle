@@ -29,6 +29,7 @@ struct AdminUserRow {
     permission: String,
     disabled_at: Option<i64>,
     disabled_reason: Option<String>,
+    issue_report_limit: i64,
     disabled_by_email: Option<String>,
     password_hash: Option<String>,
     identity_providers: Option<String>,
@@ -76,7 +77,7 @@ pub(super) async fn users(
     .await?;
     let rows = sqlx::query_as::<_, AdminUserRow>(
         "SELECT u.id, u.email, u.display_name, u.email_verified_at, u.created_at, u.updated_at, u.permission, \
-         u.disabled_at, u.disabled_reason, NULL AS disabled_by_email, u.password_hash, \
+         u.disabled_at, u.disabled_reason, u.issue_report_limit, NULL AS disabled_by_email, u.password_hash, \
          (SELECT GROUP_CONCAT(i.provider, ',') FROM user_identities i WHERE i.user_id = u.id) AS identity_providers, \
          (SELECT MAX(s.last_seen_at) FROM user_sessions s WHERE s.user_id = u.id) AS last_seen_at, \
          p.updated_at AS progress_updated_at, \
@@ -123,8 +124,19 @@ pub(super) async fn user_update(
         ));
     }
     let payload = parse_json_payload(payload)?;
-    if payload.permission.is_none() && payload.disabled.is_none() {
+    if payload.permission.is_none()
+        && payload.disabled.is_none()
+        && payload.issue_report_limit.is_none()
+    {
         return Err(AppError::validation("Choose an account update."));
+    }
+    if payload
+        .issue_report_limit
+        .is_some_and(|limit| !(3..=1000).contains(&limit))
+    {
+        return Err(AppError::validation(
+            "Issue report limit must be between 3 and 1000 per day.",
+        ));
     }
     let disabled_reason = payload.disabled_reason.as_deref().map(str::trim);
     if disabled_reason.is_some_and(|value| value.len() > 500)
@@ -171,6 +183,14 @@ pub(super) async fn user_update(
                 .execute(&mut *transaction)
                 .await?;
         }
+    }
+    if let Some(issue_report_limit) = payload.issue_report_limit {
+        sqlx::query("UPDATE users SET issue_report_limit = ?, updated_at = ? WHERE id = ?")
+            .bind(issue_report_limit)
+            .bind(now)
+            .bind(&user_id)
+            .execute(&mut *transaction)
+            .await?;
     }
     if payload.disabled != Some(true) {
         sqlx::query("DELETE FROM user_sessions WHERE user_id = ?")
@@ -368,7 +388,7 @@ async fn admin_user_for_request(
 async fn load_admin_user_detail(state: &AppState, user_id: &str) -> AppResult<AdminUserDetail> {
     let row = sqlx::query_as::<_, AdminUserRow>(
         "SELECT u.id, u.email, u.display_name, u.email_verified_at, u.created_at, u.updated_at, u.permission, \
-         u.disabled_at, u.disabled_reason, disabled_by.email AS disabled_by_email, u.password_hash, \
+         u.disabled_at, u.disabled_reason, u.issue_report_limit, disabled_by.email AS disabled_by_email, u.password_hash, \
          (SELECT GROUP_CONCAT(i.provider, ',') FROM user_identities i WHERE i.user_id = u.id) AS identity_providers, \
          (SELECT MAX(s.last_seen_at) FROM user_sessions s WHERE s.user_id = u.id) AS last_seen_at, \
          p.updated_at AS progress_updated_at, \
@@ -436,6 +456,7 @@ fn admin_user_summary(row: AdminUserRow) -> AdminUserSummary {
             .as_str(),
         disabled_at: row.disabled_at,
         disabled_reason: row.disabled_reason,
+        issue_report_limit: row.issue_report_limit,
         sign_in_providers,
         last_seen_at: row.last_seen_at,
         progress_updated_at: row.progress_updated_at,

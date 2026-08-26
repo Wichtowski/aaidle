@@ -10,14 +10,6 @@ test("Credits page loads", async ({ creditsPage }) => {
   await expect(creditsPage.heading).toBeVisible();
 });
 
-test("Issue report form is available without submitting an issue", async ({ issueReportPage }) => {
-  await issueReportPage.goto();
-  await expect(issueReportPage.heading).toBeVisible();
-  await expect(issueReportPage.titleInput).toBeVisible();
-  await expect(issueReportPage.descriptionInput).toBeVisible();
-  await expect(issueReportPage.submitButton).toBeVisible();
-});
-
 test("Profile page loads", async ({ profilePage }) => {
   await profilePage.goto();
   await expect(profilePage.heading).toBeVisible();

@@ -150,8 +150,9 @@ export const classicColumnsByCategory = {
 
 export function classicColumnsForGame(
   category: keyof typeof classicColumnsByCategory,
-  difficulty: "normal" | "challenge" | "hardcore",
+  difficulty: Difficulty,
 ): readonly ClassicColumn[] {
   const columns = classicColumnsByCategory[category];
   return difficulty === "normal" ? columns : columns.filter((column) => column !== "country");
 }
+import type { Difficulty } from "../difficulty";

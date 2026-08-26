@@ -5,7 +5,8 @@ runs:
   steps:
     - name: Run Vitest unit tests
       shell: bash
-      run: pnpm test
+      run: pnpm run test:unit
+
     - name: Add Vitest test report to summary
       if: always()
       shell: bash

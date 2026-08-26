@@ -1,2462 +1,2284 @@
 [
-    {
-        "id": "gpt",
-        "name": "GPT",
-        "aliases": [
-            "OpenAI GPT",
-            "ChatGPT"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
+  {
+    "id": "gpt",
+    "name": "GPT",
+    "aliases": ["OpenAI GPT", "ChatGPT"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "openai-chat",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "openai-chat",
-                "minPool": 0,
-                "weight": 4,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇺🇸",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "altman",
-                "minPool": 0,
-                "weight": 1,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "keystroke"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👨"
-                    }
-                ]
-            },
-            {
-                "id": "generative",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "✨",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 3
-                    }
-                ]
-            }
+        "weight": 4,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇺🇸",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 3
+          }
         ]
-    },
-    {
-        "id": "claude",
-        "name": "Claude",
-        "aliases": [
-            "Anthropic Claude"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
+      },
+      {
+        "id": "altman",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "french-artist",
-                "minPool": 0,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/monet.png.webp",
-                        "alt": "An impressionist painter",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎨",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "constitution",
-                "minPool": 1,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/banger-game-2004.png",
-                        "alt": "2004 Banger Game",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⚖️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🛡️",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 4
-                    }
-                ]
-            }
+        "weight": 1,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "keystroke"
+          },
+          {
+            "type": "emoji",
+            "value": "👨"
+          }
         ]
-    },
-    {
-        "id": "gemini",
-        "name": "Gemini",
-        "aliases": [
-            "Google Gemini"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "twins",
-                "minPool": 0,
-                "weight": 5,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/stars.webp",
-                        "alt": "A pair of identical stars",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "♊",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔎",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "google",
-        "name": "Google",
-        "aliases": [
-            "Google Bard"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "google-gemini",
-                "minPool": 0,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔵",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔴",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🟡",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🟢",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "gemma",
-        "name": "Gemma",
-        "aliases": [
-            "Google Gemma"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "gem-open",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "💎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔓"
-                    },
-                    {
-                        "type": "icon",
-                        "value": "gemma"
-                    }
-                ]
-            },
-            {
-                "id": "small-gem",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "💎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤏"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "llama",
-        "name": "Llama",
-        "aliases": [
-            "Meta Llama"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "andes-wool",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🧶",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "∞",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔓",
-                        "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "herd-meta",
-                "minPool": 0,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🦙",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🦙",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "∞",
-                        "revealPriority": 3
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "meta",
-        "name": "Meta",
-        "aliases": [
-            "Facebook",
-            "Meta AI",
-            "Meta Platforms"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model",
-            "technology"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "zuck-meme",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "👀",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🦎",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "♾️",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🥽",
-                        "revealPriority": 4
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👥",
-                        "revealPriority": 5
-                    }
-                ]
-            },
-            {
-                "id": "metaverse",
-                "minPool": 0,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/vr.png",
-                        "alt": "A person using a VR headset",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "♾️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌐",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👤",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "social-empire",
-                "minPool": 0,
-                "weight": 2,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🟦",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "𝐟",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "♾️",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "mistral",
-        "name": "Mistral",
-        "aliases": [
-            "Mistral AI"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "french-wind",
-                "minPool": 0,
-                "weight": 4,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇫🇷",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌬️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "wind-code",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌬️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💻"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇫🇷"
-                    }
-                ]
-            },
-            {
-                "id": "storm",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇫🇷"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌪️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "mixtral",
-        "name": "Mixtral",
-        "aliases": [
-            "Mistral Mixtral"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "mixed-experts",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎛️",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👨‍🔬👩‍🔬",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇫🇷",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎨",
-                        "revealPriority": 3
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "deepseek",
-        "name": "DeepSeek",
-        "aliases": [
-            "Deep Seek"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "deep-seek",
-                "minPool": 0,
-                "weight": 5,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "⏬",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤿",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔭",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🐋",
-                        "revealPriority": 4
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳",
-                        "revealPriority": 5
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "qwen",
-        "name": "Qwen",
-        "aliases": [
-            "Qwen2",
-            "Alibaba Qwen"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "alibaba-cloud",
-                "minPool": 0,
-                "weight": 4,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "alibaba",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "☁️",
-                        "revealPriority": 3
-                    }
-                ]
-            },
-            {
-                "id": "vision-chat",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    }
-                ]
-            },
-            {
-                "id": "commerce-vision",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "alibaba"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "grok",
-        "name": "Grok",
-        "aliases": [
-            "xAI Grok"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "x-rocket",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔞",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "grok",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "is-this-true",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "space-us",
-                "minPool": 0,
-                "weight": 2,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "is-this-true",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇺🇸",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🍆",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🛰️",
-                        "revealPriority": 4
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "bird",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "clown",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "super heavy",
-                "minPool": 1,
-                "weight": 1,
-                "initialRevealCount": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🦸"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏋️‍♂️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏋️‍♂️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏋️‍♂️"
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "grok"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "elon-musk",
-        "name": "Elon Musk",
-        "aliases": [
-            "Elon",
-            "Musk"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "creator"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "tesla-space",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "tesla",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🚀",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "x",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "red-planet",
-                        "revealPriority": 4
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "grok",
-                        "revealPriority": 5
-                    }
-                ]
-            },
-            {
-                "id": "mars-doge",
-                "minPool": 0,
-                "weight": 3,
-                "initialRevealCount": 1,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "doge",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "red-planet",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "tesla",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "x",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "cybertruck-x",
-                "minPool": 1,
-                "weight": 2,
-                "initialRevealCount": 1,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "tesla-cybertruck",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "tesla",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "clown",
-                        "revealPriority": 3
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "kimi",
-        "name": "Kimi",
-        "aliases": [
-            "Moonshot Kimi"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "moon-shot",
-                "minPool": 0,
-                "weight": 5,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌙",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏀",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "lunar-launch",
-                "minPool": 1,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌕",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🚀",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💻",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "phi",
-        "name": "Phi",
-        "aliases": [
-            "Microsoft Phi"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "phi-windows",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "φ"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🪟"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "command",
-        "name": "Command",
-        "aliases": [
-            "Cohere Command"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "terminal",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "command-line",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⌨️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏢",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "officer",
-                "minPool": 1,
-                "weight": 2,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎖️",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/keyboard-key.png",
-                        "alt": "A keyboard modifier key",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🏢",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "aya",
-        "name": "Aya",
-        "aliases": [
-            "Cohere Aya"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "multilingual",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "ayaya"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌍"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🗣️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤝"
-                    }
-                ]
-            },
-            {
-                "id": "global-chat",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌐"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "nova",
-        "name": "Nova",
-        "aliases": [
-            "Amazon Nova"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "amazon-star",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "📦"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌟"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "☁️"
-                    }
-                ]
-            },
-            {
-                "id": "cloud-nova",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "☁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "✨"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "granite",
-        "name": "Granite",
-        "aliases": [
-            "IBM Granite"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "ibm-stone",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "ibm"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🪨"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💻"
-                    }
-                ]
-            },
-            {
-                "id": "enterprise-rock",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🏢"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🪨"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "bielik",
-        "name": "Bielik",
-        "aliases": [
-            "Bielik AI"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "polish-eagle",
-                "minPool": 0,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🦅"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    }
-                ]
-            },
-            {
-                "id": "eagle-brain",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🦅"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "pllum",
-        "name": "PLLuM",
-        "aliases": [
-            "Polish Large Language Model"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
-        "minPool": 0,
-        "variants": [
-            {
-                "id": "polish-fruit",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/purple-fruit.png",
-                        "alt": "A purple stone fruit",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "polish-language",
-                "minPool": 1,
-                "weight": 2,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/polish-text.png",
-                        "alt": "bober kurwa",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🗣️",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇵🇱",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖",
-                        "revealPriority": 4
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "bert",
-        "name": "BERT",
-        "aliases": [
-            "Bidirectional Encoder Representations from Transformers"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "nlp"
-        ],
+      },
+      {
+        "id": "generative",
         "minPool": 1,
-        "variants": [
-            {
-                "id": "sesame-transformer",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🧸"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "↔️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔀"
-                    }
-                ]
-            },
-            {
-                "id": "masked-language",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎭"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📖"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "✨",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 3
+          }
         ]
-    },
-    {
-        "id": "t5",
-        "name": "T5",
-        "aliases": [
-            "Text-to-Text Transfer Transformer"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "nlp"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "text-transfer",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔤"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➡️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔤"
-                    }
-                ]
-            },
-            {
-                "id": "five-transformers",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "5️⃣"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔀"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "whisper",
-        "name": "Whisper",
-        "aliases": [
-            "OpenAI Whisper"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "language-model"
-        ],
+      }
+    ]
+  },
+  {
+    "id": "claude",
+    "name": "Claude",
+    "aliases": ["Anthropic Claude"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "french-artist",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "speech-quiet",
-                "minPool": 0,
-                "weight": 4,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🤫",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📝",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎙️",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📝",
-                        "revealPriority": 4
-                    }
-                ]
-            },
-            {
-                "id": "audio-transcribe",
-                "minPool": 0,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎧"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➡️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📄"
-                    }
-                ]
-            }
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/monet.png.webp",
+            "alt": "An impressionist painter",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🎨",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 4
+          }
         ]
-    },
-    {
-        "id": "clip",
-        "name": "CLIP",
-        "aliases": [
-            "Contrastive Language-Image Pre-training"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "computer-vision",
-            "nlp"
-        ],
+      },
+      {
+        "id": "constitution",
+        "minPool": 1,
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/banger-game-2004.png",
+            "alt": "2004 Banger Game",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "⚖️",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🛡️",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gemini",
+    "name": "Gemini",
+    "aliases": ["Google Gemini"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "twins",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "image-text",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔗"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔤"
-                    }
-                ]
-            },
-            {
-                "id": "contrast",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "⬛"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⬜"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📷"
-                    }
-                ]
-            }
+        "weight": 5,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/stars.webp",
+            "alt": "A pair of identical stars",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "♊",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🔎",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "👁️",
+            "revealPriority": 4
+          }
         ]
-    },
-    {
-        "id": "sam",
-        "name": "SAM",
-        "aliases": [
-            "Segment Anything Model"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "computer-vision"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "segment-anything",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "✂️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    }
-                ]
-            },
-            {
-                "id": "mask-image",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎭"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "yolo",
-        "name": "YOLO",
-        "aliases": [
-            "You Only Look Once"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "object-detection"
-        ],
+      }
+    ]
+  },
+  {
+    "id": "google",
+    "name": "Google",
+    "aliases": ["Google Bard"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "google-gemini",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "look-once",
-                "minPool": 1,
-                "weight": 3,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🫵"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "1️⃣"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    }
-                ]
-            },
-            {
-                "id": "fast-boxes",
-                "minPool": 0,
-                "weight": 2,
-                "initialRevealCount": 1,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🤙"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "𝐘"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "𝐎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "𝑳"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "𝒪"
-                    }
-                ]
-            }
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔵",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🔴",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🟡",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🟢",
+            "revealPriority": 4
+          }
         ]
-    },
-    {
-        "id": "detr",
-        "name": "DETR",
-        "aliases": [
-            "Detection Transformer"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "object-detection"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "detect-transform",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔀"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            },
-            {
-                "id": "boxes-query",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "📦"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "❓"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "vit",
-        "name": "ViT",
-        "aliases": [
-            "Vision Transformer"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "computer-vision"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "vision-transformer",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "👁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔀"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            },
-            {
-                "id": "patches",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🧩"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "resnet",
-        "name": "ResNet",
-        "aliases": [
-            "Residual Network"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "computer-vision",
-            "neural-network"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "residual-network",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "➕"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🕸️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            },
-            {
-                "id": "skip-connection",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "⏭️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔗"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "sentence-transformers",
-        "name": "Sentence Transformers",
-        "aliases": [
-            "SentenceTransformer",
-            "MiniLM"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "nlp"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "sentences-vectors",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➡️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    }
-                ]
-            },
-            {
-                "id": "semantic-search",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "💬"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "bge",
-        "name": "BGE",
-        "aliases": [
-            "BAAI General Embedding"
-        ],
-        "entityKind": "emoji",
-        "categories": [
-            "nlp"
-        ],
-        "minPool": 1,
-        "variants": [
-            {
-                "id": "embedding-search",
-                "minPool": 1,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔎"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🇨🇳"
-                    }
-                ]
-            },
-            {
-                "id": "general-embedding",
-                "minPool": 1,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌍"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📐"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔤"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "lstm",
-        "name": "LSTM",
-        "aliases": [
-            "Long Short-Term Memory"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "neural-network"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "long-short-memory",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "📏"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤏"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    }
-                ]
-            },
-            {
-                "id": "gated-sequence",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🚪"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔁"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "gru",
-        "name": "GRU",
-        "aliases": [
-            "Gated Recurrent Unit"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "neural-network"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "gated-unit",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🚪"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🔁"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "1️⃣"
-                    }
-                ]
-            },
-            {
-                "id": "recurrence",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🔄"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🧠"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "gan",
-        "name": "GAN",
-        "aliases": [
-            "Generative Adversarial Network"
-        ],
-        "entityKind": "architecture",
-        "categories": [
-            "neural-network"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "generator-versus",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "✨"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⚔️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🕸️"
-                    }
-                ]
-            },
-            {
-                "id": "fake-detector",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎨"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🕵️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🤖"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "random-forest",
-        "name": "Random Forest",
-        "aliases": [
-            "RandomForest"
-        ],
-        "entityKind": "algorithm",
-        "categories": [
-            "classical-ml"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "forest-target",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🌲"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌲"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    }
-                ]
-            },
-            {
-                "id": "vote-trees",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🗳️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🌳"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📊"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "k-means",
-        "name": "K-Means",
-        "aliases": [
-            "KMeans"
-        ],
-        "entityKind": "algorithm",
-        "categories": [
-            "classical-ml"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "cluster-centres",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🎯"
-                    }
-                ]
-            },
-            {
-                "id": "groups-average",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "👥"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➗"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📊"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "pca",
-        "name": "PCA",
-        "aliases": [
-            "Principal Component Analysis"
-        ],
-        "entityKind": "algorithm",
-        "categories": [
-            "classical-ml"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "projection-axis",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "icon",
-                        "icon": "point-cloud"
-                    },
-                    {
-                        "type": "icon",
-                        "icon": "projection-axis"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⬇️"
-                    }
-                ]
-            },
-            {
-                "id": "reduce-dimensions",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "📊"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "↘️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "2️⃣"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "sobel",
-        "name": "Sobel",
-        "aliases": [
-            "Sobel operator"
-        ],
-        "entityKind": "operator",
-        "categories": [
-            "image-processing"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "image-gradient",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➡️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    }
-                ]
-            },
-            {
-                "id": "xy-derivatives",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "↔️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "↕️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "canny",
-        "name": "Canny",
-        "aliases": [
-            "Canny edge detector"
-        ],
-        "entityKind": "operator",
-        "categories": [
-            "image-processing"
-        ],
-        "minPool": 2,
-        "variants": [
-            {
-                "id": "edges",
-                "minPool": 2,
-                "weight": 3,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "✂️"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "➖"
-                    }
-                ]
-            },
-            {
-                "id": "threshold-edge",
-                "minPool": 2,
-                "weight": 2,
-                "clues": [
-                    {
-                        "type": "emoji",
-                        "value": "📈"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🚧"
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🖼️"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "nvidia",
-        "name": "NVIDIA",
-        "aliases": [
-            "Nvidia"
-        ],
-        "entityKind": "technology",
-        "categories": [
-            "computer-vision",
-            "hardware"
-        ],
+      }
+    ]
+  },
+  {
+    "id": "gemma",
+    "name": "Gemma",
+    "aliases": ["Google Gemma"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "gem-open",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "jensen-green",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 3,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/jacket.png",
-                        "alt": "Black leather jacket",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🟢",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "👁️",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/rtx.png",
-                        "alt": "GPU close-up",
-                        "revealPriority": 4
-                    }
-                ]
-            }
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "💎"
+          },
+          {
+            "type": "emoji",
+            "value": "🔓"
+          },
+          {
+            "type": "icon",
+            "value": "gemma"
+          }
         ]
-    },
-    {
-        "id": "cuda",
-        "name": "CUDA",
-        "aliases": [
-            "NVIDIA CUDA"
-        ],
-        "entityKind": "technology",
-        "categories": [
-            "hardware"
-        ],
+      },
+      {
+        "id": "small-gem",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "💎"
+          },
+          {
+            "type": "emoji",
+            "value": "🤏"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "llama",
+    "name": "Llama",
+    "aliases": ["Meta Llama"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "andes-wool",
         "minPool": 0,
-        "variants": [
-            {
-                "id": "barracuda",
-                "minPool": 0,
-                "weight": 4,
-                "initialRevealCount": 2,
-                "clues": [
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/barra.png",
-                        "alt": "Barracuda fish",
-                        "revealPriority": 1
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "🟢",
-                        "revealPriority": 2
-                    },
-                    {
-                        "type": "emoji",
-                        "value": "⚡",
-                        "revealPriority": 3
-                    },
-                    {
-                        "type": "image",
-                        "src": "/emoji-clues/rtx.png",
-                        "alt": "Parallel GPU compute",
-                        "revealPriority": 4
-                    }
-                ]
-            }
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🧶",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "∞",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🔓",
+            "revealPriority": 3
+          }
         ]
-    }
+      },
+      {
+        "id": "herd-meta",
+        "minPool": 0,
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🦙",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🦙",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "∞",
+            "revealPriority": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "meta",
+    "name": "Meta",
+    "aliases": ["Facebook", "Meta AI", "Meta Platforms"],
+    "entityKind": "emoji",
+    "categories": ["language-model", "technology"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "zuck-meme",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "👀",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🦎",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "♾️",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🥽",
+            "revealPriority": 4
+          },
+          {
+            "type": "emoji",
+            "value": "👥",
+            "revealPriority": 5
+          }
+        ]
+      },
+      {
+        "id": "metaverse",
+        "minPool": 0,
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/vr.png",
+            "alt": "A person using a VR headset",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "♾️",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🌐",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "👤",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "social-empire",
+        "minPool": 0,
+        "weight": 2,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🟦",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "𝐟",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "♾️",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mistral",
+    "name": "Mistral",
+    "aliases": ["Mistral AI"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "french-wind",
+        "minPool": 0,
+        "weight": 4,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇫🇷",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🌬️",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 3
+          }
+        ]
+      },
+      {
+        "id": "wind-code",
+        "minPool": 0,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌬️"
+          },
+          {
+            "type": "emoji",
+            "value": "💻"
+          },
+          {
+            "type": "emoji",
+            "value": "🇫🇷"
+          }
+        ]
+      },
+      {
+        "id": "storm",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇫🇷"
+          },
+          {
+            "type": "emoji",
+            "value": "🌪️"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mixtral",
+    "name": "Mixtral",
+    "aliases": ["Mistral Mixtral"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "mixed-experts",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎛️",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "👨‍🔬👩‍🔬",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🇫🇷",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🎨",
+            "revealPriority": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "aliases": ["Deep Seek"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "deep-seek",
+        "minPool": 0,
+        "weight": 5,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "⏬",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🤿",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🔭",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🐋",
+            "revealPriority": 4
+          },
+          {
+            "type": "emoji",
+            "value": "🇨🇳",
+            "revealPriority": 5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "qwen",
+    "name": "Qwen",
+    "aliases": ["Qwen2", "Alibaba Qwen"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "alibaba-cloud",
+        "minPool": 0,
+        "weight": 4,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇨🇳",
+            "revealPriority": 1
+          },
+          {
+            "type": "icon",
+            "icon": "alibaba",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "☁️",
+            "revealPriority": 3
+          }
+        ]
+      },
+      {
+        "id": "vision-chat",
+        "minPool": 0,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇨🇳"
+          },
+          {
+            "type": "emoji",
+            "value": "👁️"
+          },
+          {
+            "type": "emoji",
+            "value": "💬"
+          }
+        ]
+      },
+      {
+        "id": "commerce-vision",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "alibaba"
+          },
+          {
+            "type": "emoji",
+            "value": "👁️"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "grok",
+    "name": "Grok",
+    "aliases": ["xAI Grok"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "x-rocket",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔞",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 2
+          },
+          {
+            "type": "icon",
+            "icon": "grok",
+            "revealPriority": 3
+          },
+          {
+            "type": "icon",
+            "icon": "is-this-true",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "space-us",
+        "minPool": 0,
+        "weight": 2,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "is-this-true",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🇺🇸",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🍆",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🛰️",
+            "revealPriority": 4
+          },
+          {
+            "type": "icon",
+            "icon": "bird",
+            "revealPriority": 3
+          },
+          {
+            "type": "icon",
+            "icon": "clown",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "super heavy",
+        "minPool": 1,
+        "weight": 1,
+        "initialRevealCount": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🤖"
+          },
+          {
+            "type": "emoji",
+            "value": "🦸"
+          },
+          {
+            "type": "emoji",
+            "value": "🏋️‍♂️"
+          },
+          {
+            "type": "emoji",
+            "value": "🏋️‍♂️"
+          },
+          {
+            "type": "emoji",
+            "value": "🏋️‍♂️"
+          },
+          {
+            "type": "icon",
+            "icon": "grok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "elon-musk",
+    "name": "Elon Musk",
+    "aliases": ["Elon", "Musk"],
+    "entityKind": "emoji",
+    "categories": ["creator"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "tesla-space",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "tesla",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🚀",
+            "revealPriority": 2
+          },
+          {
+            "type": "icon",
+            "icon": "x",
+            "revealPriority": 3
+          },
+          {
+            "type": "icon",
+            "icon": "red-planet",
+            "revealPriority": 4
+          },
+          {
+            "type": "icon",
+            "icon": "grok",
+            "revealPriority": 5
+          }
+        ]
+      },
+      {
+        "id": "mars-doge",
+        "minPool": 0,
+        "weight": 3,
+        "initialRevealCount": 1,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "doge",
+            "revealPriority": 1
+          },
+          {
+            "type": "icon",
+            "icon": "red-planet",
+            "revealPriority": 2
+          },
+          {
+            "type": "icon",
+            "icon": "tesla",
+            "revealPriority": 3
+          },
+          {
+            "type": "icon",
+            "icon": "x",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "cybertruck-x",
+        "minPool": 1,
+        "weight": 2,
+        "initialRevealCount": 1,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "tesla-cybertruck",
+            "revealPriority": 1
+          },
+          {
+            "type": "icon",
+            "icon": "tesla",
+            "revealPriority": 2
+          },
+          {
+            "type": "icon",
+            "icon": "clown",
+            "revealPriority": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kimi",
+    "name": "Kimi",
+    "aliases": ["Moonshot Kimi"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "moon-shot",
+        "minPool": 0,
+        "weight": 5,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌙",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🏀",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🇨🇳",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "lunar-launch",
+        "minPool": 1,
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌕",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🚀",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🇨🇳",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "💻",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "phi",
+    "name": "Phi",
+    "aliases": ["Microsoft Phi"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "phi-windows",
+        "minPool": 0,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "φ"
+          },
+          {
+            "type": "emoji",
+            "value": "🪟"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command",
+    "name": "Command",
+    "aliases": ["Cohere Command"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "terminal",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "command-line",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "⌨️",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🏢",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "officer",
+        "minPool": 1,
+        "weight": 2,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎖️",
+            "revealPriority": 1
+          },
+          {
+            "type": "image",
+            "src": "/emoji-visual/keyboard-key.png",
+            "alt": "A keyboard modifier key",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🏢",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "aya",
+    "name": "Aya",
+    "aliases": ["Cohere Aya"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "multilingual",
+        "minPool": 0,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "ayaya"
+          },
+          {
+            "type": "emoji",
+            "value": "🌍"
+          },
+          {
+            "type": "emoji",
+            "value": "🗣️"
+          },
+          {
+            "type": "emoji",
+            "value": "🤝"
+          }
+        ]
+      },
+      {
+        "id": "global-chat",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌐"
+          },
+          {
+            "type": "emoji",
+            "value": "💬"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nova",
+    "name": "Nova",
+    "aliases": ["Amazon Nova"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "amazon-star",
+        "minPool": 0,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "📦"
+          },
+          {
+            "type": "emoji",
+            "value": "🌟"
+          },
+          {
+            "type": "emoji",
+            "value": "☁️"
+          }
+        ]
+      },
+      {
+        "id": "cloud-nova",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "☁️"
+          },
+          {
+            "type": "emoji",
+            "value": "✨"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "granite",
+    "name": "Granite",
+    "aliases": ["IBM Granite"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "ibm-stone",
+        "minPool": 0,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "ibm"
+          },
+          {
+            "type": "emoji",
+            "value": "🪨"
+          },
+          {
+            "type": "emoji",
+            "value": "💻"
+          }
+        ]
+      },
+      {
+        "id": "enterprise-rock",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🏢"
+          },
+          {
+            "type": "emoji",
+            "value": "🪨"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bielik",
+    "name": "Bielik",
+    "aliases": ["Bielik AI"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "polish-eagle",
+        "minPool": 0,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🇵🇱"
+          },
+          {
+            "type": "emoji",
+            "value": "🦅"
+          },
+          {
+            "type": "emoji",
+            "value": "💬"
+          }
+        ]
+      },
+      {
+        "id": "eagle-brain",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🦅"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          },
+          {
+            "type": "emoji",
+            "value": "🇵🇱"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pllum",
+    "name": "PLLuM",
+    "aliases": ["Polish Large Language Model"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "polish-fruit",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/purple-fruit.png",
+            "alt": "A purple stone fruit",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🇵🇱",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "💬",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🧠",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "polish-language",
+        "minPool": 1,
+        "weight": 2,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/polish-text.png",
+            "alt": "bober kurwa",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🗣️",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🇵🇱",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🤖",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bert",
+    "name": "BERT",
+    "aliases": ["Bidirectional Encoder Representations from Transformers"],
+    "entityKind": "architecture",
+    "categories": ["nlp"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "sesame-transformer",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🧸"
+          },
+          {
+            "type": "emoji",
+            "value": "↔️"
+          },
+          {
+            "type": "emoji",
+            "value": "🔀"
+          }
+        ]
+      },
+      {
+        "id": "masked-language",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎭"
+          },
+          {
+            "type": "emoji",
+            "value": "📖"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "t5",
+    "name": "T5",
+    "aliases": ["Text-to-Text Transfer Transformer"],
+    "entityKind": "architecture",
+    "categories": ["nlp"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "text-transfer",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔤"
+          },
+          {
+            "type": "emoji",
+            "value": "➡️"
+          },
+          {
+            "type": "emoji",
+            "value": "🔤"
+          }
+        ]
+      },
+      {
+        "id": "five-transformers",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "5️⃣"
+          },
+          {
+            "type": "emoji",
+            "value": "🔀"
+          },
+          {
+            "type": "emoji",
+            "value": "📖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "whisper",
+    "name": "Whisper",
+    "aliases": ["OpenAI Whisper"],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "speech-quiet",
+        "minPool": 0,
+        "weight": 4,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🤫",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "📝",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "🎙️",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "📝",
+            "revealPriority": 4
+          }
+        ]
+      },
+      {
+        "id": "audio-transcribe",
+        "minPool": 0,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎧"
+          },
+          {
+            "type": "emoji",
+            "value": "➡️"
+          },
+          {
+            "type": "emoji",
+            "value": "📄"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "clip",
+    "name": "CLIP",
+    "aliases": ["Contrastive Language-Image Pre-training"],
+    "entityKind": "architecture",
+    "categories": ["computer-vision", "nlp"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "image-text",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          },
+          {
+            "type": "emoji",
+            "value": "🔗"
+          },
+          {
+            "type": "emoji",
+            "value": "🔤"
+          }
+        ]
+      },
+      {
+        "id": "contrast",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "⬛"
+          },
+          {
+            "type": "emoji",
+            "value": "⬜"
+          },
+          {
+            "type": "emoji",
+            "value": "📷"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sam",
+    "name": "SAM",
+    "aliases": ["Segment Anything Model"],
+    "entityKind": "architecture",
+    "categories": ["computer-vision"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "segment-anything",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "✂️"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          },
+          {
+            "type": "emoji",
+            "value": "🎯"
+          }
+        ]
+      },
+      {
+        "id": "mask-image",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎭"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "yolo",
+    "name": "YOLO",
+    "aliases": ["You Only Look Once"],
+    "entityKind": "architecture",
+    "categories": ["object-detection"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "look-once",
+        "minPool": 1,
+        "weight": 3,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🫵"
+          },
+          {
+            "type": "emoji",
+            "value": "👁️"
+          },
+          {
+            "type": "emoji",
+            "value": "1️⃣"
+          },
+          {
+            "type": "emoji",
+            "value": "🎯"
+          }
+        ]
+      },
+      {
+        "id": "fast-boxes",
+        "minPool": 0,
+        "weight": 2,
+        "initialRevealCount": 1,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🤙"
+          },
+          {
+            "type": "emoji",
+            "value": "𝐘"
+          },
+          {
+            "type": "emoji",
+            "value": "𝐎"
+          },
+          {
+            "type": "emoji",
+            "value": "𝑳"
+          },
+          {
+            "type": "emoji",
+            "value": "𝒪"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "detr",
+    "name": "DETR",
+    "aliases": ["Detection Transformer"],
+    "entityKind": "architecture",
+    "categories": ["object-detection"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "detect-transform",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎯"
+          },
+          {
+            "type": "emoji",
+            "value": "🔀"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          }
+        ]
+      },
+      {
+        "id": "boxes-query",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "📦"
+          },
+          {
+            "type": "emoji",
+            "value": "❓"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vit",
+    "name": "ViT",
+    "aliases": ["Vision Transformer"],
+    "entityKind": "architecture",
+    "categories": ["computer-vision"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "vision-transformer",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "👁️"
+          },
+          {
+            "type": "emoji",
+            "value": "🔀"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          }
+        ]
+      },
+      {
+        "id": "patches",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🧩"
+          },
+          {
+            "type": "emoji",
+            "value": "👁️"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resnet",
+    "name": "ResNet",
+    "aliases": ["Residual Network"],
+    "entityKind": "architecture",
+    "categories": ["computer-vision", "neural-network"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "residual-network",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "➕"
+          },
+          {
+            "type": "emoji",
+            "value": "🕸️"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          }
+        ]
+      },
+      {
+        "id": "skip-connection",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "⏭️"
+          },
+          {
+            "type": "emoji",
+            "value": "🔗"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sentence-transformers",
+    "name": "Sentence Transformers",
+    "aliases": ["SentenceTransformer", "MiniLM"],
+    "entityKind": "architecture",
+    "categories": ["nlp"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "sentences-vectors",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "💬"
+          },
+          {
+            "type": "emoji",
+            "value": "➡️"
+          },
+          {
+            "type": "emoji",
+            "value": "📈"
+          }
+        ]
+      },
+      {
+        "id": "semantic-search",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔎"
+          },
+          {
+            "type": "emoji",
+            "value": "💬"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bge",
+    "name": "BGE",
+    "aliases": ["BAAI General Embedding"],
+    "entityKind": "emoji",
+    "categories": ["nlp"],
+    "minPool": 1,
+    "variants": [
+      {
+        "id": "embedding-search",
+        "minPool": 1,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔎"
+          },
+          {
+            "type": "emoji",
+            "value": "📈"
+          },
+          {
+            "type": "emoji",
+            "value": "🇨🇳"
+          }
+        ]
+      },
+      {
+        "id": "general-embedding",
+        "minPool": 1,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌍"
+          },
+          {
+            "type": "emoji",
+            "value": "📐"
+          },
+          {
+            "type": "emoji",
+            "value": "🔤"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lstm",
+    "name": "LSTM",
+    "aliases": ["Long Short-Term Memory"],
+    "entityKind": "architecture",
+    "categories": ["neural-network"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "long-short-memory",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "📏"
+          },
+          {
+            "type": "emoji",
+            "value": "🤏"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          }
+        ]
+      },
+      {
+        "id": "gated-sequence",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🚪"
+          },
+          {
+            "type": "emoji",
+            "value": "🔁"
+          },
+          {
+            "type": "emoji",
+            "value": "📈"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gru",
+    "name": "GRU",
+    "aliases": ["Gated Recurrent Unit"],
+    "entityKind": "architecture",
+    "categories": ["neural-network"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "gated-unit",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🚪"
+          },
+          {
+            "type": "emoji",
+            "value": "🔁"
+          },
+          {
+            "type": "emoji",
+            "value": "1️⃣"
+          }
+        ]
+      },
+      {
+        "id": "recurrence",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🔄"
+          },
+          {
+            "type": "emoji",
+            "value": "🧠"
+          },
+          {
+            "type": "emoji",
+            "value": "📈"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gan",
+    "name": "GAN",
+    "aliases": ["Generative Adversarial Network"],
+    "entityKind": "architecture",
+    "categories": ["neural-network"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "generator-versus",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "✨"
+          },
+          {
+            "type": "emoji",
+            "value": "⚔️"
+          },
+          {
+            "type": "emoji",
+            "value": "🕸️"
+          }
+        ]
+      },
+      {
+        "id": "fake-detector",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎨"
+          },
+          {
+            "type": "emoji",
+            "value": "🕵️"
+          },
+          {
+            "type": "emoji",
+            "value": "🤖"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "random-forest",
+    "name": "Random Forest",
+    "aliases": ["RandomForest"],
+    "entityKind": "algorithm",
+    "categories": ["classical-ml"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "forest-target",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🌲"
+          },
+          {
+            "type": "emoji",
+            "value": "🌲"
+          },
+          {
+            "type": "emoji",
+            "value": "🎯"
+          }
+        ]
+      },
+      {
+        "id": "vote-trees",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🗳️"
+          },
+          {
+            "type": "emoji",
+            "value": "🌳"
+          },
+          {
+            "type": "emoji",
+            "value": "📊"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "k-means",
+    "name": "K-Means",
+    "aliases": ["KMeans"],
+    "entityKind": "algorithm",
+    "categories": ["classical-ml"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "cluster-centres",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🎯"
+          },
+          {
+            "type": "emoji",
+            "value": "🎯"
+          },
+          {
+            "type": "emoji",
+            "value": "🎯"
+          }
+        ]
+      },
+      {
+        "id": "groups-average",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "👥"
+          },
+          {
+            "type": "emoji",
+            "value": "➗"
+          },
+          {
+            "type": "emoji",
+            "value": "📊"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pca",
+    "name": "PCA",
+    "aliases": ["Principal Component Analysis"],
+    "entityKind": "algorithm",
+    "categories": ["classical-ml"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "projection-axis",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "icon",
+            "icon": "point-cloud"
+          },
+          {
+            "type": "icon",
+            "icon": "projection-axis"
+          },
+          {
+            "type": "emoji",
+            "value": "⬇️"
+          }
+        ]
+      },
+      {
+        "id": "reduce-dimensions",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "📊"
+          },
+          {
+            "type": "emoji",
+            "value": "↘️"
+          },
+          {
+            "type": "emoji",
+            "value": "2️⃣"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sobel",
+    "name": "Sobel",
+    "aliases": ["Sobel operator"],
+    "entityKind": "operator",
+    "categories": ["image-processing"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "image-gradient",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          },
+          {
+            "type": "emoji",
+            "value": "➡️"
+          },
+          {
+            "type": "emoji",
+            "value": "📈"
+          }
+        ]
+      },
+      {
+        "id": "xy-derivatives",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "↔️"
+          },
+          {
+            "type": "emoji",
+            "value": "↕️"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "canny",
+    "name": "Canny",
+    "aliases": ["Canny edge detector"],
+    "entityKind": "operator",
+    "categories": ["image-processing"],
+    "minPool": 2,
+    "variants": [
+      {
+        "id": "edges",
+        "minPool": 2,
+        "weight": 3,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          },
+          {
+            "type": "emoji",
+            "value": "✂️"
+          },
+          {
+            "type": "emoji",
+            "value": "➖"
+          }
+        ]
+      },
+      {
+        "id": "threshold-edge",
+        "minPool": 2,
+        "weight": 2,
+        "visuals": [
+          {
+            "type": "emoji",
+            "value": "📈"
+          },
+          {
+            "type": "emoji",
+            "value": "🚧"
+          },
+          {
+            "type": "emoji",
+            "value": "🖼️"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nvidia",
+    "name": "NVIDIA",
+    "aliases": ["Nvidia"],
+    "entityKind": "technology",
+    "categories": ["computer-vision", "hardware"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "jensen-green",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 3,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/jacket.png",
+            "alt": "Black leather jacket",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🟢",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "👁️",
+            "revealPriority": 3
+          },
+          {
+            "type": "image",
+            "src": "/emoji-visual/rtx.png",
+            "alt": "GPU close-up",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cuda",
+    "name": "CUDA",
+    "aliases": ["NVIDIA CUDA"],
+    "entityKind": "technology",
+    "categories": ["hardware"],
+    "minPool": 0,
+    "variants": [
+      {
+        "id": "barracuda",
+        "minPool": 0,
+        "weight": 4,
+        "initialRevealCount": 2,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/emoji-visual/barra.png",
+            "alt": "Barracuda fish",
+            "revealPriority": 1
+          },
+          {
+            "type": "emoji",
+            "value": "🟢",
+            "revealPriority": 2
+          },
+          {
+            "type": "emoji",
+            "value": "⚡",
+            "revealPriority": 3
+          },
+          {
+            "type": "image",
+            "src": "/emoji-visual/rtx.png",
+            "alt": "Parallel GPU compute",
+            "revealPriority": 4
+          }
+        ]
+      }
+    ]
+  }
 ]

@@ -4,7 +4,7 @@ import { expect, test } from "../../../fixtures/e2e";
 // Never publish browser artifacts from tests that receive a production password.
 test.use({ trace: "off", screenshot: "off", video: "off" });
 
-test.beforeEach(async ({ loginPage, profilePage }) => {
+test.beforeEach(async ({ issueReportPage, loginPage, profilePage }) => {
   const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
@@ -12,6 +12,16 @@ test.beforeEach(async ({ loginPage, profilePage }) => {
   await loginPage.goto();
   await loginPage.signIn(email, password);
   await expect(profilePage.heading).toBeVisible();
+});
+
+test("authenticated user can access the issue report form", async ({ issueReportPage }) => {
+  await issueReportPage.goto();
+
+  await expect(issueReportPage.heading).toBeVisible();
+  await expect(issueReportPage.gameSelect).toBeVisible();
+  await expect(issueReportPage.titleInput).toBeVisible();
+  await expect(issueReportPage.descriptionInput).toBeVisible();
+  await expect(issueReportPage.submitButton).toBeVisible();
 });
 
 test("authenticated user can access the password reset page", async ({ resetPasswordPage }) => {

@@ -10,7 +10,7 @@ Files:
 
 - `src/app/components/game/ClassicGame.tsx` — 648 lines
 - `src/app/components/game/TimelineGame.tsx` — 530 lines
-- `src/app/components/game/EmojiCluesGame.tsx` — 496 lines
+- `src/app/components/game/EmojiDifficultyGame.tsx` — 496 lines
 
 These components combine data fetching, caching, local-progress hydration, submission handling, retries, animations, dialogs, navigation, and rendering.
 

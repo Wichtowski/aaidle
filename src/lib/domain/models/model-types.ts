@@ -1,5 +1,7 @@
-export const classicDifficulties = ["normal", "challenge", "hardcore"] as const;
-export type ClassicDifficulty = (typeof classicDifficulties)[number];
+import { difficulties, isDifficulty, type Difficulty } from "../difficulty";
+
+export const classicDifficulties = difficulties;
+export type ClassicDifficulty = Difficulty;
 export const classicCategories = [
   "llm",
   "cv",
@@ -46,7 +48,7 @@ export function isClassicCategory(value: string | null | undefined): value is Cl
 export type ModelPoolRank = 0 | 1 | 2;
 
 export function isClassicDifficulty(value: string | null | undefined): value is ClassicDifficulty {
-  return classicDifficulties.includes(value as ClassicDifficulty);
+  return isDifficulty(value);
 }
 
 export const classicDifficultyRank: Record<ClassicDifficulty, ModelPoolRank> = {

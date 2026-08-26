@@ -1,8 +1,31 @@
-import { useId, useState, type ReactNode } from "react";
+import { useId, useLayoutEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { canManageUsers } from "@lib/auth/permissions";
 import { useAuth } from "../auth/useAuth";
 import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
+
+const hellModeStorageKey = "aaidle:hell-mode:v1";
+
+function savedHellMode() {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(hellModeStorageKey) === "1";
+}
+
+function useHellModeEnabled(user: ReturnType<typeof useAuth>["user"], hardcoreUnlocked: boolean) {
+  const [saved, setSaved] = useState(savedHellMode);
+
+  useLayoutEffect(() => {
+    const sync = () => setSaved(savedHellMode());
+    window.addEventListener("storage", sync);
+    window.addEventListener("aaidle:hell-mode-change", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("aaidle:hell-mode-change", sync);
+    };
+  }, []);
+
+  return Boolean(user && hardcoreUnlocked && saved);
+}
 
 export function SiteNavbar({
   children,
@@ -11,10 +34,12 @@ export function SiteNavbar({
   children?: ReactNode;
   hardcore?: boolean;
 }) {
-  const { unavailable, user, signOut, retry } = useAuth();
+  const { hardcoreUnlocked, unavailable, user, signOut, retry } = useAuth();
+  const hellModeEnabled = useHellModeEnabled(user, hardcoreUnlocked);
+  const infernal = hardcore || hellModeEnabled;
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
-  const labels = hardcore
+  const labels = infernal
     ? {
         profile: "Soul",
         privacy: "Pacts",
@@ -72,7 +97,7 @@ export function SiteNavbar({
         ) : (
           <Link to="/login" prefetch="render">{labels.signIn}</Link>
         )}
-        <BuyMeCoffeeLink hardcore={hardcore} />
+        <BuyMeCoffeeLink hardcore={infernal} />
       </div>
     </nav>
   );

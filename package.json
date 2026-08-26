@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "test": "vitest run --config=tests/configs/vitest.config.ts",
+    "test:unit": "vitest run --config=tests/configs/vitest.config.ts",
     "test:install": "pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium",
     "test:watch": "vitest --config=tests/configs/vitest.config.ts",
     "test:e2e": "playwright test --config=tests/configs/playwright.config.ts --no-deps --project=chromium --project=mobile-chromium",

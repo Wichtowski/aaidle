@@ -39,7 +39,7 @@ pub(super) const CLASSIC_CHALLENGE_COMPLETION_CATEGORIES: [&str; 6] =
 mod admin;
 mod auth;
 mod classic;
-mod emoji_clues;
+mod emoji;
 mod issues;
 mod progress;
 mod timeline;
@@ -118,19 +118,19 @@ pub fn router(state: AppState) -> Router {
             "/games/classic/challenges/{challenge_id}/trajectory",
             post(classic::trajectory),
         )
-        .route("/games/emoji-clues/{difficulty}", get(emoji_clues::game))
+        .route("/games/emoji/{difficulty}", get(emoji::game))
         .route("/games/timeline/{difficulty}", get(timeline::game))
         .route(
             "/games/timeline/challenges/{challenge_id}/attempts",
             post(timeline::attempt),
         )
         .route(
-            "/games/emoji-clues/challenges/{challenge_id}/guesses",
-            get(emoji_clues::guess_history).post(emoji_clues::guess),
+            "/games/emoji/challenges/{challenge_id}/guesses",
+            get(emoji::guess_history).post(emoji::guess),
         )
         .route(
-            "/games/emoji-clues/challenges/{challenge_id}/hints",
-            get(emoji_clues::hints),
+            "/games/emoji/challenges/{challenge_id}/hints",
+            get(emoji::hints),
         )
         .route("/players/{player_id}/stats", get(classic::player_stats))
         .with_state(state.clone())

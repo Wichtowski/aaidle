@@ -7,7 +7,7 @@ export type SavedTimelineGame = {
   challengeDate: string;
   difficulty: TimelineDifficulty;
   positions: Array<string | null>;
-  placements: Array<0 | 1> | null;
+  placements: Array<0 | 1 | 2 | null> | null;
   acceptedAttempts: number;
   attemptsRemaining: number | null;
   solved: boolean;

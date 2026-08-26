@@ -6,6 +6,7 @@ use sqlx::{FromRow, SqlitePool};
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use uuid::Uuid;
 
+use crate::domain::difficulty::Difficulty;
 use crate::domain::timeline::TIMELINE_HARDCORE_ATTEMPT_LIMIT;
 use crate::error::{AppError, AppResult};
 
@@ -605,10 +606,10 @@ async fn emoji_history(
     difficulty: &str,
     page: i64,
 ) -> AppResult<ProgressHistoryResponse> {
-    if !matches!(difficulty, "normal" | "challenge" | "hardcore") {
-        return Err(AppError::validation("Unknown Emoji Clues difficulty."));
+    if Difficulty::parse(difficulty).is_none() {
+        return Err(AppError::validation("Unknown Emoji difficulty."));
     }
-    let mode = format!("emoji-clues:{difficulty}");
+    let mode = format!("emoji-z:{difficulty}");
     let total = sqlx::query_scalar::<_, i64>(
         "SELECT COUNT(*) FROM (SELECT a.challenge_id FROM visual_clue_guess_events a \
          JOIN visual_clue_challenges c ON c.id = a.challenge_id \
@@ -661,7 +662,7 @@ async fn timeline_history(
     difficulty: &str,
     page: i64,
 ) -> AppResult<ProgressHistoryResponse> {
-    if !matches!(difficulty, "normal" | "challenge" | "hardcore") {
+    if Difficulty::parse(difficulty).is_none() {
         return Err(AppError::validation("Unknown Timeline difficulty."));
     }
     let total = sqlx::query_scalar::<_, i64>(

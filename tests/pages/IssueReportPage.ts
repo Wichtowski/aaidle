@@ -3,6 +3,7 @@ import { BasePage } from "./BasePage";
 
 export class IssueReportPage extends BasePage {
   readonly heading: Locator = this.page.locator('[data-testid="issue-report-heading"]');
+  readonly gameSelect: Locator = this.page.locator('[data-testid="issue-report-game"]');
   readonly titleInput: Locator = this.page.locator('[data-testid="issue-report-title"]');
   readonly descriptionInput: Locator = this.page.locator(
     '[data-testid="issue-report-description"]',

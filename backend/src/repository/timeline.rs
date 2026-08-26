@@ -137,7 +137,18 @@ pub async fn ensure_timeline_challenge(
     secret: &str,
 ) -> AppResult<TimelineChallenge> {
     if let Some(challenge) = find_timeline_challenge_by_date(pool, date, difficulty).await? {
-        return parse_challenge(challenge);
+        let parsed = parse_challenge(challenge)?;
+        let config = difficulty.config();
+        if parsed.model_order.len() == config.total_model_count
+            && parsed.anchor_positions.len() == config.locked_anchor_count
+        {
+            return Ok(parsed);
+        }
+
+        sqlx::query("DELETE FROM timeline_challenges WHERE id = ?")
+            .bind(parsed.id.to_string())
+            .execute(pool)
+            .await?;
     }
 
     let candidates = timeline_candidates(pool).await?;
@@ -239,12 +250,7 @@ async fn process_timeline_attempt_once(
 
     let now = super::now_unix_millis();
     super::ensure_anonymous_player(connection, input.player_id, now).await?;
-    let placements = input
-        .model_order
-        .iter()
-        .zip(&challenge.model_order)
-        .map(|(submitted, expected)| u8::from(submitted == &expected.id))
-        .collect::<Vec<_>>();
+    let placements = timeline_placements(&challenge, &input.model_order);
     let is_correct = placements.iter().all(|placement| *placement == 1);
     let attempt_number = accepted_attempts + 1;
     let attempts_remaining = config
@@ -452,4 +458,92 @@ fn parse_challenge(row: TimelineChallengeRow) -> AppResult<TimelineChallenge> {
         anchor_positions: serde_json::from_str(&row.anchor_positions_json)?,
         tray_order: serde_json::from_str(&row.tray_order_json)?,
     })
+}
+
+fn release_year(value: &str) -> Option<&str> {
+    value
+        .get(..4)
+        .filter(|year| year.as_bytes().iter().all(u8::is_ascii_digit))
+}
+
+fn timeline_placements(challenge: &TimelineChallenge, submitted: &[String]) -> Vec<u8> {
+    submitted
+        .iter()
+        .zip(&challenge.model_order)
+        .map(|(submitted, expected)| {
+            if submitted == &expected.id {
+                return 1;
+            }
+
+            let same_year = challenge
+                .model_order
+                .iter()
+                .find(|model| model.id == *submitted)
+                .and_then(|model| release_year(&model.release_date))
+                .zip(release_year(&expected.release_date))
+                .is_some_and(|(submitted_year, expected_year)| submitted_year == expected_year);
+            if challenge.difficulty == TimelineDifficulty::Hardcore && same_year {
+                2
+            } else {
+                0
+            }
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn placement_challenge(difficulty: TimelineDifficulty) -> TimelineChallenge {
+        TimelineChallenge {
+            id: Uuid::new_v4(),
+            challenge_date: "2026-08-25".to_owned(),
+            difficulty,
+            model_order: vec![
+                TimelineModelSnapshot {
+                    id: "first".to_owned(),
+                    name: "First".to_owned(),
+                    item_kind: "model".to_owned(),
+                    release_date: "2020-01-01".to_owned(),
+                    year_annotation: None,
+                    categories: vec!["language-model".to_owned()],
+                },
+                TimelineModelSnapshot {
+                    id: "second".to_owned(),
+                    name: "Second".to_owned(),
+                    item_kind: "model".to_owned(),
+                    release_date: "2020-06-01".to_owned(),
+                    year_annotation: None,
+                    categories: vec!["language-model".to_owned()],
+                },
+                TimelineModelSnapshot {
+                    id: "third".to_owned(),
+                    name: "Third".to_owned(),
+                    item_kind: "model".to_owned(),
+                    release_date: "2021-01-01".to_owned(),
+                    year_annotation: None,
+                    categories: vec!["language-model".to_owned()],
+                },
+            ],
+            anchor_positions: vec![],
+            tray_order: vec!["first".to_owned(), "second".to_owned(), "third".to_owned()],
+        }
+    }
+
+    #[test]
+    fn hardcore_marks_same_year_positions_without_marking_normal() {
+        let submitted = ["second".to_owned(), "first".to_owned(), "third".to_owned()];
+        assert_eq!(
+            timeline_placements(
+                &placement_challenge(TimelineDifficulty::Hardcore),
+                &submitted
+            ),
+            [2, 2, 1]
+        );
+        assert_eq!(
+            timeline_placements(&placement_challenge(TimelineDifficulty::Normal), &submitted),
+            [0, 0, 1]
+        );
+    }
 }

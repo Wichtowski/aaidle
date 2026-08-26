@@ -15,11 +15,7 @@ export default defineConfig({
         ["allure-playwright", { resultsDir: "tests/reports/allure-results" }],
         ["../env.ts"],
       ]
-    : [
-        ["list"],
-        ["html", { open: "never", outputFolder: "tests/reports/playwright" }],
-        ["../env.ts"],
-      ],
+    : [["list"], ["html", { open: "never", outputFolder: "../reports/playwright" }], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
     extraHTTPHeaders: env.cloudflareE2EToken

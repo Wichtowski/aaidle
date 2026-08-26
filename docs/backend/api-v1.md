@@ -46,10 +46,10 @@ The response is cacheable for five minutes locally and one hour in a shared prox
 
 Query parameters:
 
-| Parameter | Default | Limits | Meaning |
-| --- | --- | --- | --- |
-| `cursor` | none | 128 characters | Continue after a model ID |
-| `limit` | `50` | 1-100 | Maximum records returned |
+| Parameter | Default | Limits         | Meaning                   |
+| --------- | ------- | -------------- | ------------------------- |
+| `cursor`  | none    | 128 characters | Continue after a model ID |
+| `limit`   | `50`    | 1-100          | Maximum records returned  |
 
 ```json
 {
@@ -82,11 +82,13 @@ The signed token is bound to that challenge and answer model and does not disclo
 `POST /api/v1/games/classic/hardcore/access` grants permanent account access only when the signed-in account has completed all six distinct focused Classic Challenge boards on the current UTC date.
 Generic `/challenges/*` routes are not part of the public v2 contract.
 
-`GET /api/v1/games/emoji-clues/{difficulty}` returns an answer-safe Emoji Clues challenge, its initially available clues, public entity choices, and global completion count. Supported difficulties are `normal`, `challenge`, and access-controlled `hardcore`.
-`GET /api/v1/games/emoji-clues/challenges/{challengeId}/hints?playerId={uuid}` returns the clues earned by that player.
-`POST /api/v1/games/emoji-clues/challenges/{challengeId}/guesses` accepts retry-safe `playerId`, `requestId`, `attemptNumber`, and `guessedEntityId` fields. The server validates and records every accepted guess, so rejected or duplicate requests cannot change progress.
+`GET /api/v1/games/emoji/{difficulty}` returns an answer-safe Emoji challenge, its initially available clues, public entity choices, and global completion count. Supported difficulties are `normal`, `challenge`, and access-controlled `hardcore`.
+`GET /api/v1/games/emoji/challenges/{challengeId}/hints?playerId={uuid}` returns the clues earned by that player.
+`POST /api/v1/games/emoji/challenges/{challengeId}/guesses` accepts retry-safe `playerId`, `requestId`, `attemptNumber`, and `guessedEntityId` fields. The server validates and records every accepted guess, so rejected or duplicate requests cannot change progress.
 Attempts must be sequential, and their hard limit is the eligible entity-pool size for the challenge difficulty.
-Emoji Clues supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
+Emoji supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
+
+`GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress. Normal and Challenge puzzles use distinct release years. Hardcore may contain multiple items from one year only when every item in that same-year group has a full `YYYY-MM-DD` date, so the chronological order remains unambiguous. Timeline attempt placements use `0` for an incorrect position, `1` for an exact position, and `2` when the submitted item shares the expected position's year but is not in its exact position.
 
 Classic and Emoji guess requests share persisted abuse limits: 360 requests per minute for a player and challenge, 1,500 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
@@ -138,15 +140,15 @@ The update accepts only public HTTPS SoundCloud URLs and `GET /api/v1/public-con
 
 ## Issue reporting
 
-`POST /api/v1/issues` requires a signed-in, non-disabled account and a same-origin request. It accepts a `title` from 8 to 120 characters and a `description` from 20 to 5,000 characters, then creates an issue in the project tracker using the server-side `GITHUB_ISSUES_TOKEN`. The endpoint is limited to three reports per account and client IP per hour and returns the created issue URL. The GitHub token is never sent to the browser or logged.
+`POST /api/v1/issues` requires a signed-in, non-disabled account and a same-origin request. It accepts a `game` of `classic`, `emoji`, `timeline`, or `logo`, a `title` from 8 to 120 characters, and a `description` from 20 to 5,000 characters, then creates an issue in the project tracker with the selected game as its GitHub label using the server-side `GITHUB_ISSUES_TOKEN`. Each account may submit three reports per rolling 24-hour period by default; a superadmin may increase an account's limit up to 1,000 reports per rolling 24-hour period. The endpoint returns the created issue URL. The GitHub token is never sent to the browser or logged.
 
 ## Migration mapping
 
 The current Node route handlers remain outside this backend for frontend migration compatibility.
 The Rust service itself only exposes these v1 routes.
 
-| Existing route family | Rust v1 route |
-| --- | --- |
-| `/api/v1/games/classic/*` | `/api/v1/games/classic/{category}/{difficulty}` and scoped Classic challenge routes |
-| `/api/v1/games/classic/challenges/{challengeId}/stats` | `/api/v1/games/classic/challenges/{challengeId}/stats` |
-| legacy model catalog in game payloads | `/api/v1/models` |
+| Existing route family                                  | Rust v1 route                                                                       |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `/api/v1/games/classic/*`                              | `/api/v1/games/classic/{category}/{difficulty}` and scoped Classic challenge routes |
+| `/api/v1/games/classic/challenges/{challengeId}/stats` | `/api/v1/games/classic/challenges/{challengeId}/stats`                              |
+| legacy model catalog in game payloads                  | `/api/v1/models`                                                                    |

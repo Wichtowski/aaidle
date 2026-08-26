@@ -1,8 +1,6 @@
-use std::net::SocketAddr;
-
 use axum::{
     Json,
-    extract::{ConnectInfo, State, rejection::JsonRejection},
+    extract::{State, rejection::JsonRejection},
     http::HeaderMap,
 };
 
@@ -13,20 +11,27 @@ use crate::{
 };
 
 use super::{
-    assert_csrf_or_bearer, assert_same_origin_or_bearer, authenticated_user,
-    consume_auth_rate_limit, parse_json_payload,
+    assert_csrf_or_bearer, assert_same_origin_or_bearer, authenticated_user, now_millis,
+    parse_json_payload,
 };
+
+const ISSUE_GAMES: [&str; 4] = ["classic", "emoji", "timeline", "logo"];
 
 pub(super) async fn create(
     State(state): State<AppState>,
     headers: HeaderMap,
-    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     payload: Result<Json<IssueReportRequest>, JsonRejection>,
 ) -> AppResult<Json<IssueReportResponse>> {
     assert_same_origin_or_bearer(&state, &headers)?;
     assert_csrf_or_bearer(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
     let payload = parse_json_payload(payload)?;
+    let game = payload.game.trim();
+    if !ISSUE_GAMES.contains(&game) {
+        return Err(AppError::validation(
+            "game must be one of classic, emoji, timeline, or logo",
+        ));
+    }
     let title = payload.title.trim();
     let description = payload.description.trim();
     if !(8..=120).contains(&title.len()) {
@@ -39,17 +44,25 @@ pub(super) async fn create(
             "description must be between 20 and 5000 characters",
         ));
     }
-    consume_auth_rate_limit(
-        &state,
-        &headers,
-        Some(peer),
+    let subject =
+        crate::auth::rate_limit_subject(&state.config.auth_secret, "issue-report-user", &user.id)?;
+    if !crate::auth::consume_rate_limit(
+        &state.db,
         "issue-report",
-        &user.email,
-        3,
-        60 * 60 * 1_000,
+        &subject,
+        user.issue_report_limit,
+        24 * 60 * 60 * 1_000,
+        now_millis(),
     )
-    .await?;
+    .await?
+    {
+        return Err(AppError::rate_limited(
+            "You have reached your issue report limit for today.",
+            24 * 60 * 60,
+        ));
+    }
     Ok(Json(IssueReportResponse {
-        url: crate::issues::create_report(&state.http, &state.config, title, description).await?,
+        url: crate::issues::create_report(&state.http, &state.config, title, description, game)
+            .await?,
     }))
 }

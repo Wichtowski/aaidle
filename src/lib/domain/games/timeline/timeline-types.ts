@@ -1,5 +1,7 @@
-export const timelineDifficulties = ["normal", "challenge", "hardcore"] as const;
-export type TimelineDifficulty = (typeof timelineDifficulties)[number];
+import { difficulties, type Difficulty } from "../../difficulty";
+
+export const timelineDifficulties = difficulties;
+export type TimelineDifficulty = Difficulty;
 
 export type TimelineModel = {
   id: string;
@@ -33,14 +35,14 @@ export type TimelineGamePayload = {
     attemptsRemaining: number | null;
     latestAttempt: {
       modelOrder: string[];
-      placements: Array<0 | 1>;
+      placements: Array<0 | 1 | 2>;
       attemptNumber: number;
     } | null;
   };
 };
 
 export type TimelineAttemptPayload = {
-  placements: Array<0 | 1>;
+  placements: Array<0 | 1 | 2>;
   attemptsRemaining: number | null;
 };
 

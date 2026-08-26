@@ -1,7 +1,10 @@
 import { useState, type SubmitEvent } from "react";
 import { ApiError, apiClient } from "@lib/api/client";
 
+type IssueGame = "classic" | "emoji" | "timeline" | "logo";
+
 export function IssueReportForm() {
+  const [game, setGame] = useState<IssueGame | "">("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -14,8 +17,9 @@ export function IssueReportForm() {
     setError(null);
     setIssueUrl(null);
     try {
-      const issue = await apiClient.reportIssue(title, description);
+      const issue = await apiClient.reportIssue(title, description, game as IssueGame);
       setIssueUrl(issue.url);
+      setGame("");
       setTitle("");
       setDescription("");
     } catch (requestError) {
@@ -32,6 +36,24 @@ export function IssueReportForm() {
   return (
     <form className="issue-report__form" onSubmit={submit}>
       <label>
+        Game
+        <select
+          data-testid="issue-report-game"
+          disabled={submitting}
+          onChange={(event) => setGame(event.target.value as IssueGame | "")}
+          required
+          value={game}
+        >
+          <option disabled value="">
+            Choose the game this issue affects
+          </option>
+          <option value="classic">Classic</option>
+          <option value="emoji">Emoji</option>
+          <option value="timeline">Timeline</option>
+          <option value="logo">Logo</option>
+        </select>
+      </label>
+      <label>
         Short title
         <input
           data-testid="issue-report-title"
@@ -39,7 +61,7 @@ export function IssueReportForm() {
           maxLength={120}
           minLength={8}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="The LLM challenge marks a correct guess wrong"
+          placeholder="Summarize the problem in a few words"
           required
           value={title}
         />
@@ -52,7 +74,7 @@ export function IssueReportForm() {
           maxLength={5_000}
           minLength={20}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder="Include what you expected, what happened instead, and how to reproduce it."
+          placeholder="Tell us what you expected, what happened, and how to reproduce it."
           required
           rows={8}
           value={description}

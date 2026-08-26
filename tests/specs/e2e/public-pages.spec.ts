@@ -24,7 +24,7 @@ test("Home page navigates to Classic", async ({ classicPage, homePage }) => {
   await expect(classicPage.difficultyNavigation).toBeVisible();
 });
 
-test("Home page navigates to Emoji Clues", async ({ emojiPage, homePage }) => {
+test("Home page navigates to Emoji", async ({ emojiPage, homePage }) => {
   await homePage.goto();
   await homePage.playEmojiLink.click();
 
@@ -62,6 +62,7 @@ test("mobile navigation menu exposes site links", async ({ page }, testInfo) => 
 test("protected account routes redirect anonymous users to login", async ({
   accountDisabledPage,
   deleteAccountPage,
+  issueReportPage,
   loginPage,
   resetPasswordPage,
 }) => {
@@ -72,6 +73,9 @@ test("protected account routes redirect anonymous users to login", async ({
   await expect(loginPage.heading).toBeVisible();
 
   await accountDisabledPage.goto();
+  await expect(loginPage.heading).toBeVisible();
+
+  await issueReportPage.goto();
   await expect(loginPage.heading).toBeVisible();
 });
 

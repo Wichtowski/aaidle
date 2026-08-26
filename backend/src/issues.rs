@@ -13,6 +13,7 @@ const GITHUB_ISSUES_URL: &str = "https://api.github.com/repos/Wichtowski/aaidle/
 struct CreateIssueRequest<'a> {
     title: String,
     body: &'a str,
+    labels: [&'a str; 1],
 }
 
 #[derive(Deserialize)]
@@ -25,6 +26,7 @@ pub async fn create_report(
     config: &AppConfig,
     title: &str,
     description: &str,
+    game: &str,
 ) -> AppResult<String> {
     let token = config.github_issues_token.as_deref().ok_or_else(|| {
         AppError::Unavailable(
@@ -39,6 +41,7 @@ pub async fn create_report(
         .json(&CreateIssueRequest {
             title: format!("[Report] {title}"),
             body: description,
+            labels: [game],
         })
         .send()
         .await

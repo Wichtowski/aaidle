@@ -3,7 +3,7 @@
 import { act, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { DailyCountdown } from "../../../src/app/components/game/DailyCountdown";
+import { DailyCountdown } from "../../../src/app/components/game/common/layout/DailyCountdown";
 
 describe("DailyCountdown", () => {
   afterEach(() => {

@@ -23,17 +23,17 @@ Production serves the static `dist/` assets through the platform Caddy instance.
 
 ## Repository map
 
-| Area | Location | Responsibility |
-| --- | --- | --- |
-| Browser entry and routes | `src/App.tsx`, `src/app/` | Pages, layouts, auth flows, and game UI |
-| Browser domain logic | `src/lib/domain/` | Client-safe selection, comparison, model-space, and progress behavior |
-| Browser API boundary | `src/lib/api/`, `src/lib/validation/` | HTTP calls and response/request validation |
-| Local progress | `src/lib/storage/` | Versioned, SSR-safe, Zod-validated local state |
-| Rust routes | `backend/src/api/v1/` | Versioned HTTP handlers for games, auth, progress, admin, and issues |
-| Rust domain logic | `backend/src/domain/` | Selection, comparison, trajectory, timeline, visual clues, and streak rules |
-| Persistence | `backend/src/db.rs`, `backend/src/repository/`, `backend/migrations/` | SQLite pool, migrations, queries, and repositories |
-| Seed data | `data/`, `backend/src/bin/seed.rs` | Canonical model and game catalogs |
-| Tests | `tests/`, `backend/tests/` | Browser, API, unit, accessibility, and performance coverage |
+| Area                     | Location                                                              | Responsibility                                                              |
+| ------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Browser entry and routes | `src/App.tsx`, `src/app/`                                             | Pages, layouts, auth flows, and game UI                                     |
+| Browser domain logic     | `src/lib/domain/`                                                     | Client-safe selection, comparison, model-space, and progress behavior       |
+| Browser API boundary     | `src/lib/api/`, `src/lib/validation/`                                 | HTTP calls and response/request validation                                  |
+| Local progress           | `src/lib/storage/`                                                    | Versioned, SSR-safe, Zod-validated local state                              |
+| Rust routes              | `backend/src/api/v1/`                                                 | Versioned HTTP handlers for games, auth, progress, admin, and issues        |
+| Rust domain logic        | `backend/src/domain/`                                                 | Selection, comparison, trajectory, timeline, visual clues, and streak rules |
+| Persistence              | `backend/src/db.rs`, `backend/src/repository/`, `backend/migrations/` | SQLite pool, migrations, queries, and repositories                          |
+| Seed data                | `data/`, `backend/src/bin/seed.rs`                                    | Canonical model and game catalogs                                           |
+| Tests                    | `tests/`, `backend/tests/`                                            | Browser, API, unit, accessibility, and performance coverage                 |
 
 ## Runtime boundaries
 
@@ -45,16 +45,16 @@ Production serves the static `dist/` assets through the platform Caddy instance.
 
 ## State ownership
 
-| State | Owner | Notes |
-| --- | --- | --- |
-| Challenge answer and eligible pool | API/database | Never sent in a public challenge DTO |
-| Accepted guesses and attempt order | API/database | Server validates sequence and limits |
-| Anonymous player identity | Browser | UUID only; no IP, device, or location is attached |
-| Anonymous UI progress | Browser localStorage | Key `aaidle:progress:v1`; validated and synchronized across tabs |
-| Verified account progress | API/database | Local progress is merged only when backed by accepted server events |
-| Sessions and one-time auth tokens | API cookies/API | Browser sessions use HttpOnly cookies plus readable CSRF cookie/header pairing |
-| Aggregate completion statistics | API/database | Derived from server-confirmed completions |
-| Admin permissions | API/database | Roles are `user`, `developer`, and `superadmin` |
+| State                              | Owner                | Notes                                                                          |
+| ---------------------------------- | -------------------- | ------------------------------------------------------------------------------ |
+| Challenge answer and eligible pool | API/database         | Never sent in a public challenge DTO                                           |
+| Accepted guesses and attempt order | API/database         | Server validates sequence and limits                                           |
+| Anonymous player identity          | Browser              | UUID only; no IP, device, or location is attached                              |
+| Anonymous UI progress              | Browser localStorage | Key `aaidle:progress:v1`; validated and synchronized across tabs               |
+| Verified account progress          | API/database         | Local progress is merged only when backed by accepted server events            |
+| Sessions and one-time auth tokens  | API cookies/API      | Browser sessions use HttpOnly cookies plus readable CSRF cookie/header pairing |
+| Aggregate completion statistics    | API/database         | Derived from server-confirmed completions                                      |
+| Admin permissions                  | API/database         | Roles are `user`, `developer`, and `superadmin`                                |
 
 ## Game flow and invariants
 
@@ -78,7 +78,7 @@ The following invariants are security and correctness boundaries:
 The public contract is documented in [API v1](backend/api-v1.md). Major route groups are:
 
 - `/api/v1/games/classic/*` — Classic categories, guesses, stats, trajectory, and Hardcore access.
-- `/api/v1/games/emoji-clues/*` — Emoji Clues challenges, hints, and guesses.
+- `/api/v1/games/emoji/*` — Emoji challenges, hints, and guesses.
 - `/api/v1/games/timeline/*` — Timeline challenges and progress.
 - `/api/v1/models` — Paginated public model discovery.
 - `/api/v1/auth/*` — Password, OAuth, verification, reset, sessions, and progress sync.

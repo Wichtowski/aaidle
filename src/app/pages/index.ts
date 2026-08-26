@@ -1,0 +1,12 @@
+export { default as HomePage } from "./home/HomePage";
+export { default as ClassicPage } from "./game/ClassicPage";
+export { default as EmojiPage } from "./game/EmojiPage";
+export { default as TimelinePage } from "./game/TimelinePage";
+export { default as ProfilePage } from "./profile/ProfilePage";
+export { default as LoginPage } from "./auth/LoginPage";
+export { default as RegisterPage } from "./auth/RegisterPage";
+export { default as ResetPasswordPage } from "./auth/ResetPasswordPage";
+export { default as DeleteAccountPage } from "./auth/DeleteAccountPage";
+export { default as AccountDisabledPage } from "./auth/AccountDisabledPage";
+export { default as AdminPage } from "./admin/AdminPage";
+export { default as DeferredIssuePage } from "./issues/DeferredIssuePage";

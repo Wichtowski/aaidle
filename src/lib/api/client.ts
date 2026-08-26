@@ -14,6 +14,7 @@ import type {
   TimelineDifficulty,
   TimelineGamePayload,
 } from "../domain/games/timeline/timeline-types";
+import type { Difficulty } from "../domain/difficulty";
 
 const apiPath = (path: string) => `/api/v1${path}`;
 
@@ -61,6 +62,7 @@ export type AdminUserSummary = {
   lastSeenAt: number | null;
   progressUpdatedAt: number | null;
   completionCount: number;
+  issueReportLimit: number;
 };
 
 export type AdminUserDetail = AdminUserSummary & {
@@ -105,13 +107,13 @@ export type VisualClue =
   | { type: "icon"; icon: string; revealPriority?: number }
   | { type: "image"; src: string; alt?: string; revealPriority?: number };
 
-export type EmojiCluesDifficulty = "normal" | "challenge" | "hardcore";
-export type EmojiCluesGamePayload = {
+export type EmojiDifficulty = Difficulty;
+export type EmojiGamePayload = {
   challenge: {
     id: string;
     date: string;
     mode: string;
-    difficulty: EmojiCluesDifficulty;
+    difficulty: EmojiDifficulty;
     expiresAt: string;
     clues: VisualClue[];
     maximumClues: number;
@@ -415,11 +417,11 @@ class ApiClient {
     return this.request<HardcoreStatus>("/auth/hardcore-status", { cache: "no-store" });
   }
 
-  reportIssue(title: string, description: string) {
+  reportIssue(title: string, description: string, game: "classic" | "emoji" | "timeline" | "logo") {
     return this.request<{ url: string }>("/issues", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description }),
+      body: JSON.stringify({ title, description, game }),
     });
   }
 
@@ -446,6 +448,7 @@ class ApiClient {
       permission?: Extract<UserPermission, "user" | "developer">;
       disabled?: boolean;
       disabledReason?: string;
+      issueReportLimit?: number;
     },
   ) {
     return this.request<{ user: AdminUserDetail }>(`/admin/users/${encodeURIComponent(userId)}`, {
@@ -583,11 +586,11 @@ class ApiClient {
     );
   }
 
-  emojiCluesGame(difficulty: EmojiCluesDifficulty, signal?: AbortSignal) {
-    return this.request<EmojiCluesGamePayload>(`/games/emoji-clues/${difficulty}`, { signal });
+  emojiGame(difficulty: EmojiDifficulty, signal?: AbortSignal) {
+    return this.request<EmojiGamePayload>(`/games/emoji/${difficulty}`, { signal });
   }
 
-  submitEmojiCluesGuess(
+  submitEmojiGuess(
     challengeId: string,
     playerId: string,
     requestId: string,
@@ -595,32 +598,32 @@ class ApiClient {
     attemptNumber: number,
   ) {
     return this.request<{
-      entity: EmojiCluesGamePayload["entities"][number];
+      entity: EmojiGamePayload["entities"][number];
       isCorrect: boolean;
       attemptNumber: number;
       globalCompletionCount: number;
       clues: VisualClue[];
-    }>(`/games/emoji-clues/challenges/${challengeId}/guesses`, {
+    }>(`/games/emoji/challenges/${challengeId}/guesses`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ playerId, requestId, guessedEntityId, attemptNumber }),
     });
   }
 
-  emojiCluesHints(challengeId: string, playerId: string) {
+  emojiHints(challengeId: string, playerId: string) {
     const query = new URLSearchParams({ playerId });
     return this.request<{ clues: VisualClue[] }>(
-      `/games/emoji-clues/challenges/${challengeId}/hints?${query}`,
+      `/games/emoji/challenges/${challengeId}/hints?${query}`,
       { cache: "no-store" },
     );
   }
 
-  emojiCluesGuessHistory(challengeId: string, playerId: string) {
+  emojiGuessHistory(challengeId: string, playerId: string) {
     const query = new URLSearchParams({ playerId });
     return this.request<{
       guesses: Array<{ id: string; name: string; isCorrect: boolean; attemptNumber: number }>;
       clues: VisualClue[];
-    }>(`/games/emoji-clues/challenges/${challengeId}/guesses?${query}`, { cache: "no-store" });
+    }>(`/games/emoji/challenges/${challengeId}/guesses?${query}`, { cache: "no-store" });
   }
 
   classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {

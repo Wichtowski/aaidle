@@ -9,7 +9,7 @@ use time::OffsetDateTime;
 use time::{Date, format_description::FormatItem, macros::format_description};
 
 const MODELS: &str = include_str!("../../../data/classic.seed.json");
-const EMOJI_CLUES: &str = include_str!("../../../data/emoji.seed.json");
+const EMOJI: &str = include_str!("../../../data/emoji.seed.json");
 const TIMELINE_MODELS: &str = include_str!("../../../data/timeline.seed.json");
 const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 
@@ -114,10 +114,9 @@ async fn main() -> AppResult<()> {
         .execute(&mut *transaction)
         .await?;
     }
-    let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
-        serde_json::from_str(EMOJI_CLUES)?;
-    aidle_api::domain::visual_clues::validate_seed(&visual_clues)?;
-    for entity in visual_clues {
+    let emoji: Vec<aidle_api::domain::emoji::VisualClueEntity> = serde_json::from_str(EMOJI)?;
+    aidle_api::domain::emoji::validate_seed(&emoji)?;
+    for entity in emoji {
         sqlx::query(
             "INSERT INTO visual_clue_entities \
              (id, name, aliases_json, entity_kind, categories_json, min_pool, entity_json, updated_at) \
@@ -130,11 +129,11 @@ async fn main() -> AppResult<()> {
         .bind(&entity.name)
         .bind(serde_json::to_string(&entity.aliases)?)
         .bind(match &entity.entity_kind {
-            aidle_api::domain::visual_clues::EntityKind::Emoji => "emoji",
-            aidle_api::domain::visual_clues::EntityKind::Architecture => "architecture",
-            aidle_api::domain::visual_clues::EntityKind::Algorithm => "algorithm",
-            aidle_api::domain::visual_clues::EntityKind::Operator => "operator",
-            aidle_api::domain::visual_clues::EntityKind::Technology => "technology",
+            aidle_api::domain::emoji::EntityKind::Emoji => "emoji",
+            aidle_api::domain::emoji::EntityKind::Architecture => "architecture",
+            aidle_api::domain::emoji::EntityKind::Algorithm => "algorithm",
+            aidle_api::domain::emoji::EntityKind::Operator => "operator",
+            aidle_api::domain::emoji::EntityKind::Technology => "technology",
         })
         .bind(serde_json::to_string(&entity.categories)?)
         .bind(i64::from(entity.min_pool))

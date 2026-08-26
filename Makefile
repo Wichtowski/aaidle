@@ -29,7 +29,7 @@ help:
 	@echo "  make backend-build    Build the Rust API"
 	@echo "  make backend-test     Run Rust API tests"
 	@echo "  make migrate          Apply Rust API migrations to the local Docker database"
-	@echo "  make seed             Import the local model and Emoji Clues game data"
+	@echo "  make seed             Import the local model and Emoji game data"
 	@echo "  make fixture-admin    Provision the local development superadmin fixture"
 	@echo ""
 	@echo "  make scripts          List available repository scripts"

@@ -150,9 +150,11 @@ pub(super) async fn attempt(
 ) -> AppResult<Json<TimelineAttemptResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     let payload = parse_json_payload(payload)?;
-    if payload.model_order.is_empty() || payload.model_order.len() > 12 {
+    if payload.model_order.is_empty()
+        || payload.model_order.len() > crate::domain::timeline::TIMELINE_MAX_MODEL_COUNT
+    {
         return Err(AppError::validation(
-            "modelOrder must contain between 1 and 12 models",
+            "modelOrder must contain between 1 and 18 models",
         ));
     }
     if payload

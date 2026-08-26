@@ -118,6 +118,10 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
   await timelinePage.submitButton.click();
 
   await expect(page.getByRole("dialog", { name: "Perfect chronology." })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Submit complete timeline|Timeline solved/ }),
+  ).toHaveCount(0);
+  await expect(page.locator(".timeline-card--movable.timeline-card--solved")).toHaveCount(4);
   expect(submittedOrders).toHaveLength(2);
   expect(new Set(submittedOrders[0])).toEqual(new Set(itemOrder));
   expect(submittedOrders[0][0]).toBe("anchor-old");

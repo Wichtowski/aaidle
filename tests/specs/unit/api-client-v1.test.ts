@@ -46,21 +46,21 @@ describe("v1 API client", () => {
     });
   });
 
-  it("asks Emoji Clues for server-earned hints only", async () => {
+  it("asks Emoji for server-earned hints only", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(response({ clues: [{ type: "emoji", value: "🧠" }] }));
     vi.stubGlobal("fetch", fetchMock);
-    await apiClient.emojiCluesHints(
+    await apiClient.emojiHints(
       "2c8d3858-8e24-4ad0-b1d3-7d231af19a58",
       "75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v1/games/emoji-clues/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
   });
 
-  it("loads accepted Emoji Clues guesses for the in-game history", async () => {
+  it("loads accepted Emoji guesses for the in-game history", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       response({
         guesses: [{ id: "gpt-4o", name: "GPT-4o", isCorrect: false, attemptNumber: 1 }],
@@ -69,13 +69,13 @@ describe("v1 API client", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    const history = await apiClient.emojiCluesGuessHistory(
+    const history = await apiClient.emojiGuessHistory(
       "2c8d3858-8e24-4ad0-b1d3-7d231af19a58",
       "75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
 
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v1/games/emoji-clues/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
     expect(history.guesses).toEqual([
       { id: "gpt-4o", name: "GPT-4o", isCorrect: false, attemptNumber: 1 },

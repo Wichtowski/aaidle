@@ -3,7 +3,7 @@
 import { render } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { GuessRow } from "../../../src/app/components/game/GuessRow";
+import { GuessRow } from "../../../src/app/components/game/classic/board/GuessRow";
 import type { ClassicComparison } from "../../../src/lib/domain/guesses/comparison-types";
 import {
   classicColumns,

@@ -5,7 +5,7 @@ use sqlx::SqlitePool;
 
 use crate::{
     config::AppConfig,
-    domain::visual_clues::VisualClueCatalog,
+    domain::emoji::VisualClueCatalog,
     error::{AppError, AppResult},
 };
 
@@ -14,7 +14,7 @@ pub struct AppState {
     pub db: SqlitePool,
     pub config: Arc<AppConfig>,
     pub http: Client,
-    pub visual_clues: Arc<VisualClueCatalog>,
+    pub emoji: Arc<VisualClueCatalog>,
 }
 
 impl AppState {
@@ -30,7 +30,7 @@ impl AppState {
             db,
             config,
             http,
-            visual_clues: Arc::new(VisualClueCatalog::load()?),
+            emoji: Arc::new(VisualClueCatalog::load()?),
         })
     }
 }

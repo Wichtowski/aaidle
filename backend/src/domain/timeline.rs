@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use time::{Date, format_description::FormatItem, macros::format_description};
 
-use crate::error::{AppError, AppResult};
+use crate::{
+    domain::difficulty::Difficulty,
+    error::{AppError, AppResult},
+};
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -14,36 +17,12 @@ const PROVIDER_REPEAT_WEIGHT: u64 = 4;
 const CATEGORY_REPEAT_WEIGHT: u64 = 2;
 
 pub const TIMELINE_SELECTION_VERSION: i64 = 1;
-pub const TIMELINE_HARDCORE_ATTEMPT_LIMIT: u16 = 12;
+pub const TIMELINE_HARDCORE_ATTEMPT_LIMIT: u16 = 8;
+pub const TIMELINE_MAX_MODEL_COUNT: usize = 18;
 
-#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum TimelineDifficulty {
-    Normal,
-    Challenge,
-    Hardcore,
-}
+pub use crate::domain::difficulty::Difficulty as TimelineDifficulty;
 
-impl TimelineDifficulty {
-    pub const ALL: [Self; 3] = [Self::Normal, Self::Challenge, Self::Hardcore];
-
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            "normal" => Some(Self::Normal),
-            "challenge" => Some(Self::Challenge),
-            "hardcore" => Some(Self::Hardcore),
-            _ => None,
-        }
-    }
-
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Normal => "normal",
-            Self::Challenge => "challenge",
-            Self::Hardcore => "hardcore",
-        }
-    }
-
+impl Difficulty {
     pub fn config(self) -> TimelineDifficultyConfig {
         match self {
             Self::Normal => TimelineDifficultyConfig {
@@ -53,14 +32,14 @@ impl TimelineDifficulty {
                 attempt_limit: None,
             },
             Self::Challenge => TimelineDifficultyConfig {
-                locked_anchor_count: 3,
-                total_model_count: 9,
+                locked_anchor_count: 4,
+                total_model_count: 12,
                 pool_rank: 1,
                 attempt_limit: None,
             },
             Self::Hardcore => TimelineDifficultyConfig {
-                locked_anchor_count: 4,
-                total_model_count: 12,
+                locked_anchor_count: 6,
+                total_model_count: 18,
                 pool_rank: 2,
                 attempt_limit: Some(TIMELINE_HARDCORE_ATTEMPT_LIMIT),
             },
@@ -124,8 +103,8 @@ pub fn select_timeline_puzzle(
     eligible.sort_by(|left, right| left.id.cmp(&right.id));
     eligible.dedup_by(|left, right| left.id == right.id);
 
-    let mut selected = Vec::with_capacity(config.total_model_count);
-    let mut selected_years = BTreeSet::new();
+    let mut selected: Vec<TimelineCandidate> = Vec::with_capacity(config.total_model_count);
+    let mut selected_years = BTreeSet::<String>::new();
     let mut provider_counts = BTreeMap::<String, u64>::new();
     let mut category_counts = BTreeMap::<String, u64>::new();
 
@@ -133,14 +112,27 @@ pub fn select_timeline_puzzle(
         let mut ranked = eligible
             .iter()
             .filter(|candidate| {
-                release_year(&candidate.release_date)
-                    .is_some_and(|year| !selected_years.contains(year))
-            })
-            .filter(|candidate| {
+                let Some(year) = release_year(&candidate.release_date) else {
+                    return false;
+                };
+                if difficulty != TimelineDifficulty::Hardcore {
+                    return !selected_years.contains(year);
+                }
+
+                let same_year = selected
+                    .iter()
+                    .filter(|chosen| release_year(&chosen.release_date) == Some(year))
+                    .collect::<Vec<_>>();
                 !selected
                     .iter()
-                    .any(|chosen: &&TimelineCandidate| chosen.id == candidate.id)
+                    .any(|chosen| chosen.release_date == candidate.release_date)
+                    && (same_year.is_empty()
+                        || (is_precise_release_date(&candidate.release_date)
+                            && same_year
+                                .iter()
+                                .all(|chosen| is_precise_release_date(&chosen.release_date))))
             })
+            .filter(|candidate| !selected.iter().any(|chosen| chosen.id == candidate.id))
             .map(|candidate| {
                 let provider_penalty = provider_counts
                     .get(&candidate.provider_id)
@@ -167,23 +159,25 @@ pub fn select_timeline_puzzle(
         ranked.sort_by_key(|(penalty, rank, candidate)| (*penalty, *rank, candidate.id.as_str()));
         let candidate = ranked
             .first()
-            .map(|(_, _, candidate)| *candidate)
+            .map(|(_, _, candidate)| (*candidate).clone())
             .ok_or_else(|| {
                 AppError::Unavailable(format!(
-                    "Timeline {} needs {} eligible models with distinct release years.",
+                    "Timeline {} needs {} eligible models with unambiguous release dates.",
                     difficulty.as_str(),
                     config.total_model_count
                 ))
             })?;
 
-        selected.push(candidate);
+        selected.push(candidate.clone());
         selected_years.insert(
-            release_year(&candidate.release_date).expect("eligible candidate has a release year"),
+            release_year(&candidate.release_date)
+                .expect("eligible candidate has a release year")
+                .to_owned(),
         );
         *provider_counts
             .entry(candidate.provider_id.clone())
             .or_default() += 1;
-        for category in relevant_categories(candidate) {
+        for category in relevant_categories(&candidate) {
             *category_counts.entry(category.to_owned()).or_default() += 1;
         }
     }
@@ -239,6 +233,10 @@ fn is_release_date(value: &str) -> bool {
         return value.as_bytes().iter().all(u8::is_ascii_digit) && value != "0000";
     }
     Date::parse(value, DATE_FORMAT).is_ok()
+}
+
+fn is_precise_release_date(value: &str) -> bool {
+    value.len() == 10 && Date::parse(value, DATE_FORMAT).is_ok()
 }
 
 fn release_year(value: &str) -> Option<&str> {
@@ -339,9 +337,9 @@ mod tests {
             TimelineDifficulty::Challenge.config().locked_anchor_count,
             3
         );
-        assert_eq!(TimelineDifficulty::Challenge.config().total_model_count, 9);
-        assert_eq!(TimelineDifficulty::Hardcore.config().locked_anchor_count, 4);
-        assert_eq!(TimelineDifficulty::Hardcore.config().total_model_count, 12);
+        assert_eq!(TimelineDifficulty::Challenge.config().total_model_count, 12);
+        assert_eq!(TimelineDifficulty::Hardcore.config().locked_anchor_count, 5);
+        assert_eq!(TimelineDifficulty::Hardcore.config().total_model_count, 18);
         assert_eq!(
             TimelineDifficulty::Hardcore.config().attempt_limit,
             Some(TIMELINE_HARDCORE_ATTEMPT_LIMIT)
@@ -367,9 +365,9 @@ mod tests {
         .expect("select puzzle");
 
         assert_eq!(first, second);
-        assert_eq!(first.model_order.len(), 9);
+        assert_eq!(first.model_order.len(), 12);
         assert_eq!(first.anchor_positions.len(), 3);
-        assert_eq!(first.tray_order.len(), 6);
+        assert_eq!(first.tray_order.len(), 9);
         assert!(
             first
                 .anchor_positions
@@ -465,5 +463,64 @@ mod tests {
                 .find(|candidate| candidate.id == model.id)
                 .is_some_and(|candidate| candidate.min_pool_rank <= 1)
         }));
+    }
+
+    #[test]
+    fn hardcore_allows_overlapping_years_when_dates_are_precise() {
+        let mut candidates = candidates(18);
+        for (index, candidate) in candidates.iter_mut().enumerate() {
+            candidate.release_date = format!("2020-01-{:02}", index + 1);
+        }
+        assert!(candidates.iter().all(|candidate| {
+            is_release_date(&candidate.release_date)
+                && is_precise_release_date(&candidate.release_date)
+        }));
+
+        let puzzle = select_timeline_puzzle(
+            "2026-08-25",
+            TimelineDifficulty::Hardcore,
+            "test secret that is longer than thirty two bytes",
+            &candidates,
+        )
+        .expect("select Hardcore puzzle");
+
+        assert_eq!(puzzle.model_order.len(), 18);
+        assert!(
+            puzzle
+                .model_order
+                .iter()
+                .all(|model| is_precise_release_date(&model.release_date))
+        );
+    }
+
+    #[test]
+    fn hardcore_rejects_ambiguous_overlapping_years() {
+        let mut candidates = candidates(18);
+        candidates[0].release_date = "2020".to_owned();
+        candidates[1].release_date = "2020-01-01".to_owned();
+
+        let result = select_timeline_puzzle(
+            "2026-08-25",
+            TimelineDifficulty::Hardcore,
+            "test secret that is longer than thirty two bytes",
+            &candidates,
+        );
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn hardcore_rejects_duplicate_precise_dates() {
+        let mut candidates = candidates(18);
+        candidates[1].release_date = candidates[0].release_date.clone();
+
+        let result = select_timeline_puzzle(
+            "2026-08-25",
+            TimelineDifficulty::Hardcore,
+            "test secret that is longer than thirty two bytes",
+            &candidates,
+        );
+
+        assert!(result.is_err());
     }
 }

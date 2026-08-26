@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import AccountDisabledPage from "../../../src/app/pages/AccountDisabledPage";
+import AccountDisabledPage from "../../../src/app/pages/auth/AccountDisabledPage";
 
 const signOut = vi.fn(async () => {});
 

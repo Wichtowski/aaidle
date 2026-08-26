@@ -1,5 +1,19 @@
 import type { TimelineGamePayload } from "./timeline-types";
 
+export const TIMELINE_DESKTOP_COLUMNS = 6;
+
+export function timelineVisualPosition(
+  position: number,
+  columns: number,
+): { row: number; column: number } | null {
+  if (columns <= 0 || position < 0) return null;
+
+  const row = Math.floor(position / columns);
+  const positionWithinRow = position % columns;
+  const column = row % 2 === 0 ? positionWithinRow : columns - positionWithinRow - 1;
+  return { row: row + 1, column: column + 1 };
+}
+
 export function initialTimelinePositions(game: TimelineGamePayload): Array<string | null> {
   return game.slots.map((slot) => slot.anchor?.id ?? null);
 }

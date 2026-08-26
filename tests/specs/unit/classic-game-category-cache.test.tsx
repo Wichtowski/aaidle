@@ -4,7 +4,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ClassicGame } from "../../../src/app/components/game/ClassicGame";
+import { ClassicGame } from "../../../src/app/components/game/classic/ClassicGame";
 import { apiClient, type ClassicGamePayload } from "../../../src/lib/api/client";
 
 vi.mock("../../../src/app/components/auth/useAuth", () => ({
@@ -34,7 +34,7 @@ vi.mock("../../../src/lib/storage/use-local-progress", () => ({
   }),
 }));
 
-vi.mock("../../../src/app/components/game/ClassicGameControls", () => ({
+vi.mock("../../../src/app/components/game/classic/controls/ClassicGameControls", () => ({
   ClassicGameControls: ({ models }: { models: Array<{ id: string; name: string }> }) =>
     createElement(
       "div",

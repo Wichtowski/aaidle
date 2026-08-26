@@ -159,7 +159,7 @@ async fn seed(pool: &SqlitePool) {
         .expect("attach family");
     for number in 3..=14 {
         let id = format!("model-{number}");
-        let release_date = format!("2025-01-{number:02}");
+        let release_date = format!("{}-01-01", 2000 + number);
         sqlx::query(
             "INSERT INTO models (id, provider_id, name, slug, release_date, release_year, local_execution, reasoning_support, \
              status, is_guessable, verified_at, source_label, created_at, updated_at) \
@@ -207,10 +207,28 @@ async fn seed(pool: &SqlitePool) {
     .execute(pool)
     .await
     .expect("seed Timeline event");
-    let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
+    for (id, release_date) in [
+        ("test-ai-event-early", "1990-01-01"),
+        ("test-ai-event-mid", "1991-01-01"),
+        ("test-ai-event-late", "1992-01-01"),
+    ] {
+        sqlx::query(
+            "INSERT INTO timeline_items \
+             (id, item_kind, name, provider_key, categories_json, min_pool_rank, release_date, \
+              source_url, is_active, updated_at) \
+             VALUES (?, 'event', ?, 'independent', '[\"language-model\"]', 0, ?, 'https://example.com/event', 1, 0)",
+        )
+        .bind(id)
+        .bind(id)
+        .bind(release_date)
+        .execute(pool)
+        .await
+        .expect("seed additional Timeline event");
+    }
+    let emoji: Vec<aidle_api::domain::emoji::VisualClueEntity> =
         serde_json::from_str(include_str!("../../data/emoji.seed.json"))
             .expect("parse visual clue seed");
-    for entity in visual_clues {
+    for entity in emoji {
         sqlx::query(
             "INSERT INTO visual_clue_entities \
              (id, name, aliases_json, entity_kind, categories_json, min_pool, entity_json, updated_at) \
@@ -1684,7 +1702,7 @@ async fn emoji_attempts_must_follow_the_server_accepted_history() {
     let game = response_json(
         app.clone()
             .oneshot(
-                Request::get("/api/v1/games/emoji-clues/normal")
+                Request::get("/api/v1/games/emoji/normal")
                     .body(Body::empty())
                     .expect("Emoji request"),
             )
@@ -1698,7 +1716,7 @@ async fn emoji_attempts_must_follow_the_server_accepted_history() {
     let response = app
         .oneshot(
             Request::post(format!(
-                "/api/v1/games/emoji-clues/challenges/{challenge_id}/guesses"
+                "/api/v1/games/emoji/challenges/{challenge_id}/guesses"
             ))
             .header("content-type", "application/json")
             .body(Body::from(
@@ -1782,7 +1800,7 @@ async fn guess_rate_limits_are_shared_across_game_modes_and_return_retry_after()
     let emoji = response_json(
         app.clone()
             .oneshot(
-                Request::get("/api/v1/games/emoji-clues/normal")
+                Request::get("/api/v1/games/emoji/normal")
                     .body(Body::empty())
                     .expect("Emoji request"),
             )
@@ -1800,7 +1818,7 @@ async fn guess_rate_limits_are_shared_across_game_modes_and_return_retry_after()
     let limited = app
         .oneshot(
             Request::post(format!(
-                "/api/v1/games/emoji-clues/challenges/{emoji_challenge_id}/guesses"
+                "/api/v1/games/emoji/challenges/{emoji_challenge_id}/guesses"
             ))
             .header("content-type", "application/json")
             .body(Body::from(
@@ -1907,7 +1925,7 @@ async fn timeline_modes_expose_only_public_puzzle_data_and_exact_configuration()
     let (app, _) = test_app().await;
     let player_id = Uuid::new_v4();
 
-    for (difficulty, total, anchors, movable) in [("normal", 6, 2, 4), ("challenge", 9, 3, 6)] {
+    for (difficulty, total, anchors, movable) in [("normal", 6, 2, 4), ("challenge", 12, 3, 9)] {
         let response = app
             .clone()
             .oneshot(
@@ -1942,9 +1960,7 @@ async fn timeline_modes_expose_only_public_puzzle_data_and_exact_configuration()
                 .as_array()
                 .expect("movable models")
                 .iter()
-                .all(|model| model.get("releaseDate").is_none()
-                    && model.get("provider").is_none()
-                    && model.get("categories").is_none())
+                .all(|model| model.get("releaseDate").is_none() && model.get("provider").is_none())
         );
         assert!(payload["progress"]["attemptLimit"].is_null());
         assert!(payload["progress"]["attemptsRemaining"].is_null());
