@@ -29,7 +29,8 @@
     "format:files": "prettier --write",
     "format:check": "prettier --check . .github/scripts/**/*.mjs",
     "merge-many-to-one": "node scripts/merge-many-to-one.mjs",
-    "split-one-to-many": "node scripts/split-one-to-many.mjs"
+    "split-one-to-many": "node scripts/split-one-to-many.mjs",
+    "timeline:seed": "node scripts/build-timeline-seed.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.20",

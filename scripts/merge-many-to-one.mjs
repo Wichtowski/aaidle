@@ -7,6 +7,7 @@ import {
   readJson,
   writeJson,
 } from "./classic-seed-constants.mjs";
+import { syncTimelineSeed } from "./timeline-seed-constants.mjs";
 
 const inputDirectory = resolve(process.argv[2] ?? "data/classic");
 const output = resolve(process.argv[3] ?? "data/classic.seed.json");
@@ -43,4 +44,5 @@ for (const category of CLASSIC_CATEGORIES) {
 
 const models = [...modelsById.values()];
 writeJson(output, models, { writeFileSync });
+syncTimelineSeed({ classicPath: output });
 console.log(`Merged ${models.length} models into ${output}.`);

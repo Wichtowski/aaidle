@@ -111,6 +111,16 @@ impl IntoResponse for AppError {
                     "ATTEMPT_LIMIT_REACHED",
                     "Every available answer for this challenge has already been guessed.",
                 ),
+                "TIMELINE_ATTEMPT_LIMIT_REACHED" => (
+                    StatusCode::CONFLICT,
+                    "ATTEMPT_LIMIT_REACHED",
+                    "No Timeline submissions remain for this challenge.",
+                ),
+                "TIMELINE_CHALLENGE_COMPLETED" => (
+                    StatusCode::CONFLICT,
+                    "CHALLENGE_COMPLETED",
+                    "This Timeline challenge has already been completed by this player.",
+                ),
                 _ => (
                     StatusCode::CONFLICT,
                     "CONFLICT",

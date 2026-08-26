@@ -9,6 +9,11 @@ import type {
   PublicModelIndex,
 } from "../domain/models/model-types";
 import type { LocalProgress } from "../storage/local-progress-schema";
+import type {
+  TimelineAttemptPayload,
+  TimelineDifficulty,
+  TimelineGamePayload,
+} from "../domain/games/timeline/timeline-types";
 
 const apiPath = (path: string) => `/api/v1${path}`;
 
@@ -395,8 +400,8 @@ class ApiClient {
     });
   }
 
-  progressHistory(category: string, page: number) {
-    const query = new URLSearchParams({ category, page: String(page) });
+  progressHistory(game: "classic" | "emoji" | "timeline", category: string, page: number) {
+    const query = new URLSearchParams({ game, category, page: String(page) });
     return this.request<ProgressHistory>(`/auth/progress/history?${query}`, {
       cache: "no-store",
     });
@@ -552,6 +557,30 @@ class ApiClient {
       uniquePlayers: number;
       correctGuesses: number;
     }>(`/games/classic/challenges/${challengeId}/stats`);
+  }
+
+  timelineGame(difficulty: TimelineDifficulty, playerId: string, signal?: AbortSignal) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<TimelineGamePayload>(`/games/timeline/${difficulty}?${query}`, {
+      cache: "no-store",
+      signal,
+    });
+  }
+
+  submitTimelineAttempt(
+    challengeId: string,
+    playerId: string,
+    requestId: string,
+    modelOrder: string[],
+  ) {
+    return this.request<TimelineAttemptPayload>(
+      `/games/timeline/challenges/${challengeId}/attempts`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId, requestId, modelOrder }),
+      },
+    );
   }
 
   emojiCluesGame(difficulty: EmojiCluesDifficulty, signal?: AbortSignal) {

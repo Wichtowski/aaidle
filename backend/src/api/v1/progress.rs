@@ -21,6 +21,7 @@ const PROGRESS_WRITES_PER_MINUTE: i64 = 60;
 
 #[derive(Deserialize)]
 pub(super) struct HistoryQuery {
+    game: Option<String>,
     category: String,
     page: Option<i64>,
 }
@@ -88,6 +89,7 @@ pub(super) async fn history(
             crate::progress::history(
                 &state.db,
                 &user.id,
+                query.game.as_deref().unwrap_or("classic"),
                 &query.category,
                 query.page.unwrap_or(1),
             )

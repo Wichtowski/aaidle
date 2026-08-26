@@ -1,6 +1,6 @@
 PNPM ?= pnpm
 COMPOSE ?= docker compose -f backend/compose.yml
-SCRIPTS := validate-emoji-data validate-model-data validate-workflow-action-pins
+SCRIPTS := build-timeline-seed validate-emoji-data validate-model-data validate-workflow-action-pins
 
 .DEFAULT_GOAL := help
 

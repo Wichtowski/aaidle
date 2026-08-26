@@ -52,14 +52,19 @@ export default function HomePage() {
               Play Emoji <FaArrowRight aria-hidden="true" />
             </strong>
           </Link>
-          <article className="game-mode-card game-mode-card--in-progress">
-            <span>
-              <span aria-hidden>◷</span> In progress
-            </span>
+          <Link
+            className="game-mode-card"
+            data-testid="home-play-timeline"
+            to="/timeline"
+            prefetch="intent"
+          >
+            <span>Available now</span>
             <h3>Timeline</h3>
             <p>Arrange a limited set of AI models in release order.</p>
-            <strong>Coming soon</strong>
-          </article>
+            <strong>
+              Play Timeline <FaArrowRight aria-hidden="true" />
+            </strong>
+          </Link>
           <article className="game-mode-card game-mode-card--in-progress">
             <span>
               <span aria-hidden>▧</span> In progress

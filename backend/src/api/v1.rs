@@ -42,6 +42,7 @@ mod classic;
 mod emoji_clues;
 mod issues;
 mod progress;
+mod timeline;
 
 pub fn router(state: AppState) -> Router {
     let request_id = HeaderName::from_static("x-request-id");
@@ -118,6 +119,11 @@ pub fn router(state: AppState) -> Router {
             post(classic::trajectory),
         )
         .route("/games/emoji-clues/{difficulty}", get(emoji_clues::game))
+        .route("/games/timeline/{difficulty}", get(timeline::game))
+        .route(
+            "/games/timeline/challenges/{challenge_id}/attempts",
+            post(timeline::attempt),
+        )
         .route(
             "/games/emoji-clues/challenges/{challenge_id}/guesses",
             get(emoji_clues::guess_history).post(emoji_clues::guess),

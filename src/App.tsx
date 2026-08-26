@@ -20,6 +20,7 @@ const ClassicPage = lazy(() => import("@app/pages/ClassicPage"));
 const AccountDisabledPage = lazy(() => import("@app/pages/AccountDisabledPage"));
 const DeleteAccountPage = lazy(() => import("@app/pages/DeleteAccountPage"));
 const DeferredIssuePage = lazy(() => import("@app/pages/DeferredIssuePage"));
+const TimelinePage = lazy(() => import("@app/pages/TimelinePage"));
 const ProgressSync = lazy(() =>
   import("@components/auth/ProgressSync").then(({ ProgressSync }) => ({ default: ProgressSync })),
 );
@@ -53,6 +54,7 @@ function Content() {
           <Route path="/classic" element={<Navigate replace to="/classic/llm" />} />
           <Route path="/classic/:category" element={<ClassicPage />} />
           <Route path="/emoji" element={<EmojiCluesGame />} />
+          <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route element={<DisabledAccountRoute />}>

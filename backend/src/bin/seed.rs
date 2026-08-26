@@ -6,9 +6,12 @@ use aidle_api::{config::AppConfig, db, error::AppResult};
 use serde::Deserialize;
 use sqlx::SqliteConnection;
 use time::OffsetDateTime;
+use time::{Date, format_description::FormatItem, macros::format_description};
 
 const MODELS: &str = include_str!("../../../data/classic.seed.json");
 const EMOJI_CLUES: &str = include_str!("../../../data/emoji.seed.json");
+const TIMELINE_MODELS: &str = include_str!("../../../data/timeline.seed.json");
+const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -32,6 +35,25 @@ struct SeedModel {
     category_details: serde_json::Value,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SeedTimelineItem {
+    id: String,
+    kind: String,
+    name: String,
+    min_pool: i64,
+    provider: String,
+    categories: Vec<String>,
+    release_date: String,
+    source_url: Option<String>,
+    #[serde(default = "default_true")]
+    active: bool,
+}
+
+fn default_true() -> bool {
+    true
+}
+
 #[tokio::main]
 async fn main() -> AppResult<()> {
     dotenvy::dotenv().ok();
@@ -45,6 +67,43 @@ async fn main() -> AppResult<()> {
     let mut transaction = pool.begin().await?;
     for model in &models {
         seed_model(&mut transaction, model, now).await?;
+    }
+    let timeline_items: Vec<SeedTimelineItem> = serde_json::from_str(TIMELINE_MODELS)?;
+    sqlx::query("DELETE FROM timeline_items")
+        .execute(&mut *transaction)
+        .await?;
+    for item in &timeline_items {
+        Date::parse(&item.release_date, DATE_FORMAT).map_err(|_| {
+            aidle_api::error::AppError::config(format!(
+                "Timeline item {} has an invalid release date",
+                item.id
+            ))
+        })?;
+        if !matches!(item.kind.as_str(), "model" | "event") {
+            return Err(aidle_api::error::AppError::config(format!(
+                "Timeline item {} has an invalid kind",
+                item.id
+            )));
+        }
+        sqlx::query(
+            "INSERT INTO timeline_items \
+             (id, item_kind, model_id, name, provider_key, categories_json, min_pool_rank, \
+              release_date, source_url, is_active, updated_at) \
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        )
+        .bind(&item.id)
+        .bind(&item.kind)
+        .bind((item.kind == "model").then_some(&item.id))
+        .bind(&item.name)
+        .bind(slug(&item.provider))
+        .bind(serde_json::to_string(&item.categories)?)
+        .bind(item.min_pool.clamp(0, 2))
+        .bind(&item.release_date)
+        .bind(&item.source_url)
+        .bind(item.active)
+        .bind(now)
+        .execute(&mut *transaction)
+        .await?;
     }
     let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
         serde_json::from_str(EMOJI_CLUES)?;
@@ -76,7 +135,11 @@ async fn main() -> AppResult<()> {
         .await?;
     }
     transaction.commit().await?;
-    println!("Seeded {} models.", models.len());
+    println!(
+        "Seeded {} Classic models and {} Timeline items.",
+        models.len(),
+        timeline_items.len()
+    );
     Ok(())
 }
 

@@ -118,6 +118,7 @@ pub enum VisualClue {
         reveal_priority: Option<i32>,
     },
     Icon {
+        #[serde(alias = "value")]
         icon: String,
         #[serde(skip_serializing)]
         meaning: Option<String>,
@@ -168,7 +169,12 @@ pub fn resolve_variant(
         .find(|variant| variant.id == variant_id)
         .ok_or_else(|| AppError::Unavailable("Visual Clue variant is unavailable.".to_owned()))?;
     // A missing priority falls back to its position in the seed. Stable sorting preserves ties.
-    let mut indexed_clues = variant.clues.iter().cloned().enumerate().collect::<Vec<_>>();
+    let mut indexed_clues = variant
+        .clues
+        .iter()
+        .cloned()
+        .enumerate()
+        .collect::<Vec<_>>();
     indexed_clues.sort_by_key(|(index, clue)| {
         (
             clue.reveal_priority().is_none(),
@@ -290,9 +296,7 @@ mod tests {
         assert_eq!(nvidia.name, "NVIDIA");
         let meta = catalog.entity("meta").expect("Meta is seeded");
         assert!(meta.categories.contains(&VisualClueCategory::Technology));
-        assert!(catalog
-            .eligible(0)
-            .all(|entity| entity.min_pool == 0));
+        assert!(catalog.eligible(0).all(|entity| entity.min_pool == 0));
         assert!(catalog.eligible(2).count() > catalog.eligible(0).count());
     }
 

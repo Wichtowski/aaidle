@@ -319,6 +319,82 @@ pub struct ClassicGameResponse {
     pub global_completion_count: i64,
 }
 
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelinePublicModel {
+    pub id: String,
+    pub name: String,
+    pub item_kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub release_date: Option<String>,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineAnchorModel {
+    pub id: String,
+    pub name: String,
+    pub item_kind: String,
+    pub release_date: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineSlotResponse {
+    pub position: usize,
+    pub anchor: Option<TimelineAnchorModel>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineChallengeResponse {
+    pub id: Uuid,
+    pub date: String,
+    pub difficulty: String,
+    pub expires_at: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineLatestAttemptResponse {
+    pub model_order: Vec<String>,
+    pub placements: Vec<u8>,
+    pub attempt_number: u16,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineProgressResponse {
+    pub solved: bool,
+    pub attempt_limit: Option<u16>,
+    pub attempts_remaining: Option<u16>,
+    pub latest_attempt: Option<TimelineLatestAttemptResponse>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineGameResponse {
+    pub challenge: TimelineChallengeResponse,
+    pub slots: Vec<TimelineSlotResponse>,
+    pub movable_models: Vec<TimelinePublicModel>,
+    pub progress: TimelineProgressResponse,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct TimelineAttemptRequest {
+    pub player_id: Uuid,
+    pub request_id: Uuid,
+    pub model_order: Vec<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineAttemptResponse {
+    pub placements: Vec<u8>,
+    pub attempts_remaining: Option<u16>,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VisualClueEntityResponse {

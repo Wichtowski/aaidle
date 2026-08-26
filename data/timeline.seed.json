@@ -1,0 +1,3529 @@
+[
+  {
+    "id": "naive-bayes",
+    "kind": "model",
+    "name": "Naive Bayes",
+    "minPool": 1,
+    "provider": "Thomas Bayes",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1763-01-01"
+  },
+  {
+    "id": "laplacian-operator",
+    "kind": "model",
+    "name": "Laplacian Operator",
+    "minPool": 0,
+    "provider": "Pierre-Simon Laplace",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1782-01-01"
+  },
+  {
+    "id": "linear-regression",
+    "kind": "model",
+    "name": "Linear Regression",
+    "minPool": 0,
+    "provider": "Adrien-Marie Legendre",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1805-01-01"
+  },
+  {
+    "id": "gaussian-blur",
+    "kind": "model",
+    "name": "Gaussian Blur",
+    "minPool": 0,
+    "provider": "Carl Friedrich Gauss",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1809-01-01"
+  },
+  {
+    "id": "gaussian-mixture-model",
+    "kind": "model",
+    "name": "Gaussian Mixture Model",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1894-01-01"
+  },
+  {
+    "id": "principal-component-analysis",
+    "kind": "model",
+    "name": "PCA",
+    "minPool": 0,
+    "provider": "Karl Pearson",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1901-01-01"
+  },
+  {
+    "id": "linear-discriminant-analysis",
+    "kind": "model",
+    "name": "Linear Discriminant Analysis",
+    "minPool": 0,
+    "provider": "Ronald Fisher",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1936-01-01"
+  },
+  {
+    "id": "quadratic-discriminant-analysis",
+    "kind": "model",
+    "name": "Quadratic Discriminant Analysis",
+    "minPool": 1,
+    "provider": "Ronald Fisher",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1936-01-01"
+  },
+  {
+    "id": "gabor-filter",
+    "kind": "model",
+    "name": "Gabor Filter",
+    "minPool": 1,
+    "provider": "Dennis Gabor",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1946-01-01"
+  },
+  {
+    "id": "gaussian-process",
+    "kind": "model",
+    "name": "Gaussian Process",
+    "minPool": 2,
+    "provider": "Danie Krige",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1951-01-01"
+  },
+  {
+    "id": "knn",
+    "kind": "model",
+    "name": "K-Nearest Neighbors",
+    "minPool": 1,
+    "provider": "Evelyn Fix, Joseph Hodges",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1951-01-01"
+  },
+  {
+    "id": "k-means",
+    "kind": "model",
+    "name": "K-Means",
+    "minPool": 0,
+    "provider": "Stuart Lloyd",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1957-01-01"
+  },
+  {
+    "id": "logistic-regression",
+    "kind": "model",
+    "name": "Logistic Regression",
+    "minPool": 0,
+    "provider": "David Cox",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1958-01-01"
+  },
+  {
+    "id": "perceptron",
+    "kind": "model",
+    "name": "Perceptron",
+    "minPool": 0,
+    "provider": "Frank Rosenblatt",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1958-07-01"
+  },
+  {
+    "id": "box-filter",
+    "kind": "model",
+    "name": "Box Filter",
+    "minPool": 1,
+    "provider": "Image processing",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1960-01-01"
+  },
+  {
+    "id": "hough-line-transform",
+    "kind": "model",
+    "name": "Hough Line Transform",
+    "minPool": 1,
+    "provider": "Paul Hough",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1962-01-01"
+  },
+  {
+    "id": "agglomerative-clustering",
+    "kind": "model",
+    "name": "Agglomerative Clustering",
+    "minPool": 1,
+    "provider": "Robert Sokal",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1963-01-01"
+  },
+  {
+    "id": "roberts-cross",
+    "kind": "model",
+    "name": "Roberts Cross",
+    "minPool": 1,
+    "provider": "Lawrence Roberts",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1963-01-01"
+  },
+  {
+    "id": "black-hat",
+    "kind": "model",
+    "name": "Black Hat",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "dilation",
+    "kind": "model",
+    "name": "Dilation",
+    "minPool": 0,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "erosion",
+    "kind": "model",
+    "name": "Erosion",
+    "minPool": 0,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "morphological-closing",
+    "kind": "model",
+    "name": "Morphological Closing",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "morphological-gradient",
+    "kind": "model",
+    "name": "Morphological Gradient",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "morphological-opening",
+    "kind": "model",
+    "name": "Morphological Opening",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "top-hat",
+    "kind": "model",
+    "name": "Top Hat",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1964-01-01"
+  },
+  {
+    "id": "hidden-markov-model",
+    "kind": "model",
+    "name": "Hidden Markov Model",
+    "minPool": 1,
+    "provider": "Leonard Baum",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1966-01-01"
+  },
+  {
+    "id": "sobel-operator",
+    "kind": "model",
+    "name": "Sobel Operator",
+    "minPool": 0,
+    "provider": "Irwin Sobel",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1968-01-01"
+  },
+  {
+    "id": "prewitt-operator",
+    "kind": "model",
+    "name": "Prewitt Operator",
+    "minPool": 1,
+    "provider": "Judith Prewitt",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1970-01-01"
+  },
+  {
+    "id": "ridge-regression",
+    "kind": "model",
+    "name": "Ridge Regression",
+    "minPool": 2,
+    "provider": "Arthur Hoerl, Robert Kennard",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1970-01-01"
+  },
+  {
+    "id": "truncated-svd",
+    "kind": "model",
+    "name": "Truncated SVD",
+    "minPool": 1,
+    "provider": "Gene Golub",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1970-01-01"
+  },
+  {
+    "id": "median-filter",
+    "kind": "model",
+    "name": "Median Filter",
+    "minPool": 0,
+    "provider": "John Tukey",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1971-01-01"
+  },
+  {
+    "id": "hough-circle-transform",
+    "kind": "model",
+    "name": "Hough Circle Transform",
+    "minPool": 1,
+    "provider": "Richard Duda",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1972-01-01"
+  },
+  {
+    "id": "mean-shift",
+    "kind": "model",
+    "name": "Mean Shift",
+    "minPool": 1,
+    "provider": "Keinosuke Fukunaga",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1975-01-01"
+  },
+  {
+    "id": "otsu-thresholding",
+    "kind": "model",
+    "name": "Otsu Thresholding",
+    "minPool": 0,
+    "provider": "Nobuyuki Otsu",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1979-01-01"
+  },
+  {
+    "id": "watershed",
+    "kind": "model",
+    "name": "Watershed",
+    "minPool": 1,
+    "provider": "Serge Beucher",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1979-01-01"
+  },
+  {
+    "id": "cnn",
+    "kind": "model",
+    "name": "Convolutional Neural Network",
+    "minPool": 1,
+    "provider": "Kunihiko Fukushima, Yann LeCun",
+    "categories": [
+      "neural-network",
+      "computer-vision"
+    ],
+    "releaseDate": "1980-01-01"
+  },
+  {
+    "id": "difference-of-gaussians",
+    "kind": "model",
+    "name": "Difference of Gaussians",
+    "minPool": 1,
+    "provider": "David Marr",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1980-01-01"
+  },
+  {
+    "id": "laplacian-of-gaussian",
+    "kind": "model",
+    "name": "Laplacian of Gaussian",
+    "minPool": 1,
+    "provider": "David Marr",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1980-01-01"
+  },
+  {
+    "id": "hopfield-network",
+    "kind": "model",
+    "name": "Hopfield Network",
+    "minPool": 2,
+    "provider": "California Institute of Technology",
+    "categories": [
+      "neural-network",
+      "associative-memory"
+    ],
+    "releaseDate": "1982-01-01"
+  },
+  {
+    "id": "rnn",
+    "kind": "model",
+    "name": "Recurrent Neural Network",
+    "minPool": 1,
+    "provider": "John Hopfield",
+    "categories": [
+      "neural-network",
+      "sequence-model"
+    ],
+    "releaseDate": "1982-01-01"
+  },
+  {
+    "id": "boltzmann-machine",
+    "kind": "model",
+    "name": "Boltzmann Machine",
+    "minPool": 2,
+    "provider": "David Ackley, Geoffrey Hinton, Terrence Sejnowski",
+    "categories": [
+      "neural-network",
+      "generative-model"
+    ],
+    "releaseDate": "1985-01-01"
+  },
+  {
+    "id": "autoencoder",
+    "kind": "model",
+    "name": "Autoencoder",
+    "minPool": 1,
+    "provider": "David Rumelhart, Geoffrey Hinton, Ronald Williams",
+    "categories": [
+      "neural-network",
+      "representation-learning"
+    ],
+    "releaseDate": "1986-01-01"
+  },
+  {
+    "id": "canny-edge-detector",
+    "kind": "model",
+    "name": "Canny Edge Detector",
+    "minPool": 0,
+    "provider": "John Canny",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1986-01-01"
+  },
+  {
+    "id": "decision-tree",
+    "kind": "model",
+    "name": "Decision Tree",
+    "minPool": 1,
+    "provider": "Ross Quinlan",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1986-01-01"
+  },
+  {
+    "id": "rbm",
+    "kind": "model",
+    "name": "Restricted Boltzmann Machine",
+    "minPool": 2,
+    "provider": "University of Toronto",
+    "categories": [
+      "neural-network",
+      "generative-model"
+    ],
+    "releaseDate": "1986-01-01"
+  },
+  {
+    "id": "multi-layer-perceptron",
+    "kind": "model",
+    "name": "Multi-Layer Perceptron",
+    "minPool": 0,
+    "provider": "David Rumelhart",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1986-10-01"
+  },
+  {
+    "id": "harris-corner-detector",
+    "kind": "model",
+    "name": "Harris Corner Detector",
+    "minPool": 0,
+    "provider": "Chris Harris",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1988-01-01"
+  },
+  {
+    "id": "adaptive-thresholding",
+    "kind": "model",
+    "name": "Adaptive Thresholding",
+    "minPool": 1,
+    "provider": "Image processing",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1989-01-01"
+  },
+  {
+    "id": "independent-component-analysis",
+    "kind": "model",
+    "name": "Independent Component Analysis",
+    "minPool": 1,
+    "provider": "Aapo Hyvärinen",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1994-01-01"
+  },
+  {
+    "id": "shi-tomasi-corner-detector",
+    "kind": "model",
+    "name": "Shi-Tomasi Corner Detector",
+    "minPool": 1,
+    "provider": "Jianbo Shi",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1994-01-01"
+  },
+  {
+    "id": "random-forest",
+    "kind": "model",
+    "name": "Random Forest",
+    "minPool": 1,
+    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1995-08-14"
+  },
+  {
+    "id": "svm",
+    "kind": "model",
+    "name": "Support Vector Machine",
+    "minPool": 1,
+    "provider": "Corinna Cortes, Vladimir Vapnik",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1995-09-01"
+  },
+  {
+    "id": "adaboost",
+    "kind": "model",
+    "name": "AdaBoost",
+    "minPool": 1,
+    "provider": "AT&T Bell Laboratories",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1996-01-01"
+  },
+  {
+    "id": "lasso",
+    "kind": "model",
+    "name": "Lasso",
+    "minPool": 2,
+    "provider": "Robert Tibshirani",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1996-01-01"
+  },
+  {
+    "id": "local-binary-pattern",
+    "kind": "model",
+    "name": "Local Binary Pattern",
+    "minPool": 1,
+    "provider": "Timo Ojala",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1996-01-01"
+  },
+  {
+    "id": "dbscan",
+    "kind": "model",
+    "name": "DBSCAN",
+    "minPool": 0,
+    "provider": "Martin Ester",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1996-08-01"
+  },
+  {
+    "id": "lstm",
+    "kind": "model",
+    "name": "LSTM",
+    "minPool": 1,
+    "provider": "IDSIA",
+    "categories": [
+      "neural-network",
+      "sequence-model"
+    ],
+    "releaseDate": "1997-01-01"
+  },
+  {
+    "id": "kernel-pca",
+    "kind": "model",
+    "name": "Kernel PCA",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1997-07-01"
+  },
+  {
+    "id": "bilateral-filter",
+    "kind": "model",
+    "name": "Bilateral Filter",
+    "minPool": 1,
+    "provider": "Carlo Tomasi",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1998-01-01"
+  },
+  {
+    "id": "lenet-5",
+    "kind": "model",
+    "name": "LeNet-5",
+    "minPool": 1,
+    "provider": "AT&T Bell Laboratories",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "1998-11-01"
+  },
+  {
+    "id": "sift",
+    "kind": "model",
+    "name": "SIFT",
+    "minPool": 0,
+    "provider": "David Lowe",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1999-01-01"
+  },
+  {
+    "id": "optics",
+    "kind": "model",
+    "name": "OPTICS",
+    "minPool": 1,
+    "provider": "Mihael Ankerst",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1999-06-01"
+  },
+  {
+    "id": "non-negative-matrix-factorization",
+    "kind": "model",
+    "name": "Non-negative Matrix Factorization",
+    "minPool": 1,
+    "provider": "Daniel Lee",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1999-10-01"
+  },
+  {
+    "id": "scharr-operator",
+    "kind": "model",
+    "name": "Scharr Operator",
+    "minPool": 1,
+    "provider": "H. Scharr",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2000-01-01"
+  },
+  {
+    "id": "local-outlier-factor",
+    "kind": "model",
+    "name": "Local Outlier Factor",
+    "minPool": 1,
+    "provider": "Markus Breunig",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2000-06-01"
+  },
+  {
+    "id": "echo-state-network",
+    "kind": "model",
+    "name": "Echo State Network",
+    "minPool": 2,
+    "provider": "Fraunhofer Institute",
+    "categories": [
+      "neural-network",
+      "sequence-model"
+    ],
+    "releaseDate": "2001-01-01"
+  },
+  {
+    "id": "gradient-boosting",
+    "kind": "model",
+    "name": "Gradient Boosting",
+    "minPool": 1,
+    "provider": "Jerome Friedman",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "2001-01-01"
+  },
+  {
+    "id": "one-class-svm",
+    "kind": "model",
+    "name": "One-Class SVM",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2001-01-01"
+  },
+  {
+    "id": "spectral-clustering",
+    "kind": "model",
+    "name": "Spectral Clustering",
+    "minPool": 1,
+    "provider": "Andrew Ng",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2001-01-01"
+  },
+  {
+    "id": "conditional-random-field",
+    "kind": "model",
+    "name": "Conditional Random Field",
+    "minPool": 1,
+    "provider": "John Lafferty",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2001-06-01"
+  },
+  {
+    "id": "grabcut",
+    "kind": "model",
+    "name": "GrabCut",
+    "minPool": 1,
+    "provider": "Carsten Rother",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2004-01-01"
+  },
+  {
+    "id": "elastic-net",
+    "kind": "model",
+    "name": "Elastic Net",
+    "minPool": 2,
+    "provider": "Hui Zou, Trevor Hastie",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "2005-01-01"
+  },
+  {
+    "id": "hog",
+    "kind": "model",
+    "name": "HOG",
+    "minPool": 0,
+    "provider": "Navneet Dalal",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2005-06-01"
+  },
+  {
+    "id": "fast-corner-detector",
+    "kind": "model",
+    "name": "FAST Corner Detector",
+    "minPool": 1,
+    "provider": "Edward Rosten",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2006-01-01"
+  },
+  {
+    "id": "surf",
+    "kind": "model",
+    "name": "SURF",
+    "minPool": 1,
+    "provider": "Herbert Bay",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2006-01-01"
+  },
+  {
+    "id": "affinity-propagation",
+    "kind": "model",
+    "name": "Affinity Propagation",
+    "minPool": 1,
+    "provider": "Brendan Frey",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2007-02-01"
+  },
+  {
+    "id": "isolation-forest",
+    "kind": "model",
+    "name": "Isolation Forest",
+    "minPool": 0,
+    "provider": "Fei Tony Liu",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2008-12-01"
+  },
+  {
+    "id": "t-sne",
+    "kind": "model",
+    "name": "t-SNE",
+    "minPool": 1,
+    "provider": "Laurens van der Maaten",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2008-12-01"
+  },
+  {
+    "id": "brief",
+    "kind": "model",
+    "name": "BRIEF",
+    "minPool": 1,
+    "provider": "Michael Calonder",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2010-01-01"
+  },
+  {
+    "id": "orb",
+    "kind": "model",
+    "name": "ORB",
+    "minPool": 1,
+    "provider": "Ethan Rublee",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2011-01-01"
+  },
+  {
+    "id": "alexnet",
+    "kind": "model",
+    "name": "AlexNet",
+    "minPool": 1,
+    "provider": "University of Toronto",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2012-12-03"
+  },
+  {
+    "id": "rcnn",
+    "kind": "model",
+    "name": "R-CNN",
+    "minPool": 1,
+    "provider": "UC Berkeley",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2013-11-11"
+  },
+  {
+    "id": "vae",
+    "kind": "model",
+    "name": "Variational Autoencoder",
+    "minPool": 1,
+    "provider": "University of Amsterdam",
+    "categories": [
+      "neural-network",
+      "generative-model"
+    ],
+    "releaseDate": "2013-12-20"
+  },
+  {
+    "id": "gru",
+    "kind": "model",
+    "name": "GRU",
+    "minPool": 1,
+    "provider": "Université de Montréal",
+    "categories": [
+      "neural-network",
+      "sequence-model"
+    ],
+    "releaseDate": "2014-06-03"
+  },
+  {
+    "id": "gan",
+    "kind": "model",
+    "name": "GAN",
+    "minPool": 1,
+    "provider": "Université de Montréal",
+    "categories": [
+      "neural-network",
+      "generative-model"
+    ],
+    "releaseDate": "2014-06-10"
+  },
+  {
+    "id": "vgg16",
+    "kind": "model",
+    "name": "VGG16",
+    "minPool": 1,
+    "provider": "University of Oxford",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2014-09-04"
+  },
+  {
+    "id": "vgg19",
+    "kind": "model",
+    "name": "VGG19",
+    "minPool": 2,
+    "provider": "University of Oxford",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2014-09-04"
+  },
+  {
+    "id": "googlenet",
+    "kind": "model",
+    "name": "GoogLeNet",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2014-09-17"
+  },
+  {
+    "id": "diffusion-model",
+    "kind": "model",
+    "name": "Diffusion Model",
+    "minPool": 1,
+    "provider": "Jascha Sohl-Dickstein, Eric Weiss, Niru Maheswaranathan, Surya Ganguli",
+    "categories": [
+      "neural-network",
+      "generative-model"
+    ],
+    "releaseDate": "2015-03-12"
+  },
+  {
+    "id": "fast-rcnn",
+    "kind": "model",
+    "name": "Fast R-CNN",
+    "minPool": 1,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2015-04-30"
+  },
+  {
+    "id": "unet",
+    "kind": "model",
+    "name": "U-Net",
+    "minPool": 1,
+    "provider": "University of Freiburg",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2015-05-18"
+  },
+  {
+    "id": "faster-rcnn",
+    "kind": "model",
+    "name": "Faster R-CNN",
+    "minPool": 1,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2015-06-04"
+  },
+  {
+    "id": "dcgan",
+    "kind": "model",
+    "name": "DCGAN",
+    "minPool": 1,
+    "provider": "indico Research",
+    "categories": [
+      "neural-network",
+      "generative-model",
+      "computer-vision"
+    ],
+    "releaseDate": "2015-11-19"
+  },
+  {
+    "id": "inception-v3",
+    "kind": "model",
+    "name": "InceptionV3",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2015-12-02"
+  },
+  {
+    "id": "ssd",
+    "kind": "model",
+    "name": "SSD",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2015-12-08"
+  },
+  {
+    "id": "resnet-101",
+    "kind": "model",
+    "name": "ResNet-101",
+    "minPool": 2,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2015-12-10"
+  },
+  {
+    "id": "resnet-152",
+    "kind": "model",
+    "name": "ResNet-152",
+    "minPool": 2,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2015-12-10"
+  },
+  {
+    "id": "resnet-50",
+    "kind": "model",
+    "name": "ResNet-50",
+    "minPool": 1,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2015-12-10"
+  },
+  {
+    "id": "openai-announced",
+    "kind": "event",
+    "name": "OpenAI announced",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2015-12-11",
+    "sourceUrl": "https://openai.com/index/introducing-openai/"
+  },
+  {
+    "id": "squeezenet",
+    "kind": "model",
+    "name": "SqueezeNet",
+    "minPool": 2,
+    "provider": "DeepScale / UC Berkeley",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2016-02-24"
+  },
+  {
+    "id": "xgboost",
+    "kind": "model",
+    "name": "XGBoost",
+    "minPool": 1,
+    "provider": "XGBoost Project",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2016-03-09"
+  },
+  {
+    "id": "wide-resnet",
+    "kind": "model",
+    "name": "Wide ResNet",
+    "minPool": 2,
+    "provider": "Université Paris-Est",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2016-05-23"
+  },
+  {
+    "id": "densenet-121",
+    "kind": "model",
+    "name": "DenseNet-121",
+    "minPool": 1,
+    "provider": "Cornell University",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2016-08-25"
+  },
+  {
+    "id": "xception",
+    "kind": "model",
+    "name": "Xception",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2016-10-07"
+  },
+  {
+    "id": "resnext",
+    "kind": "model",
+    "name": "ResNeXt",
+    "minPool": 2,
+    "provider": "Meta AI",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2016-11-16"
+  },
+  {
+    "id": "keypoint-rcnn",
+    "kind": "model",
+    "name": "Keypoint R-CNN",
+    "minPool": 2,
+    "provider": "PyTorch",
+    "categories": [
+      "computer-vision",
+      "keypoint-detection",
+      "object-detection"
+    ],
+    "releaseDate": "2017-03-20"
+  },
+  {
+    "id": "mask-rcnn",
+    "kind": "model",
+    "name": "Mask R-CNN",
+    "minPool": 1,
+    "provider": "Meta AI",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "instance-segmentation"
+    ],
+    "releaseDate": "2017-03-20"
+  },
+  {
+    "id": "transformer",
+    "kind": "model",
+    "name": "Transformer",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "neural-network",
+      "attention",
+      "sequence-model"
+    ],
+    "releaseDate": "2017-06-12"
+  },
+  {
+    "id": "deeplabv3",
+    "kind": "model",
+    "name": "DeepLabV3",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2017-06-17"
+  },
+  {
+    "id": "catboost",
+    "kind": "model",
+    "name": "CatBoost",
+    "minPool": 2,
+    "provider": "Yandex",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2017-06-28"
+  },
+  {
+    "id": "shufflenet",
+    "kind": "model",
+    "name": "ShuffleNet",
+    "minPool": 2,
+    "provider": "Megvii",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2017-07-04"
+  },
+  {
+    "id": "retinanet",
+    "kind": "model",
+    "name": "RetinaNet",
+    "minPool": 1,
+    "provider": "Meta AI",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2017-08-07"
+  },
+  {
+    "id": "lightgbm",
+    "kind": "model",
+    "name": "LightGBM",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2017-12-01"
+  },
+  {
+    "id": "cascade-rcnn",
+    "kind": "model",
+    "name": "Cascade R-CNN",
+    "minPool": 2,
+    "provider": "UC San Diego",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2017-12-03"
+  },
+  {
+    "id": "mobilenet-v2",
+    "kind": "model",
+    "name": "MobileNetV2",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2018-01-13"
+  },
+  {
+    "id": "ssdlite",
+    "kind": "model",
+    "name": "SSDLite",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2018-01-13"
+  },
+  {
+    "id": "yolov3",
+    "kind": "model",
+    "name": "YOLOv3",
+    "minPool": 0,
+    "provider": "University of Washington",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2018-04-08"
+  },
+  {
+    "id": "mnasnet",
+    "kind": "model",
+    "name": "MNASNet",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2018-07-31"
+  },
+  {
+    "id": "bert-base-uncased",
+    "kind": "model",
+    "name": "BERT Base Uncased",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2018-10-11"
+  },
+  {
+    "id": "bert-large-uncased",
+    "kind": "model",
+    "name": "BERT Large Uncased",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2018-10-11"
+  },
+  {
+    "id": "mbert",
+    "kind": "model",
+    "name": "Multilingual BERT",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "releaseDate": "2018-10-11"
+  },
+  {
+    "id": "gpt-2",
+    "kind": "model",
+    "name": "GPT-2",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019-02-14"
+  },
+  {
+    "id": "fcos",
+    "kind": "model",
+    "name": "FCOS",
+    "minPool": 1,
+    "provider": "University of Adelaide",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2019-04-02"
+  },
+  {
+    "id": "bio-clinicalbert",
+    "kind": "model",
+    "name": "BioClinicalBERT",
+    "minPool": 2,
+    "provider": "Unknown",
+    "categories": [
+      "nlp"
+    ],
+    "releaseDate": "2019-04-06"
+  },
+  {
+    "id": "centernet",
+    "kind": "model",
+    "name": "CenterNet",
+    "minPool": 2,
+    "provider": "University of Texas at Austin",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "keypoint-detection"
+    ],
+    "releaseDate": "2019-04-16"
+  },
+  {
+    "id": "mobilenet-v3",
+    "kind": "model",
+    "name": "MobileNetV3",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2019-05-06"
+  },
+  {
+    "id": "efficientnet-b0",
+    "kind": "model",
+    "name": "EfficientNet-B0",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2019-05-28"
+  },
+  {
+    "id": "efficientnet-b7",
+    "kind": "model",
+    "name": "EfficientNet-B7",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2019-05-28"
+  },
+  {
+    "id": "xlnet",
+    "kind": "model",
+    "name": "XLNet",
+    "minPool": 1,
+    "provider": "Google / Carnegie Mellon University",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019-06-19"
+  },
+  {
+    "id": "roberta-base",
+    "kind": "model",
+    "name": "RoBERTa Base",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019-07-26"
+  },
+  {
+    "id": "albert",
+    "kind": "model",
+    "name": "ALBERT",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019-09-26"
+  },
+  {
+    "id": "distilgpt2",
+    "kind": "model",
+    "name": "DistilGPT-2",
+    "minPool": 2,
+    "provider": "Hugging Face",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019-10-01"
+  },
+  {
+    "id": "distilbert-base-uncased",
+    "kind": "model",
+    "name": "DistilBERT Base Uncased",
+    "minPool": 1,
+    "provider": "Hugging Face",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019-10-02"
+  },
+  {
+    "id": "bart-large",
+    "kind": "model",
+    "name": "BART Large",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019-10-29"
+  },
+  {
+    "id": "xlm-roberta",
+    "kind": "model",
+    "name": "XLM-RoBERTa",
+    "minPool": 1,
+    "provider": "Meta AI",
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "releaseDate": "2019-11-05"
+  },
+  {
+    "id": "camembert-base",
+    "kind": "model",
+    "name": "CamemBERT Base",
+    "minPool": 1,
+    "provider": "ALMAnaCH (Inria)",
+    "categories": [
+      "nlp"
+    ],
+    "releaseDate": "2019-11-10"
+  },
+  {
+    "id": "efficientdet",
+    "kind": "model",
+    "name": "EfficientDet",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2019-11-20"
+  },
+  {
+    "id": "pegasus",
+    "kind": "model",
+    "name": "PEGASUS",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019-12-18"
+  },
+  {
+    "id": "t5-base",
+    "kind": "model",
+    "name": "T5 Base",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2020-02-11"
+  },
+  {
+    "id": "electra",
+    "kind": "model",
+    "name": "ELECTRA",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2020-03-23"
+  },
+  {
+    "id": "longformer",
+    "kind": "model",
+    "name": "Longformer",
+    "minPool": 2,
+    "provider": "Allen Institute for AI",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2020-04-10"
+  },
+  {
+    "id": "herbert-base-cased",
+    "kind": "model",
+    "name": "HerBERT Base Cased",
+    "minPool": 1,
+    "provider": "Allegro",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2020-05-01"
+  },
+  {
+    "id": "facebook-detr-resnet-50",
+    "kind": "model",
+    "name": "DETR ResNet-50",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2020-05-26"
+  },
+  {
+    "id": "yolov5",
+    "kind": "model",
+    "name": "YOLOv5",
+    "minPool": 0,
+    "provider": "Ultralytics",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2020-06-26"
+  },
+  {
+    "id": "bigbird",
+    "kind": "model",
+    "name": "BigBird",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2020-07-28"
+  },
+  {
+    "id": "deformable-detr",
+    "kind": "model",
+    "name": "Deformable DETR",
+    "minPool": 2,
+    "provider": "SenseTime",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2020-10-08"
+  },
+  {
+    "id": "vit-base-patch16-224",
+    "kind": "model",
+    "name": "ViT Base Patch16 224",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification"
+    ],
+    "releaseDate": "2020-10-22"
+  },
+  {
+    "id": "clip-vit-large-patch14",
+    "kind": "model",
+    "name": "CLIP ViT-L/14",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "embedding"
+    ],
+    "releaseDate": "2021-01-05"
+  },
+  {
+    "id": "swin-transformer",
+    "kind": "model",
+    "name": "Swin Transformer",
+    "minPool": 1,
+    "provider": "Microsoft Research",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "transformer"
+    ],
+    "releaseDate": "2021-03-25"
+  },
+  {
+    "id": "efficientnet-v2",
+    "kind": "model",
+    "name": "EfficientNetV2",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "releaseDate": "2021-04-01"
+  },
+  {
+    "id": "segformer-b0-ade20k",
+    "kind": "model",
+    "name": "SegFormer B0",
+    "minPool": 1,
+    "provider": "NVIDIA",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2021-05-31"
+  },
+  {
+    "id": "yolos-small",
+    "kind": "model",
+    "name": "YOLOS Small",
+    "minPool": 1,
+    "provider": "HUST Vision Lab",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2021-06-01"
+  },
+  {
+    "id": "all-minilm-l6-v2",
+    "kind": "model",
+    "name": "All-MiniLM-L6-v2",
+    "minPool": 2,
+    "provider": "Hugging Face",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2021-08-20"
+  },
+  {
+    "id": "all-mpnet-base-v2",
+    "kind": "model",
+    "name": "all-mpnet-base-v2",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2021-08-30"
+  },
+  {
+    "id": "mdeberta-v3-base",
+    "kind": "model",
+    "name": "mDeBERTa v3 Base",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "nlp",
+      "multilingual"
+    ],
+    "releaseDate": "2021-10-27"
+  },
+  {
+    "id": "mask2former-swin-small-ade-semantic",
+    "kind": "model",
+    "name": "Mask2Former Swin Small",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2021-12-02"
+  },
+  {
+    "id": "deberta-v3-base",
+    "kind": "model",
+    "name": "DeBERTa v3 Base",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2021-12-17"
+  },
+  {
+    "id": "clipseg-rd64-refined",
+    "kind": "model",
+    "name": "CLIPSeg",
+    "minPool": 1,
+    "provider": "University of Göttingen",
+    "categories": [
+      "computer-vision",
+      "segmentation",
+      "multimodal"
+    ],
+    "releaseDate": "2021-12-18"
+  },
+  {
+    "id": "convnext-base",
+    "kind": "model",
+    "name": "ConvNeXt Base",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "image-classification"
+    ],
+    "releaseDate": "2022-01-10"
+  },
+  {
+    "id": "table-transformer-detection",
+    "kind": "model",
+    "name": "Table Transformer",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2022-03-04"
+  },
+  {
+    "id": "maxvit",
+    "kind": "model",
+    "name": "MaxViT",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "transformer"
+    ],
+    "releaseDate": "2022-04-22"
+  },
+  {
+    "id": "owl-vit",
+    "kind": "model",
+    "name": "OWL-ViT",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "object-detection"
+    ],
+    "releaseDate": "2022-05-12"
+  },
+  {
+    "id": "plt5-base",
+    "kind": "model",
+    "name": "plT5 Base",
+    "minPool": 1,
+    "provider": "Allegro",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2022-05-18"
+  },
+  {
+    "id": "nllb-200-600m",
+    "kind": "model",
+    "name": "NLLB-200 600M",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2022-07-06"
+  },
+  {
+    "id": "yolov7",
+    "kind": "model",
+    "name": "YOLOv7",
+    "minPool": 1,
+    "provider": "Academia Sinica",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2022-07-06"
+  },
+  {
+    "id": "flan-t5-xl",
+    "kind": "model",
+    "name": "FLAN-T5 XL",
+    "minPool": 2,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2022-10-20"
+  },
+  {
+    "id": "gpt-3-5-turbo",
+    "kind": "model",
+    "name": "GPT-3.5 Turbo",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2022-11-30"
+  },
+  {
+    "id": "yolov8",
+    "kind": "model",
+    "name": "YOLOv8",
+    "minPool": 0,
+    "provider": "Ultralytics",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "segmentation"
+    ],
+    "releaseDate": "2023-01-10"
+  },
+  {
+    "id": "gpt-4",
+    "kind": "model",
+    "name": "GPT-4",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2023-03-14"
+  },
+  {
+    "id": "grounding-dino-base",
+    "kind": "model",
+    "name": "Grounding DINO Base",
+    "minPool": 1,
+    "provider": "IDEA Research",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "multimodal"
+    ],
+    "releaseDate": "2023-03-20"
+  },
+  {
+    "id": "sam",
+    "kind": "model",
+    "name": "Segment Anything Model",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2023-04-05"
+  },
+  {
+    "id": "dinov2-base",
+    "kind": "model",
+    "name": "DINOv2 Base",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "embedding"
+    ],
+    "releaseDate": "2023-04-14"
+  },
+  {
+    "id": "yolo-nas",
+    "kind": "model",
+    "name": "YOLO-NAS",
+    "minPool": 2,
+    "provider": "Deci AI",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2023-05-03"
+  },
+  {
+    "id": "e5-large-v2",
+    "kind": "model",
+    "name": "E5 Large v2",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2023-05-25"
+  },
+  {
+    "id": "llama-2-70b-chat",
+    "kind": "model",
+    "name": "Llama 2 70B Chat",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2023-07-18"
+  },
+  {
+    "id": "rtdetr-r50",
+    "kind": "model",
+    "name": "RT-DETR R50",
+    "minPool": 1,
+    "provider": "Baidu",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2023-09-01"
+  },
+  {
+    "id": "bge-large-en-v1-5",
+    "kind": "model",
+    "name": "BGE Large EN v1.5",
+    "minPool": 2,
+    "provider": "BAAI",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2023-09-15"
+  },
+  {
+    "id": "command-light",
+    "kind": "model",
+    "name": "Command Light",
+    "minPool": 2,
+    "provider": "Cohere",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2023-09-27"
+  },
+  {
+    "id": "deepseek-math-7b",
+    "kind": "model",
+    "name": "DeepSeekMath 7B",
+    "minPool": 2,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "releaseDate": "2023-11-02"
+  },
+  {
+    "id": "grok-1",
+    "kind": "model",
+    "name": "Grok-1",
+    "minPool": 1,
+    "provider": "xAI",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2023-11-04"
+  },
+  {
+    "id": "gpt-4-turbo",
+    "kind": "model",
+    "name": "GPT-4 Turbo",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2023-11-06"
+  },
+  {
+    "id": "whisper-large-v3",
+    "kind": "model",
+    "name": "Whisper Large v3",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "speech-model",
+      "multimodal"
+    ],
+    "releaseDate": "2023-11-06"
+  },
+  {
+    "id": "mixtral-8x7b-instruct",
+    "kind": "model",
+    "name": "Mixtral 8x7B Instruct",
+    "minPool": 0,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2023-12-08"
+  },
+  {
+    "id": "gemini-1-0-pro",
+    "kind": "model",
+    "name": "Gemini 1.0 Pro",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2023-12-13"
+  },
+  {
+    "id": "text-embedding-3-large",
+    "kind": "model",
+    "name": "text-embedding-3-large",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2024-01-25"
+  },
+  {
+    "id": "nomic-embed-text-v1-5",
+    "kind": "model",
+    "name": "nomic-embed-text-v1.5",
+    "minPool": 1,
+    "provider": "Nomic AI",
+    "categories": [
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2024-02-14"
+  },
+  {
+    "id": "gemini-1-5-pro",
+    "kind": "model",
+    "name": "Gemini 1.5 Pro",
+    "minPool": 0,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-02-15"
+  },
+  {
+    "id": "claude-3-opus",
+    "kind": "model",
+    "name": "Claude 3 Opus",
+    "minPool": 1,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-03-04"
+  },
+  {
+    "id": "claude-3-sonnet",
+    "kind": "model",
+    "name": "Claude 3 Sonnet",
+    "minPool": 1,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-03-04"
+  },
+  {
+    "id": "command-r",
+    "kind": "model",
+    "name": "Command R",
+    "minPool": 1,
+    "provider": "Cohere",
+    "categories": [
+      "language-model",
+      "reranking"
+    ],
+    "releaseDate": "2024-03-11"
+  },
+  {
+    "id": "claude-3-haiku",
+    "kind": "model",
+    "name": "Claude 3 Haiku",
+    "minPool": 1,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-03-13"
+  },
+  {
+    "id": "command-r-plus",
+    "kind": "model",
+    "name": "Command R+",
+    "minPool": 1,
+    "provider": "Cohere",
+    "categories": [
+      "language-model",
+      "reranking"
+    ],
+    "releaseDate": "2024-04-04"
+  },
+  {
+    "id": "mixtral-8x22b-instruct",
+    "kind": "model",
+    "name": "Mixtral 8x22B Instruct",
+    "minPool": 1,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-04-17"
+  },
+  {
+    "id": "llama-3-70b-instruct",
+    "kind": "model",
+    "name": "Llama 3 70B Instruct",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-04-18"
+  },
+  {
+    "id": "llama-3-8b-instruct",
+    "kind": "model",
+    "name": "Llama 3 8B Instruct",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-04-18"
+  },
+  {
+    "id": "mistral-7b-instruct-v0-3",
+    "kind": "model",
+    "name": "Mistral 7B Instruct v0.3",
+    "minPool": 1,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-05-07"
+  },
+  {
+    "id": "gpt-4o",
+    "kind": "model",
+    "name": "GPT-4o",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-05-13"
+  },
+  {
+    "id": "gemini-1-5-flash",
+    "kind": "model",
+    "name": "Gemini 1.5 Flash",
+    "minPool": 0,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-05-14"
+  },
+  {
+    "id": "phi-3-medium-128k-instruct",
+    "kind": "model",
+    "name": "Phi-3 Medium 128K Instruct",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-05-21"
+  },
+  {
+    "id": "aya-23-35b",
+    "kind": "model",
+    "name": "Aya 23 35B",
+    "minPool": 2,
+    "provider": "Cohere",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-05-23"
+  },
+  {
+    "id": "yolov10",
+    "kind": "model",
+    "name": "YOLOv10",
+    "minPool": 1,
+    "provider": "Tsinghua University",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2024-05-23"
+  },
+  {
+    "id": "qwen2-72b-instruct",
+    "kind": "model",
+    "name": "Qwen2 72B Instruct",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-06-07"
+  },
+  {
+    "id": "phi-3-mini-128k-instruct",
+    "kind": "model",
+    "name": "Phi-3 Mini 128K Instruct",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-06-12"
+  },
+  {
+    "id": "deepseek-coder-v2",
+    "kind": "model",
+    "name": "DeepSeek-Coder-V2",
+    "minPool": 1,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-06-17"
+  },
+  {
+    "id": "florence-2-large",
+    "kind": "model",
+    "name": "Florence-2 Large",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "object-detection"
+    ],
+    "releaseDate": "2024-06-17"
+  },
+  {
+    "id": "claude-3-5-sonnet",
+    "kind": "model",
+    "name": "Claude 3.5 Sonnet",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "coding"
+    ],
+    "releaseDate": "2024-06-20"
+  },
+  {
+    "id": "gemma-2-27b-it",
+    "kind": "model",
+    "name": "Gemma 2 27B IT",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-06-27"
+  },
+  {
+    "id": "gpt-4o-mini",
+    "kind": "model",
+    "name": "GPT-4o mini",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-07-18"
+  },
+  {
+    "id": "mistral-nemo",
+    "kind": "model",
+    "name": "Mistral Nemo",
+    "minPool": 1,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-07-18"
+  },
+  {
+    "id": "llama-3-1-405b-instruct",
+    "kind": "model",
+    "name": "Llama 3.1 405B Instruct",
+    "minPool": 0,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-07-23"
+  },
+  {
+    "id": "llama-3-1-8b-instruct",
+    "kind": "model",
+    "name": "Llama 3.1 8B Instruct",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-07-23"
+  },
+  {
+    "id": "mistral-large-2",
+    "kind": "model",
+    "name": "Mistral Large 2",
+    "minPool": 0,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-07-24"
+  },
+  {
+    "id": "sam-2",
+    "kind": "model",
+    "name": "Segment Anything 2",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "segmentation",
+      "video"
+    ],
+    "releaseDate": "2024-07-29"
+  },
+  {
+    "id": "grok-2",
+    "kind": "model",
+    "name": "Grok 2",
+    "minPool": 0,
+    "provider": "xAI",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-08-13"
+  },
+  {
+    "id": "phi-3-5-mini-instruct",
+    "kind": "model",
+    "name": "Phi-3.5 Mini Instruct",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-08-20"
+  },
+  {
+    "id": "qwen2-vl-72b-instruct",
+    "kind": "model",
+    "name": "Qwen2-VL 72B Instruct",
+    "minPool": 1,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-08-29"
+  },
+  {
+    "id": "deepseek-v2-5",
+    "kind": "model",
+    "name": "DeepSeek-V2.5",
+    "minPool": 1,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-09-05"
+  },
+  {
+    "id": "yolo11",
+    "kind": "model",
+    "name": "YOLO11",
+    "minPool": 0,
+    "provider": "Ultralytics",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "segmentation"
+    ],
+    "releaseDate": "2024-09-10"
+  },
+  {
+    "id": "qwen2-5-14b-instruct",
+    "kind": "model",
+    "name": "Qwen2.5 14B Instruct",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-09-19"
+  },
+  {
+    "id": "qwen2-5-72b-instruct",
+    "kind": "model",
+    "name": "Qwen2.5 72B Instruct",
+    "minPool": 1,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-09-19"
+  },
+  {
+    "id": "qwen2-5-7b-instruct",
+    "kind": "model",
+    "name": "Qwen2.5 7B Instruct",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-09-19"
+  },
+  {
+    "id": "llama-3-2-11b-vision-instruct",
+    "kind": "model",
+    "name": "Llama 3.2 11B Vision Instruct",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-09-25"
+  },
+  {
+    "id": "llama-3-2-1b-instruct",
+    "kind": "model",
+    "name": "Llama 3.2 1B Instruct",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-09-25"
+  },
+  {
+    "id": "llama-3-2-3b-instruct",
+    "kind": "model",
+    "name": "Llama 3.2 3B Instruct",
+    "minPool": 2,
+    "provider": "Meta",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-09-25"
+  },
+  {
+    "id": "llama-3-2-90b-vision-instruct",
+    "kind": "model",
+    "name": "Llama 3.2 90B Vision Instruct",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "releaseDate": "2024-09-25"
+  },
+  {
+    "id": "granite-3-1-8b-instruct",
+    "kind": "model",
+    "name": "Granite 3.1 8B Instruct",
+    "minPool": 2,
+    "provider": "IBM",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-10-21"
+  },
+  {
+    "id": "claude-3-5-haiku",
+    "kind": "model",
+    "name": "Claude 3.5 Haiku",
+    "minPool": 1,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-10-22"
+  },
+  {
+    "id": "qwen2-5-coder-32b",
+    "kind": "model",
+    "name": "Qwen2.5-Coder 32B",
+    "minPool": 1,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-11-12"
+  },
+  {
+    "id": "qwen2-5-coder-7b",
+    "kind": "model",
+    "name": "Qwen2.5-Coder 7B",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-11-12"
+  },
+  {
+    "id": "amazon-nova-canvas",
+    "kind": "model",
+    "name": "Amazon Nova Canvas",
+    "minPool": 1,
+    "provider": "Amazon",
+    "categories": [
+      "image-generation"
+    ],
+    "releaseDate": "2024-12-03"
+  },
+  {
+    "id": "amazon-nova-lite",
+    "kind": "model",
+    "name": "Amazon Nova Lite",
+    "minPool": 1,
+    "provider": "Amazon",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-12-03"
+  },
+  {
+    "id": "amazon-nova-micro",
+    "kind": "model",
+    "name": "Amazon Nova Micro",
+    "minPool": 1,
+    "provider": "Amazon",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-12-03"
+  },
+  {
+    "id": "amazon-nova-pro",
+    "kind": "model",
+    "name": "Amazon Nova Pro",
+    "minPool": 0,
+    "provider": "Amazon",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-12-03"
+  },
+  {
+    "id": "aya-expanse-32b",
+    "kind": "model",
+    "name": "Aya Expanse 32B",
+    "minPool": 2,
+    "provider": "Cohere",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-12-03"
+  },
+  {
+    "id": "o1",
+    "kind": "model",
+    "name": "o1",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2024-12-05"
+  },
+  {
+    "id": "llama-3-3-70b-instruct",
+    "kind": "model",
+    "name": "Llama 3.3 70B Instruct",
+    "minPool": 0,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-12-06"
+  },
+  {
+    "id": "gemini-2-0-flash",
+    "kind": "model",
+    "name": "Gemini 2.0 Flash",
+    "minPool": 0,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2024-12-11"
+  },
+  {
+    "id": "phi-4",
+    "kind": "model",
+    "name": "Phi-4",
+    "minPool": 0,
+    "provider": "Microsoft",
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "releaseDate": "2024-12-12"
+  },
+  {
+    "id": "modernbert",
+    "kind": "model",
+    "name": "ModernBERT",
+    "minPool": 1,
+    "provider": "Answer.AI / LightOn",
+    "categories": [
+      "language-model",
+      "nlp",
+      "embedding"
+    ],
+    "releaseDate": "2024-12-19"
+  },
+  {
+    "id": "deepseek-v3",
+    "kind": "model",
+    "name": "DeepSeek-V3",
+    "minPool": 0,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2024-12-26"
+  },
+  {
+    "id": "codestral-25-01",
+    "kind": "model",
+    "name": "Codestral 25.01",
+    "minPool": 1,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-01-13"
+  },
+  {
+    "id": "deepseek-r1",
+    "kind": "model",
+    "name": "DeepSeek-R1",
+    "minPool": 0,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-01-20"
+  },
+  {
+    "id": "qwen2-5-vl-7b",
+    "kind": "model",
+    "name": "Qwen2.5-VL 7B",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "releaseDate": "2025-01-26"
+  },
+  {
+    "id": "qwen2-5-max",
+    "kind": "model",
+    "name": "Qwen2.5-Max",
+    "minPool": 0,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-01-29"
+  },
+  {
+    "id": "grok-3",
+    "kind": "model",
+    "name": "Grok 3",
+    "minPool": 0,
+    "provider": "xAI",
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "releaseDate": "2025-02-17"
+  },
+  {
+    "id": "claude-3-7-sonnet",
+    "kind": "model",
+    "name": "Claude 3.7 Sonnet",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "releaseDate": "2025-02-24"
+  },
+  {
+    "id": "phi-4-multimodal-instruct",
+    "kind": "model",
+    "name": "Phi-4-multimodal-instruct",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2025-02-26"
+  },
+  {
+    "id": "gemma-3-27b",
+    "kind": "model",
+    "name": "Gemma 3 27B",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2025-03-12"
+  },
+  {
+    "id": "command-a",
+    "kind": "model",
+    "name": "Command A",
+    "minPool": 0,
+    "provider": "Cohere",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-03-13"
+  },
+  {
+    "id": "mistral-small-3-1",
+    "kind": "model",
+    "name": "Mistral Small 3.1",
+    "minPool": 0,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "coding"
+    ],
+    "releaseDate": "2025-03-17"
+  },
+  {
+    "id": "rf-detr-base",
+    "kind": "model",
+    "name": "RF-DETR Base",
+    "minPool": 2,
+    "provider": "Roboflow",
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "releaseDate": "2025-03-20"
+  },
+  {
+    "id": "gemini-2-5-pro",
+    "kind": "model",
+    "name": "Gemini 2.5 Pro",
+    "minPool": 0,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "releaseDate": "2025-03-25"
+  },
+  {
+    "id": "llama-4-maverick",
+    "kind": "model",
+    "name": "Llama 4 Maverick",
+    "minPool": 0,
+    "provider": "Meta",
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "releaseDate": "2025-04-05"
+  },
+  {
+    "id": "gpt-4-1",
+    "kind": "model",
+    "name": "GPT-4.1",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-04-14"
+  },
+  {
+    "id": "ibm-granite-3-3-8b-instruct",
+    "kind": "model",
+    "name": "Granite 3.3 8B Instruct",
+    "minPool": 1,
+    "provider": "IBM",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-04-16"
+  },
+  {
+    "id": "o3",
+    "kind": "model",
+    "name": "o3",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-04-16"
+  },
+  {
+    "id": "o4-mini",
+    "kind": "model",
+    "name": "o4-mini",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-04-16"
+  },
+  {
+    "id": "gemini-2-5-flash",
+    "kind": "model",
+    "name": "Gemini 2.5 Flash",
+    "minPool": 0,
+    "provider": "Google",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "releaseDate": "2025-04-17"
+  },
+  {
+    "id": "qwen3-30b-a3b",
+    "kind": "model",
+    "name": "Qwen3 30B-A3B",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-04-29"
+  },
+  {
+    "id": "qwen3-32b",
+    "kind": "model",
+    "name": "Qwen3 32B",
+    "minPool": 0,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-04-29"
+  },
+  {
+    "id": "qwen3-8b",
+    "kind": "model",
+    "name": "Qwen3 8B",
+    "minPool": 1,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-04-29"
+  },
+  {
+    "id": "mistral-medium-3",
+    "kind": "model",
+    "name": "Mistral Medium 3",
+    "minPool": 0,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-05-07"
+  },
+  {
+    "id": "claude-opus-4",
+    "kind": "model",
+    "name": "Claude Opus 4",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "releaseDate": "2025-05-22"
+  },
+  {
+    "id": "claude-sonnet-4",
+    "kind": "model",
+    "name": "Claude Sonnet 4",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "releaseDate": "2025-05-22"
+  },
+  {
+    "id": "kimi-k2-instruct",
+    "kind": "model",
+    "name": "Kimi K2",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-07-11"
+  },
+  {
+    "id": "pllum-12b-nc-250715",
+    "kind": "model",
+    "name": "PLLuM 12B NC",
+    "minPool": 1,
+    "provider": "PLLuM",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2025-07-15"
+  },
+  {
+    "id": "gpt-oss-120b",
+    "kind": "model",
+    "name": "GPT-OSS 120B",
+    "minPool": 2,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-08-05"
+  },
+  {
+    "id": "gpt-oss-20b",
+    "kind": "model",
+    "name": "GPT-OSS 20B",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-08-05"
+  },
+  {
+    "id": "gpt-5",
+    "kind": "model",
+    "name": "GPT-5",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-08-07"
+  },
+  {
+    "id": "gpt-5-mini",
+    "kind": "model",
+    "name": "GPT-5 mini",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-08-07"
+  },
+  {
+    "id": "gpt-5-nano",
+    "kind": "model",
+    "name": "GPT-5 nano",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-08-07"
+  },
+  {
+    "id": "gpt-5-pro",
+    "kind": "model",
+    "name": "GPT-5 Pro",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2025-08-07"
+  },
+  {
+    "id": "embeddinggemma-300m",
+    "kind": "model",
+    "name": "EmbeddingGemma 300M",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "releaseDate": "2025-09-04"
+  },
+  {
+    "id": "claude-sonnet-4-5",
+    "kind": "model",
+    "name": "Claude Sonnet 4.5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-09-29"
+  },
+  {
+    "id": "claude-haiku-4-5",
+    "kind": "model",
+    "name": "Claude Haiku 4.5",
+    "minPool": 1,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-10-15"
+  },
+  {
+    "id": "kimi-k2-thinking",
+    "kind": "model",
+    "name": "Kimi K2 Thinking",
+    "minPool": 2,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-11-06"
+  },
+  {
+    "id": "bielik-11b-v3-0-instruct",
+    "kind": "model",
+    "name": "Bielik 11B v3.0 Instruct",
+    "minPool": 0,
+    "provider": "SpeakLeash",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2025-12-31"
+  },
+  {
+    "id": "kimi-k2-5",
+    "kind": "model",
+    "name": "Kimi K2.5",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-01-27"
+  },
+  {
+    "id": "claude-opus-4-6",
+    "kind": "model",
+    "name": "Claude Opus 4.6",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-02-05"
+  },
+  {
+    "id": "gpt-5-4",
+    "kind": "model",
+    "name": "GPT-5.4",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-03-05"
+  },
+  {
+    "id": "gpt-5-4-mini",
+    "kind": "model",
+    "name": "GPT-5.4 mini",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-03-17"
+  },
+  {
+    "id": "gpt-5-4-nano",
+    "kind": "model",
+    "name": "GPT-5.4 nano",
+    "minPool": 1,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-03-17"
+  },
+  {
+    "id": "kimi-k2-6",
+    "kind": "model",
+    "name": "Kimi K2.6",
+    "minPool": 1,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-04-20"
+  },
+  {
+    "id": "gpt-5-5",
+    "kind": "model",
+    "name": "GPT-5.5",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-04-23"
+  },
+  {
+    "id": "granite-4-1-8b",
+    "kind": "model",
+    "name": "Granite 4.1 8B",
+    "minPool": 1,
+    "provider": "IBM",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-04-29"
+  },
+  {
+    "id": "claude-opus-4-8",
+    "kind": "model",
+    "name": "Claude Opus 4.8",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-05-28"
+  },
+  {
+    "id": "kimi-k2-7-code",
+    "kind": "model",
+    "name": "Kimi K2.7 Code",
+    "minPool": 2,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-06-12"
+  },
+  {
+    "id": "claude-sonnet-5",
+    "kind": "model",
+    "name": "Claude Sonnet 5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-06-30"
+  },
+  {
+    "id": "gpt-5-6-luna",
+    "kind": "model",
+    "name": "GPT-5.6 Luna",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-07-09"
+  },
+  {
+    "id": "gpt-5-6-sol",
+    "kind": "model",
+    "name": "GPT-5.6 Sol",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-07-09"
+  },
+  {
+    "id": "gpt-5-6-terra",
+    "kind": "model",
+    "name": "GPT-5.6 Terra",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2026-07-09"
+  },
+  {
+    "id": "kimi-k3",
+    "kind": "model",
+    "name": "Kimi K3",
+    "minPool": 0,
+    "provider": "Moonshot AI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-07-16"
+  },
+  {
+    "id": "deepseek-v4-flash-0731",
+    "kind": "model",
+    "name": "DeepSeek-V4-Flash",
+    "minPool": 1,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-07-31"
+  }
+]

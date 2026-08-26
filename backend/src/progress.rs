@@ -6,6 +6,7 @@ use sqlx::{FromRow, SqlitePool};
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use uuid::Uuid;
 
+use crate::domain::timeline::TIMELINE_HARDCORE_ATTEMPT_LIMIT;
 use crate::error::{AppError, AppResult};
 
 const MAX_ACTIVE_GAMES: usize = 16;
@@ -218,6 +219,11 @@ pub async fn synchronize(
     .bind(&player_id)
     .execute(&mut *transaction)
     .await?;
+    sqlx::query("UPDATE timeline_attempts SET user_id = ? WHERE player_id = ? AND user_id IS NULL")
+        .bind(user_id)
+        .bind(&player_id)
+        .execute(&mut *transaction)
+        .await?;
     let merged_player = player_id != primary_player_id;
     if merged_player {
         sqlx::query(
@@ -252,6 +258,47 @@ pub async fn synchronize(
             .bind(&player_id)
             .execute(&mut *transaction)
             .await?;
+        sqlx::query(
+            "UPDATE timeline_attempts SET attempt_number = attempt_number + 1000000 \
+             WHERE player_id = ?",
+        )
+        .bind(&player_id)
+        .execute(&mut *transaction)
+        .await?;
+        sqlx::query("UPDATE timeline_attempts SET player_id = ? WHERE player_id = ?")
+            .bind(&primary_player_id)
+            .bind(&player_id)
+            .execute(&mut *transaction)
+            .await?;
+        sqlx::query(
+            "UPDATE timeline_attempts SET attempt_number = attempt_number + 2000000 \
+             WHERE player_id = ?",
+        )
+        .bind(&primary_player_id)
+        .execute(&mut *transaction)
+        .await?;
+        sqlx::query(
+            "UPDATE timeline_attempts AS current SET attempt_number = (\
+               SELECT COUNT(*) FROM timeline_attempts AS previous \
+               WHERE previous.player_id = current.player_id \
+               AND previous.challenge_id = current.challenge_id \
+               AND (previous.created_at < current.created_at \
+                 OR (previous.created_at = current.created_at AND previous.id <= current.id))\
+             ) WHERE player_id = ?",
+        )
+        .bind(&primary_player_id)
+        .execute(&mut *transaction)
+        .await?;
+        sqlx::query(
+            "UPDATE timeline_attempts SET attempts_remaining_after = CASE \
+               WHEN (SELECT difficulty FROM timeline_challenges WHERE id = challenge_id) = 'hardcore' \
+               THEN MAX(0, ? - attempt_number) ELSE NULL END \
+             WHERE player_id = ?",
+        )
+        .bind(i64::from(TIMELINE_HARDCORE_ATTEMPT_LIMIT))
+        .bind(&primary_player_id)
+        .execute(&mut *transaction)
+        .await?;
         sqlx::query("DELETE FROM player_mode_stats WHERE player_id IN (?, ?)")
             .bind(&primary_player_id)
             .bind(&player_id)
@@ -465,6 +512,24 @@ pub async fn load(pool: &SqlitePool, user_id: &str) -> AppResult<Option<Value>> 
 pub async fn history(
     pool: &SqlitePool,
     user_id: &str,
+    game: &str,
+    category: &str,
+    page: i64,
+) -> AppResult<ProgressHistoryResponse> {
+    if !(1..=1_000_000).contains(&page) {
+        return Err(AppError::validation("page must be between 1 and 1000000"));
+    }
+    match game {
+        "classic" => classic_history(pool, user_id, category, page).await,
+        "emoji" => emoji_history(pool, user_id, category, page).await,
+        "timeline" => timeline_history(pool, user_id, category, page).await,
+        _ => Err(AppError::validation("Unknown progress game.")),
+    }
+}
+
+async fn classic_history(
+    pool: &SqlitePool,
+    user_id: &str,
     category: &str,
     page: i64,
 ) -> AppResult<ProgressHistoryResponse> {
@@ -473,9 +538,6 @@ pub async fn history(
         "llm" | "cv" | "nlp" | "object-detection" | "classical-ml" | "filters" | "hardcore"
     ) {
         return Err(AppError::validation("Unknown Classic category."));
-    }
-    if !(1..=1_000_000).contains(&page) {
-        return Err(AppError::validation("page must be between 1 and 1000000"));
     }
     let mode_segment = if category == "object-detection" {
         "od"
@@ -535,6 +597,167 @@ pub async fn history(
         page_size: HISTORY_PAGE_SIZE,
         stats: history_stats(pool, user_id, &pattern).await?,
     })
+}
+
+async fn emoji_history(
+    pool: &SqlitePool,
+    user_id: &str,
+    difficulty: &str,
+    page: i64,
+) -> AppResult<ProgressHistoryResponse> {
+    if !matches!(difficulty, "normal" | "challenge" | "hardcore") {
+        return Err(AppError::validation("Unknown Emoji Clues difficulty."));
+    }
+    let mode = format!("emoji-clues:{difficulty}");
+    let total = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM (SELECT a.challenge_id FROM visual_clue_guess_events a \
+         JOIN visual_clue_challenges c ON c.id = a.challenge_id \
+         WHERE a.user_id = ? AND c.mode = ? GROUP BY a.challenge_id)",
+    )
+    .bind(user_id)
+    .bind(&mode)
+    .fetch_one(pool)
+    .await?;
+    let rows = sqlx::query_as::<_, HistoryRow>(
+        "SELECT c.id AS challenge_id, c.challenge_date, c.mode, COUNT(*) AS guess_count, \
+         MAX(a.is_correct) AS solved FROM visual_clue_guess_events a \
+         JOIN visual_clue_challenges c ON c.id = a.challenge_id \
+         WHERE a.user_id = ? AND c.mode = ? GROUP BY c.id, c.challenge_date, c.mode \
+         ORDER BY c.challenge_date DESC LIMIT ? OFFSET ?",
+    )
+    .bind(user_id)
+    .bind(&mode)
+    .bind(HISTORY_PAGE_SIZE)
+    .bind((page - 1) * HISTORY_PAGE_SIZE)
+    .fetch_all(pool)
+    .await?;
+    let all_rows = emoji_history_rows(pool, user_id, &mode).await?;
+    let mut games = Vec::with_capacity(rows.len());
+    for row in rows {
+        let guessed_model_names = sqlx::query_scalar::<_, String>(
+            "SELECT entity.name FROM visual_clue_guess_events attempt \
+             JOIN visual_clue_entities entity ON entity.id = attempt.guessed_entity_id \
+             WHERE attempt.user_id = ? AND attempt.challenge_id = ? \
+             ORDER BY attempt.attempt_number, attempt.created_at LIMIT 100",
+        )
+        .bind(user_id)
+        .bind(&row.challenge_id)
+        .fetch_all(pool)
+        .await?;
+        games.push(history_game(row, guessed_model_names));
+    }
+    Ok(ProgressHistoryResponse {
+        games,
+        total,
+        page,
+        page_size: HISTORY_PAGE_SIZE,
+        stats: history_stats_from_rows(&all_rows, false)?,
+    })
+}
+
+async fn timeline_history(
+    pool: &SqlitePool,
+    user_id: &str,
+    difficulty: &str,
+    page: i64,
+) -> AppResult<ProgressHistoryResponse> {
+    if !matches!(difficulty, "normal" | "challenge" | "hardcore") {
+        return Err(AppError::validation("Unknown Timeline difficulty."));
+    }
+    let total = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM (SELECT attempt.challenge_id FROM timeline_attempts attempt \
+         JOIN timeline_challenges challenge ON challenge.id = attempt.challenge_id \
+         WHERE attempt.user_id = ? AND challenge.difficulty = ? GROUP BY attempt.challenge_id)",
+    )
+    .bind(user_id)
+    .bind(difficulty)
+    .fetch_one(pool)
+    .await?;
+    let rows = sqlx::query_as::<_, HistoryRow>(
+        "SELECT challenge.id AS challenge_id, challenge.challenge_date, \
+         'timeline:' || challenge.difficulty AS mode, COUNT(*) AS guess_count, \
+         MAX(attempt.is_correct) AS solved FROM timeline_attempts attempt \
+         JOIN timeline_challenges challenge ON challenge.id = attempt.challenge_id \
+         WHERE attempt.user_id = ? AND challenge.difficulty = ? \
+         GROUP BY challenge.id, challenge.challenge_date, challenge.difficulty \
+         ORDER BY challenge.challenge_date DESC LIMIT ? OFFSET ?",
+    )
+    .bind(user_id)
+    .bind(difficulty)
+    .bind(HISTORY_PAGE_SIZE)
+    .bind((page - 1) * HISTORY_PAGE_SIZE)
+    .fetch_all(pool)
+    .await?;
+    let all_rows = timeline_history_rows(pool, user_id, difficulty).await?;
+    let games = rows
+        .into_iter()
+        .map(|row| {
+            let labels = (1..=row.guess_count)
+                .map(|attempt| format!("Submission {attempt}"))
+                .collect();
+            history_game(row, labels)
+        })
+        .collect();
+    Ok(ProgressHistoryResponse {
+        games,
+        total,
+        page,
+        page_size: HISTORY_PAGE_SIZE,
+        stats: history_stats_from_rows(&all_rows, true)?,
+    })
+}
+
+fn history_game(row: HistoryRow, guessed_model_names: Vec<String>) -> ProgressHistoryGame {
+    ProgressHistoryGame {
+        challenge_id: row.challenge_id,
+        challenge_date: row.challenge_date,
+        mode: row.mode,
+        status: if row.solved != 0 {
+            "solved"
+        } else {
+            "in-progress"
+        },
+        guess_count: row.guess_count,
+        guessed_model_names,
+    }
+}
+
+async fn emoji_history_rows(
+    pool: &SqlitePool,
+    user_id: &str,
+    mode: &str,
+) -> AppResult<Vec<HistoryRow>> {
+    Ok(sqlx::query_as::<_, HistoryRow>(
+        "SELECT c.id AS challenge_id, c.challenge_date, c.mode, COUNT(*) AS guess_count, \
+         MAX(a.is_correct) AS solved FROM visual_clue_guess_events a \
+         JOIN visual_clue_challenges c ON c.id = a.challenge_id \
+         WHERE a.user_id = ? AND c.mode = ? GROUP BY c.id, c.challenge_date, c.mode \
+         ORDER BY c.challenge_date DESC",
+    )
+    .bind(user_id)
+    .bind(mode)
+    .fetch_all(pool)
+    .await?)
+}
+
+async fn timeline_history_rows(
+    pool: &SqlitePool,
+    user_id: &str,
+    difficulty: &str,
+) -> AppResult<Vec<HistoryRow>> {
+    Ok(sqlx::query_as::<_, HistoryRow>(
+        "SELECT challenge.id AS challenge_id, challenge.challenge_date, \
+         'timeline:' || challenge.difficulty AS mode, COUNT(*) AS guess_count, \
+         MAX(attempt.is_correct) AS solved FROM timeline_attempts attempt \
+         JOIN timeline_challenges challenge ON challenge.id = attempt.challenge_id \
+         WHERE attempt.user_id = ? AND challenge.difficulty = ? \
+         GROUP BY challenge.id, challenge.challenge_date, challenge.difficulty \
+         ORDER BY challenge.challenge_date DESC",
+    )
+    .bind(user_id)
+    .bind(difficulty)
+    .fetch_all(pool)
+    .await?)
 }
 
 pub async fn canonical_player_id(
@@ -648,6 +871,26 @@ async fn synchronize_completion_records(
     .bind(user_id)
     .execute(&mut **transaction)
     .await?;
+    sqlx::query(
+        "INSERT OR IGNORE INTO timeline_user_completions (user_id, challenge_id, completed_at) \
+         SELECT ?, challenge_id, MIN(created_at) FROM timeline_attempts \
+         WHERE user_id = ? AND is_correct = 1 GROUP BY challenge_id",
+    )
+    .bind(user_id)
+    .bind(user_id)
+    .execute(&mut **transaction)
+    .await?;
+    sqlx::query(
+        "INSERT OR IGNORE INTO user_game_progress \
+         (user_id, game_type, difficulty, category, completed_at) \
+         SELECT ?, 'timeline', c.difficulty, 'timeline', MIN(a.created_at) \
+         FROM timeline_attempts a JOIN timeline_challenges c ON c.id = a.challenge_id \
+         WHERE a.user_id = ? AND a.is_correct = 1 GROUP BY c.difficulty",
+    )
+    .bind(user_id)
+    .bind(user_id)
+    .execute(&mut **transaction)
+    .await?;
     Ok(())
 }
 
@@ -677,13 +920,24 @@ async fn history_stats(
     .bind(mode_pattern)
     .fetch_all(pool)
     .await?;
+    history_stats_from_rows(&rows, false)
+}
+
+fn history_stats_from_rows(
+    rows: &[HistoryRow],
+    timeline_distribution: bool,
+) -> AppResult<ProgressHistoryStats> {
     let solved = rows
         .iter()
         .filter(|row| row.solved != 0)
         .collect::<Vec<_>>();
-    let mut distribution = default_distribution();
+    let mut distribution = if timeline_distribution {
+        (1..=12).map(|key| (key.to_string(), 0)).collect()
+    } else {
+        default_distribution()
+    };
     for row in &solved {
-        let bucket = if row.guess_count > 9 {
+        let bucket = if !timeline_distribution && row.guess_count > 9 {
             "10+".to_owned()
         } else {
             row.guess_count.to_string()

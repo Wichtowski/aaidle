@@ -3,7 +3,9 @@ use std::{path::PathBuf, sync::Arc, time::Duration};
 use aidle_api::{
     api, auth,
     config::{AppConfig, AppEnvironment},
-    db, repository,
+    db,
+    domain::timeline::{TIMELINE_HARDCORE_ATTEMPT_LIMIT, TimelineDifficulty},
+    repository,
     state::AppState,
 };
 use axum::{
@@ -102,26 +104,30 @@ async fn seed(pool: &SqlitePool) {
     .execute(pool)
     .await
     .expect("seed provider");
-    for (id, name, year) in [
-        ("model-one", "Model One", 2024),
-        ("model-two", "Model Two", 2025),
+    for (id, name, release_date) in [
+        ("model-one", "Model One", "2024-01-01"),
+        ("model-two", "Model Two", "2025-01-01"),
     ] {
         sqlx::query(
-            "INSERT INTO models (id, provider_id, name, slug, release_year, local_execution, reasoning_support, \
+            "INSERT INTO models (id, provider_id, name, slug, release_date, release_year, local_execution, reasoning_support, \
              status, is_guessable, verified_at, source_label, created_at, updated_at) \
-             VALUES (?, 'openai', ?, ?, ?, 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
+             VALUES (?, 'openai', ?, ?, ?, CAST(substr(?, 1, 4) AS INTEGER), 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
         )
         .bind(id)
         .bind(name)
         .bind(id)
-        .bind(year)
+        .bind(release_date)
+        .bind(release_date)
         .execute(pool)
         .await
         .expect("seed model");
     }
     sqlx::query(
         "INSERT INTO categories (id, name, slug) VALUES \
-         ('language-model', 'language model', 'language-model'), ('filters', 'filters', 'filters')",
+         ('language-model', 'language model', 'language-model'), \
+         ('filters', 'filters', 'filters'), \
+         ('computer-vision', 'computer vision', 'computer-vision'), \
+         ('object-detection', 'object detection', 'object-detection')",
     )
     .execute(pool)
     .await
@@ -151,20 +157,56 @@ async fn seed(pool: &SqlitePool) {
         .execute(pool)
         .await
         .expect("attach family");
-    for number in 3..=6 {
+    for number in 3..=14 {
         let id = format!("model-{number}");
+        let release_date = format!("2025-01-{number:02}");
         sqlx::query(
-            "INSERT INTO models (id, provider_id, name, slug, release_year, local_execution, reasoning_support, \
+            "INSERT INTO models (id, provider_id, name, slug, release_date, release_year, local_execution, reasoning_support, \
              status, is_guessable, verified_at, source_label, created_at, updated_at) \
-             VALUES (?, 'openai', ?, ?, 2025, 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
+             VALUES (?, 'openai', ?, ?, ?, 2025, 'unknown', 'unknown', 'active', 1, 'test', 'test', 0, 0)",
         )
         .bind(&id)
         .bind(format!("Model {number}"))
         .bind(&id)
+        .bind(&release_date)
         .execute(pool)
         .await
         .expect("seed additional model");
+        let category = match number {
+            3..=6 => "filters",
+            7..=11 => "computer-vision",
+            _ => "object-detection",
+        };
+        sqlx::query("INSERT INTO model_categories (model_id, category_id) VALUES (?, ?)")
+            .bind(&id)
+            .bind(category)
+            .execute(pool)
+            .await
+            .expect("seed additional model category");
     }
+    sqlx::query(
+        "INSERT INTO timeline_items \
+         (id, item_kind, model_id, name, provider_key, categories_json, min_pool_rank, \
+          release_date, is_active, updated_at) \
+         SELECT m.id, 'model', m.id, m.name, m.provider_id, \
+          COALESCE((SELECT json_group_array(category_id) FROM model_categories WHERE model_id = m.id), '[]'), \
+          COALESCE(g.min_pool_rank, 0), m.release_date, 1, 0 \
+         FROM models m LEFT JOIN model_game_metadata g ON g.model_id = m.id \
+         WHERE m.release_date IS NOT NULL",
+    )
+    .execute(pool)
+    .await
+    .expect("seed Timeline models");
+    sqlx::query(
+        "INSERT INTO timeline_items \
+         (id, item_kind, name, provider_key, categories_json, min_pool_rank, release_date, \
+          source_url, is_active, updated_at) \
+         VALUES ('test-ai-event', 'event', 'Test AI event', 'independent', \
+          '[\"language-model\"]', 0, '2015-12-11', 'https://example.com/event', 1, 0)",
+    )
+    .execute(pool)
+    .await
+    .expect("seed Timeline event");
     let visual_clues: Vec<aidle_api::domain::visual_clues::VisualClueEntity> =
         serde_json::from_str(include_str!("../../data/emoji.seed.json"))
             .expect("parse visual clue seed");
@@ -195,6 +237,22 @@ async fn response_json(response: axum::response::Response) -> serde_json::Value 
         .expect("read response body")
         .to_bytes();
     serde_json::from_slice(&body).expect("decode JSON response")
+}
+
+fn rotate_movable_models(correct_order: &[String], anchor_positions: &[usize]) -> Vec<String> {
+    let anchors = anchor_positions
+        .iter()
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
+    let movable_positions = (0..correct_order.len())
+        .filter(|position| !anchors.contains(position))
+        .collect::<Vec<_>>();
+    let mut order = correct_order.to_vec();
+    for (index, position) in movable_positions.iter().enumerate() {
+        let next = movable_positions[(index + 1) % movable_positions.len()];
+        order[*position] = correct_order[next].clone();
+    }
+    order
 }
 
 fn cookie_value(response: &axum::response::Response, name: &str) -> String {
@@ -306,7 +364,7 @@ async fn routes_are_versioned_and_hide_the_answer() {
             .as_array()
             .expect("models array")
             .len(),
-        6
+        14
     );
 
     let classic = app
@@ -1842,4 +1900,279 @@ async fn sqlite_wal_pool_handles_concurrent_daily_creation_and_guess_writes() {
     assert_eq!(stats.total_guesses, 24);
     assert_eq!(stats.unique_players, 24);
     remove_test_database(pool, path).await;
+}
+
+#[tokio::test]
+async fn timeline_modes_expose_only_public_puzzle_data_and_exact_configuration() {
+    let (app, _) = test_app().await;
+    let player_id = Uuid::new_v4();
+
+    for (difficulty, total, anchors, movable) in [("normal", 6, 2, 4), ("challenge", 9, 3, 6)] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::get(format!(
+                    "/api/v1/games/timeline/{difficulty}?playerId={player_id}"
+                ))
+                .body(Body::empty())
+                .expect("Timeline game request"),
+            )
+            .await
+            .expect("Timeline game response");
+        assert_eq!(response.status(), StatusCode::OK);
+        let payload = response_json(response).await;
+        let slots = payload["slots"].as_array().expect("Timeline slots");
+        assert_eq!(slots.len(), total);
+        assert_eq!(
+            slots
+                .iter()
+                .filter(|slot| slot["anchor"].is_object())
+                .count(),
+            anchors
+        );
+        assert_eq!(
+            payload["movableModels"]
+                .as_array()
+                .expect("movable models")
+                .len(),
+            movable
+        );
+        assert!(
+            payload["movableModels"]
+                .as_array()
+                .expect("movable models")
+                .iter()
+                .all(|model| model.get("releaseDate").is_none()
+                    && model.get("provider").is_none()
+                    && model.get("categories").is_none())
+        );
+        assert!(payload["progress"]["attemptLimit"].is_null());
+        assert!(payload["progress"]["attemptsRemaining"].is_null());
+    }
+
+    let hardcore = app
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/timeline/hardcore?playerId={player_id}"
+            ))
+            .body(Body::empty())
+            .expect("Timeline Hardcore request"),
+        )
+        .await
+        .expect("Timeline Hardcore response");
+    assert_eq!(hardcore.status(), StatusCode::UNAUTHORIZED);
+}
+
+#[tokio::test]
+async fn timeline_attempts_are_positional_idempotent_and_reject_invalid_sets() {
+    let (app, pool) = test_app().await;
+    let player_id = Uuid::new_v4();
+    let game = response_json(
+        app.clone()
+            .oneshot(
+                Request::get(format!(
+                    "/api/v1/games/timeline/normal?playerId={player_id}"
+                ))
+                .body(Body::empty())
+                .expect("Timeline game request"),
+            )
+            .await
+            .expect("Timeline game response"),
+    )
+    .await;
+    let challenge_id = game["challenge"]["id"]
+        .as_str()
+        .expect("Timeline challenge ID");
+    let (correct_json, anchors_json) = sqlx::query_as::<_, (String, String)>(
+        "SELECT model_order_json, anchor_positions_json FROM timeline_challenges WHERE id = ?",
+    )
+    .bind(challenge_id)
+    .fetch_one(&pool)
+    .await
+    .expect("stored Timeline challenge");
+    let correct = serde_json::from_str::<Vec<serde_json::Value>>(&correct_json)
+        .expect("stored model order")
+        .into_iter()
+        .map(|model| model["id"].as_str().expect("stored model ID").to_owned())
+        .collect::<Vec<_>>();
+    let anchors = serde_json::from_str::<Vec<usize>>(&anchors_json).expect("stored anchors");
+    let wrong = rotate_movable_models(&correct, &anchors);
+    let request_id = Uuid::new_v4();
+    let attempt_request = |request_id: Uuid, model_order: &[String]| {
+        Request::post(format!(
+            "/api/v1/games/timeline/challenges/{challenge_id}/attempts"
+        ))
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::json!({
+                "playerId": player_id,
+                "requestId": request_id,
+                "modelOrder": model_order
+            })
+            .to_string(),
+        ))
+        .expect("Timeline attempt request")
+    };
+
+    let first = app
+        .clone()
+        .oneshot(attempt_request(request_id, &wrong))
+        .await
+        .expect("Timeline attempt response");
+    assert_eq!(first.status(), StatusCode::OK);
+    let first = response_json(first).await;
+    assert_eq!(
+        first
+            .as_object()
+            .expect("attempt object")
+            .keys()
+            .cloned()
+            .collect::<std::collections::BTreeSet<_>>(),
+        ["attemptsRemaining".to_owned(), "placements".to_owned()]
+            .into_iter()
+            .collect()
+    );
+    assert_eq!(
+        first["placements"].as_array().expect("placements").len(),
+        correct.len()
+    );
+    assert!(
+        first["placements"]
+            .as_array()
+            .expect("placements")
+            .iter()
+            .any(|value| value == 0)
+    );
+
+    let replay = app
+        .clone()
+        .oneshot(attempt_request(request_id, &wrong))
+        .await
+        .expect("Timeline replay response");
+    assert_eq!(replay.status(), StatusCode::OK);
+    assert_eq!(response_json(replay).await, first);
+
+    let mut duplicate = wrong.clone();
+    duplicate[1] = duplicate[0].clone();
+    let invalid = app
+        .clone()
+        .oneshot(attempt_request(Uuid::new_v4(), &duplicate))
+        .await
+        .expect("duplicate Timeline response");
+    assert_eq!(invalid.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM timeline_attempts WHERE challenge_id = ? AND player_id = ?",
+        )
+        .bind(challenge_id)
+        .bind(player_id.to_string())
+        .fetch_one(&pool)
+        .await
+        .expect("Timeline attempt count"),
+        1
+    );
+
+    let solved = app
+        .oneshot(attempt_request(Uuid::new_v4(), &correct))
+        .await
+        .expect("solved Timeline response");
+    assert_eq!(solved.status(), StatusCode::OK);
+    assert!(
+        response_json(solved).await["placements"]
+            .as_array()
+            .expect("solved placements")
+            .iter()
+            .all(|value| value == 1)
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn timeline_hardcore_concurrent_final_submission_cannot_exceed_limit() {
+    let (pool, path) = production_style_test_pool().await;
+    let challenge = repository::timeline::ensure_timeline_challenge(
+        &pool,
+        "2026-08-25",
+        TimelineDifficulty::Hardcore,
+        "test secret that is longer than thirty two bytes",
+    )
+    .await
+    .expect("create Timeline challenge");
+    let player_id = Uuid::new_v4();
+    let correct = challenge
+        .model_order
+        .iter()
+        .map(|model| model.id.clone())
+        .collect::<Vec<_>>();
+    let wrong = rotate_movable_models(&correct, &challenge.anchor_positions);
+
+    for _ in 0..TIMELINE_HARDCORE_ATTEMPT_LIMIT - 1 {
+        repository::timeline::process_timeline_attempt(
+            &pool,
+            repository::timeline::TimelineAttemptInput {
+                challenge_id: challenge.id,
+                player_id,
+                user_id: None,
+                hardcore_access: true,
+                request_id: Uuid::new_v4(),
+                model_order: wrong.clone(),
+            },
+        )
+        .await
+        .expect("accepted Hardcore attempt");
+    }
+
+    let mut tasks = Vec::new();
+    for _ in 0..2 {
+        let pool = pool.clone();
+        let order = wrong.clone();
+        tasks.push(tokio::spawn(async move {
+            repository::timeline::process_timeline_attempt(
+                &pool,
+                repository::timeline::TimelineAttemptInput {
+                    challenge_id: challenge.id,
+                    player_id,
+                    user_id: None,
+                    hardcore_access: true,
+                    request_id: Uuid::new_v4(),
+                    model_order: order,
+                },
+            )
+            .await
+        }));
+    }
+    let results = futures_join(tasks).await;
+    assert_eq!(results.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        results
+            .iter()
+            .filter(|result| matches!(result, Err(aidle_api::error::AppError::Conflict(code)) if code == "TIMELINE_ATTEMPT_LIMIT_REACHED"))
+            .count(),
+        1
+    );
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>(
+            "SELECT COUNT(*) FROM timeline_attempts WHERE challenge_id = ? AND player_id = ?",
+        )
+        .bind(challenge.id.to_string())
+        .bind(player_id.to_string())
+        .fetch_one(&pool)
+        .await
+        .expect("Hardcore attempt count"),
+        i64::from(TIMELINE_HARDCORE_ATTEMPT_LIMIT)
+    );
+    remove_test_database(pool, path).await;
+}
+
+async fn futures_join(
+    tasks: Vec<
+        tokio::task::JoinHandle<
+            aidle_api::error::AppResult<repository::timeline::TimelineAttemptResult>,
+        >,
+    >,
+) -> Vec<aidle_api::error::AppResult<repository::timeline::TimelineAttemptResult>> {
+    let mut results = Vec::with_capacity(tasks.len());
+    for task in tasks {
+        results.push(task.await.expect("Timeline attempt task"));
+    }
+    results
 }

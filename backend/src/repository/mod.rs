@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+pub mod timeline;
 pub mod visual_clues;
 
 use sqlx::{FromRow, SqliteConnection, SqlitePool};
@@ -959,7 +960,7 @@ pub(super) fn is_sqlite_busy(error: &AppError) -> bool {
     }
 }
 
-async fn ensure_anonymous_player(
+pub(super) async fn ensure_anonymous_player(
     connection: &mut SqliteConnection,
     player_id: Uuid,
     now: i64,

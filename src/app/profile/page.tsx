@@ -21,8 +21,15 @@ import {
 import { updateProgress } from "../../lib/storage/local-progress-store";
 import { apiClient, type ProgressHistory } from "../../lib/api/client";
 import { mergeServerProgress } from "../../lib/domain/players/cloud-progress";
+import { readSavedTimelineGames } from "../../lib/domain/games/timeline/timeline-progress-store";
+import {
+  timelineDifficulties,
+  timelineDifficultyLabel,
+  type TimelineDifficulty,
+} from "../../lib/domain/games/timeline/timeline-types";
 
 const historyPageSize = 3;
+type StatsGame = "classic" | "emoji" | "timeline";
 const ritualHints = [
   "Complete focused Challenge boards to see whether the ledger starts watching back.",
   "Something is not right. One seal has warmed. Complete the remaining Challenges today.",
@@ -95,8 +102,13 @@ export default function Profile() {
   const hellModeEnabled = canSeeInnerCircle && hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
+  const [statsGame, setStatsGame] = useState<StatsGame>("classic");
   const [category, setCategory] = useState<ClassicCategory>("llm");
+  const [difficulty, setDifficulty] = useState<TimelineDifficulty>("normal");
   const [cloudHistory, setCloudHistory] = useState<ProgressHistory | null>(null);
+  const activeCategory = statsGame === "classic" ? category : difficulty;
+  const attemptTerm = statsGame === "timeline" ? "submissions" : "guesses";
+  const attemptTermSingular = statsGame === "timeline" ? "submission" : "guess";
 
   useEffect(() => {
     if (!user) {
@@ -106,7 +118,7 @@ export default function Profile() {
     let cancelled = false;
     setCloudHistory(null);
     void apiClient
-      .progressHistory(category, historyPage)
+      .progressHistory(statsGame, activeCategory, historyPage)
       .then((history) => {
         if (!cancelled) setCloudHistory(history);
       })
@@ -116,19 +128,47 @@ export default function Profile() {
     return () => {
       cancelled = true;
     };
-  }, [category, historyPage, user]);
+  }, [activeCategory, historyPage, statsGame, user]);
 
   const allHistory = Object.values(progress.games).sort((a, b) =>
     b.challengeDate.localeCompare(a.challengeDate),
   );
   const categoryModePrefix = classicChallengeMode(category, "normal").replace(/normal$/, "");
-  const localCategoryHistory = allHistory.filter((game) =>
-    game.mode.startsWith(categoryModePrefix),
-  );
-  const solved = localCategoryHistory.filter((game) => game.status === "solved");
-  const guessDistribution = distribution();
+  const localClassicHistory = allHistory.filter((game) => game.mode.startsWith(categoryModePrefix));
+  const localTimelineHistory = readSavedTimelineGames()
+    .filter((game) => game.difficulty === difficulty && (game.acceptedAttempts > 0 || game.solved))
+    .sort((left, right) => right.challengeDate.localeCompare(left.challengeDate));
+  const localHistory =
+    statsGame === "classic"
+      ? localClassicHistory.map((game) => ({
+          challengeId: game.challengeId,
+          challengeDate: game.challengeDate,
+          mode: game.mode,
+          status: game.status,
+          attemptCount: game.guesses.length,
+          labels: game.guesses.map((guess) => guess.modelName),
+        }))
+      : statsGame === "timeline"
+        ? localTimelineHistory.map((game) => ({
+            challengeId: game.challengeId,
+            challengeDate: game.challengeDate,
+            mode: `timeline:${game.difficulty}`,
+            status: game.solved ? ("solved" as const) : ("in-progress" as const),
+            attemptCount: game.acceptedAttempts,
+            labels: Array.from(
+              { length: game.acceptedAttempts },
+              (_, index) => `Submission ${index + 1}`,
+            ),
+          }))
+        : [];
+  const solved = localHistory.filter((game) => game.status === "solved");
+  const guessDistribution =
+    statsGame === "timeline"
+      ? Object.fromEntries(Array.from({ length: 12 }, (_, index) => [String(index + 1), 0]))
+      : distribution();
   for (const game of solved) {
-    const bucket = game.guesses.length > 9 ? "10+" : String(game.guesses.length);
+    const bucket =
+      statsGame !== "timeline" && game.attemptCount > 9 ? "10+" : String(game.attemptCount);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
   const dates = [...new Set(solved.map((game) => game.challengeDate))].sort().reverse();
@@ -159,7 +199,7 @@ export default function Profile() {
   const distributionValues = Object.entries(stats.guessDistribution);
   const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
   const totalWins = distributionValues.reduce((total, [, value]) => total + value, 0);
-  const historyCount = user ? (cloudHistory?.total ?? 0) : localCategoryHistory.length;
+  const historyCount = user ? (cloudHistory?.total ?? 0) : localHistory.length;
   const totalPages = Math.max(1, Math.ceil(historyCount / historyPageSize));
   const page = Math.min(historyPage, totalPages);
   const historyGames = user
@@ -173,7 +213,16 @@ export default function Profile() {
           modelName,
         })),
       }))
-    : localCategoryHistory.slice((page - 1) * historyPageSize, page * historyPageSize);
+    : localHistory.slice((page - 1) * historyPageSize, page * historyPageSize).map((game) => ({
+        challengeId: game.challengeId,
+        challengeDate: game.challengeDate,
+        mode: game.mode,
+        status: game.status,
+        guesses: game.labels.map((modelName, index) => ({
+          modelId: `${game.challengeId}:${index}`,
+          modelName,
+        })),
+      }));
   const enterInnerCircle = () => {
     if (!user) {
       navigate("/login");
@@ -268,23 +317,60 @@ export default function Profile() {
           </div>
         </details>
       )}
-      <div className="classic-category-nav" role="tablist" aria-label="Classic category statistics">
-        {classicCategories
-          .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
-          .map((item) => (
-            <button
-              aria-selected={category === item}
-              onClick={() => {
-                setCategory(item);
-                setHistoryPage(1);
-              }}
-              role="tab"
-              type="button"
-              key={item}
-            >
-              {classicCategoryDetails[item].label}
-            </button>
-          ))}
+      <div className="profile-game-tabs" role="tablist" aria-label="Game statistics">
+        {(["classic", "emoji", "timeline"] as const).map((game) => (
+          <button
+            aria-selected={statsGame === game}
+            key={game}
+            onClick={() => {
+              setStatsGame(game);
+              setHistoryPage(1);
+            }}
+            role="tab"
+            type="button"
+          >
+            {game === "classic" ? "Classic" : game === "emoji" ? "Emoji Clues" : "Timeline"}
+          </button>
+        ))}
+      </div>
+      <div
+        className="classic-category-nav"
+        role="tablist"
+        aria-label={`${statsGame === "classic" ? "Classic category" : "Difficulty"} statistics`}
+      >
+        {statsGame === "classic"
+          ? classicCategories
+              .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
+              .map((item) => (
+                <button
+                  aria-selected={category === item}
+                  onClick={() => {
+                    setCategory(item);
+                    setHistoryPage(1);
+                  }}
+                  role="tab"
+                  type="button"
+                  key={item}
+                >
+                  {classicCategoryDetails[item].label}
+                </button>
+              ))
+          : timelineDifficulties
+              .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
+              .map((item) => (
+                <button
+                  aria-selected={difficulty === item}
+                  onClick={() => {
+                    setDifficulty(item);
+                    setHistoryPage(1);
+                  }}
+                  role="tab"
+                  type="button"
+                  key={item}
+                >
+                  {timelineDifficultyLabel(item)}
+                </button>
+              ))}
       </div>
       <div className="stat-grid">
         <div>
@@ -305,11 +391,13 @@ export default function Profile() {
         <div className="stats-section__heading">
           <div>
             <p className="eyebrow">Solved games</p>
-            <h2 id="distribution-title">Guess distribution</h2>
+            <h2 id="distribution-title">
+              {statsGame === "timeline" ? "Submission distribution" : "Guess distribution"}
+            </h2>
           </div>
           <span>{stats.gamesWon} wins</span>
         </div>
-        <div className="distribution" aria-label="Win distribution by number of guesses">
+        <div className="distribution" aria-label={`Win distribution by number of ${attemptTerm}`}>
           {distributionValues.map(([attempts, value]) => {
             const width = totalWins ? (value / totalWins) * 100 : 0;
             const isHot = value > 0 && value === largestBucket;
@@ -317,7 +405,7 @@ export default function Profile() {
               <div className="distribution__row" data-hot={isHot || undefined} key={attempts}>
                 <span className="distribution__label">{attempts}</span>
                 <div
-                  aria-label={`${value} wins in ${attempts} guesses`}
+                  aria-label={`${value} wins in ${attempts} ${Number(attempts) === 1 ? attemptTermSingular : attemptTerm}`}
                   aria-valuemax={totalWins}
                   aria-valuemin={0}
                   aria-valuenow={value}
@@ -337,7 +425,9 @@ export default function Profile() {
         <div className="stats-section__heading">
           <div>
             <p className="eyebrow">{user ? "Stored on your account" : "Stored on this device"}</p>
-            <h2 id="history-title">Saved guesses</h2>
+            <h2 id="history-title">
+              {statsGame === "timeline" ? "Saved submissions" : "Saved guesses"}
+            </h2>
           </div>
           <span>{historyCount} games</span>
         </div>
@@ -350,8 +440,8 @@ export default function Profile() {
                     <strong>{game.challengeDate}</strong>
                     <span>
                       {game.status === "solved"
-                        ? `Solved in ${game.guesses.length} guesses`
-                        : `${game.guesses.length} guesses · in progress`}
+                        ? `Solved in ${game.guesses.length} ${game.guesses.length === 1 ? attemptTermSingular : attemptTerm}`
+                        : `${game.guesses.length} ${game.guesses.length === 1 ? attemptTermSingular : attemptTerm} · in progress`}
                     </span>
                   </div>
                   <p className="guess-history__guesses">
@@ -366,7 +456,7 @@ export default function Profile() {
               ))}
             </ol>
             {totalPages > 1 && (
-              <nav className="history-pagination" aria-label="Saved guesses pages">
+              <nav className="history-pagination" aria-label={`Saved ${attemptTerm} pages`}>
                 <button
                   className="history-pagination__button"
                   disabled={page === 1}
@@ -390,7 +480,7 @@ export default function Profile() {
             )}
           </>
         ) : (
-          <p className="stats-empty">Play a game and your guesses will appear here.</p>
+          <p className="stats-empty">Play a game and your {attemptTerm} will appear here.</p>
         )}
       </section>
       {showRitualChallenge && ritualComplete && hardcoreUnlocked && (

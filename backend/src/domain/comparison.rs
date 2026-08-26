@@ -432,11 +432,11 @@ fn compare_boolean(guessed: Option<bool>, answer: Option<bool>) -> ComparisonRes
 }
 
 fn compare_tool_use(guessed: Option<bool>, answer: Option<bool>) -> ComparisonResult {
-        if guessed.unwrap_or(false) == answer.unwrap_or(false) {
-                ComparisonResult::Correct
-        } else {
-                ComparisonResult::Incorrect
-        }
+    if guessed.unwrap_or(false) == answer.unwrap_or(false) {
+        ComparisonResult::Correct
+    } else {
+        ComparisonResult::Incorrect
+    }
 }
 
 fn compare_sets(guessed: Option<&Vec<String>>, answer: Option<&Vec<String>>) -> ComparisonResult {
