@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type PointerEvent } from "react";
+import { useMemo, useState, type PointerEvent } from "react";
 import { modelSpaceAxes, modelSpacePoint } from "@lib/domain/models/model-space";
 import type { ClassicCategory, ComparableModel } from "@lib/domain/models/model-types";
 
@@ -81,18 +81,24 @@ export function ModelSpaceTrajectory({
     rotation: typeof rotation;
   } | null>(null);
   const axes = modelSpaceAxes(category);
-  const answer = guesses.find((guess) => guess.isCorrect);
-  const pathGuesses = guesses.filter((guess) => !guess.isCorrect);
-  const points = [
-    ...pathGuesses.map((guess) => ({ ...guess, kind: "guess" as const })),
-    ...(answer ? [{ ...answer, kind: "answer" as const }] : []),
-  ].map((point) => ({
+  const { answer, pathGuesses, basePoints } = useMemo(() => {
+    const nextAnswer = guesses.find((guess) => guess.isCorrect);
+    const nextPathGuesses = guesses.filter((guess) => !guess.isCorrect);
+    return {
+      answer: nextAnswer,
+      pathGuesses: nextPathGuesses,
+      basePoints: [
+        ...nextPathGuesses.map((guess) => ({ ...guess, kind: "guess" as const })),
+        ...(nextAnswer ? [{ ...nextAnswer, kind: "answer" as const }] : []),
+      ].map((point) => ({
+        ...point,
+        position: modelSpacePoint(point.model, category, referenceModels),
+      })),
+    };
+  }, [category, guesses, referenceModels]);
+  const points = basePoints.map((point) => ({
     ...point,
-    projected: project(
-      modelSpacePoint(point.model, category, referenceModels),
-      rotation.azimuth,
-      rotation.elevation,
-    ),
+    projected: project(point.position, rotation.azimuth, rotation.elevation),
   }));
   const pathPoints = points.filter((point) => point.kind === "guess");
   const answerPoint = points.find((point) => point.kind === "answer");
@@ -194,7 +200,7 @@ export function ModelSpaceTrajectory({
             y2={answerPoint.projected.y}
           />
         )}
-        {points
+        {[...points]
           .sort((left, right) => left.projected.depth - right.projected.depth)
           .map((point) => (
             <g

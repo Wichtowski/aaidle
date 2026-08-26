@@ -31,11 +31,13 @@ import {
   type TimelineGamePayload,
 } from "@lib/domain/games/timeline/timeline-types";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
+import { utcDate } from "@lib/utils/dates";
 import { useAuth } from "../auth/useAuth";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
 import { GameLoadingState } from "../ui/GameLoadingState";
 import { SiteNavbar } from "../ui/SiteNavbar";
 import { Toast } from "../ui/Toast";
+import { GameEyebrow } from "./GameEyebrow";
 import { GameIntro } from "./GameLayout";
 import { TimelineHTP } from "./TimelineHTP";
 
@@ -78,7 +80,7 @@ function hydrateGame(game: TimelineGamePayload) {
 
 export function TimelineGame() {
   const progress = useLocalProgress();
-  const { hardcoreUnlocked, user } = useAuth();
+  const { hardcoreUnlocked } = useAuth();
   const [difficulty, setDifficulty] = useState<TimelineDifficulty>("normal");
   const [game, setGame] = useState<TimelineGamePayload | null>(null);
   const [positions, setPositions] = useState<Array<string | null>>([]);
@@ -309,12 +311,6 @@ export function TimelineGame() {
             </button>
           ))}
       </div>
-      {!hardcoreUnlocked && (
-        <small className="timeline-hardcore-note">
-          Complete the Classic Challenge ritual to unlock Hardcore
-          {!user ? ". Sign in to track the ritual." : "."}
-        </small>
-      )}
     </div>
   );
 
@@ -322,14 +318,20 @@ export function TimelineGame() {
     <main className="page game-page timeline-page">
       <SiteNavbar />
       <GameIntro
-        description="Place AI models and events in chronological order. Dates stay hidden until every position is correct."
+        description="Place events in chronological order. Dates stay hidden until every position is correct."
         difficulty={difficultyControls}
         expiresAt={game?.challenge.expiresAt ?? null}
-        eyebrow="Daily chronology"
+        eyebrow={
+          <GameEyebrow
+            date={game?.challenge.date ?? utcDate()}
+            game="Timeline"
+            variant={timelineDifficultyLabel(difficulty)}
+          />
+        }
         onExpiry={() => setLoadAttempt((attempt) => attempt + 1)}
         title={
           <>
-            Build today’s <em>AI timeline.</em>
+            Build today’s <em>timeline.</em>
           </>
         }
         titleId="timeline-title"

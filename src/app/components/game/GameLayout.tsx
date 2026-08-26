@@ -29,7 +29,7 @@ export function GameIntro({
   return (
     <section className="game-intro" aria-labelledby={titleId}>
       <div className="game-intro__meta">
-        <p className="eyebrow">{eyebrow}</p>
+        {eyebrow}
         <div className="game-intro__timing">
           {expiresAt && <DailyCountdown expiresAt={expiresAt} onExpiry={onExpiry} />}
           {completionCount !== null && completionCount !== undefined && (
@@ -37,7 +37,9 @@ export function GameIntro({
           )}
         </div>
       </div>
-      <h1 data-testid="game-heading" id={titleId}>{title}</h1>
+      <h1 data-testid="game-heading" id={titleId}>
+        {title}
+      </h1>
       <p className="lede">{description}</p>
       {navigation}
       {difficulty}

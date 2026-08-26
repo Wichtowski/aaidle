@@ -9,6 +9,7 @@ import {
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../ui/SiteNavbar";
+import { GameEyebrow } from "./GameEyebrow";
 import { GameIntro } from "./GameLayout";
 import { ApiUnavailableState } from "../ui/ApiUnavailableState";
 import { GameLoadingState } from "../ui/GameLoadingState";
@@ -269,11 +270,7 @@ export function EmojiCluesGame() {
         completionCount={solved ? (game?.globalCompletionCount ?? null) : null}
         description="Use the visual clues to identify the hidden AI system, architecture, algorithm, or operator. Wrong guesses can reveal more clues."
         expiresAt={game?.challenge.expiresAt ?? null}
-        eyebrow={
-          <>
-            Emoji Clues · {date} · {selectedPool.label}
-          </>
-        }
+        eyebrow={<GameEyebrow date={date} game="Emoji Clues" variant={selectedPool.label} />}
         title="Guess today’s hidden AI idea"
         titleId="emoji-clues-title"
       />

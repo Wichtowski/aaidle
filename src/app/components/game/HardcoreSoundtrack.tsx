@@ -44,7 +44,7 @@ export function HardcoreSoundtrack() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [trackUrl, setTrackUrl] = useState<string | null>(null);
   const [volume, setVolume] = useState(25);
-  const [minimized, setMinimized] = useState(true);
+  const [minimized, setMinimized] = useState(false);
   const progress = useLocalProgress();
   const progressReady = useLocalProgressReady();
   const autoplayAttempted = useRef(false);
@@ -157,6 +157,7 @@ export function HardcoreSoundtrack() {
         <iframe
           allow="autoplay"
           className="hardcore-soundtrack__player"
+          loading="lazy"
           ref={iframeRef}
           src={playerUrl.toString()}
           tabIndex={minimized ? -1 : undefined}

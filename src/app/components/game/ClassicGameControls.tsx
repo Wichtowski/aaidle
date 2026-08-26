@@ -1,5 +1,6 @@
 import { GuessAutocomplete } from "./GuessAutocomplete";
 import { ClassicCategoryNav } from "./ClassicCategoryNav";
+import { GameEyebrow } from "./GameEyebrow";
 import { GameIntro } from "./GameLayout";
 import { utcDate } from "@lib/utils/dates";
 import {
@@ -99,9 +100,11 @@ export function ClassicGameControls({
       }
       expiresAt={expiresAt}
       eyebrow={
-        <>
-          Classic · {date ?? utcDate()} · {resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
-        </>
+        <GameEyebrow
+          date={date ?? utcDate()}
+          game="Classic"
+          variant={resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
+        />
       }
       input={
         date &&
