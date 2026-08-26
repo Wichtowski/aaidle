@@ -139,7 +139,7 @@ pub fn select_timeline_puzzle(
                     .copied()
                     .unwrap_or_default()
                     * PROVIDER_REPEAT_WEIGHT;
-                let category_penalty = relevant_categories(candidate, difficulty)
+                let category_penalty = relevant_categories(candidate)
                     .iter()
                     .map(|category| category_counts.get(*category).copied().unwrap_or_default())
                     .min()
@@ -173,7 +173,7 @@ pub fn select_timeline_puzzle(
         *provider_counts
             .entry(candidate.provider_id.clone())
             .or_default() += 1;
-        for category in relevant_categories(candidate, difficulty) {
+        for category in relevant_categories(candidate) {
             *category_counts.entry(category.to_owned()).or_default() += 1;
         }
     }
@@ -226,10 +226,7 @@ fn is_candidate_eligible(candidate: &TimelineCandidate, difficulty: TimelineDiff
     candidate.min_pool_rank <= difficulty.config().pool_rank && !candidate.categories.is_empty()
 }
 
-fn relevant_categories<'a>(
-    candidate: &'a TimelineCandidate,
-    _difficulty: TimelineDifficulty,
-) -> Vec<&'a str> {
+fn relevant_categories(candidate: &TimelineCandidate) -> Vec<&str> {
     candidate.categories.iter().map(String::as_str).collect()
 }
 

@@ -275,7 +275,7 @@ mod tests {
               ]
             }]
         }"#).expect("image seed deserializes");
-        validate_seed(&[entity.clone()]).expect("valid image seed");
+        validate_seed(std::slice::from_ref(&entity)).expect("valid image seed");
         let resolved = resolve_variant(&entity, "green").expect("variant resolves");
         assert_eq!(resolved.initial_reveal_count, 2);
         assert!(matches!(resolved.clues[0], VisualClue::Image { .. }));
