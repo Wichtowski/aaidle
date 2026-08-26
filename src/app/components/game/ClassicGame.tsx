@@ -557,19 +557,9 @@ export function ClassicGame({
       />
       {category === "hardcore" && <HardcoreSoundtrack />}
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
-      {!challenge &&
-        error !== null &&
-        (isApiUnavailable(error) ? (
-          <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
-        ) : (
-          <section className="api-unavailable" role="alert">
-            <div>
-              <p className="eyebrow">Game unavailable</p>
-              <h2>We couldn’t load this game.</h2>
-              <p>{error instanceof Error ? error.message : "Please choose another game mode."}</p>
-            </div>
-          </section>
-        ))}
+      {!challenge && error !== null && (
+        <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
+      )}
       {challenge && error !== null && retryGuess && (
         <ApiUnavailableState onRetry={() => void pick(retryGuess.model, retryGuess.requestId)} />
       )}

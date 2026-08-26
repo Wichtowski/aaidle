@@ -5,12 +5,9 @@ export function ApiUnavailableState({ onRetry }: { onRetry: () => void }) {
     <section className="api-unavailable" role="status" aria-live="polite">
       <FaTriangleExclamation aria-hidden="true" />
       <div>
-        <p className="eyebrow">Connection unstable</p>
-        <h2>We’re having trouble connecting to aAIdle right now.</h2>
-        <p>
-          Your connection may be unstable or the game server may be temporarily unavailable.
-          Try again in a moment.
-        </p>
+        <p className="eyebrow">Game unavailable</p>
+        <h2>We’re having trouble loading this game.</h2>
+        <p>The game is temporarily unavailable. Please try again in a moment.</p>
         <button className="button button--primary" onClick={onRetry} type="button">
           Try again
         </button>

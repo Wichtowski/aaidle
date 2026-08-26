@@ -1,0 +1,32 @@
+name: TypeScript unit tests
+description: Run Vitest unit tests and publish the test summary
+runs:
+  using: composite
+  steps:
+    - name: Run Vitest unit tests
+      shell: bash
+      run: pnpm test
+    - name: Add Vitest test report to summary
+      if: always()
+      shell: bash
+      run: |
+        if [[ ! -f tests/reports/vitest.json ]]; then
+          {
+            echo "## 🧪 Unit Test Report"
+            echo
+            echo "❌ Vitest did not run because an earlier step failed."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+        fi
+
+        vitest_passed=$(jq '.numPassedTests // 0' tests/reports/vitest.json)
+        vitest_total=$(jq '.numTotalTests // 0' tests/reports/vitest.json)
+        vitest_status="✅"
+        if [[ "$(jq -r '.success' tests/reports/vitest.json)" != "true" ]]; then
+          vitest_status="❌"
+        fi
+        {
+          echo "## 🧪 Unit Test Report"
+          echo
+          echo "${vitest_status} ${vitest_passed} passed · ${vitest_total} total"
+        } >> "$GITHUB_STEP_SUMMARY"

@@ -14,9 +14,9 @@ permissions:
   contents: write
 
 env:
-  NODE_VERSION: 22
+  NODE_VERSION: ${{ vars.NODE_VERSION || 22 }}
+  PNPM_VERSION: ${{ vars.PNPM_VERSION || '11.24.0' }}
   PACKAGE_MANAGER: pnpm
-  PNPM_VERSION: 11.5.3
   PW_CACHE_DIR: ~/.cache/ms-playwright
   CHECKOUT_REPO: "Checkout repository"
   SETUP_PNPM: "Set up pnpm"

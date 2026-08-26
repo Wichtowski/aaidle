@@ -9,7 +9,6 @@ The daily answer stays server-side.
 - [Architecture](docs/architecture.md) describes system boundaries and data flow.
 - [Backend operations](docs/backend/operations.md) covers the Rust service, configuration, SQLite, and Docker.
 - [API v1 contract](docs/backend/api-v1.md) defines the public Rust API.
-- [Legacy migration matrix](docs/migrations/legacy-migration-matrix.md) records the Node-to-Rust migration scope and deferred features.
 
 ## Local development
 
@@ -98,3 +97,5 @@ pnpm merge-many-to-one
 ```
 
 Models without a `categoryDetails` section stay in `data/classic.seed.json` while the category files are split, so the merge remains lossless
+
+Timeline events are maintained separately in `data/timeline/events.seed.json`. Running `pnpm merge-many-to-one` combines those events with the merged Classic catalog and regenerates `data/timeline.seed.json`.

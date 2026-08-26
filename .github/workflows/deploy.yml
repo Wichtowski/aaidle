@@ -34,6 +34,22 @@ jobs:
     with:
       release_tag: ${{ github.ref_name }}
 
+  frontend-verification:
+    needs: validate-ref
+    uses: ./.github/workflows/frontend-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.ref_name }}
+
+  seed-verification:
+    needs: validate-ref
+    uses: ./.github/workflows/seed-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.ref_name }}
+
   rust-unit-tests:
     needs: validate-ref
     uses: ./.github/workflows/rust-unit-tests.yml
@@ -52,7 +68,8 @@ jobs:
       release_tag: ${{ github.ref_name }}
 
   publish-release:
-    needs: [vitest-unit-tests, rust-unit-tests, docker-build]
+    needs:
+      [vitest-unit-tests, frontend-verification, seed-verification, rust-unit-tests, docker-build]
     uses: ./.github/workflows/publish-release.yml
     permissions:
       contents: write

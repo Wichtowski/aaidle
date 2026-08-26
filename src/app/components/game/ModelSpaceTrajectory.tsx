@@ -81,7 +81,7 @@ export function ModelSpaceTrajectory({
     rotation: typeof rotation;
   } | null>(null);
   const axes = modelSpaceAxes(category);
-  const { answer, pathGuesses, basePoints } = useMemo(() => {
+  const { answer, basePoints } = useMemo(() => {
     const nextAnswer = guesses.find((guess) => guess.isCorrect);
     const nextPathGuesses = guesses.filter((guess) => !guess.isCorrect);
     return {

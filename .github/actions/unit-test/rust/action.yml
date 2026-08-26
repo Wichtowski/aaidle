@@ -1,0 +1,35 @@
+name: Rust unit tests
+description: Run Rust unit tests and publish the test summary
+runs:
+  using: composite
+  steps:
+    - name: Run Rust unit tests
+      working-directory: backend
+      shell: bash
+      run: |
+        set -o pipefail
+        cargo +1.94.0 test --locked 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
+    - name: Add Rust test report to summary
+      if: always()
+      shell: bash
+      run: |
+        read -r test_passed test_failed test_ignored < <(
+          awk '/test result:/ {
+            for (i = 1; i <= NF; i++) {
+              if ($(i) == "passed;") passed += $(i - 1)
+              if ($(i) == "failed;") failed += $(i - 1)
+              if ($(i) == "ignored;") ignored += $(i - 1)
+            }
+          } END { print passed + 0, failed + 0, ignored + 0 }' \
+          "$RUNNER_TEMP/rust-test-output"
+        )
+        test_total=$((test_passed + test_failed))
+        test_status="✅"
+        if [[ "$test_failed" -gt 0 ]]; then
+          test_status="❌"
+        fi
+        {
+          echo "## 🦀 Unit Test Report"
+          echo
+          echo "${test_status} ${test_passed} passed · ${test_total} total"
+        } >> "$GITHUB_STEP_SUMMARY"

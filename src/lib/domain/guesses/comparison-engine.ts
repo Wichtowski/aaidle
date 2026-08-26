@@ -54,10 +54,10 @@ const releaseQuarter = (model: ComparableModel) => {
     return null;
   }
   const year = Number(model.releaseDate.slice(0, 4));
+  if (!Number.isFinite(year)) return null;
+  if (/^\d{4}$/.test(model.releaseDate)) return year * 4;
   const month = Number(model.releaseDate.slice(5, 7));
-  return Number.isFinite(year) && month >= 1 && month <= 12
-    ? year * 4 + Math.ceil(month / 3)
-    : null;
+  return month >= 1 && month <= 12 ? year * 4 + Math.ceil(month / 3) : null;
 };
 export function compareClassicModels(
   guessed: ComparableModel,

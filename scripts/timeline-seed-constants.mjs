@@ -4,13 +4,18 @@ import { resolve } from "node:path";
 export function syncTimelineSeed({
   classicPath = "data/classic.seed.json",
   timelinePath = "data/timeline.seed.json",
+  eventsPath = "data/timeline/events.seed.json",
 } = {}) {
   const resolvedClassicPath = resolve(classicPath);
   const resolvedTimelinePath = resolve(timelinePath);
   const classicModels = JSON.parse(readFileSync(resolvedClassicPath, "utf8"));
   const existingItems = existsSync(resolvedTimelinePath)
-    ? JSON.parse(readFileSync(resolvedTimelinePath, "utf8"))
+    ? parseJsonOrEmpty(resolvedTimelinePath)
     : [];
+  const resolvedEventsPath = resolve(eventsPath);
+  const eventItems = existsSync(resolvedEventsPath)
+    ? parseJsonOrEmpty(resolvedEventsPath)
+    : existingItems.filter((item) => item?.kind === "event");
 
   if (!Array.isArray(classicModels)) {
     throw new Error(`${resolvedClassicPath} must contain a JSON array`);
@@ -21,7 +26,7 @@ export function syncTimelineSeed({
 
   const events = existingItems.filter((item) => item?.kind === "event");
   const models = classicModels
-    .filter((model) => isFullIsoDate(model.releaseDate))
+    .filter((model) => isReleaseDate(model.releaseDate))
     .map((model) => ({
       id: model.id,
       kind: "model",
@@ -30,6 +35,7 @@ export function syncTimelineSeed({
       provider: model.provider ?? "Unknown",
       categories: model.categories,
       releaseDate: model.releaseDate,
+      ...(model.yearAnnotation ? { yearAnnotation: model.yearAnnotation } : {}),
     }));
   const items = [...events, ...models].sort(
     (left, right) =>
@@ -38,6 +44,11 @@ export function syncTimelineSeed({
   validateTimelineItems(items, resolvedTimelinePath);
   writeFileSync(resolvedTimelinePath, `${JSON.stringify(items, null, 2)}\n`);
   return items.length;
+}
+
+function parseJsonOrEmpty(path) {
+  const content = readFileSync(path, "utf8").trim();
+  return content ? JSON.parse(content) : [];
 }
 
 function validateTimelineItems(items, path) {
@@ -50,8 +61,8 @@ function validateTimelineItems(items, path) {
       throw new Error(`${path} contains an invalid or duplicate ID at index ${index}`);
     }
     seenIds.add(item.id);
-    if (!isFullIsoDate(item.releaseDate)) {
-      throw new Error(`${item.id} does not have a verified full ISO release date`);
+    if (!isReleaseDate(item.releaseDate)) {
+      throw new Error(`${item.id} does not have a valid release date (YYYY or YYYY-MM-DD)`);
     }
     if (!Array.isArray(item.categories) || item.categories.length === 0) {
       throw new Error(`${item.id} must have at least one eligible category`);
@@ -67,8 +78,10 @@ function matchesKind(value) {
   return value === "model" || value === "event";
 }
 
-function isFullIsoDate(value) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+function isReleaseDate(value) {
+  if (typeof value !== "string") return false;
+  if (/^\d{4}$/.test(value)) return value !== "0000";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }

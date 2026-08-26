@@ -12,7 +12,7 @@ import {
   type PointerEvent,
 } from "react";
 import { FaCircleQuestion, FaGripVertical, FaLock } from "react-icons/fa6";
-import { ApiError, apiClient, isApiUnavailable } from "@lib/api/client";
+import { ApiError, apiClient } from "@lib/api/client";
 import {
   adjacentMovablePosition,
   initialTimelinePositions,
@@ -30,6 +30,7 @@ import {
   type TimelineDifficulty,
   type TimelineGamePayload,
 } from "@lib/domain/games/timeline/timeline-types";
+import { timelineCategoryLabel } from "@lib/domain/games/timeline/timeline-category";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { utcDate } from "@lib/utils/dates";
 import { useAuth } from "../auth/useAuth";
@@ -39,6 +40,7 @@ import { SiteNavbar } from "../ui/SiteNavbar";
 import { Toast } from "../ui/Toast";
 import { GameEyebrow } from "./GameEyebrow";
 import { GameIntro } from "./GameLayout";
+import { DifficultySwitch } from "./DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
 
 const TimelineCompletedDialog = lazy(() =>
@@ -47,7 +49,11 @@ const TimelineCompletedDialog = lazy(() =>
   })),
 );
 
+const timelineCardAnimationDuration = 560;
+const timelineCardAnimationStagger = 70;
+
 function formatReleaseDate(value: string) {
+  if (/^\d{4}$/.test(value)) return value;
   return new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, {
     day: "numeric",
     month: "short",
@@ -94,6 +100,7 @@ export function TimelineGame() {
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
   const [draggingModelId, setDraggingModelId] = useState<string | null>(null);
+  const [dragOverTarget, setDragOverTarget] = useState<"board" | "tray" | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -202,12 +209,14 @@ export function TimelineGame() {
       const slot = target?.closest<HTMLElement>("[data-timeline-position]");
       const tray = target?.closest<HTMLElement>("[data-timeline-tray]");
       const targetKey = slot?.dataset.timelinePosition ?? (tray ? "tray" : null);
+      setDragOverTarget(targetKey === "tray" ? "tray" : targetKey === null ? null : "board");
       if (targetKey === null || targetKey === lastPointerTarget.current) return;
       lastPointerTarget.current = targetKey;
       moveModel(draggingModelId, targetKey === "tray" ? null : Number(targetKey));
     };
     const pointerUp = () => {
       setDraggingModelId(null);
+      setDragOverTarget(null);
       lastPointerTarget.current = null;
     };
     window.addEventListener("pointermove", pointerMove, { passive: false });
@@ -230,6 +239,7 @@ export function TimelineGame() {
     const modelId = event.dataTransfer.getData("text/plain") || draggingModelId;
     if (modelId) moveModel(modelId, position);
     setDraggingModelId(null);
+    setDragOverTarget(null);
   };
   const startPointerDrag = (event: PointerEvent, modelId: string) => {
     if (event.pointerType === "touch") event.preventDefault();
@@ -277,7 +287,14 @@ export function TimelineGame() {
           .catch(() => {
             setToast("Timeline solved. Reload the page to reveal every date.");
           });
-        completionTimer.current = window.setTimeout(() => setShowCompletion(true), 1_200);
+        const animationDuration =
+          timelineCardAnimationDuration +
+          Math.max(0, game.slots.length - 1) * timelineCardAnimationStagger +
+          100;
+        completionTimer.current = window.setTimeout(
+          () => setShowCompletion(true),
+          animationDuration,
+        );
       }
     } catch (submitError) {
       if (submitError instanceof ApiError && submitError.code === "ATTEMPT_LIMIT_REACHED") {
@@ -294,24 +311,16 @@ export function TimelineGame() {
   };
 
   const difficultyControls = (
-    <div className="game-intro__difficulty">
-      <span>Difficulty</span>
-      <div className="difficulty-switch" data-testid="timeline-difficulty">
-        {timelineDifficulties
-          .filter((option) => option !== "hardcore" || hardcoreUnlocked)
-          .map((option) => (
-            <button
-              aria-pressed={difficulty === option}
-              disabled={busy || loading}
-              key={option}
-              onClick={() => setDifficulty(option)}
-              type="button"
-            >
-              {timelineDifficultyLabel(option)}
-            </button>
-          ))}
-      </div>
-    </div>
+    <DifficultySwitch
+      ariaLabel="Timeline difficulty"
+      disabled={busy || loading}
+      onChange={(value) => setDifficulty(value as TimelineDifficulty)}
+      options={timelineDifficulties
+        .filter((option) => option !== "hardcore" || hardcoreUnlocked)
+        .map((option) => ({ value: option, label: timelineDifficultyLabel(option) }))}
+      selected={difficulty}
+      testId="timeline-difficulty"
+    />
   );
 
   return (
@@ -338,17 +347,9 @@ export function TimelineGame() {
       />
 
       {loading && <GameLoadingState label="Loading today’s Timeline…" />}
-      {!loading &&
-        Boolean(error) &&
-        !game &&
-        (isApiUnavailable(error) ? (
-          <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
-        ) : (
-          <section className="api-unavailable" role="alert">
-            <h2>Timeline unavailable</h2>
-            <p>{error instanceof Error ? error.message : "Please try again."}</p>
-          </section>
-        ))}
+      {!loading && Boolean(error) && !game && (
+        <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
+      )}
 
       {game && (
         <section className="timeline-game" aria-label="Timeline arrangement">
@@ -364,7 +365,25 @@ export function TimelineGame() {
             )}
           </div>
 
-          <ol className="timeline-board" key={validationSequence}>
+          <ol
+            className={[
+              "timeline-board",
+              difficulty !== "normal" ? "timeline-board--multirow" : "",
+              dragOverTarget === "board" ? "timeline-board--drop-target" : "",
+            ].join(" ")}
+            key={validationSequence}
+            onDragEnter={() => setDragOverTarget("board")}
+            onDragLeave={(event) => {
+              const relatedTarget = event.relatedTarget as Node | null;
+              if (!relatedTarget || !event.currentTarget.contains(relatedTarget)) {
+                setDragOverTarget(null);
+              }
+            }}
+            onDragOver={(event) => {
+              event.preventDefault();
+              setDragOverTarget("board");
+            }}
+          >
             {game.slots.map((slot, position) => {
               const modelId = positions[position];
               const item = modelId ? itemById.get(modelId) : null;
@@ -385,12 +404,13 @@ export function TimelineGame() {
                   {slot.anchor ? (
                     <article className="timeline-card timeline-card--anchor">
                       <span className="timeline-card__meta">
-                        <FaLock aria-hidden /> Locked {slot.anchor.itemKind}
+                        <FaLock aria-hidden /> {timelineCategoryLabel(slot.anchor.categories, slot.anchor.itemKind)}
                       </span>
                       <strong>{slot.anchor.name}</strong>
                       <time dateTime={slot.anchor.releaseDate}>
                         {formatReleaseDate(slot.anchor.releaseDate)}
                       </time>
+                      {slot.anchor.yearAnnotation && <small>{slot.anchor.yearAnnotation}</small>}
                     </article>
                   ) : item ? (
                     <button
@@ -411,13 +431,16 @@ export function TimelineGame() {
                       type="button"
                     >
                       <span className="timeline-card__meta">
-                        <FaGripVertical aria-hidden /> {item.itemKind}
+                        <FaGripVertical aria-hidden /> {timelineCategoryLabel(item.categories, item.itemKind)}
                       </span>
                       <strong>{item.name}</strong>
                       {solved && item.releaseDate && (
-                        <time dateTime={item.releaseDate}>
-                          {formatReleaseDate(item.releaseDate)}
-                        </time>
+                        <>
+                          <time dateTime={item.releaseDate}>
+                            {formatReleaseDate(item.releaseDate)}
+                          </time>
+                          {item.yearAnnotation && <small>{item.yearAnnotation}</small>}
+                        </>
                       )}
                       {feedback && (
                         <span className="timeline-card__feedback">
@@ -442,42 +465,54 @@ export function TimelineGame() {
             })}
           </ol>
 
-          <section
-            aria-labelledby="timeline-tray-title"
-            className="timeline-tray"
-            data-timeline-tray
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={(event) => dropAt(event, null)}
-          >
-            <div>
-              <p className="eyebrow">Movable cards</p>
-              <h2 id="timeline-tray-title">Place these without seeing their dates</h2>
-            </div>
-            <div className="timeline-tray__cards">
-              {game.movableModels
-                .filter((item) => !arrangedModelIds.has(item.id))
-                .map((item) => (
-                  <button
-                    aria-pressed={selectedModelId === item.id}
-                    className="timeline-card timeline-card--movable"
-                    draggable={!solved}
-                    key={item.id}
-                    onClick={() => setSelectedModelId(selectedModelId === item.id ? null : item.id)}
-                    onDragStart={(event) => dragStart(event, item.id)}
-                    onPointerDown={(event) => startPointerDrag(event, item.id)}
-                    type="button"
-                  >
-                    <span className="timeline-card__meta">
-                      <FaGripVertical aria-hidden /> {item.itemKind}
-                    </span>
-                    <strong>{item.name}</strong>
-                  </button>
-                ))}
-              {game.movableModels.every((item) => arrangedModelIds.has(item.id)) && (
-                <p className="timeline-tray__empty">Every card is on the timeline.</p>
-              )}
-            </div>
-          </section>
+          {!solved && (
+            <section
+              aria-labelledby="timeline-tray-title"
+              className={`timeline-tray${dragOverTarget === "tray" ? " timeline-tray--drop-target" : ""}`}
+              data-timeline-tray
+              onDragEnter={() => setDragOverTarget("tray")}
+              onDragLeave={(event) => {
+                const relatedTarget = event.relatedTarget as Node | null;
+                if (!relatedTarget || !event.currentTarget.contains(relatedTarget)) {
+                  setDragOverTarget(null);
+                }
+              }}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setDragOverTarget("tray");
+              }}
+              onDrop={(event) => dropAt(event, null)}
+            >
+              <div>
+                <p className="eyebrow">Movable cards</p>
+                <h2 id="timeline-tray-title">Place these without seeing their dates</h2>
+              </div>
+              <div className="timeline-tray__cards">
+                {game.movableModels
+                  .filter((item) => !arrangedModelIds.has(item.id))
+                  .map((item) => (
+                    <button
+                      aria-pressed={selectedModelId === item.id}
+                      className="timeline-card timeline-card--movable"
+                      draggable
+                      key={item.id}
+                      onClick={() => setSelectedModelId(selectedModelId === item.id ? null : item.id)}
+                      onDragStart={(event) => dragStart(event, item.id)}
+                      onPointerDown={(event) => startPointerDrag(event, item.id)}
+                      type="button"
+                    >
+                      <span className="timeline-card__meta">
+                          <FaGripVertical aria-hidden /> {timelineCategoryLabel(item.categories, item.itemKind)}
+                      </span>
+                      <strong>{item.name}</strong>
+                    </button>
+                  ))}
+                {game.movableModels.every((item) => arrangedModelIds.has(item.id)) && (
+                  <p className="timeline-tray__empty">Every card is on the timeline.</p>
+                )}
+              </div>
+            </section>
+          )}
 
           <div className="timeline-submit">
             <button

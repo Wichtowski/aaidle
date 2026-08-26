@@ -5,11 +5,14 @@ export type TimelineModel = {
   id: string;
   name: string;
   itemKind: "model" | "event";
+  categories?: string[];
   releaseDate?: string;
+  yearAnnotation?: string;
 };
 
 export type TimelineAnchor = TimelineModel & {
   releaseDate: string;
+  yearAnnotation?: string;
 };
 
 export type TimelineGamePayload = {

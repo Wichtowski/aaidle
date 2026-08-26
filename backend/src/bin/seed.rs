@@ -45,6 +45,7 @@ struct SeedTimelineItem {
     provider: String,
     categories: Vec<String>,
     release_date: String,
+    year_annotation: Option<String>,
     source_url: Option<String>,
     #[serde(default = "default_true")]
     active: bool,
@@ -52,6 +53,13 @@ struct SeedTimelineItem {
 
 fn default_true() -> bool {
     true
+}
+
+fn valid_release_date(value: &str) -> bool {
+    if value.len() == 4 {
+        return value.as_bytes().iter().all(u8::is_ascii_digit) && value != "0000";
+    }
+    Date::parse(value, DATE_FORMAT).is_ok()
 }
 
 #[tokio::main]
@@ -73,12 +81,12 @@ async fn main() -> AppResult<()> {
         .execute(&mut *transaction)
         .await?;
     for item in &timeline_items {
-        Date::parse(&item.release_date, DATE_FORMAT).map_err(|_| {
-            aidle_api::error::AppError::config(format!(
+        if !valid_release_date(&item.release_date) {
+            return Err(aidle_api::error::AppError::config(format!(
                 "Timeline item {} has an invalid release date",
                 item.id
-            ))
-        })?;
+            )));
+        }
         if !matches!(item.kind.as_str(), "model" | "event") {
             return Err(aidle_api::error::AppError::config(format!(
                 "Timeline item {} has an invalid kind",
@@ -88,8 +96,8 @@ async fn main() -> AppResult<()> {
         sqlx::query(
             "INSERT INTO timeline_items \
              (id, item_kind, model_id, name, provider_key, categories_json, min_pool_rank, \
-              release_date, source_url, is_active, updated_at) \
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+              release_date, year_annotation, source_url, is_active, updated_at) \
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(&item.id)
         .bind(&item.kind)
@@ -99,6 +107,7 @@ async fn main() -> AppResult<()> {
         .bind(serde_json::to_string(&item.categories)?)
         .bind(item.min_pool.clamp(0, 2))
         .bind(&item.release_date)
+        .bind(&item.year_annotation)
         .bind(&item.source_url)
         .bind(item.active)
         .bind(now)

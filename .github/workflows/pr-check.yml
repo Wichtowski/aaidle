@@ -38,6 +38,22 @@ jobs:
     with:
       release_tag: ${{ github.event.pull_request.head.sha }}
 
+  frontend-verification:
+    uses: ./.github/workflows/frontend-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.event.pull_request.head.sha }}
+
+  seed-verification:
+    name: Seed verification
+    if: github.event.pull_request.head.ref != 'main'
+    uses: ./.github/workflows/seed-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ github.event.pull_request.head.sha }}
+
   rust:
     name: Rust build and test
     if: github.event.pull_request.head.ref != 'main'

@@ -16,6 +16,7 @@ export default defineConfig({
   },
   test: {
     include: ["tests/specs/unit/**/*.test.{ts,tsx}"],
+    exclude: ["tests/specs/unit/timeline-seed.test.ts"],
     environment: "node",
     setupFiles: ["./tests/setup.ts"],
     reporters: ["default", "json"],

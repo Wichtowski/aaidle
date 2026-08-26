@@ -9,7 +9,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1763-01-01"
+    "releaseDate": "1763"
   },
   {
     "id": "laplacian-operator",
@@ -31,7 +31,7 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1805-01-01"
+    "releaseDate": "1805"
   },
   {
     "id": "gaussian-blur",
@@ -64,7 +64,7 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1901-01-01"
+    "releaseDate": "1901"
   },
   {
     "id": "linear-discriminant-analysis",
@@ -75,18 +75,18 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1936-01-01"
+    "releaseDate": "1936"
   },
   {
-    "id": "quadratic-discriminant-analysis",
+    "id": "truncated-svd",
     "kind": "model",
-    "name": "Quadratic Discriminant Analysis",
+    "name": "Truncated SVD",
     "minPool": 1,
-    "provider": "Ronald Fisher",
+    "provider": "Eckart and Young",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1936-01-01"
+    "releaseDate": "1936"
   },
   {
     "id": "gabor-filter",
@@ -100,6 +100,17 @@
     "releaseDate": "1946-01-01"
   },
   {
+    "id": "quadratic-discriminant-analysis",
+    "kind": "model",
+    "name": "Quadratic Discriminant Analysis",
+    "minPool": 1,
+    "provider": "Cedric A. B. Smith",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1947"
+  },
+  {
     "id": "gaussian-process",
     "kind": "model",
     "name": "Gaussian Process",
@@ -109,7 +120,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1951-01-01"
+    "releaseDate": "1951"
   },
   {
     "id": "knn",
@@ -121,7 +132,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1951-01-01"
+    "releaseDate": "1951"
   },
   {
     "id": "k-means",
@@ -132,18 +143,7 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1957-01-01"
-  },
-  {
-    "id": "logistic-regression",
-    "kind": "model",
-    "name": "Logistic Regression",
-    "minPool": 0,
-    "provider": "David Cox",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1958-01-01"
+    "releaseDate": "1957"
   },
   {
     "id": "perceptron",
@@ -154,7 +154,29 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1958-07-01"
+    "releaseDate": "1957"
+  },
+  {
+    "id": "logistic-regression",
+    "kind": "model",
+    "name": "Logistic Regression",
+    "minPool": 0,
+    "provider": "David Cox",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1958"
+  },
+  {
+    "id": "multi-layer-perceptron",
+    "kind": "model",
+    "name": "Multi-Layer Perceptron",
+    "minPool": 0,
+    "provider": "David Rumelhart",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1958"
   },
   {
     "id": "box-filter",
@@ -187,7 +209,7 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1963-01-01"
+    "releaseDate": "1963"
   },
   {
     "id": "roberts-cross",
@@ -282,11 +304,11 @@
     "kind": "model",
     "name": "Hidden Markov Model",
     "minPool": 1,
-    "provider": "Leonard Baum",
+    "provider": "Leonard Baum, Ted Petrie",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1966-01-01"
+    "releaseDate": "1966"
   },
   {
     "id": "sobel-operator",
@@ -300,17 +322,6 @@
     "releaseDate": "1968-01-01"
   },
   {
-    "id": "prewitt-operator",
-    "kind": "model",
-    "name": "Prewitt Operator",
-    "minPool": 1,
-    "provider": "Judith Prewitt",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1970-01-01"
-  },
-  {
     "id": "ridge-regression",
     "kind": "model",
     "name": "Ridge Regression",
@@ -320,16 +331,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1970-01-01"
+    "releaseDate": "1970"
   },
   {
-    "id": "truncated-svd",
+    "id": "prewitt-operator",
     "kind": "model",
-    "name": "Truncated SVD",
+    "name": "Prewitt Operator",
     "minPool": 1,
-    "provider": "Gene Golub",
+    "provider": "Judith Prewitt",
     "categories": [
-      "classical-ml"
+      "filters"
     ],
     "releaseDate": "1970-01-01"
   },
@@ -364,7 +375,7 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1975-01-01"
+    "releaseDate": "1975"
   },
   {
     "id": "otsu-thresholding",
@@ -387,18 +398,6 @@
       "filters"
     ],
     "releaseDate": "1979-01-01"
-  },
-  {
-    "id": "cnn",
-    "kind": "model",
-    "name": "Convolutional Neural Network",
-    "minPool": 1,
-    "provider": "Kunihiko Fukushima, Yann LeCun",
-    "categories": [
-      "neural-network",
-      "computer-vision"
-    ],
-    "releaseDate": "1980-01-01"
   },
   {
     "id": "difference-of-gaussians",
@@ -459,6 +458,18 @@
     "releaseDate": "1985-01-01"
   },
   {
+    "id": "decision-tree",
+    "kind": "model",
+    "name": "Decision Tree",
+    "minPool": 1,
+    "provider": "Ross Quinlan",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1986"
+  },
+  {
     "id": "autoencoder",
     "kind": "model",
     "name": "Autoencoder",
@@ -482,18 +493,6 @@
     "releaseDate": "1986-01-01"
   },
   {
-    "id": "decision-tree",
-    "kind": "model",
-    "name": "Decision Tree",
-    "minPool": 1,
-    "provider": "Ross Quinlan",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "1986-01-01"
-  },
-  {
     "id": "rbm",
     "kind": "model",
     "name": "Restricted Boltzmann Machine",
@@ -504,17 +503,6 @@
       "generative-model"
     ],
     "releaseDate": "1986-01-01"
-  },
-  {
-    "id": "multi-layer-perceptron",
-    "kind": "model",
-    "name": "Multi-Layer Perceptron",
-    "minPool": 0,
-    "provider": "David Rumelhart",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1986-10-01"
   },
   {
     "id": "harris-corner-detector",
@@ -539,15 +527,27 @@
     "releaseDate": "1989-01-01"
   },
   {
+    "id": "cnn",
+    "kind": "model",
+    "name": "Convolutional Neural Network",
+    "minPool": 1,
+    "provider": "Kunihiko Fukushima, Yann LeCun",
+    "categories": [
+      "neural-network",
+      "computer-vision"
+    ],
+    "releaseDate": "1989-12-01"
+  },
+  {
     "id": "independent-component-analysis",
     "kind": "model",
     "name": "Independent Component Analysis",
     "minPool": 1,
-    "provider": "Aapo Hyvärinen",
+    "provider": "Pierre Comon, Aapo Hyvärinen, and Erkki Oja",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1994-01-01"
+    "releaseDate": "1994"
   },
   {
     "id": "shi-tomasi-corner-detector",
@@ -561,18 +561,6 @@
     "releaseDate": "1994-01-01"
   },
   {
-    "id": "random-forest",
-    "kind": "model",
-    "name": "Random Forest",
-    "minPool": 1,
-    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "1995-08-14"
-  },
-  {
     "id": "svm",
     "kind": "model",
     "name": "Support Vector Machine",
@@ -582,7 +570,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1995-09-01"
+    "releaseDate": "1995"
   },
   {
     "id": "adaboost",
@@ -594,7 +582,18 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1996-01-01"
+    "releaseDate": "1996"
+  },
+  {
+    "id": "dbscan",
+    "kind": "model",
+    "name": "DBSCAN",
+    "minPool": 0,
+    "provider": "Martin Ester",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1996"
   },
   {
     "id": "lasso",
@@ -606,7 +605,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1996-01-01"
+    "releaseDate": "1996"
   },
   {
     "id": "local-binary-pattern",
@@ -618,17 +617,6 @@
       "filters"
     ],
     "releaseDate": "1996-01-01"
-  },
-  {
-    "id": "dbscan",
-    "kind": "model",
-    "name": "DBSCAN",
-    "minPool": 0,
-    "provider": "Martin Ester",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1996-08-01"
   },
   {
     "id": "lstm",
@@ -647,11 +635,11 @@
     "kind": "model",
     "name": "Kernel PCA",
     "minPool": 1,
-    "provider": "Bernhard Schölkopf",
+    "provider": "Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1997-07-01"
+    "releaseDate": "1997-09-29"
   },
   {
     "id": "bilateral-filter",
@@ -676,6 +664,17 @@
       "neural-network"
     ],
     "releaseDate": "1998-11-01"
+  },
+  {
+    "id": "one-class-svm",
+    "kind": "model",
+    "name": "One-Class SVM",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf, John Platt, John Shawe-Taylor, Alex Smola, and Robert Williamson",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1999"
   },
   {
     "id": "sift",
@@ -704,11 +703,11 @@
     "kind": "model",
     "name": "Non-negative Matrix Factorization",
     "minPool": 1,
-    "provider": "Daniel Lee",
+    "provider": "Daniel Lee, Sebastian Seung",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1999-10-01"
+    "releaseDate": "1999-10-21"
   },
   {
     "id": "scharr-operator",
@@ -726,11 +725,45 @@
     "kind": "model",
     "name": "Local Outlier Factor",
     "minPool": 1,
-    "provider": "Markus Breunig",
+    "provider": "Markus Breunig, Hans-Peter Kriegel, Raymond Ng, and Jörg Sander",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2000-06-01"
+    "releaseDate": "2000-05-16"
+  },
+  {
+    "id": "conditional-random-field",
+    "kind": "model",
+    "name": "Conditional Random Field",
+    "minPool": 1,
+    "provider": "John Lafferty",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2001"
+  },
+  {
+    "id": "gradient-boosting",
+    "kind": "model",
+    "name": "Gradient Boosting",
+    "minPool": 1,
+    "provider": "Jerome Friedman",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "2001"
+  },
+  {
+    "id": "spectral-clustering",
+    "kind": "model",
+    "name": "Spectral Clustering",
+    "minPool": 1,
+    "provider": "Ng, Jordan, and Weiss",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2001"
   },
   {
     "id": "echo-state-network",
@@ -745,49 +778,16 @@
     "releaseDate": "2001-01-01"
   },
   {
-    "id": "gradient-boosting",
+    "id": "random-forest",
     "kind": "model",
-    "name": "Gradient Boosting",
+    "name": "Random Forest",
     "minPool": 1,
-    "provider": "Jerome Friedman",
+    "provider": "Leo Breiman",
     "categories": [
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "2001-01-01"
-  },
-  {
-    "id": "one-class-svm",
-    "kind": "model",
-    "name": "One-Class SVM",
-    "minPool": 1,
-    "provider": "Bernhard Schölkopf",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "2001-01-01"
-  },
-  {
-    "id": "spectral-clustering",
-    "kind": "model",
-    "name": "Spectral Clustering",
-    "minPool": 1,
-    "provider": "Andrew Ng",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "2001-01-01"
-  },
-  {
-    "id": "conditional-random-field",
-    "kind": "model",
-    "name": "Conditional Random Field",
-    "minPool": 1,
-    "provider": "John Lafferty",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "2001-06-01"
+    "releaseDate": "2001-10-01"
   },
   {
     "id": "grabcut",
@@ -810,7 +810,7 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "2005-01-01"
+    "releaseDate": "2005"
   },
   {
     "id": "hog",
@@ -857,17 +857,6 @@
     "releaseDate": "2007-02-01"
   },
   {
-    "id": "isolation-forest",
-    "kind": "model",
-    "name": "Isolation Forest",
-    "minPool": 0,
-    "provider": "Fei Tony Liu",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "2008-12-01"
-  },
-  {
     "id": "t-sne",
     "kind": "model",
     "name": "t-SNE",
@@ -876,7 +865,18 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2008-12-01"
+    "releaseDate": "2008"
+  },
+  {
+    "id": "isolation-forest",
+    "kind": "model",
+    "name": "Isolation Forest",
+    "minPool": 0,
+    "provider": "Fei Tony Liu",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2008-12-15"
   },
   {
     "id": "brief",
@@ -1216,6 +1216,19 @@
     "releaseDate": "2016-11-16"
   },
   {
+    "id": "lightgbm",
+    "kind": "model",
+    "name": "LightGBM",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2017"
+  },
+  {
     "id": "keypoint-rcnn",
     "kind": "model",
     "name": "Keypoint R-CNN",
@@ -1303,19 +1316,6 @@
       "object-detection"
     ],
     "releaseDate": "2017-08-07"
-  },
-  {
-    "id": "lightgbm",
-    "kind": "model",
-    "name": "LightGBM",
-    "minPool": 2,
-    "provider": "Microsoft",
-    "categories": [
-      "machine-learning",
-      "classical-ml",
-      "gradient-boosting"
-    ],
-    "releaseDate": "2017-12-01"
   },
   {
     "id": "cascade-rcnn",

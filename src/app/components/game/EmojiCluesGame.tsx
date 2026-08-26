@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSPropertie
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import {
   apiClient,
+  isApiUnavailable,
   type EmojiCluesDifficulty,
   type EmojiCluesGamePayload,
   type VisualClue,
@@ -16,6 +17,7 @@ import { GameLoadingState } from "../ui/GameLoadingState";
 import { Toast } from "../ui/Toast";
 import { EmojiClueIcon } from "./emoji-clue-icons";
 import { EmojiHTP } from "./EmojiHTP";
+import { DifficultySwitch } from "./DifficultySwitch";
 
 const EmojiCluesCompletedDialog = lazy(() =>
   import("./EmojiCluesCompletedDialog").then(({ EmojiCluesCompletedDialog }) => ({
@@ -55,7 +57,6 @@ export function EmojiCluesGame() {
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [winAnimation, setWinAnimation] = useState(false);
   const [error, setError] = useState<unknown>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [hardcore, setHardcore] = useState<{
@@ -86,7 +87,6 @@ export function EmojiCluesGame() {
     if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
     completionTimer.current = null;
     setShowCompletion(false);
-    setWinAnimation(false);
 
     if (difficulty === "hardcore" && !hardcore?.unlocked) {
       setGame(null);
@@ -124,14 +124,10 @@ export function EmojiCluesGame() {
       })
       .catch((nextError: unknown) => {
         if (active && !(nextError instanceof DOMException && nextError.name === "AbortError")) {
-          if (loadFailureCount.current === 0) {
+          if (isApiUnavailable(nextError) && loadFailureCount.current === 0) {
             loadFailureCount.current += 1;
             retrying = true;
-            setToast(
-              nextError instanceof Error
-                ? nextError.message
-                : "We could not load Emoji Clues. Retrying now.",
-            );
+            setToast("The game is temporarily unavailable. Retrying now.");
             setLoadAttempt((attempt) => attempt + 1);
             return;
           }
@@ -234,7 +230,6 @@ export function EmojiCluesGame() {
       guessFailureCount.current = 0;
       setQuery("");
       if (response.isCorrect) {
-        setWinAnimation(true);
         const animationDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches
           ? 0
           : 3_200;
@@ -273,25 +268,19 @@ export function EmojiCluesGame() {
         eyebrow={<GameEyebrow date={date} game="Emoji Clues" variant={selectedPool.label} />}
         title="Guess today’s hidden AI idea"
         titleId="emoji-clues-title"
+        difficulty={
+          <DifficultySwitch
+            ariaLabel="Emoji Clues difficulty"
+            disabled={busy || isLoadingGame}
+            onChange={(value) => setDifficulty(value as EmojiCluesDifficulty)}
+            options={emojiCluePools
+              .filter((pool) => pool.difficulty !== "hardcore" || hardcore?.unlocked)
+              .map((pool) => ({ value: pool.difficulty, label: pool.label }))}
+            selected={difficulty}
+            testId="emoji-difficulty"
+          />
+        }
       />
-      <nav
-        className="emoji-clues__modes"
-        aria-label="Emoji Clues difficulty"
-        data-testid="emoji-difficulty"
-      >
-        {emojiCluePools
-          .filter((pool) => pool.difficulty !== "hardcore" || hardcore?.unlocked)
-          .map((pool) => (
-            <button
-              className={pool.difficulty === difficulty ? "is-selected" : undefined}
-              key={pool.pool}
-              type="button"
-              onClick={() => setDifficulty(pool.difficulty)}
-            >
-              {pool.label}
-            </button>
-          ))}
-      </nav>
       {difficulty === "hardcore" && !hardcore?.unlocked ? (
         <section className="emoji-clues__locked" aria-live="polite">
           <p className="eyebrow">
@@ -324,27 +313,12 @@ export function EmojiCluesGame() {
                   className={[
                     "emoji-clues__clue",
                     revealed ? " emoji-clues__clue--revealed" : " emoji-clues__clue--hidden",
-                    winAnimation ? " emoji-clues__clue--winning" : "",
-                    solved && !winAnimation ? " emoji-clues__clue--solved" : "",
+                    solved ? " emoji-clues__clue--solved" : "",
                   ].join("")}
                   key={`${index}-${clueKey(clue)}`}
                   style={{ "--clue-index": index } as CSSProperties}
                 >
-                  <div
-                    className="emoji-clues__clue-inner"
-                    onAnimationEnd={(event) => {
-                      if (
-                        index === game.challenge.maximumClues - 1 &&
-                        event.animationName === "emoji-clues-winning-turn"
-                      ) {
-                        if (completionTimer.current !== null) {
-                          window.clearTimeout(completionTimer.current);
-                          completionTimer.current = null;
-                        }
-                        setShowCompletion(true);
-                      }
-                    }}
-                  >
+                  <div className="emoji-clues__clue-inner">
                     <span
                       aria-hidden="true"
                       className="emoji-clues__clue-face emoji-clues__clue-cover"

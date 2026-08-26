@@ -17,3 +17,4 @@ tsconfig.tsbuildinfo
 
 /target
 .continue
+.aaidle-seed-tui-cache.json

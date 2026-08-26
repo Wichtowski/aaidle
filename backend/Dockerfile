@@ -7,6 +7,7 @@ COPY backend/src ./backend/src
 COPY backend/migrations ./backend/migrations
 COPY data/classic.seed.json ./data/classic.seed.json
 COPY data/emoji.seed.json ./data/emoji.seed.json
+COPY data/timeline.seed.json ./data/timeline.seed.json
 
 WORKDIR /build/backend
 

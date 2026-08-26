@@ -33,6 +33,22 @@ jobs:
     with:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
+  frontend-verification:
+    needs: create-release-tag
+    uses: ./.github/workflows/frontend-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ needs.create-release-tag.outputs.tag }}
+
+  seed-verification:
+    needs: create-release-tag
+    uses: ./.github/workflows/seed-verification.yml
+    permissions:
+      contents: read
+    with:
+      release_tag: ${{ needs.create-release-tag.outputs.tag }}
+
   rust-unit-tests:
     needs: create-release-tag
     uses: ./.github/workflows/rust-unit-tests.yml
@@ -42,7 +58,14 @@ jobs:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
   docker-build:
-    needs: [create-release-tag, vitest-unit-tests, rust-unit-tests]
+    needs:
+      [
+        create-release-tag,
+        vitest-unit-tests,
+        frontend-verification,
+        seed-verification,
+        rust-unit-tests,
+      ]
     if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'AutoDeploy') }}
     uses: ./.github/workflows/docker-build.yml
     permissions:
@@ -52,7 +75,15 @@ jobs:
       release_tag: ${{ needs.create-release-tag.outputs.tag }}
 
   publish-release:
-    needs: [create-release-tag, vitest-unit-tests, rust-unit-tests, docker-build]
+    needs:
+      [
+        create-release-tag,
+        vitest-unit-tests,
+        frontend-verification,
+        seed-verification,
+        rust-unit-tests,
+        docker-build,
+      ]
     uses: ./.github/workflows/publish-release.yml
     permissions:
       contents: write

@@ -325,8 +325,11 @@ pub struct TimelinePublicModel {
     pub id: String,
     pub name: String,
     pub item_kind: String,
+    pub categories: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub release_date: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub year_annotation: Option<String>,
 }
 
 #[derive(Clone, Serialize)]
@@ -335,7 +338,10 @@ pub struct TimelineAnchorModel {
     pub id: String,
     pub name: String,
     pub item_kind: String,
+    pub categories: Vec<String>,
     pub release_date: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub year_annotation: Option<String>,
 }
 
 #[derive(Serialize)]

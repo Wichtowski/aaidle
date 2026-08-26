@@ -90,7 +90,9 @@ pub(super) async fn game(
                     id: model.id.clone(),
                     name: model.name.clone(),
                     item_kind: model.item_kind.clone(),
+                    categories: model.categories.clone(),
                     release_date: model.release_date.clone(),
+                    year_annotation: model.year_annotation.clone(),
                 }),
         })
         .collect();
@@ -107,7 +109,9 @@ pub(super) async fn game(
                     id: model.id.clone(),
                     name: model.name.clone(),
                     item_kind: model.item_kind.clone(),
+                    categories: model.categories.clone(),
                     release_date: game.solved.then(|| model.release_date.clone()),
+                    year_annotation: game.solved.then(|| model.year_annotation.clone()).flatten(),
                 })
                 .ok_or_else(|| AppError::Unavailable("Stored Timeline tray is invalid.".to_owned()))
         })

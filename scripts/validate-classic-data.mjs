@@ -114,12 +114,10 @@ function isKebabCase(value) {
 }
 
 function isIsoDate(value) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return false;
-  }
-
+  if (typeof value !== "string") return false;
+  if (/^\d{4}$/.test(value)) return value !== "0000";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00.000Z`);
-
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
@@ -387,7 +385,7 @@ for (const model of data) {
 
   assert(
     model.releaseDate === null || isIsoDate(model.releaseDate),
-    `releaseDate must be YYYY-MM-DD or null: ${model.id}`,
+    `releaseDate must be YYYY, YYYY-MM-DD, or null: ${model.id}`,
   );
 
   // Optional semantic fields

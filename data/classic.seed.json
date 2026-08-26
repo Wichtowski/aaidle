@@ -8453,7 +8453,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
+    "provider": "Leo Breiman",
     "family": [
       "Tree Ensembles",
       "Random",
@@ -8479,12 +8479,18 @@
       "feature-importance"
     ],
     "weightAvailability": "closed",
-    "country": "China / United States",
-    "releaseDate": "1995-08-14",
+    "country": "United States",
+    "releaseDate": "2001-10-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "random-forest"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8492,15 +8498,10 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "The seminal Random Forests paper was published in the October 2001 issue of Machine Learning."
   },
   {
     "id": "decision-tree",
@@ -8534,11 +8535,17 @@
     ],
     "weightAvailability": "closed",
     "country": "Australia",
-    "releaseDate": "1986-01-01",
+    "releaseDate": "1986",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "decision-tree"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8546,15 +8553,10 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Quinlan's paper introducing ID3, \"Induction of Decision Trees,\" was published in 1986; this supports 1986 for ID3 specifically, not for decision trees as a whole."
   },
   {
     "id": "svm",
@@ -8590,11 +8592,17 @@
     ],
     "weightAvailability": "closed",
     "country": "United States / Russia",
-    "releaseDate": "1995-09-01",
+    "releaseDate": "1995",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "svm"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8603,15 +8611,10 @@
           "classification",
           "regression",
           "anomaly-detection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Cortes and Vapnik introduced support-vector networks in a paper published in the journal Machine Learning, volume 20, in 1995."
   },
   {
     "id": "knn",
@@ -8648,11 +8651,17 @@
     ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "1951-01-01",
+    "releaseDate": "1951",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "knn"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8661,15 +8670,10 @@
           "classification",
           "regression",
           "nearest-neighbor-search"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Fix and Hodges' report, “Discriminatory Analysis: Nonparametric Discrimination,” was issued in 1951 and is generally credited as the origin of the k-nearest-neighbors method."
   },
   {
     "id": "naive-bayes",
@@ -8702,26 +8706,27 @@
     ],
     "weightAvailability": "closed",
     "country": "United Kingdom",
-    "releaseDate": "1763-01-01",
+    "releaseDate": "1763",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "naive-bayes"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "classification"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Bayes's essay was published in 1763, while the Naive Bayes classification method was formalized and adopted much later; no canonical release year is established."
   },
   {
     "id": "xgboost",
@@ -8762,6 +8767,12 @@
         "algorithmTypes": [
           "xgboost"
         ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "xgboost"
+        ],
         "learningParadigms": [
           "supervised"
         ],
@@ -8769,15 +8780,10 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "xgboost"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Public XGBoost release records date version 0.4 to March 9, 2016."
   },
   {
     "id": "adaboost",
@@ -8810,11 +8816,17 @@
     ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "1996-01-01",
+    "releaseDate": "1996",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "adaboost"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8822,15 +8834,10 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "AdaBoost was presented in the 1996 ICML paper “Experiments with a New Boosting Algorithm,” supporting 1996 as its release year."
   },
   {
     "id": "gradient-boosting",
@@ -8864,11 +8871,17 @@
     ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2001-01-01",
+    "releaseDate": "2001",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "gradient-boosting"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -8877,15 +8890,10 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Jerome Friedman's foundational paper on gradient boosting, “Greedy Function Approximation: A Gradient Boosting Machine,” was published in 2001."
   },
   {
     "id": "cnn",
@@ -8924,7 +8932,7 @@
     ],
     "weightAvailability": "closed",
     "country": "Japan / France",
-    "releaseDate": "1980-01-01",
+    "releaseDate": "1989-12-01",
     "categoryDetails": {
       "computer-vision": {
         "visionTasks": [
@@ -10660,10 +10668,16 @@
     ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2017-12-01",
+    "releaseDate": "2017",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
+          "lightgbm"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
           "lightgbm"
         ],
         "learningParadigms": [
@@ -10673,15 +10687,10 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "lightgbm"
         ]
       }
-    }
+    },
+    "yearAnnotation": "LightGBM was introduced by Microsoft in paper “LightGBM: A Highly Efficient Gradient Boosting Decision Tree” and published in the NeurIPS 2017 proceedings. Github release records support the April 24, 2017 in https://github.com/lightgbm-org/LightGBM/releases?page=4"
   },
   {
     "id": "catboost",
@@ -10723,6 +10732,12 @@
         "algorithmTypes": [
           "catboost"
         ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "catboost"
+        ],
         "learningParadigms": [
           "supervised"
         ],
@@ -10730,15 +10745,10 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "catboost"
         ]
       }
-    }
+    },
+    "yearAnnotation": "CatBoost was introduced by Yandex and publicly documented in 2017, including its 2017 research publication. Wikipedia states release as July 18, 2017, but Github's first release is recorded on Sep 14, 2017; this date is documented in https://github.com/catboost/catboost/releases?page=10"
   },
   {
     "id": "gaussian-process",
@@ -10773,11 +10783,17 @@
     ],
     "weightAvailability": "closed",
     "country": "South Africa",
-    "releaseDate": "1951-01-01",
+    "releaseDate": "1951",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "gaussian-process"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -10786,15 +10802,10 @@
           "regression",
           "classification",
           "uncertainty-estimation"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Danie Krige's 1951 work is commonly credited with introducing kriging, which is closely related to Gaussian-process spatial prediction; the exact day is not historically established."
   },
   {
     "id": "ridge-regression",
@@ -10828,26 +10839,27 @@
     ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "1970-01-01",
+    "releaseDate": "1970",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "ridge-regression"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "regression"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Hoerl and Kennard introduced ridge regression in their paper published in Technometrics in 1970."
   },
   {
     "id": "lasso",
@@ -10880,11 +10892,17 @@
     ],
     "weightAvailability": "closed",
     "country": "Canada / United States",
-    "releaseDate": "1996-01-01",
+    "releaseDate": "1996",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "lasso"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -10892,15 +10910,10 @@
         "objectives": [
           "regression",
           "feature-selection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Robert Tibshirani's paper introducing the Lasso, \"Regression Shrinkage and Selection via the Lasso,\" was published in 1996."
   },
   {
     "id": "elastic-net",
@@ -10934,11 +10947,17 @@
     ],
     "weightAvailability": "closed",
     "country": "China / United States",
-    "releaseDate": "2005-01-01",
+    "releaseDate": "2005",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "elastic-net"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -10946,15 +10965,10 @@
         "objectives": [
           "regression",
           "feature-selection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "The foundational paper introducing Elastic Net, “Regularization and Variable Selection via the Elastic Net,” was published in 2005."
   },
   {
     "id": "hopfield-network",
@@ -12593,26 +12607,27 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1805-01-01",
+    "releaseDate": "1805",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "regression"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "numeric-prediction"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "numeric-prediction"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Legendre's 1805 publication on least squares is a documented historical foundation for linear regression; only the year is reliably established here."
   },
   {
     "id": "logistic-regression",
@@ -12641,27 +12656,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "1958-01-01",
+    "releaseDate": "1958",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "regression",
           "classification"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "binary-classification"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
         ]
       }
-    }
+    },
+    "yearAnnotation": "David R. Cox published “The Regression Analysis of Binary Sequences” in the Journal of the Royal Statistical Society, Series B, in 1958, a foundational formulation of logistic regression."
   },
   {
     "id": "k-means",
@@ -12692,26 +12708,27 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1957-01-01",
+    "releaseDate": "1957",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Lloyd's least-squares quantization work underlying K-means dates to 1957; the work was circulated as a Bell Labs technical report and formally published later."
   },
   {
     "id": "dbscan",
@@ -12742,12 +12759,18 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Germany",
-    "releaseDate": "1996-08-01",
+    "releaseDate": "1996",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "density-based"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -12755,15 +12778,10 @@
         "objectives": [
           "cluster-assignment",
           "anomaly-detection"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "The DBSCAN method was first published in the 1996 proceedings of the ACM SIGKDD conference."
   },
   {
     "id": "principal-component-analysis",
@@ -12793,26 +12811,27 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "1901-01-01",
+    "releaseDate": "1901",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Karl Pearson introduced the principal-components method in his 1901 paper, \"On Lines and Planes of Closest Fit to Systems of Points in Space.\""
   },
   {
     "id": "gaussian-mixture-model",
@@ -12852,18 +12871,18 @@
           "density-estimation",
           "clustering"
         ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ],
         "learningParadigms": [
           "unsupervised"
         ],
         "objectives": [
           "probabilities",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
     }
@@ -12896,26 +12915,27 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1958-07-01",
+    "releaseDate": "1957",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "binary-classification"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Historical accounts generally date the perceptron's introduction to 1957; in 1958 Rosenblatt published further details together with the implementation of an AI machine."
   },
   {
     "id": "multi-layer-perceptron",
@@ -12947,27 +12967,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1986-10-01",
+    "releaseDate": "1958",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification",
           "regression"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "predictions"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "predictions"
         ]
       }
-    }
+    },
+    "yearAnnotation": "The multi-layer perceptron was proposed by Rosenblatt in the early multilayered perceptron architecture. Then in 1962 Rosenblatt described additional multilayer perceptron variants, including systems with more than one trainable layer, but without the modern general backpropagation algorithm. The hidden/association weights were not generally trained. Rumelhart, Hinton, and Williams published the backpropagation algorithm in 1986, which enabled training of multi-layer perceptrons. The 1958 date is included here to reflect the early conceptualization of the architecture."
   },
   {
     "id": "linear-discriminant-analysis",
@@ -13000,12 +13021,18 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "1936-01-01",
+    "releaseDate": "1936",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification",
           "dimensionality-reduction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -13013,15 +13040,10 @@
         "objectives": [
           "class-labels",
           "feature-projection"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Fisher introduced the method in his 1936 paper, “The Use of Multiple Measurements in Taxonomic Problems,” supporting the year 1936."
   },
   {
     "id": "isolation-forest",
@@ -13052,26 +13074,27 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "2008-12-01",
+    "releaseDate": "2008-12-15",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "anomaly-score"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Fei Tony Liu, Kai Ming Ting and Zhi-Hua Zhou introduced Isolation Forest in their 2008 IEEE International Conference on Data Mining paper \"Isolation Forest\" around 2008-12-15 to 2008-12-19 (conference date; no agenda found)."
   },
   {
     "id": "agglomerative-clustering",
@@ -13103,12 +13126,18 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1963-01-01",
+    "releaseDate": "1963",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "hierarchical"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -13116,15 +13145,10 @@
         "objectives": [
           "dendrogram",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Sokal and Sneath's Principles of Numerical Taxonomy, which helped establish agglomerative numerical classification methods, was published in 1963."
   },
   {
     "id": "spectral-clustering",
@@ -13132,7 +13156,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Andrew Ng",
+    "provider": "Ng, Jordan, and Weiss",
     "family": [
       "Spectral clustering",
       "Spectral",
@@ -13155,27 +13179,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "2001-01-01",
+    "releaseDate": "2001",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "spectral"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
-        ],
         "featureTypes": [
           "similarity-matrix"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Ng, Jordan, and Weiss published their influential spectral clustering paper in 2001; the specific day and month are not reliably established."
   },
   {
     "id": "mean-shift",
@@ -13206,27 +13231,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Japan",
-    "releaseDate": "1975-01-01",
+    "releaseDate": "1975",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "density-estimation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Fukunaga and Hostetler introduced the mean-shift procedure in a 1975 paper on density-gradient estimation and pattern recognition."
   },
   {
     "id": "affinity-propagation",
@@ -13265,21 +13291,22 @@
           "clustering",
           "message-passing"
         ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ],
         "learningParadigms": [
           "unsupervised"
         ],
         "objectives": [
           "exemplars",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "similarity-matrix"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "The method's seminal Science publication appeared in 2007, with online-first publication preceding the February 16 print issue."
   },
   {
     "id": "optics",
@@ -13317,21 +13344,22 @@
           "clustering",
           "density-based"
         ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ],
         "learningParadigms": [
           "unsupervised"
         ],
         "objectives": [
           "ordering",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Ankerst, Breunig, Kriegel, and Sander introduced OPTICS in their ACM SIGMOD paper published on June 1, 1999."
   },
   {
     "id": "kernel-pca",
@@ -13339,7 +13367,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Bernhard Schölkopf",
+    "provider": "Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller",
     "family": [
       "Kernel methods",
       "Kernel",
@@ -13362,27 +13390,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Germany",
-    "releaseDate": "1997-07-01",
+    "releaseDate": "1997-09-29",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "kernel-method"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Schölkopf, Smola, and Müller introduced Kernel PCA in their ICANN 1997 paper \"Kernel Principal Component Analysis,\" published in the conference proceedings on September 29, 1997."
   },
   {
     "id": "independent-component-analysis",
@@ -13390,7 +13419,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Aapo Hyvärinen",
+    "provider": "Pierre Comon, Aapo Hyvärinen, and Erkki Oja",
     "family": [
       "Blind source separation",
       "Independent",
@@ -13414,27 +13443,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Finland",
-    "releaseDate": "1994-01-01",
+    "releaseDate": "1994",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "source-separation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "independent-components"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "independent-components"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Pierre Comon's foundational paper \"Independent Component Analysis, A New Concept?\" was published in April 1994."
   },
   {
     "id": "non-negative-matrix-factorization",
@@ -13442,7 +13472,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Daniel Lee",
+    "provider": "Daniel Lee, Sebastian Seung",
     "family": [
       "Matrix factorization",
       "Non",
@@ -13467,27 +13497,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1999-10-01",
+    "releaseDate": "1999-10-21",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "matrix-factorization",
           "dimensionality-reduction"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "components"
-        ],
         "featureTypes": [
           "non-negative"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "components"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Lee and Seung's foundational paper \"Learning the Parts of Objects by Non-Negative Matrix Factorization\" was published in Nature on October 21, 1999."
   },
   {
     "id": "truncated-svd",
@@ -13495,7 +13526,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Gene Golub",
+    "provider": "Eckart and Young",
     "family": [
       "Matrix factorization",
       "Truncated",
@@ -13518,27 +13549,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1970-01-01",
+    "releaseDate": "1936",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "matrix-factorization",
           "dimensionality-reduction"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
-        ],
         "featureTypes": [
           "sparse"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Eckart and Young established the low-rank matrix approximation result underlying truncated SVD in their September 1936 paper \"The Approximation of One Matrix by Another of Lower Rank.\" Golub and Reinsch's 1970 paper \"Singular Value Decomposition and Least Squares Solutions\" provided a practical algorithm for computing the SVD, which is widely used in truncated SVD implementations."
   },
   {
     "id": "t-sne",
@@ -13569,27 +13601,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Netherlands",
-    "releaseDate": "2008-12-01",
+    "releaseDate": "2008",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "visualisation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "embedding"
-        ],
         "featureTypes": [
           "high-dimensional"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "embedding"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Van der Maaten and Hinton introduced t-SNE in their paper \"Visualizing Data using t-SNE,\" published in November 2008."
   },
   {
     "id": "quadratic-discriminant-analysis",
@@ -13597,7 +13630,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Ronald Fisher",
+    "provider": "Cedric A. B. Smith",
     "family": [
       "Discriminant analysis",
       "Quadratic",
@@ -13622,11 +13655,17 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "1936-01-01",
+    "releaseDate": "1947",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -13634,15 +13673,10 @@
         "objectives": [
           "class-labels",
           "probabilities"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Cedric A. B. Smith developed the pioneering quadratic discriminant function in work commonly cited to 1947, extending discriminant analysis to cases with unequal covariance matrices."
   },
   {
     "id": "local-outlier-factor",
@@ -13650,7 +13684,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Markus Breunig",
+    "provider": "Markus Breunig, Hans-Peter Kriegel, Raymond Ng, and Jörg Sander",
     "family": [
       "Anomaly detection",
       "Local",
@@ -13674,27 +13708,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Germany",
-    "releaseDate": "2000-06-01",
+    "releaseDate": "2000-05-16",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection",
           "density-based"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "anomaly-score"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Breunig, Kriegel, Ng, and Sander introduced Local Outlier Factor in their SIGMOD 2000 paper \"LOF: Identifying Density-Based Local Outliers,\" published on May 16, 2000."
   },
   {
     "id": "one-class-svm",
@@ -13702,7 +13737,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Bernhard Schölkopf",
+    "provider": "Bernhard Schölkopf, John Platt, John Shawe-Taylor, Alex Smola, and Robert Williamson",
     "family": [
       "Kernel methods",
       "One",
@@ -13726,27 +13761,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Germany",
-    "releaseDate": "2001-01-01",
+    "releaseDate": "1999",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection",
           "kernel-method"
         ],
-        "learningParadigms": [
-          "semi-supervised"
-        ],
-        "objectives": [
-          "inlier-prediction"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "semi-supervised"
+        ],
+        "objectives": [
+          "inlier-prediction"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Schölkopf, Williamson, Smola, Shawe-Taylor, and Platt introduced the One-Class SVM approach in their NIPS 1999 paper \"Support Vector Method for Novelty Detection.\""
   },
   {
     "id": "hidden-markov-model",
@@ -13754,7 +13790,7 @@
     "modelClass": "classical_ml",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Leonard Baum",
+    "provider": "Leonard Baum, Ted Petrie",
     "family": [
       "Probabilistic sequence model",
       "Hidden",
@@ -13779,12 +13815,18 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1966-01-01",
+    "releaseDate": "1966",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "sequence-modelling",
           "probabilistic-modelling"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -13792,15 +13834,10 @@
         "objectives": [
           "state-sequence",
           "probabilities"
-        ],
-        "featureTypes": [
-          "sequential"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Baum and Petrie published foundational work on hidden Markov models in \"Statistical Inference for Probabilistic Functions of Finite State Markov Chains\" in December 1966."
   },
   {
     "id": "conditional-random-field",
@@ -13832,27 +13869,28 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "2001-06-01",
+    "releaseDate": "2001",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "sequence-labelling",
           "probabilistic-modelling"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "label-sequence"
-        ],
         "featureTypes": [
           "sequential"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "label-sequence"
         ]
       }
-    }
+    },
+    "yearAnnotation": "Lafferty, McCallum, and Pereira introduced Conditional Random Fields in their ICML 2001 paper \"Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data.\""
   },
   {
     "id": "sobel-operator",

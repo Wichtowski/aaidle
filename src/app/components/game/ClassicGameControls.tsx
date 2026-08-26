@@ -2,6 +2,7 @@ import { GuessAutocomplete } from "./GuessAutocomplete";
 import { ClassicCategoryNav } from "./ClassicCategoryNav";
 import { GameEyebrow } from "./GameEyebrow";
 import { GameIntro } from "./GameLayout";
+import { DifficultySwitch } from "./DifficultySwitch";
 import { utcDate } from "@lib/utils/dates";
 import {
   classicCategoryDetails,
@@ -75,27 +76,15 @@ export function ClassicGameControls({
       }
       difficulty={
         category !== "hardcore" && (
-          <div aria-busy={loading} className="game-intro__difficulty">
-            <span>Difficulty</span>
-            <div
-              className="difficulty-switch"
-              aria-label="Classic difficulty"
-              data-testid="classic-difficulty"
-              role="group"
-            >
-              {choices.map((option) => (
-                <button
-                  aria-pressed={option === difficulty}
-                  disabled={loading && option !== difficulty}
-                  key={option}
-                  onClick={() => onDifficultyChange(option)}
-                  type="button"
-                >
-                  {difficultyLabels[option]}
-                </button>
-              ))}
-            </div>
-          </div>
+          <DifficultySwitch
+            ariaLabel="Classic difficulty"
+            disabled={(option) => loading && option.value !== difficulty}
+            loading={loading}
+            onChange={(value) => onDifficultyChange(value as ClassicDifficulty)}
+            options={choices.map((option) => ({ value: option, label: difficultyLabels[option] }))}
+            selected={difficulty}
+            testId="classic-difficulty"
+          />
         )
       }
       expiresAt={expiresAt}

@@ -26,8 +26,8 @@ async fn main() -> AppResult<()> {
     let config = Arc::new(AppConfig::from_env()?);
     let pool = db::connect(&config).await?;
     if std::env::args().nth(1).as_deref() == Some("migrate") {
-        db::migrate(&pool).await?;
-        info!("database migrations completed");
+        let version = db::migrate(&pool).await?;
+        info!("database migrations completed to version {version}");
         return Ok(());
     }
     db::migrate(&pool).await?;

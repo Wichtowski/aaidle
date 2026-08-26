@@ -83,6 +83,7 @@ pub struct TimelineCandidate {
     pub item_kind: String,
     pub provider_id: String,
     pub release_date: String,
+    pub year_annotation: Option<String>,
     pub min_pool_rank: u8,
     pub categories: Vec<String>,
 }
@@ -94,6 +95,10 @@ pub struct TimelineModelSnapshot {
     pub name: String,
     pub item_kind: String,
     pub release_date: String,
+    #[serde(default)]
+    pub year_annotation: Option<String>,
+    #[serde(default)]
+    pub categories: Vec<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -113,21 +118,24 @@ pub fn select_timeline_puzzle(
     let mut eligible = candidates
         .iter()
         .filter(|candidate| is_candidate_eligible(candidate, difficulty))
-        .filter(|candidate| Date::parse(&candidate.release_date, DATE_FORMAT).is_ok())
+        .filter(|candidate| is_release_date(&candidate.release_date))
         .cloned()
         .collect::<Vec<_>>();
     eligible.sort_by(|left, right| left.id.cmp(&right.id));
     eligible.dedup_by(|left, right| left.id == right.id);
 
     let mut selected = Vec::with_capacity(config.total_model_count);
-    let mut selected_dates = BTreeSet::new();
+    let mut selected_years = BTreeSet::new();
     let mut provider_counts = BTreeMap::<String, u64>::new();
     let mut category_counts = BTreeMap::<String, u64>::new();
 
     for step in 0..config.total_model_count {
         let mut ranked = eligible
             .iter()
-            .filter(|candidate| !selected_dates.contains(&candidate.release_date))
+            .filter(|candidate| {
+                release_year(&candidate.release_date)
+                    .is_some_and(|year| !selected_years.contains(year))
+            })
             .filter(|candidate| {
                 !selected
                     .iter()
@@ -162,14 +170,16 @@ pub fn select_timeline_puzzle(
             .map(|(_, _, candidate)| *candidate)
             .ok_or_else(|| {
                 AppError::Unavailable(format!(
-                    "Timeline {} needs {} eligible models with distinct release dates.",
+                    "Timeline {} needs {} eligible models with distinct release years.",
                     difficulty.as_str(),
                     config.total_model_count
                 ))
             })?;
 
         selected.push(candidate);
-        selected_dates.insert(candidate.release_date.clone());
+        selected_years.insert(
+            release_year(&candidate.release_date).expect("eligible candidate has a release year"),
+        );
         *provider_counts
             .entry(candidate.provider_id.clone())
             .or_default() += 1;
@@ -215,11 +225,26 @@ pub fn select_timeline_puzzle(
                 name: model.name.clone(),
                 item_kind: model.item_kind.clone(),
                 release_date: model.release_date.clone(),
+                year_annotation: model.year_annotation.clone(),
+                categories: model.categories.clone(),
             })
             .collect(),
         anchor_positions,
         tray_order: tray_order.into_iter().map(|(_, id)| id).collect(),
     })
+}
+
+fn is_release_date(value: &str) -> bool {
+    if value.len() == 4 {
+        return value.as_bytes().iter().all(u8::is_ascii_digit) && value != "0000";
+    }
+    Date::parse(value, DATE_FORMAT).is_ok()
+}
+
+fn release_year(value: &str) -> Option<&str> {
+    value
+        .get(..4)
+        .filter(|year| year.as_bytes().iter().all(u8::is_ascii_digit))
 }
 
 fn is_candidate_eligible(candidate: &TimelineCandidate, difficulty: TimelineDifficulty) -> bool {
@@ -291,7 +316,8 @@ mod tests {
                 name: format!("Model {index}"),
                 item_kind: "model".to_owned(),
                 provider_id: format!("provider-{}", index % 6),
-                release_date: format!("2025-{:02}-{:02}", index / 28 + 1, index % 28 + 1),
+                release_date: format!("{}-01-01", 1900 + index),
+                year_annotation: None,
                 min_pool_rank: 0,
                 categories: vec![
                     match index % 3 {
@@ -323,7 +349,7 @@ mod tests {
     }
 
     #[test]
-    fn selection_is_deterministic_balanced_and_uses_distinct_dates() {
+    fn selection_is_deterministic_balanced_and_uses_distinct_years() {
         let candidates = candidates(30);
         let first = select_timeline_puzzle(
             "2026-08-25",
@@ -354,7 +380,7 @@ mod tests {
             first
                 .model_order
                 .iter()
-                .map(|model| model.release_date.as_str())
+                .map(|model| model.release_date.get(..4).expect("release year"))
                 .collect::<BTreeSet<_>>()
                 .len(),
             first.model_order.len()

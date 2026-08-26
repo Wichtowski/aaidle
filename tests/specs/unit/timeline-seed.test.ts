@@ -60,10 +60,11 @@ describe("Timeline seed synchronization", () => {
       ]),
     );
 
-    expect(syncTimelineSeed({ classicPath, timelinePath })).toBe(2);
+    expect(syncTimelineSeed({ classicPath, timelinePath })).toBe(3);
     const firstOutput = readFileSync(timelinePath, "utf8");
     expect(JSON.parse(firstOutput)).toEqual([
       expect.objectContaining({ id: "custom-event", sourceUrl: "https://example.com/source" }),
+      expect.objectContaining({ id: "year-only-model", kind: "model", releaseDate: "2024" }),
       expect.objectContaining({ id: "dated-model", kind: "model", minPool: 1 }),
     ]);
 

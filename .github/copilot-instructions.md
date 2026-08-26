@@ -1,11 +1,27 @@
-# Aidle repository context
+# Copilot instructions for aAIdle
 
-Use the root [README](../README.md) for the project overview and quick-start instructions.
-Read the following documentation when the task touches the corresponding area:
+Start with the repository-level [AGENTS.md](../AGENTS.md). It is the concise working agreement for changes in this repository.
 
-- [Architecture](../docs/architecture.md): system boundaries, answer secrecy, state ownership, and game invariants.
-- [Backend operations](../docs/backend/operations.md): Rust service setup, configuration, SQLite behavior, Docker, backups, and validation commands.
-- [API v1 contract](../docs/backend/api-v1.md): public route behavior, authentication, progress synchronization, and admin constraints.
-- [Legacy migration matrix](../docs/migrations/legacy-migration-matrix.md): migration decisions, intentionally dropped aliases, and deferred features.
+Use the durable technical references when a task crosses a boundary:
 
-Preserve answer secrecy: do not expose `daily_challenges.answer_model_id` through public API responses, client state, or logs. Keep server-authoritative game completions and access controls backed by accepted server-side events.
+- [Architecture](../docs/architecture.md) for ownership, data flow, invariants, and the repository map.
+- [Backend operations](../docs/backend/operations.md) for Rust, SQLite, configuration, Docker, backups, and deployment.
+- [API v1 contract](../docs/backend/api-v1.md) for routes, JSON shapes, authentication, rate limits, and compatibility.
+
+Implementation rules:
+
+- Keep the answer server-side. Never expose `daily_challenges.answer_model_id` in responses, browser state, logs, or diagnostics.
+- Keep completions and access decisions server-authoritative. Client localStorage is a cache for UI progress, not proof of completion.
+- Preserve retry idempotency, sequential attempts, exact pool-based attempt limits, CSRF/origin checks, and role-based admin authorization.
+- Keep frontend code in `src/` independent of Rust and SQLite. Keep API behavior in `/api/v1` and update its contract when it changes.
+- Use additive SQLx migrations for schema changes and update tests for changed DTOs or domain rules.
+- Do not reintroduce the removed migration-matrix documentation or generic legacy routes without an explicit, documented requirement.
+
+Verification:
+
+```bash
+pnpm check
+cd backend && cargo fmt --check && cargo clippy --all-targets --all-features -- -D warnings && cargo test
+```
+
+Prefer the smallest relevant check during iteration, then run the full applicable checks before handing off.

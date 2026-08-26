@@ -1,4 +1,4 @@
-name: Vitest Unit Tests
+name: Seed Verification
 
 on:
   workflow_call:
@@ -8,11 +8,15 @@ on:
         type: string
 
 jobs:
-  test:
-    name: Vitest unit tests
+  verify:
+    name: ${{ matrix.game }} seed verification
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        game: [classic, emoji, timeline]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -26,5 +30,12 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Run TypeScript unit tests
-        uses: ./.github/actions/unit-test/typescript
+      - name: Validate ${{ matrix.game }} seed
+        run: pnpm run validate-${{ matrix.game }}-data
+      - name: Merge and verify synchronized Classic/Timeline seeds
+        if: matrix.game == 'classic' || matrix.game == 'timeline'
+        run: |
+          set -euo pipefail
+          pnpm merge-many-to-one
+          pnpm exec node scripts/validate-classic-data.mjs
+          git diff --exit-code -- data/classic.seed.json data/timeline.seed.json

@@ -27,7 +27,7 @@ pub async fn connect(config: &AppConfig) -> AppResult<SqlitePool> {
         .await?)
 }
 
-pub async fn migrate(pool: &SqlitePool) -> AppResult<()> {
+pub async fn migrate(pool: &SqlitePool) -> AppResult<i64> {
     let mut connection = pool.acquire().await?;
     sqlx::query("PRAGMA foreign_keys = OFF")
         .execute(&mut *connection)
@@ -43,5 +43,9 @@ pub async fn migrate(pool: &SqlitePool) -> AppResult<()> {
     })?;
     foreign_key_result?;
 
-    Ok(())
+    Ok(sqlx::migrate!("./migrations")
+        .migrations
+        .last()
+        .map(|migration| migration.version)
+        .unwrap_or(0))
 }

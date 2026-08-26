@@ -18,6 +18,7 @@ struct TimelineCandidateRow {
     item_kind: String,
     provider_id: String,
     release_date: String,
+    year_annotation: Option<String>,
     min_pool_rank: i64,
     categories: String,
 }
@@ -355,7 +356,7 @@ fn replay_attempt(
 async fn timeline_candidates(pool: &SqlitePool) -> AppResult<Vec<TimelineCandidate>> {
     let rows = sqlx::query_as::<_, TimelineCandidateRow>(
         "SELECT item.id, item.name, item.item_kind, item.provider_key AS provider_id, \
-         item.release_date, item.min_pool_rank, item.categories_json AS categories \
+         item.release_date, item.year_annotation, item.min_pool_rank, item.categories_json AS categories \
          FROM timeline_items item LEFT JOIN models m ON m.id = item.model_id \
          LEFT JOIN providers p ON p.id = m.provider_id \
          WHERE item.is_active = 1 AND (item.item_kind = 'event' OR \
@@ -372,6 +373,7 @@ async fn timeline_candidates(pool: &SqlitePool) -> AppResult<Vec<TimelineCandida
                 item_kind: row.item_kind,
                 provider_id: row.provider_id,
                 release_date: row.release_date,
+                year_annotation: row.year_annotation,
                 min_pool_rank: u8::try_from(row.min_pool_rank).map_err(|_| {
                     AppError::Unavailable("Stored Timeline pool rank is invalid.".to_owned())
                 })?,

@@ -1,16 +1,5 @@
 [
   {
-    "id": "random-forest",
-    "name": "Random Forest",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Tim Kam Ho, Leo Breiman, Adele Cutler",
-    "family": [
-      "Tree Ensembles",
-      "Random",
-      "Forest"
-    ],
     "aliases": [
       "Random Forests",
       "RF"
@@ -19,24 +8,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "feature-importance"
-    ],
-    "weightAvailability": "closed",
-    "country": "China / United States",
-    "releaseDate": "1995-08-14",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "random-forest"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -44,28 +25,37 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Tree Ensembles",
+      "Random",
+      "Forest"
+    ],
+    "id": "random-forest",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Random Forest",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Leo Breiman",
+    "releaseDate": "2001-10-01",
+    "useCases": [
+      "classification",
+      "regression",
+      "feature-importance"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "The seminal Random Forests paper was published in the October 2001 issue of Machine Learning."
   },
   {
-    "id": "decision-tree",
-    "name": "Decision Tree",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Ross Quinlan",
-    "family": [
-      "Decision Trees",
-      "Decision",
-      "Tree"
-    ],
     "aliases": [
       "Decision Trees",
       "CART"
@@ -74,23 +64,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression"
-    ],
-    "weightAvailability": "closed",
-    "country": "Australia",
-    "releaseDate": "1986-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "decision-tree"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -98,29 +81,36 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "Australia",
+    "entityType": "algorithm",
+    "family": [
+      "Decision Trees",
+      "Decision",
+      "Tree"
+    ],
+    "id": "decision-tree",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Decision Tree",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Ross Quinlan",
+    "releaseDate": "1986",
+    "useCases": [
+      "classification",
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Quinlan's paper introducing ID3, \"Induction of Decision Trees,\" was published in 1986; this supports 1986 for ID3 specifically, not for decision trees as a whole."
   },
   {
-    "id": "svm",
-    "name": "Support Vector Machine",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Corinna Cortes, Vladimir Vapnik",
-    "family": [
-      "Kernel Methods",
-      "Support",
-      "Vector",
-      "Machine"
-    ],
     "aliases": [
       "SVM",
       "Support Vector Machines"
@@ -129,24 +119,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "anomaly-detection"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States / Russia",
-    "releaseDate": "1995-09-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "svm"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -155,29 +137,38 @@
           "classification",
           "regression",
           "anomaly-detection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United States / Russia",
+    "entityType": "algorithm",
+    "family": [
+      "Kernel Methods",
+      "Support",
+      "Vector",
+      "Machine"
+    ],
+    "id": "svm",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Support Vector Machine",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Corinna Cortes, Vladimir Vapnik",
+    "releaseDate": "1995",
+    "useCases": [
+      "classification",
+      "regression",
+      "anomaly-detection"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Cortes and Vapnik introduced support-vector networks in a paper published in the journal Machine Learning, volume 20, in 1995."
   },
   {
-    "id": "knn",
-    "name": "K-Nearest Neighbors",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Evelyn Fix, Joseph Hodges",
-    "family": [
-      "Nearest Neighbors",
-      "K",
-      "Nearest",
-      "Neighbors"
-    ],
     "aliases": [
       "KNN",
       "k-NN",
@@ -187,24 +178,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "nearest-neighbor-search"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "1951-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "knn"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -213,28 +196,38 @@
           "classification",
           "regression",
           "nearest-neighbor-search"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Nearest Neighbors",
+      "K",
+      "Nearest",
+      "Neighbors"
+    ],
+    "id": "knn",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "K-Nearest Neighbors",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Evelyn Fix, Joseph Hodges",
+    "releaseDate": "1951",
+    "useCases": [
+      "classification",
+      "regression",
+      "nearest-neighbor-search"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Fix and Hodges' report, “Discriminatory Analysis: Nonparametric Discrimination,” was issued in 1951 and is generally credited as the origin of the k-nearest-neighbors method."
   },
   {
-    "id": "naive-bayes",
-    "name": "Naive Bayes",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Thomas Bayes",
-    "family": [
-      "Bayesian Classifiers",
-      "Naive",
-      "Bayes"
-    ],
     "aliases": [
       "Naive Bayes Classifier"
     ],
@@ -242,50 +235,52 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "text-classification"
-    ],
-    "weightAvailability": "closed",
-    "country": "United Kingdom",
-    "releaseDate": "1763-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "naive-bayes"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "classification"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "classification"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Bayesian Classifiers",
+      "Naive",
+      "Bayes"
+    ],
+    "id": "naive-bayes",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Naive Bayes",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Thomas Bayes",
+    "releaseDate": "1763",
+    "useCases": [
+      "classification",
+      "text-classification"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Bayes's essay was published in 1763, while the Naive Bayes classification method was formalized and adopted much later; no canonical release year is established."
   },
   {
-    "id": "xgboost",
-    "name": "XGBoost",
-    "modelClass": "classical_ml",
-    "entityType": "model_family",
-    "minPool": 1,
-    "provider": "XGBoost Project",
-    "family": [
-      "Gradient Boosting",
-      "XGBoost"
-    ],
     "aliases": [
       "Extreme Gradient Boosting",
       "XGB"
@@ -295,23 +290,15 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "ranking"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "2016-03-09",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
+          "xgboost"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
           "xgboost"
         ],
         "learningParadigms": [
@@ -321,27 +308,36 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "xgboost"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "model_family",
+    "family": [
+      "Gradient Boosting",
+      "XGBoost"
+    ],
+    "id": "xgboost",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "XGBoost",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "XGBoost Project",
+    "releaseDate": "2016-03-09",
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Public XGBoost release records date version 0.4 to March 9, 2016."
   },
   {
-    "id": "adaboost",
-    "name": "AdaBoost",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "AT&T Bell Laboratories",
-    "family": [
-      "Boosting",
-      "AdaBoost"
-    ],
     "aliases": [
       "Adaptive Boosting",
       "Ada Boost"
@@ -350,23 +346,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "1996-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "adaboost"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -374,26 +363,35 @@
         "objectives": [
           "classification",
           "regression"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Boosting",
+      "AdaBoost"
+    ],
+    "id": "adaboost",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "AdaBoost",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "AT&T Bell Laboratories",
+    "releaseDate": "1996",
+    "useCases": [
+      "classification",
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "AdaBoost was presented in the 1996 ICML paper “Experiments with a New Boosting Algorithm,” supporting 1996 as its release year."
   },
   {
-    "id": "gradient-boosting",
-    "name": "Gradient Boosting",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Jerome Friedman",
-    "family": [
-      "Boosting"
-    ],
     "aliases": [
       "Gradient Boosted Decision Trees",
       "GBDT",
@@ -403,24 +401,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "ranking"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "2001-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "gradient-boosting"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -429,27 +419,35 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Boosting"
+    ],
+    "id": "gradient-boosting",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Gradient Boosting",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Jerome Friedman",
+    "releaseDate": "2001",
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Jerome Friedman's foundational paper on gradient boosting, “Greedy Function Approximation: A Gradient Boosting Machine,” was published in 2001."
   },
   {
-    "id": "lightgbm",
-    "name": "LightGBM",
-    "modelClass": "classical_ml",
-    "entityType": "model_family",
-    "minPool": 2,
-    "provider": "Microsoft",
-    "family": [
-      "Gradient Boosting",
-      "LightGBM"
-    ],
     "aliases": [
       "LightGBM",
       "Light Gradient Boosting Machine"
@@ -459,23 +457,15 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "ranking"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "2017-12-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
+          "lightgbm"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
           "lightgbm"
         ],
         "learningParadigms": [
@@ -485,27 +475,36 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "lightgbm"
         ]
       }
-    }
-  },
-  {
-    "id": "catboost",
-    "name": "CatBoost",
-    "modelClass": "classical_ml",
+    },
+    "country": "United States",
     "entityType": "model_family",
-    "minPool": 2,
-    "provider": "Yandex",
     "family": [
       "Gradient Boosting",
-      "CatBoost"
+      "LightGBM"
     ],
+    "id": "lightgbm",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "LightGBM",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Microsoft",
+    "releaseDate": "2017",
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "LightGBM was introduced by Microsoft in paper “LightGBM: A Highly Efficient Gradient Boosting Decision Tree” and published in the NeurIPS 2017 proceedings. Github release records support the April 24, 2017 in https://github.com/lightgbm-org/LightGBM/releases?page=4"
+  },
+  {
     "aliases": [
       "Cat Boost",
       "Categorical Boosting"
@@ -515,24 +514,15 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "classification",
-      "regression",
-      "ranking",
-      "categorical-data"
-    ],
-    "weightAvailability": "closed",
-    "country": "Russia",
-    "releaseDate": "2017-06-28",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
+          "catboost"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
           "catboost"
         ],
         "learningParadigms": [
@@ -542,28 +532,37 @@
           "classification",
           "regression",
           "ranking"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "catboost"
         ]
       }
-    }
+    },
+    "country": "Russia",
+    "entityType": "model_family",
+    "family": [
+      "Gradient Boosting",
+      "CatBoost"
+    ],
+    "id": "catboost",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "CatBoost",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Yandex",
+    "releaseDate": "2017-06-28",
+    "useCases": [
+      "classification",
+      "regression",
+      "ranking",
+      "categorical-data"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "CatBoost was introduced by Yandex and publicly documented in 2017, including its 2017 research publication. Wikipedia states release as July 18, 2017, but Github's first release is recorded on Sep 14, 2017; this date is documented in https://github.com/catboost/catboost/releases?page=10"
   },
   {
-    "id": "gaussian-process",
-    "name": "Gaussian Process",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 2,
-    "provider": "Danie Krige",
-    "family": [
-      "Gaussian Processes",
-      "Gaussian",
-      "Process"
-    ],
     "aliases": [
       "Gaussian Processes",
       "GP"
@@ -572,24 +571,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "regression",
-      "classification",
-      "uncertainty-estimation"
-    ],
-    "weightAvailability": "closed",
-    "country": "South Africa",
-    "releaseDate": "1951-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "gaussian-process"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -598,28 +589,37 @@
           "regression",
           "classification",
           "uncertainty-estimation"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "South Africa",
+    "entityType": "algorithm",
+    "family": [
+      "Gaussian Processes",
+      "Gaussian",
+      "Process"
+    ],
+    "id": "gaussian-process",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "Gaussian Process",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Danie Krige",
+    "releaseDate": "1951",
+    "useCases": [
+      "regression",
+      "classification",
+      "uncertainty-estimation"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Danie Krige's 1951 work is commonly credited with introducing kriging, which is closely related to Gaussian-process spatial prediction; the exact day is not historically established."
   },
   {
-    "id": "ridge-regression",
-    "name": "Ridge Regression",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 2,
-    "provider": "Arthur Hoerl, Robert Kennard",
-    "family": [
-      "Linear Models",
-      "Ridge",
-      "Regression"
-    ],
     "aliases": [
       "Ridge",
       "L2 Regression",
@@ -629,49 +629,51 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "regression"
-    ],
-    "weightAvailability": "closed",
-    "country": "United States",
-    "releaseDate": "1970-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "ridge-regression"
-        ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "regression"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "regression"
         ]
       }
-    }
-  },
-  {
-    "id": "lasso",
-    "name": "Lasso",
-    "modelClass": "classical_ml",
+    },
+    "country": "United States",
     "entityType": "algorithm",
-    "minPool": 2,
-    "provider": "Robert Tibshirani",
     "family": [
       "Linear Models",
-      "Lasso"
+      "Ridge",
+      "Regression"
     ],
+    "id": "ridge-regression",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "Ridge Regression",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Arthur Hoerl, Robert Kennard",
+    "releaseDate": "1970",
+    "useCases": [
+      "regression"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Hoerl and Kennard introduced ridge regression in their paper published in Technometrics in 1970."
+  },
+  {
     "aliases": [
       "LASSO",
       "Least Absolute Shrinkage and Selection Operator"
@@ -680,23 +682,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "regression",
-      "feature-selection"
-    ],
-    "weightAvailability": "closed",
-    "country": "Canada / United States",
-    "releaseDate": "1996-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "lasso"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -704,28 +699,35 @@
         "objectives": [
           "regression",
           "feature-selection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
-  },
-  {
-    "id": "elastic-net",
-    "name": "Elastic Net",
-    "modelClass": "classical_ml",
+    },
+    "country": "Canada / United States",
     "entityType": "algorithm",
-    "minPool": 2,
-    "provider": "Hui Zou, Trevor Hastie",
     "family": [
       "Linear Models",
-      "Elastic",
-      "Net"
+      "Lasso"
     ],
+    "id": "lasso",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "Lasso",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Robert Tibshirani",
+    "releaseDate": "1996",
+    "useCases": [
+      "regression",
+      "feature-selection"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "Robert Tibshirani's paper introducing the Lasso, \"Regression Shrinkage and Selection via the Lasso,\" was published in 1996."
+  },
+  {
     "aliases": [
       "ElasticNet",
       "Elastic Net Regression"
@@ -734,23 +736,16 @@
       "machine-learning",
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular"
-    ],
-    "outputModalities": [
-      "prediction"
-    ],
-    "useCases": [
-      "regression",
-      "feature-selection"
-    ],
-    "weightAvailability": "closed",
-    "country": "China / United States",
-    "releaseDate": "2005-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "elastic-net"
+        ],
+        "featureTypes": [
+          "tabular"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -758,198 +753,203 @@
         "objectives": [
           "regression",
           "feature-selection"
-        ],
-        "featureTypes": [
-          "tabular"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "China / United States",
+    "entityType": "algorithm",
+    "family": [
+      "Linear Models",
+      "Elastic",
+      "Net"
+    ],
+    "id": "elastic-net",
+    "inputModalities": [
+      "tabular"
+    ],
+    "minPool": 2,
+    "modelClass": "classical_ml",
+    "name": "Elastic Net",
+    "outputModalities": [
+      "prediction"
+    ],
+    "provider": "Hui Zou, Trevor Hastie",
+    "releaseDate": "2005",
+    "useCases": [
+      "regression",
+      "feature-selection"
+    ],
+    "weightAvailability": "closed",
+    "yearAnnotation": "The foundational paper introducing Elastic Net, “Regularization and Variable Selection via the Elastic Net,” was published in 2005."
   },
   {
-    "id": "linear-regression",
-    "name": "Linear Regression",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Adrien-Marie Legendre",
-    "family": [
-      "Regression"
-    ],
     "aliases": [
       "Linear regression"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "numeric-prediction"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "France",
-    "releaseDate": "1805-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "regression"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
         ],
         "objectives": [
           "numeric-prediction"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
-  },
-  {
-    "id": "logistic-regression",
-    "name": "Logistic Regression",
-    "modelClass": "classical_ml",
+    },
+    "country": "France",
     "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "David Cox",
     "family": [
       "Regression"
     ],
+    "id": "linear-regression",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "Linear Regression",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Adrien-Marie Legendre",
+    "releaseDate": "1805",
+    "useCases": [
+      "numeric-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Legendre's 1805 publication on least squares is a documented historical foundation for linear regression; only the year is reliably established here."
+  },
+  {
     "aliases": [
       "Logit regression"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "binary-classification"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1958-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "regression",
           "classification"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "binary-classification"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "binary-classification"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Regression"
+    ],
+    "id": "logistic-regression",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "Logistic Regression",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "David Cox",
+    "releaseDate": "1958",
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "David R. Cox published “The Regression Analysis of Binary Sequences” in the Journal of the Royal Statistical Society, Series B, in 1958, a foundational formulation of logistic regression."
   },
   {
-    "id": "k-means",
-    "name": "K-Means",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Stuart Lloyd",
-    "family": [
-      "Clustering",
-      "K",
-      "Means"
-    ],
     "aliases": [
       "KMeans"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1957-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Clustering",
+      "K",
+      "Means"
+    ],
+    "id": "k-means",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "K-Means",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Stuart Lloyd",
+    "releaseDate": "1957",
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Lloyd's least-squares quantization work underlying K-means dates to 1957; the work was circulated as a Bell Labs technical report and formally published later."
   },
   {
-    "id": "dbscan",
-    "name": "DBSCAN",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Martin Ester",
-    "family": [
-      "Density clustering",
-      "DBSCAN"
-    ],
     "aliases": [
       "Density-based clustering"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "cluster-assignment",
-      "anomaly-detection"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "1996-08-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "density-based"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -957,102 +957,102 @@
         "objectives": [
           "cluster-assignment",
           "anomaly-detection"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "Germany",
+    "entityType": "algorithm",
+    "family": [
+      "Density clustering",
+      "DBSCAN"
+    ],
+    "id": "dbscan",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "DBSCAN",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Martin Ester",
+    "releaseDate": "1996",
+    "useCases": [
+      "cluster-assignment",
+      "anomaly-detection"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "The DBSCAN method was first published in the 1996 proceedings of the ACM SIGKDD conference."
   },
   {
-    "id": "principal-component-analysis",
-    "name": "PCA",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Karl Pearson",
-    "family": [
-      "Dimensionality reduction",
-      "PCA"
-    ],
     "aliases": [
       "Principal Component Analysis"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "feature-projection"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1901-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
         ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Dimensionality reduction",
+      "PCA"
+    ],
+    "id": "principal-component-analysis",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "PCA",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Karl Pearson",
+    "releaseDate": "1901",
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Karl Pearson introduced the principal-components method in his 1901 paper, \"On Lines and Planes of Closest Fit to Systems of Points in Space.\""
   },
   {
-    "id": "gaussian-mixture-model",
-    "name": "Gaussian Mixture Model",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Karl Pearson",
-    "family": [
-      "Probabilistic modelling",
-      "Gaussian",
-      "Mixture",
-      "Model"
-    ],
     "aliases": [
       "GMM"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "probabilities",
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1894-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "density-estimation",
           "clustering"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -1060,154 +1060,156 @@
         "objectives": [
           "probabilities",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Probabilistic modelling",
+      "Gaussian",
+      "Mixture",
+      "Model"
+    ],
+    "id": "gaussian-mixture-model",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "Gaussian Mixture Model",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Karl Pearson",
+    "releaseDate": "1894-01-01",
+    "useCases": [
+      "probabilities",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable"
   },
   {
-    "id": "perceptron",
-    "name": "Perceptron",
-    "modelClass": "neural_network",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Frank Rosenblatt",
-    "family": [
-      "Linear classifier",
-      "Perceptron"
-    ],
     "aliases": [
       "Single-layer Perceptron"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "binary-classification"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1958-07-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
         ],
         "objectives": [
           "binary-classification"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
-  },
-  {
-    "id": "multi-layer-perceptron",
-    "name": "Multi-Layer Perceptron",
-    "modelClass": "neural_network",
+    },
+    "country": "United States",
     "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "David Rumelhart",
     "family": [
-      "Neural network",
-      "Multi",
-      "Layer",
+      "Linear classifier",
       "Perceptron"
     ],
+    "id": "perceptron",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "neural_network",
+    "name": "Perceptron",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Frank Rosenblatt",
+    "releaseDate": "1957",
+    "useCases": [
+      "binary-classification"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Historical accounts generally date the perceptron's introduction to 1957; in 1958 Rosenblatt published further details together with the implementation of an AI machine."
+  },
+  {
     "aliases": [
       "MLP"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "predictions"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1986-10-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification",
           "regression"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "predictions"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "predictions"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Neural network",
+      "Multi",
+      "Layer",
+      "Perceptron"
+    ],
+    "id": "multi-layer-perceptron",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "neural_network",
+    "name": "Multi-Layer Perceptron",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "David Rumelhart",
+    "releaseDate": "1958",
+    "useCases": [
+      "predictions"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "The multi-layer perceptron was proposed by Rosenblatt in the early multilayered perceptron architecture. Then in 1962 Rosenblatt described additional multilayer perceptron variants, including systems with more than one trainable layer, but without the modern general backpropagation algorithm. The hidden/association weights were not generally trained. Rumelhart, Hinton, and Williams published the backpropagation algorithm in 1986, which enabled training of multi-layer perceptrons. The 1958 date is included here to reflect the early conceptualization of the architecture."
   },
   {
-    "id": "linear-discriminant-analysis",
-    "name": "Linear Discriminant Analysis",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Ronald Fisher",
-    "family": [
-      "Discriminant analysis",
-      "Linear",
-      "Discriminant",
-      "Analysis"
-    ],
     "aliases": [
       "LDA"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "class-labels",
-      "feature-projection"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1936-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification",
           "dimensionality-reduction"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -1215,102 +1217,105 @@
         "objectives": [
           "class-labels",
           "feature-projection"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Discriminant analysis",
+      "Linear",
+      "Discriminant",
+      "Analysis"
+    ],
+    "id": "linear-discriminant-analysis",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "Linear Discriminant Analysis",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Ronald Fisher",
+    "releaseDate": "1936",
+    "useCases": [
+      "class-labels",
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Fisher introduced the method in his 1936 paper, “The Use of Multiple Measurements in Taxonomic Problems,” supporting the year 1936."
   },
   {
-    "id": "isolation-forest",
-    "name": "Isolation Forest",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 0,
-    "provider": "Fei Tony Liu",
-    "family": [
-      "Anomaly detection",
-      "Isolation",
-      "Forest"
-    ],
     "aliases": [
       "iForest"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "anomaly-score"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "2008-12-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "anomaly-score"
         ],
         "featureTypes": [
           "tabular"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Anomaly detection",
+      "Isolation",
+      "Forest"
+    ],
+    "id": "isolation-forest",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 0,
+    "modelClass": "classical_ml",
+    "name": "Isolation Forest",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Fei Tony Liu",
+    "releaseDate": "2008-12-15",
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Fei Tony Liu, Kai Ming Ting and Zhi-Hua Zhou introduced Isolation Forest in their 2008 IEEE International Conference on Data Mining paper \"Isolation Forest\" around 2008-12-15 to 2008-12-19 (conference date; no agenda found)."
   },
   {
-    "id": "agglomerative-clustering",
-    "name": "Agglomerative Clustering",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Robert Sokal",
-    "family": [
-      "Hierarchical clustering",
-      "Agglomerative",
-      "Clustering"
-    ],
     "aliases": [
       "Hierarchical clustering"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "dendrogram",
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1963-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "hierarchical"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -1318,154 +1323,157 @@
         "objectives": [
           "dendrogram",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
-  },
-  {
-    "id": "spectral-clustering",
-    "name": "Spectral Clustering",
-    "modelClass": "classical_ml",
+    },
+    "country": "United States",
     "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Andrew Ng",
     "family": [
-      "Spectral clustering",
-      "Spectral",
+      "Hierarchical clustering",
+      "Agglomerative",
       "Clustering"
     ],
+    "id": "agglomerative-clustering",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Agglomerative Clustering",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Robert Sokal",
+    "releaseDate": "1963",
+    "useCases": [
+      "dendrogram",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Sokal and Sneath's Principles of Numerical Taxonomy, which helped establish agglomerative numerical classification methods, was published in 1963."
+  },
+  {
     "aliases": [
       "Normalized cuts"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "2001-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "spectral"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
-        ],
         "featureTypes": [
           "similarity-matrix"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Spectral clustering",
+      "Spectral",
+      "Clustering"
+    ],
+    "id": "spectral-clustering",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Spectral Clustering",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Ng, Jordan, and Weiss",
+    "releaseDate": "2001",
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Ng, Jordan, and Weiss published their influential spectral clustering paper in 2001; the specific day and month are not reliably established."
   },
   {
-    "id": "mean-shift",
-    "name": "Mean Shift",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Keinosuke Fukunaga",
-    "family": [
-      "Mode seeking",
-      "Mean",
-      "Shift"
-    ],
     "aliases": [
       "Mean-shift clustering"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Japan",
-    "releaseDate": "1975-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "density-estimation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "cluster-assignment"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "cluster-assignment"
         ]
       }
-    }
+    },
+    "country": "Japan",
+    "entityType": "algorithm",
+    "family": [
+      "Mode seeking",
+      "Mean",
+      "Shift"
+    ],
+    "id": "mean-shift",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Mean Shift",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Keinosuke Fukunaga",
+    "releaseDate": "1975",
+    "useCases": [
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Fukunaga and Hostetler introduced the mean-shift procedure in a 1975 paper on density-gradient estimation and pattern recognition."
   },
   {
-    "id": "affinity-propagation",
-    "name": "Affinity Propagation",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Brendan Frey",
-    "family": [
-      "Exemplar clustering",
-      "Affinity",
-      "Propagation"
-    ],
     "aliases": [
       "AP clustering"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "exemplars",
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Canada",
-    "releaseDate": "2007-02-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "message-passing"
+        ],
+        "featureTypes": [
+          "similarity-matrix"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -1473,51 +1481,53 @@
         "objectives": [
           "exemplars",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "similarity-matrix"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "Canada",
+    "entityType": "algorithm",
+    "family": [
+      "Exemplar clustering",
+      "Affinity",
+      "Propagation"
+    ],
+    "id": "affinity-propagation",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Affinity Propagation",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Brendan Frey",
+    "releaseDate": "2007-02-01",
+    "useCases": [
+      "exemplars",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "The method's seminal Science publication appeared in 2007, with online-first publication preceding the February 16 print issue."
   },
   {
-    "id": "optics",
-    "name": "OPTICS",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Mihael Ankerst",
-    "family": [
-      "Density clustering",
-      "OPTICS"
-    ],
     "aliases": [
       "Ordering Points To Identify the Clustering Structure"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "ordering",
-      "cluster-assignment"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "1999-06-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "clustering",
           "density-based"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -1525,126 +1535,168 @@
         "objectives": [
           "ordering",
           "cluster-assignment"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "Germany",
+    "entityType": "algorithm",
+    "family": [
+      "Density clustering",
+      "OPTICS"
+    ],
+    "id": "optics",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "OPTICS",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Mihael Ankerst",
+    "releaseDate": "1999-06-01",
+    "useCases": [
+      "ordering",
+      "cluster-assignment"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Ankerst, Breunig, Kriegel, and Sander introduced OPTICS in their ACM SIGMOD paper published on June 1, 1999."
   },
   {
-    "id": "kernel-pca",
-    "name": "Kernel PCA",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Bernhard Schölkopf",
-    "family": [
-      "Kernel methods",
-      "Kernel",
-      "PCA"
-    ],
     "aliases": [
       "KPCA"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "feature-projection"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "1997-07-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "kernel-method"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "country": "Germany",
+    "entityType": "algorithm",
+    "family": [
+      "Kernel methods",
+      "Kernel",
+      "PCA"
+    ],
+    "id": "kernel-pca",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Kernel PCA",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller",
+    "releaseDate": "1997-09-29",
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Schölkopf, Smola, and Müller introduced Kernel PCA in their ICANN 1997 paper \"Kernel Principal Component Analysis,\" published in the conference proceedings on September 29, 1997."
   },
   {
-    "id": "independent-component-analysis",
-    "name": "Independent Component Analysis",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Aapo Hyvärinen",
-    "family": [
-      "Blind source separation",
-      "Independent",
-      "Component",
-      "Analysis"
-    ],
     "aliases": [
       "ICA"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "independent-components"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Finland",
-    "releaseDate": "1994-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "source-separation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "independent-components"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "independent-components"
         ]
       }
-    }
+    },
+    "country": "Finland",
+    "entityType": "algorithm",
+    "family": [
+      "Blind source separation",
+      "Independent",
+      "Component",
+      "Analysis"
+    ],
+    "id": "independent-component-analysis",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Independent Component Analysis",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Pierre Comon, Aapo Hyvärinen, and Erkki Oja",
+    "releaseDate": "1994",
+    "useCases": [
+      "independent-components"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Pierre Comon's foundational paper \"Independent Component Analysis, A New Concept?\" was published in April 1994."
   },
   {
-    "id": "non-negative-matrix-factorization",
-    "name": "Non-negative Matrix Factorization",
-    "modelClass": "classical_ml",
+    "aliases": [
+      "NMF"
+    ],
+    "categories": [
+      "classical-ml"
+    ],
+    "categoryDetails": {
+      "classical-ml": {
+        "algorithmTypes": [
+          "matrix-factorization",
+          "dimensionality-reduction"
+        ],
+        "featureTypes": [
+          "non-negative"
+        ],
+        "frameworks": [
+          "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "components"
+        ]
+      }
+    },
+    "country": "United States",
     "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Daniel Lee",
     "family": [
       "Matrix factorization",
       "Non",
@@ -1652,183 +1704,145 @@
       "Matrix",
       "Factorization"
     ],
-    "aliases": [
-      "NMF"
-    ],
-    "categories": [
-      "classical-ml"
-    ],
+    "id": "non-negative-matrix-factorization",
     "inputModalities": [
       "tabular-data"
     ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Non-negative Matrix Factorization",
     "outputModalities": [
       "predictions"
     ],
+    "provider": "Daniel Lee, Sebastian Seung",
+    "releaseDate": "1999-10-21",
     "useCases": [
       "components"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1999-10-01",
-    "categoryDetails": {
-      "classical-ml": {
-        "algorithmTypes": [
-          "matrix-factorization",
-          "dimensionality-reduction"
-        ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "components"
-        ],
-        "featureTypes": [
-          "non-negative"
-        ],
-        "frameworks": [
-          "scikit-learn"
-        ]
-      }
-    }
+    "yearAnnotation": "Lee and Seung's foundational paper \"Learning the Parts of Objects by Non-Negative Matrix Factorization\" was published in Nature on October 21, 1999."
   },
   {
-    "id": "truncated-svd",
-    "name": "Truncated SVD",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Gene Golub",
-    "family": [
-      "Matrix factorization",
-      "Truncated",
-      "SVD"
-    ],
     "aliases": [
       "TSVD"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "feature-projection"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1970-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "matrix-factorization",
           "dimensionality-reduction"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "feature-projection"
-        ],
         "featureTypes": [
           "sparse"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "feature-projection"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Matrix factorization",
+      "Truncated",
+      "SVD"
+    ],
+    "id": "truncated-svd",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Truncated SVD",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Eckart and Young",
+    "releaseDate": "1936",
+    "useCases": [
+      "feature-projection"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Eckart and Young established the low-rank matrix approximation result underlying truncated SVD in their September 1936 paper \"The Approximation of One Matrix by Another of Lower Rank.\" Golub and Reinsch's 1970 paper \"Singular Value Decomposition and Least Squares Solutions\" provided a practical algorithm for computing the SVD, which is widely used in truncated SVD implementations."
   },
   {
-    "id": "t-sne",
-    "name": "t-SNE",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Laurens van der Maaten",
-    "family": [
-      "Visualisation",
-      "t",
-      "SNE"
-    ],
     "aliases": [
       "t-distributed Stochastic Neighbor Embedding"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "embedding"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Netherlands",
-    "releaseDate": "2008-12-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "dimensionality-reduction",
           "visualisation"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "embedding"
-        ],
         "featureTypes": [
           "high-dimensional"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "embedding"
         ]
       }
-    }
+    },
+    "country": "Netherlands",
+    "entityType": "algorithm",
+    "family": [
+      "Visualisation",
+      "t",
+      "SNE"
+    ],
+    "id": "t-sne",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "t-SNE",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Laurens van der Maaten",
+    "releaseDate": "2008",
+    "useCases": [
+      "embedding"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Van der Maaten and Hinton introduced t-SNE in their paper \"Visualizing Data using t-SNE,\" published in November 2008."
   },
   {
-    "id": "quadratic-discriminant-analysis",
-    "name": "Quadratic Discriminant Analysis",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Ronald Fisher",
-    "family": [
-      "Discriminant analysis",
-      "Quadratic",
-      "Discriminant",
-      "Analysis"
-    ],
     "aliases": [
       "QDA"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "class-labels",
-      "probabilities"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1936-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "classification"
+        ],
+        "featureTypes": [
+          "continuous"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "supervised"
@@ -1836,157 +1850,160 @@
         "objectives": [
           "class-labels",
           "probabilities"
-        ],
-        "featureTypes": [
-          "continuous"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
+    },
+    "country": "United Kingdom",
+    "entityType": "algorithm",
+    "family": [
+      "Discriminant analysis",
+      "Quadratic",
+      "Discriminant",
+      "Analysis"
+    ],
+    "id": "quadratic-discriminant-analysis",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Quadratic Discriminant Analysis",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Cedric A. B. Smith",
+    "releaseDate": "1947",
+    "useCases": [
+      "class-labels",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Cedric A. B. Smith developed the pioneering quadratic discriminant function in work commonly cited to 1947, extending discriminant analysis to cases with unequal covariance matrices."
   },
   {
-    "id": "local-outlier-factor",
-    "name": "Local Outlier Factor",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Markus Breunig",
-    "family": [
-      "Anomaly detection",
-      "Local",
-      "Outlier",
-      "Factor"
-    ],
     "aliases": [
       "LOF"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "anomaly-score"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "2000-06-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection",
           "density-based"
         ],
-        "learningParadigms": [
-          "unsupervised"
-        ],
-        "objectives": [
-          "anomaly-score"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "unsupervised"
+        ],
+        "objectives": [
+          "anomaly-score"
         ]
       }
-    }
+    },
+    "country": "Germany",
+    "entityType": "algorithm",
+    "family": [
+      "Anomaly detection",
+      "Local",
+      "Outlier",
+      "Factor"
+    ],
+    "id": "local-outlier-factor",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Local Outlier Factor",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Markus Breunig, Hans-Peter Kriegel, Raymond Ng, and Jörg Sander",
+    "releaseDate": "2000-05-16",
+    "useCases": [
+      "anomaly-score"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Breunig, Kriegel, Ng, and Sander introduced Local Outlier Factor in their SIGMOD 2000 paper \"LOF: Identifying Density-Based Local Outliers,\" published on May 16, 2000."
   },
   {
-    "id": "one-class-svm",
-    "name": "One-Class SVM",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Bernhard Schölkopf",
-    "family": [
-      "Kernel methods",
-      "One",
-      "Class",
-      "SVM"
-    ],
     "aliases": [
       "One-class Support Vector Machine"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "inlier-prediction"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "2001-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "anomaly-detection",
           "kernel-method"
         ],
-        "learningParadigms": [
-          "semi-supervised"
-        ],
-        "objectives": [
-          "inlier-prediction"
-        ],
         "featureTypes": [
           "continuous"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "semi-supervised"
+        ],
+        "objectives": [
+          "inlier-prediction"
         ]
       }
-    }
+    },
+    "country": "Germany",
+    "entityType": "algorithm",
+    "family": [
+      "Kernel methods",
+      "One",
+      "Class",
+      "SVM"
+    ],
+    "id": "one-class-svm",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "One-Class SVM",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Bernhard Schölkopf, John Platt, John Shawe-Taylor, Alex Smola, and Robert Williamson",
+    "releaseDate": "1999",
+    "useCases": [
+      "inlier-prediction"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Schölkopf, Williamson, Smola, Shawe-Taylor, and Platt introduced the One-Class SVM approach in their NIPS 1999 paper \"Support Vector Method for Novelty Detection.\""
   },
   {
-    "id": "hidden-markov-model",
-    "name": "Hidden Markov Model",
-    "modelClass": "classical_ml",
-    "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "Leonard Baum",
-    "family": [
-      "Probabilistic sequence model",
-      "Hidden",
-      "Markov",
-      "Model"
-    ],
     "aliases": [
       "HMM"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "state-sequence",
-      "probabilities"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1966-01-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "sequence-modelling",
           "probabilistic-modelling"
+        ],
+        "featureTypes": [
+          "sequential"
+        ],
+        "frameworks": [
+          "scikit-learn"
         ],
         "learningParadigms": [
           "unsupervised"
@@ -1994,66 +2011,87 @@
         "objectives": [
           "state-sequence",
           "probabilities"
-        ],
-        "featureTypes": [
-          "sequential"
-        ],
-        "frameworks": [
-          "scikit-learn"
         ]
       }
-    }
-  },
-  {
-    "id": "conditional-random-field",
-    "name": "Conditional Random Field",
-    "modelClass": "classical_ml",
+    },
+    "country": "United States",
     "entityType": "algorithm",
-    "minPool": 1,
-    "provider": "John Lafferty",
     "family": [
       "Probabilistic sequence model",
-      "Conditional",
-      "Random",
-      "Field"
+      "Hidden",
+      "Markov",
+      "Model"
     ],
+    "id": "hidden-markov-model",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Hidden Markov Model",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "Leonard Baum, Ted Petrie",
+    "releaseDate": "1966",
+    "useCases": [
+      "state-sequence",
+      "probabilities"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Baum and Petrie published foundational work on hidden Markov models in \"Statistical Inference for Probabilistic Functions of Finite State Markov Chains\" in December 1966."
+  },
+  {
     "aliases": [
       "CRF"
     ],
     "categories": [
       "classical-ml"
     ],
-    "inputModalities": [
-      "tabular-data"
-    ],
-    "outputModalities": [
-      "predictions"
-    ],
-    "useCases": [
-      "label-sequence"
-    ],
-    "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "2001-06-01",
     "categoryDetails": {
       "classical-ml": {
         "algorithmTypes": [
           "sequence-labelling",
           "probabilistic-modelling"
         ],
-        "learningParadigms": [
-          "supervised"
-        ],
-        "objectives": [
-          "label-sequence"
-        ],
         "featureTypes": [
           "sequential"
         ],
         "frameworks": [
           "scikit-learn"
+        ],
+        "learningParadigms": [
+          "supervised"
+        ],
+        "objectives": [
+          "label-sequence"
         ]
       }
-    }
+    },
+    "country": "United States",
+    "entityType": "algorithm",
+    "family": [
+      "Probabilistic sequence model",
+      "Conditional",
+      "Random",
+      "Field"
+    ],
+    "id": "conditional-random-field",
+    "inputModalities": [
+      "tabular-data"
+    ],
+    "minPool": 1,
+    "modelClass": "classical_ml",
+    "name": "Conditional Random Field",
+    "outputModalities": [
+      "predictions"
+    ],
+    "provider": "John Lafferty",
+    "releaseDate": "2001",
+    "useCases": [
+      "label-sequence"
+    ],
+    "weightAvailability": "not-applicable",
+    "yearAnnotation": "Lafferty, McCallum, and Pereira introduced Conditional Random Fields in their ICML 2001 paper \"Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data.\""
   }
 ]
