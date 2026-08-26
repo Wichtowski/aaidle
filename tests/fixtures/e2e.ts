@@ -12,6 +12,7 @@ import { PrivacyPage } from "../pages/PrivacyPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { ResetPasswordPage } from "../pages/ResetPasswordPage";
+import { TimelinePage } from "../pages/TimelinePage";
 
 type PageFixtures = {
   accountDisabledPage: AccountDisabledPage;
@@ -27,6 +28,7 @@ type PageFixtures = {
   profilePage: ProfilePage;
   registerPage: RegisterPage;
   resetPasswordPage: ResetPasswordPage;
+  timelinePage: TimelinePage;
 };
 
 export const test = base.extend<PageFixtures>({
@@ -43,6 +45,7 @@ export const test = base.extend<PageFixtures>({
   profilePage: async ({ page }, use) => use(new ProfilePage(page)),
   registerPage: async ({ page }, use) => use(new RegisterPage(page)),
   resetPasswordPage: async ({ page }, use) => use(new ResetPasswordPage(page)),
+  timelinePage: async ({ page }, use) => use(new TimelinePage(page)),
 });
 
 export { expect } from "@playwright/test";
