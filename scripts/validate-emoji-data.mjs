@@ -21,6 +21,8 @@ const iconKeys = new Set([
   "tesla",
   "x",
   "doge",
+  "gemma",
+  "ayaya",
 ]);
 const entityKinds = new Set(["emoji", "architecture", "algorithm", "operator", "technology"]);
 const categories = new Set([

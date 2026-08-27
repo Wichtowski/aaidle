@@ -237,7 +237,7 @@
           },
           {
             "type": "icon",
-            "value": "gemma"
+            "icon": "gemma"
           }
         ]
       },

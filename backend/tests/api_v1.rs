@@ -1925,7 +1925,7 @@ async fn timeline_modes_expose_only_public_puzzle_data_and_exact_configuration()
     let (app, _) = test_app().await;
     let player_id = Uuid::new_v4();
 
-    for (difficulty, total, anchors, movable) in [("normal", 6, 2, 4), ("challenge", 12, 3, 9)] {
+    for (difficulty, total, anchors, movable) in [("normal", 6, 2, 4), ("challenge", 12, 4, 8)] {
         let response = app
             .clone()
             .oneshot(
