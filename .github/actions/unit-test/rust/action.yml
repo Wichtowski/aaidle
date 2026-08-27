@@ -1,5 +1,6 @@
 name: Rust unit tests
 description: Run Rust unit tests and publish the test summary
+
 runs:
   using: composite
   steps:

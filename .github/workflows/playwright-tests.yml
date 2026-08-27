@@ -14,8 +14,6 @@ permissions:
   contents: write
 
 env:
-  NODE_VERSION: ${{ vars.NODE_VERSION || 22 }}
-  PNPM_VERSION: ${{ vars.PNPM_VERSION || '11.24.0' }}
   PACKAGE_MANAGER: pnpm
   PW_CACHE_DIR: ~/.cache/ms-playwright
   CHECKOUT_REPO: "Checkout repository"
@@ -37,11 +35,11 @@ jobs:
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
         id: playwright-cache
@@ -70,11 +68,11 @@ jobs:
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
         id: playwright-cache
@@ -119,11 +117,11 @@ jobs:
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
@@ -163,11 +161,11 @@ jobs:
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
         id: playwright-cache
@@ -224,10 +222,10 @@ jobs:
           ref: "${{ inputs.release_tag }}"
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -261,11 +259,11 @@ jobs:
       - name: ${{ env.SETUP_PNPM }}
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: ${{ vars.PNPM_VERSION }}
       - name: ${{ env.SETUP_NODE }}
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile

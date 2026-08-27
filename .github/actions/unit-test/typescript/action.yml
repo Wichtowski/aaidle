@@ -1,5 +1,6 @@
 name: TypeScript unit tests
 description: Run Vitest unit tests and publish the test summary
+
 runs:
   using: composite
   steps:

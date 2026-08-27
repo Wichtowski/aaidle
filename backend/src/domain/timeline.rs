@@ -335,10 +335,10 @@ mod tests {
         assert_eq!(TimelineDifficulty::Normal.config().total_model_count, 6);
         assert_eq!(
             TimelineDifficulty::Challenge.config().locked_anchor_count,
-            3
+            4
         );
         assert_eq!(TimelineDifficulty::Challenge.config().total_model_count, 12);
-        assert_eq!(TimelineDifficulty::Hardcore.config().locked_anchor_count, 5);
+        assert_eq!(TimelineDifficulty::Hardcore.config().locked_anchor_count, 6);
         assert_eq!(TimelineDifficulty::Hardcore.config().total_model_count, 18);
         assert_eq!(
             TimelineDifficulty::Hardcore.config().attempt_limit,
@@ -366,8 +366,8 @@ mod tests {
 
         assert_eq!(first, second);
         assert_eq!(first.model_order.len(), 12);
-        assert_eq!(first.anchor_positions.len(), 3);
-        assert_eq!(first.tray_order.len(), 9);
+        assert_eq!(first.anchor_positions.len(), 4);
+        assert_eq!(first.tray_order.len(), 8);
         assert!(
             first
                 .anchor_positions
