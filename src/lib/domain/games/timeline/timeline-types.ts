@@ -44,6 +44,7 @@ export type TimelineGamePayload = {
 export type TimelineAttemptPayload = {
   placements: Array<0 | 1 | 2>;
   attemptsRemaining: number | null;
+  revealedModels?: TimelineModel[];
 };
 
 export const timelineDifficultyLabel = (difficulty: TimelineDifficulty) =>

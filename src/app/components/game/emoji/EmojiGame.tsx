@@ -331,7 +331,21 @@ export function EmojiGame() {
                     </span>
                     <span className="emoji__clue-face emoji__clue-result">
                       {clue?.type === "emoji" ? (
-                        <span className="emoji__glyph">{clue.value}</span>
+                        <span className={clue.action === "replace" ? "emoji__glyph emoji__glyph--replacement" : "emoji__glyph"}>
+                          {clue.action === "replace" && clue.toValue?.includes("-") ? (
+                            <>
+                              <span className="emoji__replacement-emoji">{clue.value}</span>
+                              <span
+                                className="emoji__replacement"
+                                aria-label={`${clue.toValue.split("-")[0]} replaced by ${clue.toValue.split("-")[1]}`}
+                              >
+                                <s>{clue.toValue.split("-")[0]}</s> + {clue.toValue.split("-")[1]}
+                              </span>
+                            </>
+                          ) : (
+                            clue.value
+                          )}
+                        </span>
                       ) : clue?.type === "icon" ? (
                         <EmojiIcon icon={clue.icon} />
                       ) : clue?.type === "image" ? (

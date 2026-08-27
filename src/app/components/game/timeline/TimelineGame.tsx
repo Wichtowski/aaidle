@@ -51,6 +51,7 @@ import { GameEyebrow } from "../common/layout/GameEyebrow";
 import { GameIntro } from "../common/layout/GameLayout";
 import { DifficultySwitch } from "../common/layout/DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
+import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
 import { readGamePreferences, saveTimelineDifficulty } from "@lib/storage/game-preferences";
 
 const TimelineCompletedDialog = lazy(() =>
@@ -73,6 +74,43 @@ function formatReleaseDate(value: string) {
     timeZone: "UTC",
     year: "numeric",
   });
+}
+
+function YearAnnotationTrigger({
+  item,
+  onOpen,
+}: {
+  item: { name: string; releaseDate?: string; yearAnnotation?: string };
+  onOpen: () => void;
+}) {
+  if (!item.releaseDate || !item.yearAnnotation) {
+    if (!item.releaseDate) return null;
+    return <time dateTime={item.releaseDate}>{formatReleaseDate(item.releaseDate)}</time>;
+  }
+
+  const activate = (event: KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onOpen();
+    }
+  };
+
+  return (
+    <span
+      aria-label={`Show year note for ${item.name}`}
+      className="timeline-card__date-help"
+      onClick={(event) => {
+        event.stopPropagation();
+        onOpen();
+      }}
+      onKeyDown={activate}
+      role="button"
+      tabIndex={0}
+    >
+      <time dateTime={item.releaseDate}>{formatReleaseDate(item.releaseDate)}</time>
+      <FaCircleQuestion aria-hidden />
+    </span>
+  );
 }
 
 function hydrateGame(game: TimelineGamePayload) {
@@ -118,6 +156,11 @@ export function TimelineGame() {
   const [dragOverTarget, setDragOverTarget] = useState<number | "tray" | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [yearAnnotation, setYearAnnotation] = useState<{
+    name: string;
+    releaseDate: string;
+    annotation: string;
+  } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [validationSequence, setValidationSequence] = useState(0);
   const [landingModelId, setLandingModelId] = useState<string | null>(null);
@@ -347,12 +390,21 @@ export function TimelineGame() {
       );
       pendingRequestId.current = null;
       const didSolve = result.placements.every((placement) => placement === 1);
+      const revealedModels = new Map(
+        (result.revealedModels ?? []).map((model) => [model.id, model]),
+      );
+      const revealedGame = {
+        ...game,
+        movableModels: game.movableModels.map((model) =>
+          revealedModels.get(model.id) ? { ...model, ...revealedModels.get(model.id) } : model,
+        ),
+      };
       setPlacements(result.placements);
       setAttemptsRemaining(result.attemptsRemaining);
       setAcceptedAttempts((current) => current + 1);
       setSolved(didSolve);
       gameCache.current[difficulty] = {
-        ...game,
+        ...revealedGame,
         progress: {
           ...game.progress,
           solved: didSolve,
@@ -364,6 +416,7 @@ export function TimelineGame() {
           },
         },
       };
+      setGame(revealedGame);
       setValidationSequence((sequence) => sequence + 1);
       if (didSolve) {
         void apiClient
@@ -524,9 +577,17 @@ export function TimelineGame() {
                         {timelineCategoryLabel(slot.anchor.categories, slot.anchor.itemKind)}
                       </span>
                       <strong>{slot.anchor.name}</strong>
-                      <time dateTime={slot.anchor.releaseDate}>
-                        {formatReleaseDate(slot.anchor.releaseDate)}
-                      </time>
+                      <YearAnnotationTrigger
+                        item={slot.anchor}
+                        onOpen={() =>
+                          slot.anchor?.yearAnnotation &&
+                          setYearAnnotation({
+                            name: slot.anchor.name,
+                            releaseDate: slot.anchor.releaseDate,
+                            annotation: slot.anchor.yearAnnotation,
+                          })
+                        }
+                      />
                       {slot.anchor.yearAnnotation && <small>{slot.anchor.yearAnnotation}</small>}
                     </article>
                   ) : item ? (
@@ -554,9 +615,17 @@ export function TimelineGame() {
                       <strong>{item.name}</strong>
                       {showDate && item.releaseDate && (
                         <>
-                          <time dateTime={item.releaseDate}>
-                            {formatReleaseDate(item.releaseDate)}
-                          </time>
+                          <YearAnnotationTrigger
+                            item={item}
+                            onOpen={() =>
+                              item.yearAnnotation &&
+                              setYearAnnotation({
+                                name: item.name,
+                                releaseDate: item.releaseDate!,
+                                annotation: item.yearAnnotation,
+                              })
+                            }
+                          />
                           {item.yearAnnotation && <small>{item.yearAnnotation}</small>}
                         </>
                       )}
@@ -697,6 +766,18 @@ export function TimelineGame() {
         open={showHowToPlay}
         onClose={() => setShowHowToPlay(false)}
       />
+      {yearAnnotation && (
+        <HowToPlayDialog
+          closeLabel="Close year note"
+          description={`Recorded year: ${formatReleaseDate(yearAnnotation.releaseDate)}`}
+          eyebrow="Timeline year"
+          onClose={() => setYearAnnotation(null)}
+          open
+          title={yearAnnotation.name}
+        >
+          <p>{yearAnnotation.annotation}</p>
+        </HowToPlayDialog>
+      )}
       {game && solved && showCompletion && (
         <Suspense fallback={null}>
           <TimelineCompletedDialog

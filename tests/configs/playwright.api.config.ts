@@ -9,7 +9,11 @@ export default defineConfig({
   workers: env.isCI ? 1 : undefined,
   outputDir: "../results/api",
   reporter: env.isCI
-    ? [["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }], ["../env.ts"]]
+    ? [
+        ["list"],
+        ["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }],
+        ["../env.ts"],
+      ]
     : [["list"], ["../env.ts"]],
   use: { baseURL: env.baseURL },
   projects: [

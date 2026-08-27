@@ -11,6 +11,7 @@ export default defineConfig({
   outputDir: "../results/e2e",
   reporter: env.isCI
     ? [
+        ["list"],
         ["blob", { outputDir: "tests/reports/blob" }],
         ["allure-playwright", { resultsDir: "tests/reports/allure-results" }],
         ["../env.ts"],

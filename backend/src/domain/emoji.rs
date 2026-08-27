@@ -111,6 +111,11 @@ pub struct VisualClueVariant {
 pub enum VisualClue {
     Emoji {
         value: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        action: Option<String>,
+        #[serde(rename = "toValue")]
+        #[serde(skip_serializing_if = "Option::is_none")]
+        to_value: Option<String>,
         #[serde(skip_serializing)]
         meaning: Option<String>,
         #[serde(rename = "revealPriority")]

@@ -205,5 +205,17 @@ pub(super) async fn attempt(
     Ok(Json(TimelineAttemptResponse {
         placements: result.placements,
         attempts_remaining: result.attempts_remaining,
+        revealed_models: result
+            .revealed_models
+            .into_iter()
+            .map(|model| crate::dto::TimelinePublicModel {
+                id: model.id,
+                name: model.name,
+                item_kind: model.item_kind,
+                categories: model.categories,
+                release_date: Some(model.release_date),
+                year_annotation: model.year_annotation,
+            })
+            .collect(),
     }))
 }

@@ -4408,6 +4408,22 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   place-items: center;
   line-height: 1;
 }
+.emoji__glyph--replacement {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.emoji__replacement-emoji {
+  display: block;
+}
+.emoji__replacement {
+  display: block;
+  font-family: system-ui, sans-serif;
+  font-size: 0.28em;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
 .emoji__clue-result svg {
   display: block;
 }
@@ -4737,6 +4753,21 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   color: var(--accent);
   font-size: 13px;
   font-weight: 800;
+}
+.timeline-card__date-help {
+  align-items: center;
+  color: var(--accent);
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.35rem;
+  justify-content: center;
+}
+.timeline-card__date-help svg {
+  font-size: 0.8rem;
+}
+.timeline-card__date-help:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 .timeline-card--anchor {
   border-color: color-mix(in srgb, var(--accent), var(--line) 55%);

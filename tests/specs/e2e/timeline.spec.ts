@@ -27,6 +27,7 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
               name: "Old anchor",
               itemKind: "model",
               releaseDate: "2018-01-01",
+              yearAnnotation: "The original paper was published in 2018.",
             },
           },
           { position: 1, anchor: null },
@@ -87,6 +88,18 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
       body: JSON.stringify({
         placements: acceptedSubmissions === 1 ? [1, 0, 0, 1, 1, 1] : [1, 1, 1, 1, 1, 1],
         attemptsRemaining: null,
+        revealedModels:
+          acceptedSubmissions === 1
+            ? [
+                {
+                  id: "movable-c",
+                  name: "Movable C",
+                  itemKind: "model",
+                  releaseDate: "2022-01-01",
+                  yearAnnotation: "The first release was in 2022.",
+                },
+              ]
+            : [],
       }),
     });
   });
@@ -94,6 +107,11 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
   await timelinePage.goto();
   await expect(timelinePage.heading).toBeVisible();
   await expect(timelinePage.difficultyNavigation).toBeVisible();
+  await page.locator(".timeline-card--anchor .timeline-card__date-help").click();
+  await expect(page.getByRole("dialog", { name: "Old anchor" })).toContainText(
+    "The original paper was published in 2018.",
+  );
+  await page.getByRole("button", { name: "Close year note" }).click();
   await expect(timelinePage.submitButton).toBeDisabled();
 
   for (const [name, position] of [
@@ -111,6 +129,11 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
   await expect(timelinePage.submitButton).toBeEnabled();
   await timelinePage.submitButton.click();
   await expect(page.getByText("Incorrect position").first()).toBeVisible();
+  await page.locator(".timeline-card--correct .timeline-card__date-help").click();
+  await expect(page.getByRole("dialog", { name: "Movable C" })).toContainText(
+    "The first release was in 2022.",
+  );
+  await page.getByRole("button", { name: "Close year note" }).click();
 
   await page.getByRole("button", { name: /Position 2: Movable B/ }).click();
   await page.getByRole("button", { name: /Position 3: Movable A/ }).click();

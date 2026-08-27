@@ -58,6 +58,7 @@ pub struct TimelineChallenge {
 pub struct TimelineAttemptResult {
     pub placements: Vec<u8>,
     pub attempts_remaining: Option<u16>,
+    pub revealed_models: Vec<TimelineModelSnapshot>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -199,16 +200,15 @@ async fn process_timeline_attempt_once(
     let mut transaction = pool.begin().await?;
     let connection = &mut *transaction;
 
-    if let Some(stored) = find_attempt_by_request_id(connection, input.request_id).await? {
-        let result = replay_attempt(stored, input)?;
-        transaction.commit().await?;
-        return Ok(result);
-    }
-
     let challenge = find_timeline_challenge(connection, input.challenge_id)
         .await?
         .ok_or_else(|| AppError::NotFound("Timeline challenge not found.".to_owned()))?;
     let challenge = parse_challenge(challenge)?;
+    if let Some(stored) = find_attempt_by_request_id(connection, input.request_id).await? {
+        let result = replay_attempt(stored, input, &challenge)?;
+        transaction.commit().await?;
+        return Ok(result);
+    }
     if challenge.difficulty == TimelineDifficulty::Hardcore && !input.hardcore_access {
         return Err(AppError::Forbidden(
             "Hardcore access has not been unlocked for this account.".to_owned(),
@@ -300,6 +300,13 @@ async fn process_timeline_attempt_once(
 
     transaction.commit().await?;
     Ok(TimelineAttemptResult {
+        revealed_models: challenge
+            .model_order
+            .iter()
+            .zip(&placements)
+            .filter(|(_, placement)| **placement == 1)
+            .map(|(model, _)| model.clone())
+            .collect(),
         placements,
         attempts_remaining,
     })
@@ -336,6 +343,7 @@ fn validate_model_order(challenge: &TimelineChallenge, submitted: &[String]) -> 
 fn replay_attempt(
     stored: TimelineAttemptRow,
     input: &TimelineAttemptInput,
+    challenge: &TimelineChallenge,
 ) -> AppResult<TimelineAttemptResult> {
     let stored_order = serde_json::from_str::<Vec<String>>(&stored.model_order_json)?;
     if stored.challenge_id != input.challenge_id.to_string()
@@ -344,8 +352,16 @@ fn replay_attempt(
     {
         return Err(AppError::Conflict("REQUEST_ID_REUSED".to_owned()));
     }
+    let placements: Vec<u8> = serde_json::from_str(&stored.placements_json)?;
     Ok(TimelineAttemptResult {
-        placements: serde_json::from_str(&stored.placements_json)?,
+        revealed_models: challenge
+            .model_order
+            .iter()
+            .zip(&placements)
+            .filter(|(_, placement)| **placement == 1)
+            .map(|(model, _)| model.clone())
+            .collect(),
+        placements,
         attempts_remaining: stored
             .attempts_remaining_after
             .map(|remaining| {

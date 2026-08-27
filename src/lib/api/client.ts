@@ -103,7 +103,7 @@ export type ClassicGuessPayload = {
 };
 
 export type VisualClue =
-  | { type: "emoji"; value: string; revealPriority?: number }
+  | { type: "emoji"; value: string; action?: "replace"; toValue?: string; revealPriority?: number }
   | { type: "icon"; icon: string; revealPriority?: number }
   | { type: "image"; src: string; alt?: string; revealPriority?: number };
 

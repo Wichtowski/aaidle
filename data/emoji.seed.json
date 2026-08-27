@@ -105,27 +105,38 @@
             "revealPriority": 4
           }
         ]
-      },
+      }
+    ]
+  },
+
+  {
+    "id": "fable",
+    "name": "Fable",
+    "aliases": [],
+    "entityKind": "emoji",
+    "categories": ["language-model"],
+    "minPool": 1,
+    "variants": [
       {
-        "id": "constitution",
+        "id": "fable",
         "minPool": 1,
         "weight": 3,
         "initialRevealCount": 2,
         "visuals": [
           {
-            "type": "image",
-            "src": "/emoji-visual/banger-game-2004.png",
-            "alt": "2004 Banger Game",
+            "type": "emoji",
+            "value": "🗡️",
             "revealPriority": 1
           },
           {
             "type": "emoji",
-            "value": "⚖️",
+            "value": "🛡️",
             "revealPriority": 2
           },
           {
-            "type": "emoji",
-            "value": "🛡️",
+            "type": "image",
+            "src": "/emoji-visual/banger-game-2004.png",
+            "alt": "2004 Banger Game",
             "revealPriority": 3
           },
           {
@@ -452,18 +463,34 @@
         "id": "wind-code",
         "minPool": 0,
         "weight": 2,
+        "initialRevealCount": 2,
         "visuals": [
           {
             "type": "emoji",
-            "value": "🌬️"
+            "value": "🏹",
+            "revealPriority": 1
           },
           {
             "type": "emoji",
-            "value": "💻"
+            "value": "🎯",
+            "revealPriority": 2
           },
           {
             "type": "emoji",
-            "value": "🇫🇷"
+            "value": "❌",
+            "revealPriority": 3
+          },
+          {
+            "type": "emoji",
+            "value": "🚂",
+            "revealPriority": 4,
+            "action": "replace",
+            "toValue": "IN-L"
+          },
+          {
+            "type": "emoji",
+            "value": "🇫🇷",
+            "revealPriority": 5
           }
         ]
       },
@@ -471,18 +498,23 @@
         "id": "storm",
         "minPool": 1,
         "weight": 2,
+        "initialRevealCount": 2,
         "visuals": [
+          {
+            "type": "emoji",
+            "value": "🐈‍⬛"
+          },
           {
             "type": "emoji",
             "value": "🇫🇷"
           },
           {
             "type": "emoji",
-            "value": "🌪️"
+            "value": "🤖"
           },
           {
             "type": "emoji",
-            "value": "🤖"
+            "value": "👁️‍🗨️"
           }
         ]
       }

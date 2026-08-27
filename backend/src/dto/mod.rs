@@ -402,6 +402,7 @@ pub struct TimelineAttemptRequest {
 pub struct TimelineAttemptResponse {
     pub placements: Vec<u8>,
     pub attempts_remaining: Option<u16>,
+    pub revealed_models: Vec<TimelinePublicModel>,
 }
 
 #[derive(Serialize)]

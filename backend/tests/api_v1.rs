@@ -2044,9 +2044,13 @@ async fn timeline_attempts_are_positional_idempotent_and_reject_invalid_sets() {
             .keys()
             .cloned()
             .collect::<std::collections::BTreeSet<_>>(),
-        ["attemptsRemaining".to_owned(), "placements".to_owned()]
-            .into_iter()
-            .collect()
+        [
+            "attemptsRemaining".to_owned(),
+            "placements".to_owned(),
+            "revealedModels".to_owned(),
+        ]
+        .into_iter()
+        .collect()
     );
     assert_eq!(
         first["placements"].as_array().expect("placements").len(),
@@ -2059,6 +2063,7 @@ async fn timeline_attempts_are_positional_idempotent_and_reject_invalid_sets() {
             .iter()
             .any(|value| value == 0)
     );
+    assert!(first["revealedModels"].is_array());
 
     let replay = app
         .clone()
