@@ -20,7 +20,7 @@ function userName(user: Pick<AdminUserSummary, "email" | "displayName">) {
   return user.displayName || user.email;
 }
 
-export default function AdminPage() {
+export function AdminPage() {
   const navigate = useNavigate();
   const { loading, user } = useAuth();
   const [users, setUsers] = useState<AdminUserSummary[]>([]);

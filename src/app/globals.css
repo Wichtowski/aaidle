@@ -305,7 +305,9 @@ body.profile-hell {
   color: #fff2e9;
 }
 .difficulty-switch button:disabled {
-  cursor: wait;
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
 }
 .difficulty-switch button:focus-visible {
   outline: 2px solid var(--accent);
@@ -5093,4 +5095,13 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   .timeline-card--winning {
     animation: none;
   }
+}
+.timeline-card--neighbour { 
+  border: 2px solid #2878c8;
+  background: #e9f4ff;
+  box-shadow: inset 0 4px 0 #2878c8;
+  animation: timeline-result-incorrect 480ms both;
+}
+.timeline-card--neighbour .timeline-card__feedback {
+  color: #1d5f9f;
 }

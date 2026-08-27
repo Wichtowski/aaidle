@@ -199,10 +199,12 @@ pub(super) async fn attempt(
             hardcore_access,
             request_id: payload.request_id,
             model_order: payload.model_order,
+            speedrun_started_at: payload.speedrun_started_at,
         },
     )
     .await?;
     Ok(Json(TimelineAttemptResponse {
+        speedrun_time_ms: result.speedrun_time_ms,
         placements: result.placements,
         attempts_remaining: result.attempts_remaining,
         revealed_models: result

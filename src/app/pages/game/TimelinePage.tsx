@@ -1,5 +1,5 @@
 import { TimelineGame } from "@components/game";
 
-export default function TimelinePage() {
+export function TimelinePage() {
   return <TimelineGame />;
 }

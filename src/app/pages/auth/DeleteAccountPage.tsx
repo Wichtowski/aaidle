@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 import { apiClient } from "@lib/api/client";
 
-export default function DeleteAccountPage() {
+export function DeleteAccountPage() {
   const navigate = useNavigate();
   const [maskedEmail, setMaskedEmail] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);

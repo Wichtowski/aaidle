@@ -85,7 +85,7 @@ function RitualContent({
   );
 }
 
-export default function ProfilePage() {
+export function ProfilePage() {
   const navigate = useNavigate();
   const { hardcoreUnlocked, refreshHardcoreAccess, user } = useAuth();
   const progress = useLocalProgress();

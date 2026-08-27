@@ -1,7 +1,7 @@
 import { ResetPasswordForm } from "@components/auth/ResetPasswordForm";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
-export default function ResetPasswordPage() {
+export function ResetPasswordPage() {
   return (
     <AppPageLayout className="login-page">
       <section className="login">

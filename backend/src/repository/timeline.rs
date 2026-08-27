@@ -42,6 +42,7 @@ struct TimelineAttemptRow {
     attempt_number: i64,
     is_correct: i64,
     attempts_remaining_after: Option<i64>,
+    speedrun_time_ms: Option<i64>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -59,6 +60,7 @@ pub struct TimelineAttemptResult {
     pub placements: Vec<u8>,
     pub attempts_remaining: Option<u16>,
     pub revealed_models: Vec<TimelineModelSnapshot>,
+    pub speedrun_time_ms: Option<i64>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -84,6 +86,7 @@ pub struct TimelineAttemptInput {
     pub hardcore_access: bool,
     pub request_id: Uuid,
     pub model_order: Vec<String>,
+    pub speedrun_started_at: Option<i64>,
 }
 
 pub async fn timeline_game(
@@ -98,7 +101,7 @@ pub async fn timeline_game(
     let attempt_count = timeline_attempt_count(pool, challenge.id, player_id).await?;
     let latest = sqlx::query_as::<_, TimelineAttemptRow>(
         "SELECT challenge_id, player_id, model_order_json, placements_json, attempt_number, \
-         is_correct, attempts_remaining_after FROM timeline_attempts \
+         is_correct, attempts_remaining_after, speedrun_time_ms FROM timeline_attempts \
          WHERE challenge_id = ? AND player_id = ? ORDER BY attempt_number DESC LIMIT 1",
     )
     .bind(challenge.id.to_string())
@@ -252,6 +255,13 @@ async fn process_timeline_attempt_once(
     super::ensure_anonymous_player(connection, input.player_id, now).await?;
     let placements = timeline_placements(&challenge, &input.model_order);
     let is_correct = placements.iter().all(|placement| *placement == 1);
+    let speedrun_time_ms = (challenge.difficulty == TimelineDifficulty::Speedrun && is_correct)
+        .then(|| {
+            input
+                .speedrun_started_at
+                .map(|started| now.saturating_sub(started))
+                .unwrap_or_default()
+        });
     let attempt_number = accepted_attempts + 1;
     let attempts_remaining = config
         .attempt_limit
@@ -259,8 +269,8 @@ async fn process_timeline_attempt_once(
     sqlx::query(
         "INSERT INTO timeline_attempts \
          (id, request_id, challenge_id, player_id, user_id, model_order_json, placements_json, \
-          attempt_number, is_correct, attempts_remaining_after, created_at) \
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          attempt_number, is_correct, attempts_remaining_after, speedrun_started_at, speedrun_time_ms, created_at) \
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(Uuid::new_v4().to_string())
     .bind(input.request_id.to_string())
@@ -272,6 +282,8 @@ async fn process_timeline_attempt_once(
     .bind(attempt_number)
     .bind(is_correct)
     .bind(attempts_remaining.map(i64::from))
+    .bind(input.speedrun_started_at)
+    .bind(speedrun_time_ms)
     .bind(now)
     .execute(&mut *connection)
     .await?;
@@ -300,6 +312,7 @@ async fn process_timeline_attempt_once(
 
     transaction.commit().await?;
     Ok(TimelineAttemptResult {
+        speedrun_time_ms,
         revealed_models: challenge
             .model_order
             .iter()
@@ -354,6 +367,7 @@ fn replay_attempt(
     }
     let placements: Vec<u8> = serde_json::from_str(&stored.placements_json)?;
     Ok(TimelineAttemptResult {
+        speedrun_time_ms: stored.speedrun_time_ms,
         revealed_models: challenge
             .model_order
             .iter()
@@ -439,7 +453,7 @@ async fn find_attempt_by_request_id(
 ) -> AppResult<Option<TimelineAttemptRow>> {
     Ok(sqlx::query_as::<_, TimelineAttemptRow>(
         "SELECT challenge_id, player_id, model_order_json, placements_json, attempt_number, \
-         is_correct, attempts_remaining_after FROM timeline_attempts WHERE request_id = ?",
+         is_correct, attempts_remaining_after, speedrun_time_ms FROM timeline_attempts WHERE request_id = ?",
     )
     .bind(request_id.to_string())
     .fetch_optional(connection)
@@ -486,7 +500,8 @@ fn timeline_placements(challenge: &TimelineChallenge, submitted: &[String]) -> V
     submitted
         .iter()
         .zip(&challenge.model_order)
-        .map(|(submitted, expected)| {
+        .enumerate()
+        .map(|(expected_position, (submitted, expected))| {
             if submitted == &expected.id {
                 return 1;
             }
@@ -498,7 +513,15 @@ fn timeline_placements(challenge: &TimelineChallenge, submitted: &[String]) -> V
                 .and_then(|model| release_year(&model.release_date))
                 .zip(release_year(&expected.release_date))
                 .is_some_and(|(submitted_year, expected_year)| submitted_year == expected_year);
-            if challenge.difficulty == TimelineDifficulty::Hardcore && same_year {
+            let neighbour = challenge.difficulty == TimelineDifficulty::Speedrun
+                && challenge
+                    .model_order
+                    .iter()
+                    .position(|model| model.id == *submitted)
+                    .is_some_and(|actual| actual.abs_diff(expected_position) == 1);
+            if (matches!(challenge.difficulty, TimelineDifficulty::Hardcore) && same_year)
+                || neighbour
+            {
                 2
             } else {
                 0

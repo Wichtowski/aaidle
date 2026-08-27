@@ -1,7 +1,7 @@
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 import { useAuth } from "@components/auth/useAuth";
 
-export default function AccountDisabledPage() {
+export function AccountDisabledPage() {
   const { signOut, user } = useAuth();
   const reason = user?.disabledReason?.trim() || "No reason was provided.";
 

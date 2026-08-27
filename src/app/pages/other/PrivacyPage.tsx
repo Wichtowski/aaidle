@@ -1,6 +1,6 @@
 import { SiteNavbar } from "../../components/ui/SiteNavbar";
 
-export default function PrivacyV1Page() {
+export function PrivacyV1Page() {
   return (
     <main className="page privacy-page">
       <SiteNavbar />

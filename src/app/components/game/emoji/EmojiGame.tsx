@@ -18,7 +18,6 @@ import { Toast } from "../../ui/Toast";
 import { EmojiIcon } from "./emoji-icons";
 import { EmojiHTP } from "./EmojiHTP";
 import { DifficultySwitch } from "../common/layout/DifficultySwitch";
-import { readGamePreferences, saveEmojiDifficulty } from "@lib/storage/game-preferences";
 
 const EmojiCompletedDialog = lazy(() =>
   import("./EmojiCompletedDialog").then(({ EmojiCompletedDialog }) => ({
@@ -46,9 +45,14 @@ function clueKey(clue: VisualClue | undefined) {
   return `image-${clue.src}`;
 }
 
-export function EmojiGame() {
+export function EmojiGame({
+  difficulty,
+  onDifficultyChange,
+}: {
+  difficulty: EmojiDifficulty;
+  onDifficultyChange: (difficulty: string) => void;
+}) {
   const progress = useLocalProgress();
-  const [difficulty, setDifficulty] = useState<EmojiDifficulty>(() => readGamePreferences().emoji);
   const [game, setGame] = useState<EmojiGamePayload | null>(null);
   const [guesses, setGuesses] = useState<Guess[]>([]);
   const [query, setQuery] = useState("");
@@ -73,12 +77,6 @@ export function EmojiGame() {
   const guessFailureEntityId = useRef<string | null>(null);
   const guessFailureCount = useRef(0);
   const completionTimer = useRef<number | null>(null);
-
-  const selectDifficulty = (nextDifficulty: string) => {
-    const value = nextDifficulty as EmojiDifficulty;
-    saveEmojiDifficulty(value);
-    setDifficulty(value);
-  };
 
   useEffect(
     () => () => {
@@ -279,7 +277,7 @@ export function EmojiGame() {
           <DifficultySwitch
             ariaLabel="Emoji difficulty"
             disabled={busy || isLoadingGame}
-            onChange={selectDifficulty}
+            onChange={onDifficultyChange}
             options={emojiPools
               .filter((pool) => pool.difficulty !== "hardcore" || hardcore?.unlocked)
               .map((pool) => ({ value: pool.difficulty, label: pool.label }))}

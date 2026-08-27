@@ -5,10 +5,7 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use time::{Date, format_description::FormatItem, macros::format_description};
 
-use crate::{
-    domain::difficulty::Difficulty,
-    error::{AppError, AppResult},
-};
+use crate::error::{AppError, AppResult};
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -20,9 +17,36 @@ pub const TIMELINE_SELECTION_VERSION: i64 = 1;
 pub const TIMELINE_HARDCORE_ATTEMPT_LIMIT: u16 = 8;
 pub const TIMELINE_MAX_MODEL_COUNT: usize = 18;
 
-pub use crate::domain::difficulty::Difficulty as TimelineDifficulty;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum TimelineDifficulty {
+    Normal,
+    Challenge,
+    Speedrun,
+    Hardcore,
+}
 
-impl Difficulty {
+impl TimelineDifficulty {
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "normal" => Some(Self::Normal),
+            "challenge" => Some(Self::Challenge),
+            "speedrun" => Some(Self::Speedrun),
+            "hardcore" => Some(Self::Hardcore),
+            _ => None,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Normal => "normal",
+            Self::Challenge => "challenge",
+            Self::Speedrun => "speedrun",
+            Self::Hardcore => "hardcore",
+        }
+    }
+}
+
+impl TimelineDifficulty {
     pub fn config(self) -> TimelineDifficultyConfig {
         match self {
             Self::Normal => TimelineDifficultyConfig {
@@ -34,6 +58,12 @@ impl Difficulty {
             Self::Challenge => TimelineDifficultyConfig {
                 locked_anchor_count: 4,
                 total_model_count: 12,
+                pool_rank: 1,
+                attempt_limit: None,
+            },
+            Self::Speedrun => TimelineDifficultyConfig {
+                locked_anchor_count: 4,
+                total_model_count: 18,
                 pool_rank: 1,
                 attempt_limit: None,
             },
@@ -115,7 +145,12 @@ pub fn select_timeline_puzzle(
                 let Some(year) = release_year(&candidate.release_date) else {
                     return false;
                 };
-                if difficulty != TimelineDifficulty::Hardcore {
+                if matches!(
+                    difficulty,
+                    TimelineDifficulty::Normal
+                        | TimelineDifficulty::Challenge
+                        | TimelineDifficulty::Speedrun
+                ) {
                     return !selected_years.contains(year);
                 }
 
@@ -183,13 +218,17 @@ pub fn select_timeline_puzzle(
     }
 
     selected.sort_by(|left, right| left.release_date.cmp(&right.release_date));
-    let anchor_positions = select_anchor_positions(
-        date,
-        difficulty,
-        secret,
-        config.total_model_count,
-        config.locked_anchor_count,
-    )?;
+    let anchor_positions = if difficulty == TimelineDifficulty::Speedrun {
+        vec![0, 5, 11, 17]
+    } else {
+        select_anchor_positions(
+            date,
+            difficulty,
+            secret,
+            config.total_model_count,
+            config.locked_anchor_count,
+        )?
+    };
     let anchor_set = anchor_positions.iter().copied().collect::<BTreeSet<_>>();
     let mut tray_order = selected
         .iter()

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa6";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
-export default function HomePage() {
+export function HomePage() {
   return (
     <AppPageLayout className="home">
       <section className="hero">

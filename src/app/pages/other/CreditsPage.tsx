@@ -2,7 +2,7 @@ import { SiteNavbar } from "@components/ui/SiteNavbar";
 import { FaGithub } from "react-icons/fa6";
 import { githubRepositoryUrl } from "@lib/github/repository";
 
-export default function CreditsPage() {
+export function CreditsPage() {
   return (
     <main className="page credits-page">
       <SiteNavbar />

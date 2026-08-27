@@ -575,13 +575,14 @@ class ApiClient {
     playerId: string,
     requestId: string,
     modelOrder: string[],
+    speedrunStartedAt?: number | null,
   ) {
     return this.request<TimelineAttemptPayload>(
       `/games/timeline/challenges/${challengeId}/attempts`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId, requestId, modelOrder }),
+        body: JSON.stringify({ playerId, requestId, modelOrder, speedrunStartedAt }),
       },
     );
   }

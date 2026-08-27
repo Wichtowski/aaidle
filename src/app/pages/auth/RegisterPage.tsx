@@ -1,7 +1,7 @@
 import { RegistrationForm } from "@components/auth/RegistrationForm";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
-export default function RegisterPage() {
+export function RegisterPage() {
   return (
     <AppPageLayout className="login-page">
       <section className="login">

@@ -1,6 +1,7 @@
 type DifficultyOption = {
   value: string;
   label: string;
+  description?: string;
 };
 
 export function DifficultySwitch({
@@ -35,6 +36,7 @@ export function DifficultySwitch({
             disabled={typeof disabled === "function" ? disabled(option) : disabled}
             key={option.value}
             onClick={() => onChange(option.value)}
+            title={option.description}
             type="button"
           >
             {option.label}

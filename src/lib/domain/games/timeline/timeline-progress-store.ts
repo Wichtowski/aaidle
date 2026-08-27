@@ -12,6 +12,7 @@ export type SavedTimelineGame = {
   attemptsRemaining: number | null;
   solved: boolean;
   updatedAt: string;
+  speedrunStartedAt?: number;
 };
 
 type TimelineProgress = {

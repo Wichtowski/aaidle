@@ -1,7 +1,7 @@
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 import { IssueReportForm } from "@components/issues/IssueReportForm";
 
-export default function DeferredIssuePage() {
+export function DeferredIssuePage() {
   return (
     <AppPageLayout className="issue-report-page">
       <section className="issue-report">

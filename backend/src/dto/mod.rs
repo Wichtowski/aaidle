@@ -395,6 +395,7 @@ pub struct TimelineAttemptRequest {
     pub player_id: Uuid,
     pub request_id: Uuid,
     pub model_order: Vec<String>,
+    pub speedrun_started_at: Option<i64>,
 }
 
 #[derive(Serialize)]
@@ -403,6 +404,8 @@ pub struct TimelineAttemptResponse {
     pub placements: Vec<u8>,
     pub attempts_remaining: Option<u16>,
     pub revealed_models: Vec<TimelinePublicModel>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub speedrun_time_ms: Option<i64>,
 }
 
 #[derive(Serialize)]

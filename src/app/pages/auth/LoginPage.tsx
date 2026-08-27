@@ -1,7 +1,7 @@
 import { LoginForm } from "@components/auth/LoginForm";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
-export default function LoginPage() {
+export function LoginPage() {
   return (
     <AppPageLayout className="login-page">
       <section className="login">

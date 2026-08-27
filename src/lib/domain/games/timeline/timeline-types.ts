@@ -1,7 +1,5 @@
-import { difficulties, type Difficulty } from "../../difficulty";
-
-export const timelineDifficulties = difficulties;
-export type TimelineDifficulty = Difficulty;
+export const timelineDifficulties = ["normal", "challenge", "speedrun", "hardcore"] as const;
+export type TimelineDifficulty = (typeof timelineDifficulties)[number];
 
 export type TimelineModel = {
   id: string;

@@ -132,12 +132,13 @@ function hydrateGame(game: TimelineGamePayload) {
     acceptedAttempts: Math.max(saved?.acceptedAttempts ?? 0, serverAttempt?.attemptNumber ?? 0),
     attemptsRemaining: game.progress.attemptsRemaining,
     solved: game.progress.solved || Boolean(useSaved && saved.solved),
+    speedrunStartedAt: useSaved ? saved?.speedrunStartedAt : undefined,
   };
 }
 
 export function TimelineGame() {
   const progress = useLocalProgress();
-  const { hardcoreUnlocked } = useAuth();
+  const { hardcoreUnlocked, user } = useAuth();
   const [difficulty, setDifficulty] = useState<TimelineDifficulty>(
     () => readGamePreferences().timeline,
   );
@@ -147,6 +148,8 @@ export function TimelineGame() {
   const [acceptedAttempts, setAcceptedAttempts] = useState(0);
   const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
   const [solved, setSolved] = useState(false);
+  const [speedrunStartedAt, setSpeedrunStartedAt] = useState<number | null>(null);
+  const [speedrunElapsed, setSpeedrunElapsed] = useState(0);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -178,6 +181,10 @@ export function TimelineGame() {
   };
 
   useEffect(() => {
+    if (difficulty === "speedrun" && !user) {
+      setDifficulty("normal");
+      return;
+    }
     if (difficulty === "hardcore" && !hardcoreUnlocked) {
       setDifficulty("normal");
       return;
@@ -191,6 +198,7 @@ export function TimelineGame() {
       setAcceptedAttempts(hydrated.acceptedAttempts);
       setAttemptsRemaining(hydrated.attemptsRemaining);
       setSolved(hydrated.solved);
+      setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
       setSelectedModelId(null);
       setLoading(false);
       setError(null);
@@ -211,6 +219,7 @@ export function TimelineGame() {
         setAcceptedAttempts(hydrated.acceptedAttempts);
         setAttemptsRemaining(hydrated.attemptsRemaining);
         setSolved(hydrated.solved);
+        setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
         setSelectedModelId(null);
       })
       .catch((loadError: unknown) => {
@@ -220,7 +229,7 @@ export function TimelineGame() {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [difficulty, hardcoreUnlocked, loadAttempt, progress.playerId]);
+  }, [difficulty, hardcoreUnlocked, loadAttempt, progress.playerId, user]);
 
   useEffect(() => {
     if (!game || positions.length !== game.slots.length) return;
@@ -234,8 +243,17 @@ export function TimelineGame() {
       attemptsRemaining,
       solved,
       updatedAt: new Date().toISOString(),
+      speedrunStartedAt: speedrunStartedAt ?? undefined,
     });
-  }, [acceptedAttempts, attemptsRemaining, game, placements, positions, solved]);
+  }, [acceptedAttempts, attemptsRemaining, game, placements, positions, solved, speedrunStartedAt]);
+
+  useEffect(() => {
+    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
+    const update = () => setSpeedrunElapsed(Math.max(0, Date.now() - speedrunStartedAt));
+    update();
+    const timer = window.setInterval(update, 100);
+    return () => window.clearInterval(timer);
+  }, [difficulty, solved, speedrunStartedAt]);
 
   useEffect(
     () => () => {
@@ -377,6 +395,8 @@ export function TimelineGame() {
 
   const submit = async () => {
     if (!game || !complete || busy || solved || exhausted) return;
+    const startedAt = difficulty === "speedrun" ? speedrunStartedAt ?? Date.now() : null;
+    if (difficulty === "speedrun" && speedrunStartedAt === null) setSpeedrunStartedAt(startedAt);
     const requestId = pendingRequestId.current ?? crypto.randomUUID();
     pendingRequestId.current = requestId;
     setBusy(true);
@@ -387,6 +407,7 @@ export function TimelineGame() {
         progress.playerId,
         requestId,
         positions as string[],
+        startedAt,
       );
       pendingRequestId.current = null;
       const didSolve = result.placements.every((placement) => placement === 1);
@@ -417,7 +438,9 @@ export function TimelineGame() {
         },
       };
       setGame(revealedGame);
-      setValidationSequence((sequence) => sequence + 1);
+      if (!didSolve) {
+        setValidationSequence((sequence) => sequence + 1);
+      }
       if (didSolve) {
         void apiClient
           .timelineGame(game.challenge.difficulty, progress.playerId)
@@ -459,11 +482,17 @@ export function TimelineGame() {
   const difficultyControls = (
     <DifficultySwitch
       ariaLabel="Timeline difficulty"
-      disabled={busy || loading}
+      disabled={(option) =>
+        busy || loading || (option.value === "speedrun" && !user)
+      }
       onChange={selectDifficulty}
       options={timelineDifficulties
         .filter((option) => option !== "hardcore" || hardcoreUnlocked)
-        .map((option) => ({ value: option, label: timelineDifficultyLabel(option) }))}
+        .map((option) => ({
+          value: option,
+          label: timelineDifficultyLabel(option),
+          description: option === "speedrun" ? "Sign in to unlock Speedrun." : undefined,
+        }))}
       selected={difficulty}
       testId="timeline-difficulty"
     />
@@ -507,6 +536,11 @@ export function TimelineGame() {
             <p>
               <strong>{arrangedModelIds.size}</strong> / {positions.length} positions filled
             </p>
+            {difficulty === "speedrun" && !solved && (
+              <p>
+                <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong> elapsed
+              </p>
+            )}
             {attemptsRemaining !== null && (
               <p>
                 <strong>{attemptsRemaining}</strong> of {game.progress.attemptLimit} submissions
@@ -531,11 +565,11 @@ export function TimelineGame() {
                 placement === 1
                   ? "correct"
                   : placement === 2
-                    ? "same-year"
+                    ? difficulty === "speedrun" ? "neighbour" : "same-year"
                     : placement === 0
                       ? "incorrect"
                       : null;
-              const showDate = difficulty !== "hardcore" && (solved || feedback === "correct");
+              const showDate = solved || feedback === "correct";
               const visualPosition = timelineVisualPosition(position, TIMELINE_DESKTOP_COLUMNS);
               const positionWithinRow = position % TIMELINE_DESKTOP_COLUMNS;
               const isRowEnd =

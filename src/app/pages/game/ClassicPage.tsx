@@ -12,7 +12,7 @@ import {
   saveClassicPreference,
 } from "@lib/storage/game-preferences";
 
-export default function ClassicPage() {
+export function ClassicPage() {
   const { category: routeCategory } = useParams();
   const savedPreferences = readGamePreferences();
   const hasLocalPreference =

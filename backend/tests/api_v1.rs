@@ -2136,6 +2136,7 @@ async fn timeline_hardcore_concurrent_final_submission_cannot_exceed_limit() {
                 hardcore_access: true,
                 request_id: Uuid::new_v4(),
                 model_order: wrong.clone(),
+                speedrun_started_at: None,
             },
         )
         .await
@@ -2156,6 +2157,7 @@ async fn timeline_hardcore_concurrent_final_submission_cannot_exceed_limit() {
                     hardcore_access: true,
                     request_id: Uuid::new_v4(),
                     model_order: order,
+                    speedrun_started_at: None,
                 },
             )
             .await
