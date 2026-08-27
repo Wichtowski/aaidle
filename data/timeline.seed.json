@@ -9,7 +9,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1763"
+    "releaseDate": "1763",
+    "yearAnnotation": "Bayes's essay was published in 1763, while the Naive Bayes classification method was formalized and adopted much later; no canonical release year is established."
   },
   {
     "id": "laplacian-operator",
@@ -31,7 +32,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1805"
+    "releaseDate": "1805",
+    "yearAnnotation": "Legendre's 1805 publication on least squares is a documented historical foundation for linear regression; only the year is reliably established here."
   },
   {
     "id": "gaussian-blur",
@@ -64,7 +66,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1901"
+    "releaseDate": "1901",
+    "yearAnnotation": "Karl Pearson introduced the principal-components method in his 1901 paper, \"On Lines and Planes of Closest Fit to Systems of Points in Space.\""
   },
   {
     "id": "linear-discriminant-analysis",
@@ -75,7 +78,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1936"
+    "releaseDate": "1936",
+    "yearAnnotation": "Fisher introduced the method in his 1936 paper, “The Use of Multiple Measurements in Taxonomic Problems,” supporting the year 1936."
   },
   {
     "id": "truncated-svd",
@@ -86,7 +90,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1936"
+    "releaseDate": "1936",
+    "yearAnnotation": "Eckart and Young established the low-rank matrix approximation result underlying truncated SVD in their September 1936 paper \"The Approximation of One Matrix by Another of Lower Rank.\" Golub and Reinsch's 1970 paper \"Singular Value Decomposition and Least Squares Solutions\" provided a practical algorithm for computing the SVD, which is widely used in truncated SVD implementations."
   },
   {
     "id": "gabor-filter",
@@ -108,7 +113,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1947"
+    "releaseDate": "1947",
+    "yearAnnotation": "Cedric A. B. Smith developed the pioneering quadratic discriminant function in work commonly cited to 1947, extending discriminant analysis to cases with unequal covariance matrices."
   },
   {
     "id": "gaussian-process",
@@ -120,7 +126,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1951"
+    "releaseDate": "1951",
+    "yearAnnotation": "Danie Krige's 1951 work is commonly credited with introducing kriging, which is closely related to Gaussian-process spatial prediction; the exact day is not historically established."
   },
   {
     "id": "knn",
@@ -132,7 +139,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1951"
+    "releaseDate": "1951",
+    "yearAnnotation": "Fix and Hodges' report, “Discriminatory Analysis: Nonparametric Discrimination,” was issued in 1951 and is generally credited as the origin of the k-nearest-neighbors method."
   },
   {
     "id": "k-means",
@@ -143,7 +151,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1957"
+    "releaseDate": "1957",
+    "yearAnnotation": "Lloyd's least-squares quantization work underlying K-means dates to 1957; the work was circulated as a Bell Labs technical report and formally published later."
   },
   {
     "id": "perceptron",
@@ -154,7 +163,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1957"
+    "releaseDate": "1957",
+    "yearAnnotation": "Historical accounts generally date the perceptron's introduction to 1957; in 1958 Rosenblatt published further details together with the implementation of an AI machine."
   },
   {
     "id": "logistic-regression",
@@ -165,7 +175,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1958"
+    "releaseDate": "1958",
+    "yearAnnotation": "David R. Cox published “The Regression Analysis of Binary Sequences” in the Journal of the Royal Statistical Society, Series B, in 1958, a foundational formulation of logistic regression."
   },
   {
     "id": "multi-layer-perceptron",
@@ -176,7 +187,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1958"
+    "releaseDate": "1958",
+    "yearAnnotation": "The multi-layer perceptron was proposed by Rosenblatt in the early multilayered perceptron architecture. Then in 1962 Rosenblatt described additional multilayer perceptron variants, including systems with more than one trainable layer, but without the modern general backpropagation algorithm. The hidden/association weights were not generally trained. Rumelhart, Hinton, and Williams published the backpropagation algorithm in 1986, which enabled training of multi-layer perceptrons. The 1958 date is included here to reflect the early conceptualization of the architecture."
   },
   {
     "id": "box-filter",
@@ -209,7 +221,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1963"
+    "releaseDate": "1963",
+    "yearAnnotation": "Sokal and Sneath's Principles of Numerical Taxonomy, which helped establish agglomerative numerical classification methods, was published in 1963."
   },
   {
     "id": "roberts-cross",
@@ -308,7 +321,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1966"
+    "releaseDate": "1966",
+    "yearAnnotation": "Baum and Petrie published foundational work on hidden Markov models in \"Statistical Inference for Probabilistic Functions of Finite State Markov Chains\" in December 1966."
   },
   {
     "id": "sobel-operator",
@@ -331,7 +345,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1970"
+    "releaseDate": "1970",
+    "yearAnnotation": "Hoerl and Kennard introduced ridge regression in their paper published in Technometrics in 1970."
   },
   {
     "id": "prewitt-operator",
@@ -375,7 +390,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1975"
+    "releaseDate": "1975",
+    "yearAnnotation": "Fukunaga and Hostetler introduced the mean-shift procedure in a 1975 paper on density-gradient estimation and pattern recognition."
   },
   {
     "id": "otsu-thresholding",
@@ -467,7 +483,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1986"
+    "releaseDate": "1986",
+    "yearAnnotation": "Quinlan's paper introducing ID3, \"Induction of Decision Trees,\" was published in 1986; this supports 1986 for ID3 specifically, not for decision trees as a whole."
   },
   {
     "id": "autoencoder",
@@ -547,7 +564,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1994"
+    "releaseDate": "1994",
+    "yearAnnotation": "Pierre Comon's foundational paper \"Independent Component Analysis, A New Concept?\" was published in April 1994."
   },
   {
     "id": "shi-tomasi-corner-detector",
@@ -570,7 +588,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1995"
+    "releaseDate": "1995",
+    "yearAnnotation": "Cortes and Vapnik introduced support-vector networks in a paper published in the journal Machine Learning, volume 20, in 1995."
   },
   {
     "id": "adaboost",
@@ -582,7 +601,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1996"
+    "releaseDate": "1996",
+    "yearAnnotation": "AdaBoost was presented in the 1996 ICML paper “Experiments with a New Boosting Algorithm,” supporting 1996 as its release year."
   },
   {
     "id": "dbscan",
@@ -593,7 +613,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1996"
+    "releaseDate": "1996",
+    "yearAnnotation": "The DBSCAN method was first published in the 1996 proceedings of the ACM SIGKDD conference."
   },
   {
     "id": "lasso",
@@ -605,7 +626,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "1996"
+    "releaseDate": "1996",
+    "yearAnnotation": "Robert Tibshirani's paper introducing the Lasso, \"Regression Shrinkage and Selection via the Lasso,\" was published in 1996."
   },
   {
     "id": "local-binary-pattern",
@@ -639,7 +661,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1997-09-29"
+    "releaseDate": "1997-09-29",
+    "yearAnnotation": "Schölkopf, Smola, and Müller introduced Kernel PCA in their ICANN 1997 paper \"Kernel Principal Component Analysis,\" published in the conference proceedings on September 29, 1997."
   },
   {
     "id": "bilateral-filter",
@@ -674,7 +697,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1999"
+    "releaseDate": "1999",
+    "yearAnnotation": "Schölkopf, Williamson, Smola, Shawe-Taylor, and Platt introduced the One-Class SVM approach in their NIPS 1999 paper \"Support Vector Method for Novelty Detection.\""
   },
   {
     "id": "sift",
@@ -696,7 +720,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1999-06-01"
+    "releaseDate": "1999-06-01",
+    "yearAnnotation": "Ankerst, Breunig, Kriegel, and Sander introduced OPTICS in their ACM SIGMOD paper published on June 1, 1999."
   },
   {
     "id": "non-negative-matrix-factorization",
@@ -707,7 +732,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1999-10-21"
+    "releaseDate": "1999-10-21",
+    "yearAnnotation": "Lee and Seung's foundational paper \"Learning the Parts of Objects by Non-Negative Matrix Factorization\" was published in Nature on October 21, 1999."
   },
   {
     "id": "scharr-operator",
@@ -729,7 +755,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2000-05-16"
+    "releaseDate": "2000-05-16",
+    "yearAnnotation": "Breunig, Kriegel, Ng, and Sander introduced Local Outlier Factor in their SIGMOD 2000 paper \"LOF: Identifying Density-Based Local Outliers,\" published on May 16, 2000."
   },
   {
     "id": "conditional-random-field",
@@ -740,7 +767,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2001"
+    "releaseDate": "2001",
+    "yearAnnotation": "Lafferty, McCallum, and Pereira introduced Conditional Random Fields in their ICML 2001 paper \"Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data.\""
   },
   {
     "id": "gradient-boosting",
@@ -752,7 +780,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "2001"
+    "releaseDate": "2001",
+    "yearAnnotation": "Jerome Friedman's foundational paper on gradient boosting, “Greedy Function Approximation: A Gradient Boosting Machine,” was published in 2001."
   },
   {
     "id": "spectral-clustering",
@@ -763,7 +792,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2001"
+    "releaseDate": "2001",
+    "yearAnnotation": "Ng, Jordan, and Weiss published their influential spectral clustering paper in 2001; the specific day and month are not reliably established."
   },
   {
     "id": "echo-state-network",
@@ -787,7 +817,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "2001-10-01"
+    "releaseDate": "2001-10-01",
+    "yearAnnotation": "The seminal Random Forests paper was published in the October 2001 issue of Machine Learning."
   },
   {
     "id": "grabcut",
@@ -810,7 +841,8 @@
       "machine-learning",
       "classical-ml"
     ],
-    "releaseDate": "2005"
+    "releaseDate": "2005",
+    "yearAnnotation": "The foundational paper introducing Elastic Net, “Regularization and Variable Selection via the Elastic Net,” was published in 2005."
   },
   {
     "id": "hog",
@@ -854,7 +886,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2007-02-01"
+    "releaseDate": "2007-02-01",
+    "yearAnnotation": "The method's seminal Science publication appeared in 2007, with online-first publication preceding the February 16 print issue."
   },
   {
     "id": "t-sne",
@@ -865,7 +898,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2008"
+    "releaseDate": "2008",
+    "yearAnnotation": "Van der Maaten and Hinton introduced t-SNE in their paper \"Visualizing Data using t-SNE,\" published in November 2008."
   },
   {
     "id": "isolation-forest",
@@ -876,7 +910,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2008-12-15"
+    "releaseDate": "2008-12-15",
+    "yearAnnotation": "Fei Tony Liu, Kai Ming Ting and Zhi-Hua Zhou introduced Isolation Forest in their 2008 IEEE International Conference on Data Mining paper \"Isolation Forest\" around 2008-12-15 to 2008-12-19 (conference date; no agenda found)."
   },
   {
     "id": "brief",
@@ -1075,6 +1110,18 @@
     "releaseDate": "2015-12-02"
   },
   {
+    "id": "openai-founded",
+    "kind": "event",
+    "name": "OpenAI founded",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2015-12-08",
+    "sourceUrl": "https://openai.com/index/introducing-openai/"
+  },
+  {
     "id": "ssd",
     "kind": "model",
     "name": "SSD",
@@ -1126,18 +1173,6 @@
     "releaseDate": "2015-12-10"
   },
   {
-    "id": "openai-announced",
-    "kind": "event",
-    "name": "OpenAI announced",
-    "minPool": 0,
-    "provider": "OpenAI",
-    "categories": [
-      "language-model"
-    ],
-    "releaseDate": "2015-12-11",
-    "sourceUrl": "https://openai.com/index/introducing-openai/"
-  },
-  {
     "id": "squeezenet",
     "kind": "model",
     "name": "SqueezeNet",
@@ -1161,7 +1196,8 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "releaseDate": "2016-03-09"
+    "releaseDate": "2016-03-09",
+    "yearAnnotation": "Public XGBoost release records date version 0.4 to March 9, 2016."
   },
   {
     "id": "wide-resnet",
@@ -1226,7 +1262,8 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "releaseDate": "2017"
+    "releaseDate": "2017",
+    "yearAnnotation": "LightGBM was introduced by Microsoft in paper “LightGBM: A Highly Efficient Gradient Boosting Decision Tree” and published in the NeurIPS 2017 proceedings. Github release records support the April 24, 2017 in https://github.com/lightgbm-org/LightGBM/releases?page=4"
   },
   {
     "id": "keypoint-rcnn",
@@ -1290,7 +1327,8 @@
       "classical-ml",
       "gradient-boosting"
     ],
-    "releaseDate": "2017-06-28"
+    "releaseDate": "2017-06-28",
+    "yearAnnotation": "CatBoost was introduced by Yandex and publicly documented in 2017, including its 2017 research publication. Wikipedia states release as July 18, 2017, but Github's first release is recorded on Sep 14, 2017; this date is documented in https://github.com/catboost/catboost/releases?page=10"
   },
   {
     "id": "shufflenet",

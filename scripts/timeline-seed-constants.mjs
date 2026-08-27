@@ -24,7 +24,7 @@ export function syncTimelineSeed({
     throw new Error(`${resolvedTimelinePath} must contain a JSON array`);
   }
 
-  const events = existingItems.filter((item) => item?.kind === "event");
+  const events = eventItems.filter((item) => item?.kind === "event");
   const models = classicModels
     .filter((model) => isReleaseDate(model.releaseDate))
     .map((model) => ({

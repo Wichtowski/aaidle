@@ -30,9 +30,9 @@
     "format": "prettier --write . .github/scripts/**/*.mjs",
     "format:files": "prettier --write",
     "format:check": "prettier --check . .github/scripts/**/*.mjs",
-    "merge-many-to-one": "node scripts/merge-many-to-one.mjs",
-    "split-one-to-many": "node scripts/split-one-to-many.mjs",
-    "timeline:seed": "node scripts/build-timeline-seed.mjs"
+    "classic-merge-to-one": "node scripts/classic-merge-to-one.mjs",
+    "timeline-merge-to-one": "node scripts/timeline-merge-to-one.mjs",
+    "timeline:seed": "pnpm timeline-merge-to-one"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.20",

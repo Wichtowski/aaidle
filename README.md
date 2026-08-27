@@ -88,14 +88,13 @@ The canonical model and Emoji-game seed data live in [data](data). After updatin
 pnpm db:validate-seed
 ```
 
-The Classic catalog can be edited in six category-focused files and merged back into the single seed file used by the application:
+The Classic catalog is edited in six category-focused files and merged into the single seed file used by the application:
 
 ```bash
-pnpm split-one-to-many
 # edit data/classic/classic.<category>.seed.json files
-pnpm merge-many-to-one
+pnpm classic-merge-to-one
 ```
 
-Models without a `categoryDetails` section stay in `data/classic.seed.json` while the category files are split, so the merge remains lossless
+The category files are the source of truth for Classic models; the merge command writes the canonical `data/classic.seed.json` file.
 
-Timeline events are maintained separately in `data/timeline/events.seed.json`. Running `pnpm merge-many-to-one` combines those events with the merged Classic catalog and regenerates `data/timeline.seed.json`.
+Timeline events are maintained separately in `data/timeline/events.seed.json`. Run `pnpm timeline-merge-to-one` after `pnpm classic-merge-to-one` to combine those events with the merged Classic catalog and regenerate `data/timeline.seed.json`.

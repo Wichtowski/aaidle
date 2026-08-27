@@ -32,10 +32,10 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Validate ${{ matrix.game }} seed
         run: pnpm run validate-${{ matrix.game }}-data
+
       - name: Merge and verify synchronized Classic/Timeline seeds
         if: matrix.game == 'classic' || matrix.game == 'timeline'
         run: |
           set -euo pipefail
-          pnpm merge-many-to-one
-          pnpm exec node scripts/validate-classic-data.mjs
-          git diff --exit-code -- data/classic.seed.json data/timeline.seed.json
+          pnpm run ${{ matrix.game }}-merge-to-one
+          git diff --exit-code -- data/${{ matrix.game }}.seed.json

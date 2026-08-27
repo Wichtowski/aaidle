@@ -1,0 +1,14 @@
+[
+  {
+    "id": "openai-founded",
+    "kind": "event",
+    "name": "OpenAI founded",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2015-12-08",
+    "sourceUrl": "https://openai.com/index/introducing-openai/"
+  }
+]
