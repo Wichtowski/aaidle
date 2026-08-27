@@ -8,6 +8,8 @@ import { GameLoadingState } from "@components/ui/GameLoadingState";
 import { GlobalHellMode } from "@components/ui/GlobalHellMode";
 import HomePage from "@app/pages/home/HomePage";
 import { useAuth } from "@components/auth/useAuth";
+import { SeoMetadata } from "@components/ui/SeoMetadata";
+import { InstallPrompt } from "@components/ui/InstallPrompt";
 
 const ProfilePage = lazy(() => import("@app/pages/profile/ProfilePage"));
 const AdminPage = lazy(() => import("@app/pages/admin/AdminPage"));
@@ -37,6 +39,7 @@ function Content() {
   return (
     <>
       <ProgressSyncLoader />
+      <SeoMetadata />
       <GlobalHellMode />
       <Suspense
         fallback={
@@ -70,6 +73,7 @@ function Content() {
         </Routes>
       </Suspense>
       <CookieConsent />
+      <InstallPrompt />
     </>
   );
 }

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f6f5f0"/>
+  <rect x="0" y="0" width="390" height="630" fill="#e84f33"/>
+  <text x="195" y="360" fill="#fffefa" font-family="Arial, Helvetica, sans-serif" font-size="168" font-weight="700" text-anchor="middle">aAI</text>
+  <text x="490" y="245" fill="#17202c" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700">a</text>
+  <text x="540" y="245" fill="#e84f33" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700">AI</text>
+  <text x="630" y="245" fill="#17202c" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700">dle</text>
+  <text x="490" y="315" fill="#607084" font-family="Arial, Helvetica, sans-serif" font-size="42">Another daily guessing game</text>
+  <text x="490" y="375" fill="#607084" font-family="Arial, Helvetica, sans-serif" font-size="32">Make your guess. Learn from playing. Have fun.</text>
+</svg>

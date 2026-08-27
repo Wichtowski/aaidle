@@ -39,6 +39,48 @@ body {
 body.profile-hell {
   background: #120d12;
 }
+.install-prompt {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: min(520px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 18px;
+  background: var(--panel);
+  box-shadow: 0 12px 36px rgb(23 32 44 / 18%);
+}
+.install-prompt strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.install-prompt p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.install-prompt__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+@media (max-width: 560px) {
+  .install-prompt {
+    right: 16px;
+    bottom: 16px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .install-prompt__actions {
+    justify-content: flex-end;
+  }
+}
 .page {
   min-height: 100vh;
   max-width: 1250px;
@@ -4335,8 +4377,8 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   display: grid;
   place-items: center;
   padding: 10px;
-  backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   border-radius: 15px;
 }
 .emoji__clue-cover {
