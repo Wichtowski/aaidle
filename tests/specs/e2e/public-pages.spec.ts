@@ -5,7 +5,9 @@ test("robots.txt is served as a valid crawler policy", async ({ page }) => {
 
   expect(response.ok()).toBe(true);
   expect(response.headers()["content-type"]).toContain("text/plain");
-  expect(await response.text()).toBe("User-agent: *\nAllow: /\n");
+  expect(await response.text()).toBe(
+    "User-agent: *\nAllow: /\n\nSitemap: https://reports.aaidle.com/sitemap.xml\n",
+  );
 });
 
 test("Home page exposes both playable game modes", async ({ homePage }) => {
@@ -42,7 +44,10 @@ test("Login page exposes password sign-in", async ({ loginPage }) => {
 });
 
 test("mobile navigation menu exposes site links", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile navigation is only shown on mobile");
+  test.skip(
+    testInfo.project.name !== "mobile-chromium",
+    "Mobile navigation is only shown on mobile",
+  );
 
   await page.goto("/");
 
@@ -52,7 +57,10 @@ test("mobile navigation menu exposes site links", async ({ page }, testInfo) => 
 
   await menuButton.click();
 
-  await expect(menuButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("button", { name: "Close navigation menu" })).toHaveAttribute(
+    "aria-expanded",
+    "true",
+  );
   await expect(page.getByRole("link", { name: "Profile", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Privacy", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Credits", exact: true })).toBeVisible();

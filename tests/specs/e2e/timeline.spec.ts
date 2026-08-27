@@ -110,7 +110,7 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
 
   await expect(timelinePage.submitButton).toBeEnabled();
   await timelinePage.submitButton.click();
-  await expect(page.getByText("Incorrect position")).toBeVisible();
+  await expect(page.getByText("Incorrect position").first()).toBeVisible();
 
   await page.getByRole("button", { name: /Position 2: Movable B/ }).click();
   await page.getByRole("button", { name: /Position 3: Movable A/ }).click();

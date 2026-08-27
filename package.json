@@ -14,7 +14,7 @@
     "test:install": "pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium",
     "test:watch": "vitest --config=tests/configs/vitest.config.ts",
     "test:e2e": "playwright test --config=tests/configs/playwright.config.ts --no-deps --project=chromium --project=mobile-chromium",
-    "test:performance": "playwright test --config=tests/configs/playwright.performance.config.ts",
+    "test:lighthouse": "playwright test --config=tests/configs/playwright.lighthouse.config.ts",
     "test:api": "playwright test --config=tests/configs/playwright.api.config.ts --no-deps --project=production-api",
     "test:api:local": "bash -c 'set -a && source .env.local && set +a && pnpm test:api'",
     "test:release-rediness": "playwright test --config=tests/configs/playwright.config.ts --project=release-readiness",

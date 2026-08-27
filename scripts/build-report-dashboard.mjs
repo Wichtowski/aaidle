@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 const siteDirectory = process.argv[2] ?? "site";
 const releasePattern = /^v\d+\.\d+\.\d+$/;
-const domains = ["e2e", "api", "accessibility", "performance"];
+const domains = ["e2e", "api", "accessibility", "lighthouse"];
 const lighthouseCategories = [
   ["performance", "Performance"],
   ["accessibility", "Accessibility"],
@@ -11,83 +11,130 @@ const lighthouseCategories = [
   ["seo", "SEO"],
 ];
 
-const releases = await Promise.all((await readdir(siteDirectory, { withFileTypes: true }))
-  .filter((entry) => entry.isDirectory() && releasePattern.test(entry.name))
-  .map(async ({ name }) => {
-    const directory = join(siteDirectory, name);
-    const entries = new Set(await readdir(directory));
-    let scores = {};
-    try {
-      const lighthouse = JSON.parse(await readFile(join(directory, "performance", "metrics.json"), "utf8"));
-      scores = Object.fromEntries(lighthouseCategories
-        .map(([key]) => [key, lighthouse.categories?.[key]?.score])
-        .filter(([, score]) => typeof score === "number")
-        .map(([key, score]) => [key, Math.round(score * 100)]));
-    } catch { /* empty */ }
-    return {
-      name,
-      domains: domains.filter((domain) => entries.has(domain)),
-      performanceScore: scores.performance ?? null,
-      scores,
-      modified: (await stat(directory)).mtimeMs,
-    };
-  }));
-const chronological = releases.sort((left, right) => left.name.localeCompare(right.name, undefined, { numeric: true }));
+const releases = await Promise.all(
+  (await readdir(siteDirectory, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory() && releasePattern.test(entry.name))
+    .map(async ({ name }) => {
+      const directory = join(siteDirectory, name);
+      const entries = new Set(await readdir(directory));
+      let scores = {};
+      try {
+        const lighthouse = JSON.parse(
+          await readFile(join(directory, "lighthouse", "metrics.json"), "utf8"),
+        );
+        scores = Object.fromEntries(
+          lighthouseCategories
+            .map(([key]) => [key, lighthouse.categories?.[key]?.score])
+            .filter(([, score]) => typeof score === "number")
+            .map(([key, score]) => [key, Math.round(score * 100)]),
+        );
+      } catch {
+        /* empty */
+      }
+      return {
+        name,
+        domains: domains.filter((domain) => entries.has(domain)),
+        performanceScore: scores.performance ?? null,
+        scores,
+        modified: (await stat(directory)).mtimeMs,
+      };
+    }),
+);
+const chronological = releases.sort((left, right) =>
+  left.name.localeCompare(right.name, undefined, { numeric: true }),
+);
 const newestFirst = [...chronological].sort((left, right) => right.modified - left.modified);
 
-const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
-const chartSeries = Object.fromEntries(lighthouseCategories.map(([key, label]) => [key, {
-  label,
-  points: chronological
-    .filter(({ scores }) => scores[key] !== undefined)
-    .map(({ name, scores }) => ({ name, score: scores[key] })),
-}]));
-const chart = chartSeries.performance.points.length === 0
-  ? "<p>No Lighthouse metrics are available yet.</p>"
-  : (() => {
-      const width = 760;
-      const height = 260;
-      const padding = { top: 24, right: 24, bottom: 48, left: 42 };
-      const plotWidth = width - padding.left - padding.right;
-      const plotHeight = height - padding.top - padding.bottom;
-      const performancePoints = chartSeries.performance.points;
-      const point = ({ score }, index) => ({
-        x: padding.left + (performancePoints.length === 1 ? plotWidth / 2 : (index * plotWidth) / (performancePoints.length - 1)),
-        y: padding.top + ((100 - score) * plotHeight) / 100,
-      });
-      const points = performancePoints.map(point);
-      const path = points.slice(1).reduce((value, current, index) => {
-        const previous = points[index];
-        const middleX = (previous.x + current.x) / 2;
-        return `${value} C ${middleX},${previous.y} ${middleX},${current.y} ${current.x},${current.y}`;
-      }, `M ${points[0].x},${points[0].y}`);
-      const grid = [0, 25, 50, 75, 100].map((score) => {
-        const y = padding.top + ((100 - score) * plotHeight) / 100;
-        return `<line x1="${padding.left}" x2="${width - padding.right}" y1="${y}" y2="${y}"/><text x="4" y="${y + 4}">${score}</text>`;
-      }).join("");
-      const labels = performancePoints.map(({ name }, index) => `<text x="${points[index].x}" y="${height - 16}" text-anchor="middle">${escapeHtml(name)}</text>`).join("");
-      const circles = performancePoints.map(({ name, score }, index) => `<circle cx="${points[index].x}" cy="${points[index].y}" r="4"><title>${escapeHtml(name)}: ${score}</title></circle>`).join("");
-      return `<div id="chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Lighthouse performance score by release"><g class="grid">${grid}</g><path class="chart-line" d="${path}"/>${circles}<g class="labels">${labels}</g></svg></div>`;
-    })();
+const escapeHtml = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character],
+  );
+const chartSeries = Object.fromEntries(
+  lighthouseCategories.map(([key, label]) => [
+    key,
+    {
+      label,
+      points: chronological
+        .filter(({ scores }) => scores[key] !== undefined)
+        .map(({ name, scores }) => ({ name, score: scores[key] })),
+    },
+  ]),
+);
+const chart =
+  chartSeries.performance.points.length === 0
+    ? "<p>No Lighthouse metrics are available yet.</p>"
+    : (() => {
+        const width = 760;
+        const height = 260;
+        const padding = { top: 24, right: 24, bottom: 48, left: 42 };
+        const plotWidth = width - padding.left - padding.right;
+        const plotHeight = height - padding.top - padding.bottom;
+        const performancePoints = chartSeries.performance.points;
+        const point = ({ score }, index) => ({
+          x:
+            padding.left +
+            (performancePoints.length === 1
+              ? plotWidth / 2
+              : (index * plotWidth) / (performancePoints.length - 1)),
+          y: padding.top + ((100 - score) * plotHeight) / 100,
+        });
+        const points = performancePoints.map(point);
+        const path = points.slice(1).reduce((value, current, index) => {
+          const previous = points[index];
+          const middleX = (previous.x + current.x) / 2;
+          return `${value} C ${middleX},${previous.y} ${middleX},${current.y} ${current.x},${current.y}`;
+        }, `M ${points[0].x},${points[0].y}`);
+        const grid = [0, 25, 50, 75, 100]
+          .map((score) => {
+            const y = padding.top + ((100 - score) * plotHeight) / 100;
+            return `<line x1="${padding.left}" x2="${width - padding.right}" y1="${y}" y2="${y}"/><text x="4" y="${y + 4}">${score}</text>`;
+          })
+          .join("");
+        const labels = performancePoints
+          .map(
+            ({ name }, index) =>
+              `<text x="${points[index].x}" y="${height - 16}" text-anchor="middle">${escapeHtml(name)}</text>`,
+          )
+          .join("");
+        const circles = performancePoints
+          .map(
+            ({ name, score }, index) =>
+              `<circle cx="${points[index].x}" cy="${points[index].y}" r="4"><title>${escapeHtml(name)}: ${score}</title></circle>`,
+          )
+          .join("");
+        return `<div id="chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Lighthouse performance score by release"><g class="grid">${grid}</g><path class="chart-line" d="${path}"/>${circles}<g class="labels">${labels}</g></svg></div>`;
+      })();
 const latestRelease = newestFirst[0];
 const scoreCards = latestRelease
   ? lighthouseCategories
-    .filter(([key]) => latestRelease.scores[key] !== undefined)
-    .map(([key, label]) => `<div class="score-card"><span>${label}</span><strong>${latestRelease.scores[key]}</strong><small>/ 100</small></div>`)
-    .join("")
+      .filter(([key]) => latestRelease.scores[key] !== undefined)
+      .map(
+        ([key, label]) =>
+          `<div class="score-card"><span>${label}</span><strong>${latestRelease.scores[key]}</strong><small>/ 100</small></div>`,
+      )
+      .join("")
   : "";
-const releaseList = newestFirst.map(({ name, domains: availableDomains, scores }) => {
-  const scoreList = lighthouseCategories
-    .filter(([key]) => scores[key] !== undefined)
-    .map(([key, label]) => `<span class="metric"><b>${scores[key]}</b> ${label}</span>`)
-    .join("");
-  const reportLinks = availableDomains
-    .map((domain) => `<a class="report-link" data-domain="${domain}" href="${name}/${domain}/">${domain.toUpperCase()}</a>`)
-    .join("");
-  return `<article class="release-card"><div><p class="eyebrow">Production release</p><h3>${escapeHtml(name)}</h3></div><div class="metrics">${scoreList || "<span class=\"metric\">No Lighthouse data</span>"}</div><nav aria-label="Reports for ${escapeHtml(name)}">${reportLinks}</nav></article>`;
-}).join("");
+const releaseList = newestFirst
+  .map(({ name, domains: availableDomains, scores }) => {
+    const scoreList = lighthouseCategories
+      .filter(([key]) => scores[key] !== undefined)
+      .map(([key, label]) => `<span class="metric"><b>${scores[key]}</b> ${label}</span>`)
+      .join("");
+    const reportLinks = availableDomains
+      .map(
+        (domain) =>
+          `<a class="report-link" data-domain="${domain}" href="${name}/${domain}/">${domain.toUpperCase()}</a>`,
+      )
+      .join("");
+    return `<article class="release-card"><div><p class="eyebrow">Production release</p><h3>${escapeHtml(name)}</h3></div><div class="metrics">${scoreList || '<span class="metric">No Lighthouse data</span>'}</div><nav aria-label="Reports for ${escapeHtml(name)}">${reportLinks}</nav></article>`;
+  })
+  .join("");
 
-await writeFile(join(siteDirectory, "index.html"), `<!doctype html>
+await writeFile(
+  join(siteDirectory, "index.html"),
+  `<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -108,7 +155,7 @@ await writeFile(join(siteDirectory, "index.html"), `<!doctype html>
   <header class="hero"><div><p class="eyebrow">aAIdle release reports</p><h1>Quality checks for every release.</h1><p class="intro">Browse Lighthouse scores and test results from our latest production releases.</p></div>${latestRelease ? `<span class="release-tag">Latest: ${escapeHtml(latestRelease.name)}</span>` : ""}</header>
   ${scoreCards ? `<section class="panel" aria-labelledby="latest-scores"><h2 id="latest-scores">Latest Lighthouse scores</h2><div class="score-grid">${scoreCards}</div></section>` : ""}
   <div class="layout"><section class="panel" aria-labelledby="chart-heading"><h2 id="chart-heading"><span id="chart-heading-metric">Performance</span> progression</h2>${chart}<p class="chart-note" id="chart-note">Lighthouse performance score by production release.</p></section><section class="panel" aria-labelledby="about-reports"><h2 id="about-reports">What’s included</h2><p class="intro">Each release links to its full Lighthouse audit alongside its browser, API, and accessibility test reports.</p><div class="chart-control"><label for="chart-metric">Chart statistic</label><select id="chart-metric">${lighthouseCategories.map(([key, label]) => `<option value="${key}">${label}</option>`).join("")}</select></div></section></div>
-  <section class="panel" aria-labelledby="release-reports"><h2 id="release-reports">Release reports</h2><div class="release-list">${releaseList || "<p class=\"intro\">No reports have been published yet.</p>"}</div></section>
+  <section class="panel" aria-labelledby="release-reports"><h2 id="release-reports">Release reports</h2><div class="release-list">${releaseList || '<p class="intro">No reports have been published yet.</p>'}</div></section>
 </main>
 <script>
   const chartSeries = ${JSON.stringify(chartSeries)};
@@ -145,4 +192,5 @@ await writeFile(join(siteDirectory, "index.html"), `<!doctype html>
   metricSelect?.addEventListener("change", (event) => renderChart(event.target.value));
 </script>
 </html>
-`);
+`,
+);

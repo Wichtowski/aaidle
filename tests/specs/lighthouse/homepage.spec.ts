@@ -3,7 +3,12 @@ import { playAudit } from "playwright-lighthouse";
 import { env } from "../../env";
 import { lighthouseTest as test } from "../../fixtures/lighthouse";
 
-const performanceThreshold = Number(process.env.LIGHTHOUSE_PERFORMANCE_THRESHOLD ?? 70);
+const lighthouseThresholds = Object.fromEntries(
+  Object.entries(env.reporting.lighthouse).map(([category, threshold]) => [
+    category === "bestPractices" ? "best-practices" : category,
+    threshold,
+  ]),
+);
 
 test("homepage meets the Lighthouse performance threshold", async ({ lighthousePage, port }) => {
   await lighthousePage.goto("/");
@@ -12,12 +17,12 @@ test("homepage meets the Lighthouse performance threshold", async ({ lighthouseP
   const report = await playAudit({
     page: lighthousePage,
     port,
-    thresholds: { performance: performanceThreshold },
+    thresholds: lighthouseThresholds,
     opts: { disableStorageReset: true },
     reports: {
       formats: { html: true, json: true },
       name: "homepage",
-      directory: "tests/reports/performance",
+      directory: "tests/reports/lighthouse",
     },
   });
 

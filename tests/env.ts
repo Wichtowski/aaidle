@@ -1,4 +1,9 @@
 const baseURL = "https://aaidle.com";
+const numericEnvironment = (name: string, fallback: number): number => {
+  const rawValue = process.env[name];
+  const value = Number(rawValue);
+  return rawValue?.trim() && Number.isFinite(value) ? value : fallback;
+};
 
 const environmentEntries = [
   ["CI", process.env.CI],
@@ -18,6 +23,10 @@ const environmentEntries = [
   ["GITHUB_TOKEN", process.env.GITHUB_TOKEN],
   ["GITHUB_STEP_SUMMARY", process.env.GITHUB_STEP_SUMMARY],
   ["LIGHTHOUSE_PERFORMANCE_THRESHOLD", process.env.LIGHTHOUSE_PERFORMANCE_THRESHOLD],
+  ["LIGHTHOUSE_SEO_THRESHOLD", process.env.LIGHTHOUSE_SEO_THRESHOLD],
+  ["LIGHTHOUSE_ACCESSIBILITY_THRESHOLD", process.env.LIGHTHOUSE_ACCESSIBILITY_THRESHOLD],
+  ["LIGHTHOUSE_BEST_PRACTICES_THRESHOLD", process.env.LIGHTHOUSE_BEST_PRACTICES_THRESHOLD],
+  ["AXE_MAXIMUM_VIOLATIONS", process.env.AXE_MAXIMUM_VIOLATIONS],
 ] as const;
 
 const secretEnvironmentVariables = new Set([
@@ -74,5 +83,16 @@ export const env = {
     runId: process.env.GITHUB_RUN_ID,
     token: process.env.GITHUB_TOKEN,
     stepSummaryPath: process.env.GITHUB_STEP_SUMMARY,
+  },
+  reporting: {
+    lighthouse: {
+      performance: numericEnvironment("LIGHTHOUSE_PERFORMANCE_THRESHOLD", 70),
+      seo: numericEnvironment("LIGHTHOUSE_SEO_THRESHOLD", 70),
+      accessibility: numericEnvironment("LIGHTHOUSE_ACCESSIBILITY_THRESHOLD", 70),
+      bestPractices: numericEnvironment("LIGHTHOUSE_BEST_PRACTICES_THRESHOLD", 70),
+    },
+    accessibility: {
+      maximumViolations: numericEnvironment("AXE_MAXIMUM_VIOLATIONS", 0),
+    },
   },
 } as const;

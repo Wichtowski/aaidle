@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
   workers: env.isCI ? 1 : undefined,
-  outputDir: "../results/performance",
+  outputDir: "../results/lighthouse",
   reporter: [["list"], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
@@ -23,9 +23,9 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
     {
-      name: "performance",
+      name: "lighthouse",
       dependencies: ["release-readiness"],
-      testMatch: "specs/performance/**/*.spec.ts",
+      testMatch: "specs/lighthouse/**/*.spec.ts",
       use: { ...devices["Desktop Chrome"] },
     },
   ],

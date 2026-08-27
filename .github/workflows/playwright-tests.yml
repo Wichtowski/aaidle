@@ -179,6 +179,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
       - name: Run accessibility tests
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          AXE_MAXIMUM_VIOLATIONS: "${{ vars.AXE_MAXIMUM_VIOLATIONS }}"
         id: accessibility-tests
         continue-on-error: true
         run: pnpm run test:accessibility
@@ -213,7 +216,7 @@ jobs:
           name: accessibility-report
           path: tests/reports/accessibility
 
-  performance:
+  lighthouse:
     needs: readiness
     runs-on: ubuntu-latest
     steps:
@@ -229,27 +232,35 @@ jobs:
           cache: ${{ env.PACKAGE_MANAGER }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install Playwright Chromium and system dependencies
+        run: pnpm exec playwright install --with-deps chromium
       - name: Run Lighthouse
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          LIGHTHOUSE_PERFORMANCE_THRESHOLD: "${{ vars.LIGHTHOUSE_PERFORMANCE_THRESHOLD }}"
+          LIGHTHOUSE_SEO_THRESHOLD: "${{ vars.LIGHTHOUSE_SEO_THRESHOLD }}"
+          LIGHTHOUSE_ACCESSIBILITY_THRESHOLD: "${{ vars.LIGHTHOUSE_ACCESSIBILITY_THRESHOLD }}"
+          LIGHTHOUSE_BEST_PRACTICES_THRESHOLD: "${{ vars.LIGHTHOUSE_BEST_PRACTICES_THRESHOLD }}"
         run: |
-          mkdir -p tests/reports/performance
+          mkdir -p tests/reports/lighthouse
           pnpm exec lighthouse https://aaidle.com \
             --config-path=tests/configs/lighthouse.config.mjs \
             --chrome-flags="--headless=new --no-sandbox" \
             --output html \
             --output json \
-            --output-path=tests/reports/performance/home
-          mv tests/reports/performance/home.report.html tests/reports/performance/index.html
-          mv tests/reports/performance/home.report.json tests/reports/performance/metrics.json
+            --output-path=tests/reports/lighthouse/home
+          mv tests/reports/lighthouse/home.report.html tests/reports/lighthouse/index.html
+          mv tests/reports/lighthouse/home.report.json tests/reports/lighthouse/metrics.json
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: performance-report
-          path: tests/reports/performance
+          name: lighthouse-report
+          path: tests/reports/lighthouse
 
   publish-reports:
     if: ${{ !cancelled() }}
-    needs: [e2e, api, accessibility, performance]
+    needs: [e2e, api, accessibility, lighthouse]
     runs-on: ubuntu-latest
     steps:
       - name: ${{ env.CHECKOUT_REPO }}
@@ -285,8 +296,8 @@ jobs:
       - name: ${{ env.DOWNLOAD_ARTIFACTS }} Performance
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
-          name: performance-report
-          path: reports/performance
+          name: lighthouse-report
+          path: reports/lighthouse
       - name: Publish E2E report history
         run: pnpm run allure:e2e
       - name: Publish API report history
