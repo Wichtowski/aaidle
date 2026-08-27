@@ -91,7 +91,7 @@ test("deactivated account cannot obtain an access token", async () => {
 
   const login = await fetch(apiUrl("/api/v1/auth/token"), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ email, password }),
   });
 

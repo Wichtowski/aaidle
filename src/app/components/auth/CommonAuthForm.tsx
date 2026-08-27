@@ -19,6 +19,8 @@ type CommonAuthFormProps = {
   submitLabel: string;
   toast: { message: string; variant: ToastVariant } | null;
   onToastDismiss: () => void;
+  toolDescription: string;
+  toolName: string;
 };
 
 export function CommonAuthForm({
@@ -36,6 +38,8 @@ export function CommonAuthForm({
   submitLabel,
   toast,
   onToastDismiss,
+  toolDescription,
+  toolName,
 }: CommonAuthFormProps) {
   const { user } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -53,14 +57,21 @@ export function CommonAuthForm({
         </a>
       </div>
       <div className="auth-divider">or use your email</div>
-      <form className="auth-card__password" onSubmit={onSubmit}>
+      <form
+        className="auth-card__password"
+        onSubmit={onSubmit}
+        toolname={toolName}
+        tooldescription={toolDescription}
+      >
         <label className="auth-field">
           Email
           <input
             autoComplete="email"
             data-testid="auth-email"
+            name="email"
             onChange={(event) => onEmailChange(event.target.value)}
             required
+            toolparamdescription="The account email address."
             type="email"
             value={email}
           />
@@ -71,9 +82,11 @@ export function CommonAuthForm({
             <input
               autoComplete={passwordAutoComplete}
               data-testid="auth-password"
+              name="password"
               minLength={passwordMinLength}
               onChange={(event) => onPasswordChange(event.target.value)}
               required
+              toolparamdescription="The account password."
               type={passwordVisible ? "text" : "password"}
               value={password}
             />

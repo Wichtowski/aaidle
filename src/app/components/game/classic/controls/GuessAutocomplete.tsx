@@ -115,6 +115,8 @@ export function GuessAutocomplete({
         confirm();
       }}
       ref={rootRef}
+      toolname="guessClassicModel"
+      tooldescription="Choose the AI model you think is the answer in the classic game."
     >
       <label htmlFor="model-search">Choose a model</label>
       <div className="autocomplete__field">
@@ -126,6 +128,7 @@ export function GuessAutocomplete({
           autoComplete="off"
           disabled={disabled}
           id="model-search"
+          name="model"
           onChange={(event) => {
             const value = event.target.value;
             setQuery(value);
@@ -146,6 +149,7 @@ export function GuessAutocomplete({
           }}
           placeholder={placeholderByCategory[category]}
           role="combobox"
+          toolparamdescription="The name of the AI model to guess."
           value={query}
         />
         <button

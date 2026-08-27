@@ -39,7 +39,9 @@ export function AdminPage() {
 
   useEffect(() => {
     if (!loading && user?.disabled) navigate("/account-disabled", { replace: true });
-    else if (!loading && (!user || !canManageUsers(user.permission))) navigate("/", { replace: true });
+    else if (!loading && (!user || !canManageUsers(user.permission))) {
+      navigate("/", { replace: true });
+    }
   }, [loading, navigate, user]);
 
   useEffect(() => {
@@ -161,14 +163,21 @@ export function AdminPage() {
               <h2>{total} users</h2>
             </div>
           </div>
-          <form className="admin-search" onSubmit={submitSearch}>
+          <form
+            className="admin-search"
+            onSubmit={submitSearch}
+            toolname="searchAdminUsers"
+            tooldescription="Find registered aAIdle accounts by email address or display name."
+          >
             <label htmlFor="admin-user-search">Find by email or name</label>
             <div>
               <input
                 id="admin-user-search"
+                name="query"
                 onChange={(event) => setQueryInput(event.target.value)}
                 placeholder="name@example.com"
                 type="search"
+                toolparamdescription="An email address or display name to search for."
                 value={queryInput}
               />
               <button className="button" type="submit">
@@ -324,15 +333,21 @@ function HardcoreSoundtrackSettings() {
         <h2 id="admin-soundtrack-title">Hardcore soundtrack</h2>
         <p>Use a public HTTPS SoundCloud track URL. Leave it empty to disable the player.</p>
       </div>
-      <form onSubmit={save}>
+      <form
+        onSubmit={save}
+        toolname="saveHardcoreSoundtrack"
+        tooldescription="Save the public SoundCloud URL used for the Hardcore soundtrack."
+      >
         <label htmlFor="hardcore-soundtrack-url">SoundCloud URL</label>
         <div>
           <input
             disabled={loading || saving}
             id="hardcore-soundtrack-url"
+            name="url"
             onChange={(event) => setUrl(event.target.value)}
             placeholder="https://soundcloud.com/artist/track"
             type="url"
+            toolparamdescription="A public HTTPS SoundCloud track URL, or empty to disable the player."
             value={url}
           />
           <button className="button" disabled={loading || saving} type="submit">

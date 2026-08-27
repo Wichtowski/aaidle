@@ -4844,7 +4844,6 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 }
 .timeline-card--correct {
   cursor: default;
-  pointer-events: none;
 }
 .timeline-card--submitted.timeline-card--anchor:not(.timeline-card--winning) {
   animation: none;

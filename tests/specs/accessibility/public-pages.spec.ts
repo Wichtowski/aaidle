@@ -18,11 +18,20 @@ const ignoredBrandColorContrastTargets = new Set([
   ".game-help__button > span",
 ]);
 
+const pageHeadingByRoute: Record<string, string> = {
+  "/": '[data-testid="home-heading"]',
+  "/classic": '[data-testid="game-heading"]',
+  "/emoji": '[data-testid="game-heading"]',
+  "/privacy": '[data-testid="privacy-heading"]',
+  "/credits": '[data-testid="credits-heading"]',
+};
+
 test("public pages have no serious accessibility violations", async ({ page }) => {
   const reports = [];
 
   for (const route of routes) {
     await page.goto(route);
+    await expect(page.locator(pageHeadingByRoute[route])).toBeVisible();
     const axe = new AxeBuilder({ page });
 
     if (cloudflareChallengeRoutes.has(route)) {

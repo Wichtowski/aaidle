@@ -61,6 +61,8 @@ export function RegistrationForm() {
         passwordMinLength={12}
         submitLabel="Create account"
         toast={toast}
+        toolDescription="Create a new aAIdle account with an email address and password."
+        toolName="createAccount"
       >
         <label className="auth-field">
           Retype password
@@ -69,13 +71,17 @@ export function RegistrationForm() {
               autoComplete="new-password"
               data-testid="register-confirm-password"
               minLength={12}
+              name="confirmPassword"
               onChange={(event) => setConfirmPassword(event.target.value)}
               required
+              toolparamdescription="The password entered again for confirmation."
               type={confirmPasswordVisible ? "text" : "password"}
               value={confirmPassword}
             />
             <button
-              aria-label={confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"}
+              aria-label={
+                confirmPasswordVisible ? "Hide retyped password" : "Show retyped password"
+              }
               className="password-input__toggle"
               onClick={() => setConfirmPasswordVisible((visible) => !visible)}
               type="button"

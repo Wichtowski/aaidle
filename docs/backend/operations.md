@@ -84,6 +84,15 @@ For an empty volume, run `aidle-seed` once in the same image and with the same `
 Run the container behind a reverse proxy or CDN that handles TLS and any desired rate limits.
 The API does not trust forwarded headers.
 
+### Production security headers
+
+The API adds baseline security headers to every response. The static SPA is served by the
+host Caddy instance, so include [`deploy/caddy/aaidle-security.caddy`](../../deploy/caddy/aaidle-security.caddy)
+inside the `aaidle.com` site block and reload Caddy. This enables CSP, HSTS, COOP, clickjacking
+protection, and a restrictive Permissions Policy for the browser-facing site. The CSP permits
+the SoundCloud widget currently used by Hardcore mode; review that allowlist before adding any
+new third-party script, frame, or connection.
+
 ## Backup and restore
 
 Use SQLite’s backup facility or `VACUUM INTO` rather than copying only the `.db` file while it is being written in WAL mode.

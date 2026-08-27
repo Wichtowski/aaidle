@@ -34,7 +34,12 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <form className="auth-card auth-card__password" onSubmit={submit}>
+    <form
+      className="auth-card auth-card__password"
+      onSubmit={submit}
+      toolname="resetPassword"
+      tooldescription="Set a new password for the current aAIdle password-reset session."
+    >
       <Toast
         message={toast?.message ?? null}
         variant={toast?.variant}
@@ -47,8 +52,10 @@ export function ResetPasswordForm() {
             autoComplete="new-password"
             data-testid="reset-password"
             minLength={12}
+            name="password"
             onChange={(event) => setPassword(event.target.value)}
             required
+            toolparamdescription="The new account password, at least 12 characters long."
             type={passwordVisible ? "text" : "password"}
             value={password}
           />
@@ -69,8 +76,10 @@ export function ResetPasswordForm() {
             autoComplete="new-password"
             data-testid="reset-confirm-password"
             minLength={12}
+            name="confirmPassword"
             onChange={(event) => setConfirmPassword(event.target.value)}
             required
+            toolparamdescription="The new password entered again for confirmation."
             type={confirmPasswordVisible ? "text" : "password"}
             value={confirmPassword}
           />

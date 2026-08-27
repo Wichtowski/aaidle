@@ -329,7 +329,13 @@ export function EmojiGame({
                     </span>
                     <span className="emoji__clue-face emoji__clue-result">
                       {clue?.type === "emoji" ? (
-                        <span className={clue.action === "replace" ? "emoji__glyph emoji__glyph--replacement" : "emoji__glyph"}>
+                        <span
+                          className={
+                            clue.action === "replace"
+                              ? "emoji__glyph emoji__glyph--replacement"
+                              : "emoji__glyph"
+                          }
+                        >
                           {clue.action === "replace" && clue.toValue?.includes("-") ? (
                             <>
                               <span className="emoji__replacement-emoji">{clue.value}</span>
@@ -362,12 +368,15 @@ export function EmojiGame({
                 event.preventDefault();
                 if (activeOption) void choose(activeOption);
               }}
+              toolname="guessEmojiEntity"
+              tooldescription="Choose the AI entity you think is the answer in the emoji game."
             >
               <label htmlFor="emoji-search">Name the answer</label>
               <div>
                 <div className="emoji__input">
                   <input
                     id="emoji-search"
+                    name="entity"
                     value={query}
                     disabled={busy}
                     aria-activedescendant={
@@ -377,6 +386,7 @@ export function EmojiGame({
                     aria-controls="emoji-options"
                     aria-expanded={available.length > 0}
                     role="combobox"
+                    toolparamdescription="The name of the AI entity to guess."
                     onChange={(event) => {
                       const nextQuery = event.target.value;
                       setQuery(nextQuery);

@@ -34,14 +34,21 @@ export function IssueReportForm() {
   };
 
   return (
-    <form className="issue-report__form" onSubmit={submit}>
+    <form
+      className="issue-report__form"
+      onSubmit={submit}
+      toolname="reportIssue"
+      tooldescription="Submit a bug report about an aAIdle game to the project issue tracker."
+    >
       <label>
         Game
         <select
           data-testid="issue-report-game"
           disabled={submitting}
+          name="game"
           onChange={(event) => setGame(event.target.value as IssueGame | "")}
           required
+          toolparamdescription="The aAIdle game affected by the issue."
           value={game}
         >
           <option disabled value="">
@@ -60,9 +67,11 @@ export function IssueReportForm() {
           disabled={submitting}
           maxLength={120}
           minLength={8}
+          name="title"
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Summarize the problem in a few words"
           required
+          toolparamdescription="A short summary of the problem, between 8 and 120 characters."
           value={title}
         />
       </label>
@@ -73,10 +82,12 @@ export function IssueReportForm() {
           disabled={submitting}
           maxLength={5_000}
           minLength={20}
+          name="description"
           onChange={(event) => setDescription(event.target.value)}
           placeholder="Tell us what you expected, what happened, and how to reproduce it."
           required
           rows={8}
+          toolparamdescription="What happened, what was expected, and how to reproduce the problem."
           value={description}
         />
       </label>

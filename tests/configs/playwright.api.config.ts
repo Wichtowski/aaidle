@@ -15,7 +15,12 @@ export default defineConfig({
         ["../env.ts"],
       ]
     : [["list"], ["../env.ts"]],
-  use: { baseURL: env.baseURL },
+  use: {
+    baseURL: env.baseURL,
+    extraHTTPHeaders: env.cloudflareE2EToken
+      ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken }
+      : undefined,
+  },
   projects: [
     {
       name: "release-readiness",

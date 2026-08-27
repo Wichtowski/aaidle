@@ -109,7 +109,11 @@ export function LoginForm() {
       }
       busy={busy}
       email={email}
-      footer={<a className="auth-card__toggle" href="/register">Need an account? Create one</a>}
+      footer={
+        <a className="auth-card__toggle" href="/register">
+          Need an account? Create one
+        </a>
+      }
       onEmailChange={(value) => {
         setEmail(value);
         setSignInErrorCode(null);
@@ -124,6 +128,8 @@ export function LoginForm() {
       passwordAutoComplete="current-password"
       submitLabel="Sign in"
       toast={toast}
+      toolDescription="Sign in to an existing aAIdle account with an email address and password."
+      toolName="signIn"
     />
   );
 }
