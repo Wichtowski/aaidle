@@ -6,6 +6,7 @@ const redactions = {
   CloudflareE2EToken: { suffix: "14cb2fa26b" },
   HealthKey: { suffix: "9d5cfe746a" },
   PlaywrightTestPassword: { environmentVariable: "AAIDLE_PLAYWRIGHT_TEST_PASSWORD" },
+  PlaywrightTestEmail: { pattern: /[A-Z0-9._%+-]+@aaidle\.com/gi },
 };
 const requestedRedactions = process.argv.slice(2);
 
@@ -27,6 +28,7 @@ const patterns = requestedRedactions.map((name) => {
       "g",
     );
   }
+  if (redaction.pattern) return redaction.pattern;
 
   const secret = process.env[redaction.environmentVariable];
   if (!secret) {

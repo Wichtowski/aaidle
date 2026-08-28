@@ -4,6 +4,7 @@ import { consentState } from "../state/consent-state";
 
 export default defineConfig({
   testDir: "..",
+  globalSetup: "../playwright-global-setup.ts",
   fullyParallel: true,
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
@@ -14,9 +15,8 @@ export default defineConfig({
         ["list"],
         ["blob", { outputDir: "tests/reports/blob" }],
         ["allure-playwright", { resultsDir: "tests/reports/allure-results" }],
-        ["../env.ts"],
       ]
-    : [["list"], ["html", { open: "never", outputFolder: "../reports/playwright" }], ["../env.ts"]],
+    : [["list"], ["html", { open: "never", outputFolder: "../reports/playwright" }]],
   use: {
     baseURL: env.baseURL,
     extraHTTPHeaders: env.cloudflareE2EToken

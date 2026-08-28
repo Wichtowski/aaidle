@@ -96,8 +96,9 @@ jobs:
       - name: Redact E2E secrets from test artifacts
         if: always()
         env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
           AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
-        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword PlaywrightTestEmail
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -140,8 +141,9 @@ jobs:
       - name: Redact API test secrets from test artifacts
         if: always()
         env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
           AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
-        run: node .github/scripts/redact-allure-secrets.mjs HealthKey PlaywrightTestPassword
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken HealthKey PlaywrightTestPassword PlaywrightTestEmail
       - name: ${{ env.UPLOAD_ARTIFACTS }}
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

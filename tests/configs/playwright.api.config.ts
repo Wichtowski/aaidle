@@ -3,6 +3,7 @@ import { env } from "../env";
 
 export default defineConfig({
   testDir: "..",
+  globalSetup: "../playwright-global-setup.ts",
   fullyParallel: true,
   forbidOnly: env.isCI,
   retries: env.isCI ? 2 : 0,
@@ -12,9 +13,8 @@ export default defineConfig({
     ? [
         ["list"],
         ["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }],
-        ["../env.ts"],
       ]
-    : [["list"], ["../env.ts"]],
+    : [["list"]],
   use: {
     baseURL: env.baseURL,
     extraHTTPHeaders: env.cloudflareE2EToken
