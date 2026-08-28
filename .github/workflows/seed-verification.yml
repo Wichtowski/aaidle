@@ -33,9 +33,17 @@ jobs:
       - name: Validate ${{ matrix.game }} seed
         run: pnpm run validate-${{ matrix.game }}-data
 
-      - name: Merge and verify synchronized Classic/Timeline seeds
+      - name: Merge and verify synchronized Classic seed
         if: matrix.game == 'classic' || matrix.game == 'timeline'
         run: |
           set -euo pipefail
-          pnpm run ${{ matrix.game }}-merge-to-one
-          git diff --exit-code -- data/${{ matrix.game }}.seed.json
+          pnpm run classic-merge-to-one
+          git diff --exit-code -- data/classic.seed.json
+
+      - name: Merge and verify synchronized Timeline seed
+        if: matrix.game == 'timeline'
+        run: |
+          set -euo pipefail
+          pnpm run timeline-merge-to-one
+          git diff --exit-code -- data/timeline.seed.json
+
