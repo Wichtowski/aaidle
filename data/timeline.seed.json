@@ -1483,7 +1483,7 @@
     "kind": "model",
     "name": "BioClinicalBERT",
     "minPool": 2,
-    "provider": "Unknown",
+    "provider": "Emily Alsentzer",
     "categories": [
       "nlp"
     ],
