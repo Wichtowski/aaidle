@@ -125,13 +125,13 @@ function GuessTrajectory({
       label: guess.model.name,
       kind: "guess" as const,
       number: guess.attemptNumber,
-      point: modelSpacePoint(guess.model, category, referenceModels),
+      point: modelSpacePoint(guess.model, category, referenceModels, target),
     })),
     {
       id: target.id,
       label: target.name,
       kind: "answer" as const,
-      point: modelSpacePoint(target, category, referenceModels),
+      point: modelSpacePoint(target, category, referenceModels, target),
     },
   ];
   const projectedPoints = points.map((item) => ({
@@ -146,7 +146,7 @@ function GuessTrajectory({
     .map((model) => ({
       model,
       projected: project(
-        modelSpacePoint(model, category, referenceModels),
+        modelSpacePoint(model, category, referenceModels, target),
         rotation.azimuth,
         rotation.elevation,
       ),

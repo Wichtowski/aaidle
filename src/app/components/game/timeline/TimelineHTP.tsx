@@ -38,8 +38,7 @@ export function TimelineHTP({
         </li>
         {hardcoreUnlocked && (
           <li className="how-to-play-modal__item--partial">
-            <FaEquals aria-hidden /> Same year - the card shares a year with the correct position,
-            but its exact date is elsewhere.
+            <FaEquals aria-hidden /> Same year - the card shares a year with the correct position.
           </li>
         )}
         <li className="how-to-play-modal__item--locked">
@@ -56,7 +55,10 @@ export function TimelineHTP({
         <li>Normal and Challenge use non-overlapping years.</li>
         <li>Normal has 2 anchors out of 6 items. Challenge has 3 out of 12.</li>
         {hardcoreUnlocked && (
-          <li>Hardcore has 5 anchors out of 18 and a strict 18-submission cap.</li>
+          <>
+            <li>Hardcore has 4 anchors out of 18 and a strict 8-submission cap.</li>
+            <li>Hardcore allows for the same year verification with the yellow highlight. <br/>Just to make your suffering little less painful.</li>
+          </>
         )}
       </ul>
 

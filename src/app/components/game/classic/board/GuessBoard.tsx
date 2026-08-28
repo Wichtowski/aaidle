@@ -18,6 +18,27 @@ import type {
 } from "@lib/domain/models/model-types";
 
 const compactAfterGuessCount = 5;
+const minimumBoardColumnWidth = 64;
+const boardColumnGap = 7;
+const boardModelColumnWidth = 160;
+
+const boardColumnLayout = (columns: readonly ClassicColumn[]) => {
+  const tracks = columns.map((column) => {
+    const headingLength = classicColumnHeadings[column].length;
+    const minimumWidth = Math.max(minimumBoardColumnWidth, Math.ceil(headingLength * 7 + 12));
+    const weight = Math.min(1.6, Math.max(1, headingLength / 8));
+
+    return { minimumWidth, track: `minmax(${minimumWidth}px, ${weight}fr)` };
+  });
+
+  return {
+    minimumWidth:
+      boardModelColumnWidth +
+      tracks.reduce((total, track) => total + track.minimumWidth, 0) +
+      Math.max(0, columns.length - 1) * boardColumnGap,
+    template: tracks.map((track) => track.track).join(" "),
+  };
+};
 
 type BoardGuess = {
   model: ComparableModel;
@@ -54,6 +75,7 @@ export function GuessBoard({
     : category
       ? classicColumnsForGame(category, difficulty)
       : classicColumns;
+  const columnLayout = boardColumnLayout(columns);
   const guessIds = guesses.map((guess) => guess.requestId);
   const guessKey = guessIds.join(":");
   const [collapsedGuessIds, setCollapsedGuessIds] = useState<Set<string>>(() => new Set());
@@ -97,6 +119,8 @@ export function GuessBoard({
       style={
         {
           "--guess-board-columns": columns.length,
+          "--guess-board-min-width": `${columnLayout.minimumWidth}px`,
+          "--guess-board-template": columnLayout.template,
           "--guess-board-width": `${
             category === "hardcore"
               ? 160 + columns.length * 100

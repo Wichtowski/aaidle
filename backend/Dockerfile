@@ -27,7 +27,7 @@ RUN useradd --create-home --system --uid 10001 --user-group aaidle \
     && mkdir /data \
     && chown aaidle:aaidle /data \
     && apt-get update \
-    && apt-get install --no-install-recommends -y ca-certificates \
+    && apt-get install --no-install-recommends -y ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /out/aidle-api /usr/local/bin/aidle-api
@@ -39,6 +39,8 @@ USER aaidle
 VOLUME ["/data"]
 
 EXPOSE 8080
+
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=12 CMD curl --fail --silent --header "x-aaidle-health-key: ${HEALTH_KEY}" http://127.0.0.1:8080/api/v1/health >/dev/null || exit 1
 
 ENV AIDLE_BIND_ADDR=0.0.0.0:8080
 ENV DATABASE_URL=sqlite:///data/aidle.db

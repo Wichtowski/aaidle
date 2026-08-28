@@ -1992,7 +1992,7 @@
     "modelClass": "encoder",
     "entityType": "trained_model",
     "minPool": 2,
-    "provider": null,
+    "provider": "Emily Alsentzer",
     "family": [
       "BERT",
       "BioClinicalBERT"

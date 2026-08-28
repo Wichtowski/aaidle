@@ -171,7 +171,11 @@ export function TimelineGame() {
   const pendingRequestId = useRef<string | null>(null);
   const completionTimer = useRef<number | null>(null);
   const landingTimer = useRef<number | null>(null);
+  const draggingModelIdRef = useRef<string | null>(null);
   const lastPointerTarget = useRef<string | null>(null);
+  const pointerY = useRef<number | null>(null);
+  const pointerDragActive = useRef(false);
+  const autoScrollFrame = useRef<number | null>(null);
   const gameCache = useRef<Partial<Record<TimelineDifficulty, TimelineGamePayload>>>({});
 
   const selectDifficulty = (nextDifficulty: string) => {
@@ -325,57 +329,127 @@ export function TimelineGame() {
   );
 
   useEffect(() => {
-    if (!draggingModelId) return;
-    const pointerMove = (event: globalThis.PointerEvent) => {
-      if (event.pointerType === "touch") event.preventDefault();
-      const target = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
+    if (!draggingModelId || !pointerDragActive.current) return;
+    const scrollEdge = 72;
+    const maxScrollStep = 10;
+    const autoScroll = () => {
+      const y = pointerY.current;
+      if (y !== null) {
+        const scrollStep =
+          y < scrollEdge
+            ? -Math.ceil(((scrollEdge - y) / scrollEdge) * maxScrollStep)
+            : y > window.innerHeight - scrollEdge
+              ? Math.ceil(((y - (window.innerHeight - scrollEdge)) / scrollEdge) * maxScrollStep)
+              : 0;
+        if (scrollStep !== 0) window.scrollBy(0, scrollStep);
+      }
+      autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
+    };
+    autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
+
+    const resolveTarget = (clientX: number, clientY: number) => {
+      const target = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
       const slot = target?.closest<HTMLElement>("[data-timeline-position]");
       const tray = target?.closest<HTMLElement>("[data-timeline-tray]");
-      const targetKey = slot?.dataset.timelinePosition ?? (tray ? "tray" : null);
+      return slot?.dataset.timelinePosition ?? (tray ? "tray" : null);
+    };
+    const pointerMove = (event: globalThis.PointerEvent) => {
+      event.preventDefault();
+      pointerY.current = event.clientY;
+      const targetKey = resolveTarget(event.clientX, event.clientY);
       setDragOverTarget(
         targetKey === "tray" ? "tray" : targetKey === null ? null : Number(targetKey),
       );
-      if (targetKey === null || targetKey === lastPointerTarget.current) return;
       lastPointerTarget.current = targetKey;
-      moveModel(draggingModelId, targetKey === "tray" ? null : Number(targetKey));
     };
-    const pointerUp = () => {
-      triggerLanding(draggingModelId);
+    const pointerUp = (event: globalThis.PointerEvent) => {
+      const modelId = draggingModelIdRef.current ?? draggingModelId;
+      const targetKey = resolveTarget(event.clientX, event.clientY);
+      if (modelId && targetKey !== null) {
+        moveModel(modelId, targetKey === "tray" ? null : Number(targetKey));
+        triggerLanding(modelId);
+      }
+      pointerDragActive.current = false;
+      draggingModelIdRef.current = null;
       setDraggingModelId(null);
       setDragOverTarget(null);
       lastPointerTarget.current = null;
+      pointerY.current = null;
+    };
+    const pointerCancel = () => {
+      pointerDragActive.current = false;
+      draggingModelIdRef.current = null;
+      setDraggingModelId(null);
+      setDragOverTarget(null);
+      lastPointerTarget.current = null;
+      pointerY.current = null;
     };
     window.addEventListener("pointermove", pointerMove, { passive: false });
     window.addEventListener("pointerup", pointerUp, { once: true });
-    window.addEventListener("pointercancel", pointerUp, { once: true });
+    window.addEventListener("pointercancel", pointerCancel, { once: true });
     return () => {
       window.removeEventListener("pointermove", pointerMove);
       window.removeEventListener("pointerup", pointerUp);
-      window.removeEventListener("pointercancel", pointerUp);
+      window.removeEventListener("pointercancel", pointerCancel);
+      pointerY.current = null;
+      if (autoScrollFrame.current !== null) {
+        window.cancelAnimationFrame(autoScrollFrame.current);
+        autoScrollFrame.current = null;
+      }
     };
   }, [draggingModelId, moveModel, triggerLanding]);
 
   const dragStart = (event: DragEvent, modelId: string) => {
+    if (pointerDragActive.current) {
+      event.preventDefault();
+      return;
+    }
     const position = positions.indexOf(modelId);
     if (position >= 0 && placements?.[position] === 1) return;
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/plain", modelId);
+    const source = event.currentTarget;
+    const preview = source.cloneNode(true) as HTMLElement;
+    const sourceRect = source.getBoundingClientRect();
+    preview.classList.remove("timeline-card--dragging");
+    preview.style.width = `${sourceRect.width}px`;
+    preview.style.height = `${sourceRect.height}px`;
+    preview.style.animation = "none";
+    preview.style.position = "fixed";
+    preview.style.top = "-10000px";
+    preview.style.left = "-10000px";
+    preview.style.opacity = "1";
+    document.body.appendChild(preview);
+    event.dataTransfer.setDragImage(preview, 20, 20);
+    window.setTimeout(() => preview.remove(), 0);
+    pointerDragActive.current = false;
+    draggingModelIdRef.current = modelId;
     setDraggingModelId(modelId);
+  };
+  const dragEnd = () => {
+    draggingModelIdRef.current = null;
+    setDraggingModelId(null);
+    setDragOverTarget(null);
   };
   const dropAt = (event: DragEvent, position: number | null) => {
     event.preventDefault();
-    const modelId = event.dataTransfer.getData("text/plain") || draggingModelId;
+    const modelId =
+      event.dataTransfer.getData("text/plain") || draggingModelIdRef.current || draggingModelId;
     if (modelId) {
       moveModel(modelId, position);
       triggerLanding(modelId);
     }
+    draggingModelIdRef.current = null;
     setDraggingModelId(null);
     setDragOverTarget(null);
   };
   const startPointerDrag = (event: PointerEvent, modelId: string) => {
+    if (event.pointerType !== "touch") return;
     const position = positions.indexOf(modelId);
     if (position >= 0 && placements?.[position] === 1) return;
     if (event.pointerType === "touch") event.preventDefault();
+    pointerDragActive.current = true;
+    draggingModelIdRef.current = modelId;
     setDraggingModelId(modelId);
     lastPointerTarget.current = null;
   };
@@ -395,7 +469,7 @@ export function TimelineGame() {
 
   const submit = async () => {
     if (!game || !complete || busy || solved || exhausted) return;
-    const startedAt = difficulty === "speedrun" ? speedrunStartedAt ?? Date.now() : null;
+    const startedAt = difficulty === "speedrun" ? (speedrunStartedAt ?? Date.now()) : null;
     if (difficulty === "speedrun" && speedrunStartedAt === null) setSpeedrunStartedAt(startedAt);
     const requestId = pendingRequestId.current ?? crypto.randomUUID();
     pendingRequestId.current = requestId;
@@ -482,9 +556,7 @@ export function TimelineGame() {
   const difficultyControls = (
     <DifficultySwitch
       ariaLabel="Timeline difficulty"
-      disabled={(option) =>
-        busy || loading || (option.value === "speedrun" && !user)
-      }
+      disabled={(option) => busy || loading || (option.value === "speedrun" && !user)}
       onChange={selectDifficulty}
       options={timelineDifficulties
         .filter((option) => option !== "hardcore" || hardcoreUnlocked)
@@ -565,7 +637,9 @@ export function TimelineGame() {
                 placement === 1
                   ? "correct"
                   : placement === 2
-                    ? difficulty === "speedrun" ? "neighbour" : "same-year"
+                    ? difficulty === "speedrun"
+                      ? "neighbour"
+                      : "same-year"
                     : placement === 0
                       ? "incorrect"
                       : null;
@@ -622,7 +696,6 @@ export function TimelineGame() {
                           })
                         }
                       />
-                      {slot.anchor.yearAnnotation && <small>{slot.anchor.yearAnnotation}</small>}
                     </article>
                   ) : item ? (
                     <button
@@ -638,6 +711,7 @@ export function TimelineGame() {
                         }
                       }}
                       onDragStart={(event) => dragStart(event, item.id)}
+                      onDragEnd={dragEnd}
                       onKeyDown={(event) => cardKeyDown(event, item.id, position)}
                       onPointerDown={(event) => startPointerDrag(event, item.id)}
                       type="button"
@@ -660,7 +734,6 @@ export function TimelineGame() {
                               })
                             }
                           />
-                          {item.yearAnnotation && <small>{item.yearAnnotation}</small>}
                         </>
                       )}
                       {feedback && (
@@ -736,6 +809,7 @@ export function TimelineGame() {
                         setSelectedModelId(selectedModelId === item.id ? null : item.id)
                       }
                       onDragStart={(event) => dragStart(event, item.id)}
+                      onDragEnd={dragEnd}
                       onPointerDown={(event) => startPointerDrag(event, item.id)}
                       type="button"
                     >

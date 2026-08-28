@@ -79,6 +79,21 @@ describe("GuessBoard", () => {
     expect(board.queryByRole("columnheader", { name: "Reasoning" })).toBeNull();
   });
 
+  it("gives longer headings more space while preserving a minimum column width", () => {
+    render(createElement(GuessBoard, { category: "nlp", guesses: [] }));
+
+    const template = screen.getByRole("table").style.getPropertyValue("--guess-board-template");
+    const tracks = template.match(/minmax\([^)]*\)/g) ?? [];
+    const familyTrack = tracks[2];
+    const architectureTrack = tracks[11];
+    const trainingDataTrack = tracks[12];
+
+    expect(tracks).toHaveLength(13);
+    expect(familyTrack).toBe("minmax(64px, 1fr)");
+    expect(architectureTrack).toBe("minmax(96px, 1.5fr)");
+    expect(trainingDataTrack).toBe("minmax(103px, 1.6fr)");
+  });
+
   it("keeps Country for Normal but removes it from Challenge and Hardcore", () => {
     const { container, rerender } = render(
       createElement(GuessBoard, { category: "llm", difficulty: "normal", guesses: [] }),

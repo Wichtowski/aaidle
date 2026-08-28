@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { ClassicGame } from "@components/game";
 import { useAuth } from "@components/auth/useAuth";
 import {
@@ -33,6 +33,9 @@ export function ClassicPage() {
   const routeCategoryValue = classicCategoryFromRouteSegment(routeCategory);
   const category = routeCategoryValue ?? saved.category;
   const { hardcoreUnlocked, user } = useAuth();
+  if (!routeCategoryValue && category === "hardcore") {
+    return <Navigate replace to="/classic/hardcore" />;
+  }
   const difficulty =
     category === "hardcore"
       ? "hardcore"

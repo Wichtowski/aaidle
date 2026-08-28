@@ -22,9 +22,9 @@ export default defineConfig({
     extraHTTPHeaders: env.cloudflareE2EToken
       ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken }
       : undefined,
-    trace: env.cloudflareE2EToken ? "off" : "on-first-retry",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    trace: "on",
+    screenshot: "on",
+    video: "on",
   },
   projects: [
     {

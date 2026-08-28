@@ -2,8 +2,8 @@
 
 import { createElement, useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClassicPage } from "../../../src/app/pages/game/ClassicPage";
 
 vi.mock("../../../src/app/components/auth/useAuth", () => ({
@@ -26,7 +26,54 @@ function ChangeCategory() {
   );
 }
 
+function LocationProbe() {
+  return createElement("p", null, useLocation().pathname);
+}
+
 describe("ClassicPage navigation", () => {
+  beforeEach(() => {
+    const values = new Map<string, string>();
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: (key: string) => values.get(key) ?? null,
+        setItem: (key: string, value: string) => values.set(key, value),
+        clear: () => values.clear(),
+      },
+    });
+  });
+  afterEach(() => window.localStorage.clear());
+
+  it("canonicalizes a saved Hardcore game to the Hardcore route", async () => {
+    window.localStorage.setItem(
+      "aaidle:game-preferences:v1",
+      JSON.stringify({ classic: { category: "hardcore", difficulty: "hardcore" } }),
+    );
+
+    render(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ["/classic"] },
+        createElement(
+          Routes,
+          null,
+          createElement(Route, { path: "/classic", element: createElement(ClassicPage) }),
+          createElement(Route, {
+            path: "/classic/hardcore",
+            element: createElement(
+              "div",
+              null,
+              createElement(ClassicPage),
+              createElement(LocationProbe),
+            ),
+          }),
+        ),
+      ),
+    );
+
+    expect(await screen.findByText("/classic/hardcore")).toBeTruthy();
+  });
+
   it("resets Hardcore difficulty when moving to a regular category", () => {
     render(
       createElement(

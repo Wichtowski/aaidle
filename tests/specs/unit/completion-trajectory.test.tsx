@@ -91,6 +91,25 @@ describe("CompletionTrajectory", () => {
     expect(screen.getByText("1 candidate models")).toBeTruthy();
   });
 
+  it("uses answer-relative category and use-case axes for Hardcore", () => {
+    const answer = model("answer", "Answer model");
+    render(
+      createElement(ModelSpaceTrajectory, {
+        category: "hardcore",
+        guesses: [
+          { attemptNumber: 1, isCorrect: false, model: model("guess", "First guess") },
+          { attemptNumber: 2, isCorrect: true, model: answer },
+        ],
+        referenceModels: [model("candidate", "Candidate model"), answer],
+      }),
+    );
+
+    expect(screen.getByText("Category similarity")).toBeTruthy();
+    expect(screen.getByText("Use-case similarity")).toBeTruthy();
+    expect(screen.getByText(/similarity to the answer/)).toBeTruthy();
+    expect(screen.queryByText("Context scale")).toBeNull();
+  });
+
   it("waits for the celebration before loading the solved-game trajectory", async () => {
     const classicTrajectory = vi
       .spyOn(apiClient, "classicTrajectory")

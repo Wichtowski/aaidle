@@ -5,7 +5,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use serde::Deserialize;
-use std::net::SocketAddr;
+use std::{net::SocketAddr, time::Duration};
 
 use crate::{
     dto::{
@@ -23,6 +23,8 @@ use super::{
     is_token, named_cookie_header, no_store_with_cookie, now_millis, optional_authenticated_user,
     parse_json_payload, redirect, session_cookie,
 };
+
+const FAILED_PASSWORD_LOGIN_DELAY: Duration = Duration::from_secs(3);
 
 pub(super) async fn register(
     State(state): State<AppState>,
@@ -102,8 +104,16 @@ pub(super) async fn password_login(
         5 * 60 * 1_000,
     )
     .await?;
-    let user =
-        crate::auth::verify_password_credentials(&state.db, &email, &payload.password).await?;
+    let user = match crate::auth::verify_password_credentials(&state.db, &email, &payload.password)
+        .await
+    {
+        Ok(user) => user,
+        Err(error @ AppError::Unauthorized(_)) => {
+            tokio::time::sleep(FAILED_PASSWORD_LOGIN_DELAY).await;
+            return Err(error);
+        }
+        Err(error) => return Err(error),
+    };
     let session =
         crate::auth::rotate_session(&state.db, &user.id, session_cookie(&headers), now_millis())
             .await?;

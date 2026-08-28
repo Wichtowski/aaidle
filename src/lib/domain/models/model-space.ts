@@ -2,13 +2,24 @@ import type { ClassicCategory, ComparableModel } from "./model-types";
 
 export type ModelSpaceAxis = {
   label: string;
-  value: (model: ComparableModel) => number;
+  value: (model: ComparableModel, anchorModel: ComparableModel) => number;
 };
 
 const count = (values: string[] | null | undefined) => values?.length ?? 0;
 const contextScale = (model: ComparableModel) =>
   model.contextWindowTokens ? Math.log10(Math.max(1, model.contextWindowTokens)) : 0;
 const releaseYear = (model: ComparableModel) => model.releaseYear ?? 0;
+const setSimilarity = (
+  values: string[] | null | undefined,
+  anchorValues: string[] | null | undefined,
+) => {
+  const valueSet = new Set(values ?? []);
+  const anchorSet = new Set(anchorValues ?? []);
+  const union = new Set([...valueSet, ...anchorSet]);
+  if (union.size === 0) return 0;
+
+  return [...valueSet].filter((value) => anchorSet.has(value)).length / union.size;
+};
 const metadataBreadth = (model: ComparableModel) =>
   count(model.categories) +
   count(model.inputModalities) +
@@ -109,8 +120,14 @@ export function modelSpaceAxes(category: ClassicCategory): readonly ModelSpaceAx
     case "hardcore":
       return [
         { label: "Release year", value: releaseYear },
-        { label: "Context scale", value: contextScale },
-        { label: "Metadata breadth", value: metadataBreadth },
+        {
+          label: "Category similarity",
+          value: (model, anchorModel) => setSimilarity(model.categories, anchorModel.categories),
+        },
+        {
+          label: "Use-case similarity",
+          value: (model, anchorModel) => setSimilarity(model.useCases, anchorModel.useCases),
+        },
       ];
   }
 }
@@ -119,14 +136,15 @@ export function modelSpacePoint(
   model: ComparableModel,
   category: ClassicCategory,
   referenceModels: ComparableModel[],
+  anchorModel: ComparableModel,
 ) {
   const axes = modelSpaceAxes(category);
   const normalize = (axis: ModelSpaceAxis) => {
-    const values = referenceModels.map(axis.value);
+    const values = referenceModels.map((referenceModel) => axis.value(referenceModel, anchorModel));
     const minimum = Math.min(...values);
     const maximum = Math.max(...values);
     if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || minimum === maximum) return 0;
-    return ((axis.value(model) - minimum) / (maximum - minimum)) * 2 - 1;
+    return ((axis.value(model, anchorModel) - minimum) / (maximum - minimum)) * 2 - 1;
   };
 
   return { x: normalize(axes[0]), y: normalize(axes[1]), z: normalize(axes[2]) };

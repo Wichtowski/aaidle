@@ -92,7 +92,12 @@ export function ModelSpaceTrajectory({
         ...(nextAnswer ? [{ ...nextAnswer, kind: "answer" as const }] : []),
       ].map((point) => ({
         ...point,
-        position: modelSpacePoint(point.model, category, referenceModels),
+        position: modelSpacePoint(
+          point.model,
+          category,
+          referenceModels,
+          nextAnswer?.model ?? referenceModels[0] ?? point.model,
+        ),
       })),
     };
   }, [category, guesses, referenceModels]);
@@ -108,7 +113,12 @@ export function ModelSpaceTrajectory({
     .map((model) => ({
       model,
       projected: project(
-        modelSpacePoint(model, category, referenceModels),
+        modelSpacePoint(
+          model,
+          category,
+          referenceModels,
+          answer?.model ?? referenceModels[0] ?? model,
+        ),
         rotation.azimuth,
         rotation.elevation,
       ),
@@ -133,8 +143,9 @@ export function ModelSpaceTrajectory({
       <div>
         <h3 id="completed-model-space-title">Latest solved-game trajectory</h3>
         <p>
-          Drag to rotate. Nearby candidate models are more alike across these three
-          category-specific measures.
+          {category === "hardcore"
+            ? "Drag to rotate. Position reflects release year plus category and use-case similarity to the answer."
+            : "Drag to rotate. Nearby candidate models are more alike across these three category-specific measures."}
         </p>
       </div>
       <svg

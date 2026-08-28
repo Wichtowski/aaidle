@@ -698,6 +698,44 @@ a {
 .account-activation__link {
   text-underline-offset: 3px;
 }
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .account-activation {
+  border-color: #69372f;
+  background: #201014;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .account-activation p:not(.eyebrow) {
+  color: #d8b9af;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .account-activation__notice,
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .account-activation__link {
+  color: #fff2e9;
+}
+.profile-page--hell .profile-note {
+  border-color: #69372f;
+  background: linear-gradient(135deg, #201014, #291519);
+}
+.profile-page--hell .profile-note p {
+  color: #d8b9af;
+}
+.profile-page--hell .profile-note code {
+  background: #3a1d20;
+  color: #ffd1c4;
+}
+.profile-page--hell .profile-note__sync {
+  color: #ffd1c4 !important;
+}
+.profile-page--hell .account-activation .button--primary,
+.profile-page--hell .danger-modal__actions .button--primary {
+  border-color: #ff7b45;
+  background: #a62c1d;
+  color: #fff2e9;
+  box-shadow: 0 4px 0 #58130d;
+}
+.profile-page--hell .account-activation .button--primary:hover:not(:disabled),
+.profile-page--hell .danger-modal__actions .button--primary:hover:not(:disabled) {
+  background: #c43a24;
+  box-shadow: 0 2px 0 #58130d;
+  transform: translateY(2px);
+}
 .game-modes {
   margin: 44px 0 0;
 }
@@ -1330,6 +1368,34 @@ body.hell-mode .game-placeholder__status {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 26px;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .danger-modal {
+  background: #080507d9;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .danger-modal__content {
+  border: 1px solid #72362e;
+  background: radial-gradient(circle at 84% 0%, #4b1715 0, transparent 36%), #1a0d10;
+  box-shadow: 0 28px 80px #000c;
+  color: #f7eee8;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell)
+  .danger-modal__content
+  > p:not(.eyebrow):not(.notice) {
+  color: #d8b9af;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .danger-modal__close {
+  color: #fff2e9;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .button--danger-solid {
+  border-color: #ff7b45;
+  background: #a62c1d;
+  color: #fff2e9;
+  box-shadow: 0 4px 0 #58130d;
+}
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .button--danger-solid:hover:not(:disabled) {
+  background: #c43a24;
+  box-shadow: 0 2px 0 #58130d;
+  transform: translateY(2px);
 }
 .delete-account-page {
   min-height: 100vh;
@@ -2708,7 +2774,10 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .board-head__cards,
 .guess-row__cards {
   display: grid;
-  grid-template-columns: repeat(var(--guess-board-columns, 12), minmax(0, 1fr));
+  grid-template-columns: var(
+    --guess-board-template,
+    repeat(var(--guess-board-columns, 12), minmax(0, 1fr))
+  );
   gap: 7px;
   flex: 1;
   min-width: 0;
@@ -2716,14 +2785,22 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .guess-row__loading {
   min-height: 70px;
 }
-.board-head__cards span {
+.board-head__column {
   padding: 5px 2px;
   display: flex;
   justify-content: center;
   align-items: baseline;
-}
-.board-head__column {
+  white-space: nowrap;
   animation: content-fade-in 220ms ease both;
+}
+@media (min-width: 851px) {
+  .board-wrap:not(.board-wrap--hardcore) {
+    overflow-x: auto;
+  }
+  .board-head,
+  .guess-row {
+    min-width: var(--guess-board-min-width);
+  }
 }
 .guess-row {
   flex-direction: row;
@@ -3880,6 +3957,27 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   justify-content: flex-end;
   margin-top: 24px;
 }
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary {
+  min-width: 132px;
+  padding: 9px 24px;
+  border-color: #ff7b45;
+  background: #a62c1d;
+  color: #fff2e9;
+  box-shadow: 0 4px 0 #58130d;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary:hover:not(:disabled),
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary:focus-visible {
+  background: #c43a24;
+  box-shadow: 0 2px 0 #58130d;
+  transform: translateY(2px);
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__privacy {
+  color: #b88972;
+}
+:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__privacy svg {
+  color: #ff7846;
+  font-size: 22px;
+}
 @media (max-width: 700px) {
   .game-help__button--floating {
     right: 14px;
@@ -4780,8 +4878,6 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   position: relative;
   cursor: grab;
   touch-action: none;
-  transform-origin: center bottom;
-  transform-style: preserve-3d;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
@@ -4798,16 +4894,10 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 }
 .timeline-card--dragging {
   z-index: 4;
-  animation: timeline-card-rip 180ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
   border-color: var(--accent);
-  box-shadow:
-    0 22px 30px rgb(23 36 29 / 22%),
-    0 7px 0 color-mix(in srgb, var(--accent), var(--ink) 25%);
+  box-shadow: 0 8px 16px rgb(23 36 29 / 14%);
   cursor: grabbing;
-  transform: translate3d(0, -18px, 28px) rotateZ(-2deg) scale(1.04);
-}
-.timeline-tray__cards {
-  perspective: 900px;
+  transform: translateY(-4px) scale(1.01);
 }
 .timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--dragging):not(
     .timeline-card--winning
@@ -4948,6 +5038,18 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   color: var(--muted);
   font-size: 12px;
 }
+:is(:root.hell-mode, body.hell-mode) .timeline-submit .button--primary {
+  border-color: #ff7b45;
+  background: #a62c1d;
+  color: #fff2e9;
+  box-shadow: 0 4px 0 #58130d;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-submit .button--primary:hover:not(:disabled),
+:is(:root.hell-mode, body.hell-mode) .timeline-submit .button--primary:focus-visible {
+  background: #c43a24;
+  box-shadow: 0 2px 0 #58130d;
+  transform: translateY(2px);
+}
 .completed--timeline {
   border-top: 5px solid var(--accent);
 }
@@ -4959,29 +5061,18 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 }
 @keyframes timeline-card-land {
   0% {
-    opacity: 0.7;
-    transform: translate3d(0, -48px, 24px) rotateZ(3deg) scale(1.06);
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(0, 7px, 0) rotateZ(-1deg) scale(0.98);
-  }
-  78% {
-    transform: translate3d(0, -3px, 0) rotateZ(0) scale(1.01);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) rotateZ(0) scale(1);
-  }
-}
-@keyframes timeline-card-rip {
-  0% {
-    transform: translate3d(0, 0, 0) rotateZ(0) scale(1);
+    opacity: 0.9;
+    transform: translateY(-8px) scale(1.01);
   }
   55% {
-    transform: translate3d(0, -24px, 18px) rotateZ(-4deg) scale(1.06);
+    opacity: 1;
+    transform: translateY(2px) scale(0.995);
+  }
+  78% {
+    transform: translateY(-1px) scale(1.005);
   }
   100% {
-    transform: translate3d(0, -18px, 28px) rotateZ(-2deg) scale(1.04);
+    transform: translateY(0) scale(1);
   }
 }
 @keyframes timeline-result-incorrect {

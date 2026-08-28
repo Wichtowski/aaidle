@@ -127,7 +127,7 @@ jobs:
 
             cd "$staging_dir"
             docker compose --env-file .env -f compose.prod.yml pull api seed
-            docker compose --env-file .env -f compose.prod.yml up -d
+            docker compose --env-file .env -f compose.prod.yml up -d --wait
             docker compose --env-file .env -f compose.prod.yml ps
 
             rm -rf "$static_release_dir"

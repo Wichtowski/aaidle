@@ -30,35 +30,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     const checkAuthentication = () => {
-      void (async () => {
-        try {
-          const user = await apiClient.currentUser();
-          if (cancelled) return;
-          setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
-          if (!user || user.disabled) return;
+    void (async () => {
+      try {
+        const user = await apiClient.currentUser();
+        if (cancelled) return;
+        setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
+        if (!user || user.disabled) return;
 
-          try {
-            const status = await apiClient.hardcoreStatus();
-            if (!cancelled) {
-              setState((current) => ({
-                ...current,
-                hardcoreUnlocked: Boolean(current.user && status.signedIn && status.unlocked),
-              }));
-            }
-          } catch {
-            // Access remains locked until the server can confirm the entitlement
-          }
-        } catch (error) {
+        try {
+          const status = await apiClient.hardcoreStatus();
           if (!cancelled) {
-            setState({
-              hardcoreUnlocked: false,
-              loading: false,
-              unavailable: isApiUnavailable(error),
-              user: null,
-            });
+            setState((current) => ({
+              ...current,
+              hardcoreUnlocked: Boolean(current.user && status.signedIn && status.unlocked),
+            }));
           }
+        } catch {
+          // Access remains locked until the server can confirm the entitlement
         }
-      })();
+      } catch (error) {
+        if (!cancelled) {
+          setState({
+            hardcoreUnlocked: false,
+            loading: false,
+            unavailable: isApiUnavailable(error),
+            user: null,
+          });
+        }
+      }
+    })();
     };
 
     // Authentication is non-critical for the public shell, so let it paint first.

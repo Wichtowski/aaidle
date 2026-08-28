@@ -51,15 +51,47 @@ describe("model-space axes", () => {
       "Kernel scale",
       "Operation & output breadth",
     ]);
+    expect(modelSpaceAxes("hardcore").map((axis) => axis.label)).toEqual([
+      "Release year",
+      "Category similarity",
+      "Use-case similarity",
+    ]);
   });
 
   it("normalizes each model against the eligible candidate pool", () => {
     const early = model("early", 2015, 4_000);
     const recent = model("recent", 2025, 128_000);
 
-    expect(modelSpacePoint(early, "llm", [early, recent]).x).toBe(-1);
-    expect(modelSpacePoint(recent, "llm", [early, recent]).x).toBe(1);
-    expect(modelSpacePoint(early, "llm", [early, recent]).y).toBe(-1);
-    expect(modelSpacePoint(recent, "llm", [early, recent]).y).toBe(1);
+    expect(modelSpacePoint(early, "llm", [early, recent], recent).x).toBe(-1);
+    expect(modelSpacePoint(recent, "llm", [early, recent], recent).x).toBe(1);
+    expect(modelSpacePoint(early, "llm", [early, recent], recent).y).toBe(-1);
+    expect(modelSpacePoint(recent, "llm", [early, recent], recent).y).toBe(1);
+  });
+
+  it("positions Hardcore models by answer similarity instead of context size", () => {
+    const answer = {
+      ...model("answer", 2025, 128_000),
+      categories: ["language-model", "coding"],
+      useCases: ["general", "coding"],
+    };
+    const related = {
+      ...model("related", 2025, 4_000),
+      categories: ["language-model", "coding"],
+      useCases: ["general", "coding"],
+    };
+    const unrelated = {
+      ...model("unrelated", 2025, 128_000),
+      categories: ["filters"],
+      useCases: ["image-processing"],
+    };
+    const references = [answer, related, unrelated];
+
+    expect(modelSpacePoint(answer, "hardcore", references, answer)).toEqual(
+      modelSpacePoint(related, "hardcore", references, answer),
+    );
+    expect(modelSpacePoint(answer, "hardcore", references, answer).y).toBe(1);
+    expect(modelSpacePoint(answer, "hardcore", references, answer).z).toBe(1);
+    expect(modelSpacePoint(unrelated, "hardcore", references, answer).y).toBe(-1);
+    expect(modelSpacePoint(unrelated, "hardcore", references, answer).z).toBe(-1);
   });
 });

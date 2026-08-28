@@ -1,4 +1,8 @@
-use std::{path::PathBuf, sync::Arc, time::Duration};
+use std::{
+    path::PathBuf,
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use aidle_api::{
     api, auth,
@@ -498,6 +502,31 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
         .await
         .expect("logout response");
     assert_eq!(logout.status(), StatusCode::NO_CONTENT);
+}
+
+#[tokio::test]
+async fn failed_password_login_is_delayed() {
+    let (app, _) = test_app().await;
+    let started = Instant::now();
+    let response = app
+        .oneshot(
+            Request::post("/api/v1/auth/password")
+                .header("origin", "http://localhost:3000")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({
+                        "email": "unknown@example.test",
+                        "password": "incorrect password"
+                    })
+                    .to_string(),
+                ))
+                .expect("failed login request"),
+        )
+        .await
+        .expect("failed login response");
+
+    assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+    assert!(started.elapsed() >= Duration::from_millis(2_900));
 }
 
 #[tokio::test]
