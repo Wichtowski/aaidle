@@ -38,7 +38,12 @@ export default defineConfig({
       name: "chromium",
       dependencies: ["release-readiness"],
       testMatch: "specs/e2e/**/*.spec.ts",
-      use: { ...devices["Desktop Chrome"], storageState: consentState(env.baseURL) },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: consentState(env.baseURL),
+        userAgent:
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      },
     },
     {
       name: "mobile-chromium",

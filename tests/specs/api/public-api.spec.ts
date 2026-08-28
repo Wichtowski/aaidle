@@ -1,27 +1,22 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../../fixtures/api";
+import type { ApiClient, ApiResponse } from "../../fixtures/api";
 import { env } from "../../env";
 
 const classicCategories = ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
-const apiUrl = (path: string) => new URL(path, env.baseURL);
-const apiHeaders = (headers: HeadersInit = {}) => ({
-  ...headers,
-  ...(env.cloudflareE2EToken ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken } : {}),
-});
-
-async function accessToken(email: string, password: string) {
-  const login = await fetch(apiUrl("/api/v1/auth/token"), {
-    method: "POST",
-    headers: apiHeaders({ "Content-Type": "application/json" }),
-    body: JSON.stringify({ email, password }),
-  });
-  expect(login.ok).toBe(true);
-  const { accessToken: token } = await login.json();
-  expect(token).toEqual(expect.any(String));
-  return token as string;
+async function expectSuccessfulJson(response: ApiResponse) {
+  expect(response.ok, `Response body:\n${response.body}`).toBe(true);
+  return response.json<Record<string, unknown>>();
 }
 
-test("production API health is available with its health key", async () => {
+async function expectLogin(apiClient: ApiClient, email: string, password: string) {
+  const login = await apiClient.login(email, password);
+  const body = await expectSuccessfulJson(login);
+  const token = body.accessToken;
+  expect(token).toEqual(expect.any(String));
+}
+
+test("production API health is available with its health key", async ({ apiClient }) => {
   const { healthKey, expectedVersion } = env;
   test.skip(
     !healthKey || !expectedVersion,
@@ -29,12 +24,9 @@ test("production API health is available with its health key", async () => {
   );
   if (!healthKey || !expectedVersion) return;
 
-  const response = await fetch(apiUrl("/api/v1/health"), {
-    headers: apiHeaders({ "x-aaidle-health-key": healthKey }),
-  });
+  const response = await apiClient.getHealth(healthKey);
 
-  expect(response.ok).toBe(true);
-  expect(await response.json()).toMatchObject({
+  expect(await expectSuccessfulJson(response)).toMatchObject({
     status: "ok",
     service: "aidle-api",
     apiVersion: "v1",
@@ -42,59 +34,49 @@ test("production API health is available with its health key", async () => {
   });
 });
 
-test("normal account can access public game modes but not unlock Hardcore", async () => {
+test("normal account can access public game modes but not unlock Hardcore", async ({ apiClient }) => {
   const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;
 
-  const token = await accessToken(email, password);
-  const headers = apiHeaders({ Authorization: `Bearer ${token}` });
+  await expectLogin(apiClient, email, password);
 
   for (const category of classicCategories) {
-    const response = await fetch(apiUrl(`/api/v1/games/classic/${category}/normal`), { headers });
-    expect(response.ok).toBe(true);
-    expect((await response.json()).challenge).toBeTruthy();
+    const response = await apiClient.getClassicGame(category);
+    expect((await expectSuccessfulJson(response)).challenge).toBeTruthy();
   }
 
-  const emoji = await fetch(apiUrl("/api/v1/games/emoji/normal"), { headers });
-  expect(emoji.ok).toBe(true);
-  expect((await emoji.json()).challenge).toBeTruthy();
+  const emoji = await apiClient.getEmojiGame();
+  expect((await expectSuccessfulJson(emoji)).challenge).toBeTruthy();
 
-  const hardcore = await fetch(apiUrl("/api/v1/games/classic/hardcore/access"), {
-    method: "POST",
-    headers: apiHeaders({ ...headers, Origin: env.baseURL }),
-  });
-  expect(hardcore.status).toBe(403);
-  expect((await hardcore.json()).error.message).toBe(
+  const hardcore = await apiClient.postHardcoreAccess();
+  const hardcoreBody = hardcore.json<{ error: { message: string } }>();
+  expect(hardcore.status, `Response body:\n${hardcore.body}`).toBe(403);
+  expect(hardcoreBody.error.message).toBe(
     "Complete every Classic Challenge category to enter Hardcore.",
   );
 });
 
-test("Hardcore account can load the Hardcore game", async () => {
+test("Hardcore account can load the Hardcore game", async ({ apiClient }) => {
   const { email, password } = env.hardcoreTestCredentials;
   test.skip(!email || !password, "Production Hardcore credentials are not configured.");
   if (!email || !password) return;
 
-  const token = await accessToken(email, password);
-  const response = await fetch(apiUrl("/api/v1/games/classic/hardcore"), {
-    headers: apiHeaders({ Authorization: `Bearer ${token}` }),
-  });
+  await expectLogin(apiClient, email, password);
+  const response = await apiClient.getHardcoreGame();
 
-  expect(response.ok).toBe(true);
-  expect((await response.json()).challenge).toBeTruthy();
+  expect((await expectSuccessfulJson(response)).challenge).toBeTruthy();
 });
 
-test("deactivated account cannot obtain an access token", async () => {
+test("deactivated account cannot obtain an access token", async ({ apiClient }) => {
   const { email, password } = env.deactivatedTestCredentials;
   test.skip(!email || !password, "Production deactivated-account credentials are not configured.");
   if (!email || !password) return;
 
-  const login = await fetch(apiUrl("/api/v1/auth/token"), {
-    method: "POST",
-    headers: apiHeaders({ "Content-Type": "application/json" }),
-    body: JSON.stringify({ email, password }),
-  });
+  const login = await apiClient.login(email, password);
 
-  expect(login.status).toBe(403);
-  expect((await login.json()).error.message).toBe("This account has been disabled.");
+  expect(login.status, `Response body:\n${login.body}`).toBe(403);
+  expect(login.json<{ error: { message: string } }>().error.message).toBe(
+    "This account has been disabled.",
+  );
 });

@@ -1,4 +1,5 @@
 import { test as base } from "@playwright/test";
+import { env } from "../env";
 import { AccountDisabledPage } from "../pages/AccountDisabledPage";
 import { BasePage } from "../pages/BasePage";
 import { ClassicPage } from "../pages/ClassicPage";
@@ -32,6 +33,14 @@ type PageFixtures = {
 };
 
 export const test = base.extend<PageFixtures>({
+  context: async ({ context }, use) => {
+    if (env.cloudflareE2EToken) {
+      await context.setExtraHTTPHeaders({
+        "x-aaidle-cf-e2e-token": env.cloudflareE2EToken,
+      });
+    }
+    await use(context);
+  },
   accountDisabledPage: async ({ page }, use) => use(new AccountDisabledPage(page)),
   basePage: async ({ page }, use) => use(new BasePage(page)),
   classicPage: async ({ page }, use) => use(new ClassicPage(page)),
