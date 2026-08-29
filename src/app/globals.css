@@ -4928,7 +4928,7 @@ body.hell-mode .completed--timeline {
   cursor: pointer;
   display: inline-flex;
   gap: 0.35rem;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .timeline-card__date-help svg {
   font-size: 0.8rem;
