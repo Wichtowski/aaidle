@@ -1,0 +1,5 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","973","production API health is available with its health key","production-api","2026-08-29","passed","2026-08-29","","specs/api/public-api.spec.ts","",""
+"","313","deactivated account cannot obtain an access token","production-api","2026-08-29","passed","2026-08-29","","specs/api/public-api.spec.ts","",""
+"","662","Hardcore account can load the Hardcore game","production-api","2026-08-29","passed","2026-08-29","","specs/api/public-api.spec.ts","",""
+"","2765","normal account can access public game modes but not unlock Hardcore","production-api","2026-08-29","passed","2026-08-29","","specs/api/public-api.spec.ts","",""
