@@ -6,6 +6,7 @@ export class ClassicPage extends BasePage {
   readonly difficultyNavigation: Locator = this.page.locator(
     '[data-testid="classic-difficulty"]',
   );
+  readonly searchInput: Locator = this.page.getByRole("combobox", { name: "Choose a model" });
   readonly guessButton: Locator = this.page.locator('[data-testid="classic-guess-submit"]');
 
   async goto() {

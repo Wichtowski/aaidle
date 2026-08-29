@@ -92,4 +92,16 @@ describe("cloud progress", () => {
     expect(merged.preferences.hardcoreUnlocked).toBe(false);
     expect(merged.preferences.hellMode).toBe(false);
   });
+
+  it("keeps an authorized local Hell Mode preference across a stale response", () => {
+    const server = freshProgress();
+    const local = freshProgress();
+    server.preferences.hardcoreUnlocked = true;
+    server.preferences.hellMode = false;
+    local.preferences.hellMode = true;
+
+    const merged = mergeServerProgress(server, local);
+
+    expect(merged.preferences.hellMode).toBe(true);
+  });
 });

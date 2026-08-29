@@ -736,9 +736,6 @@ a {
   box-shadow: 0 2px 0 #58130d;
   transform: translateY(2px);
 }
-.game-modes {
-  margin: 44px 0 0;
-}
 .game-modes__heading h2 {
   margin: 0;
   font-size: clamp(28px, 4vw, 42px);
@@ -889,7 +886,7 @@ body.hell-mode .game-placeholder__status {
   line-height: 1.6;
 }
 .game-page > section {
-  padding-top: 6vh;
+  padding-top: 3vh;
 }
 .game-page h1 {
   font-size: clamp(38px, 6vw, 65px);
@@ -1369,6 +1366,14 @@ body.hell-mode .game-placeholder__status {
   gap: 10px;
   margin-top: 26px;
 }
+.sign-out-modal .danger-modal__actions {
+  gap: 9px;
+  margin-top: 24px;
+}
+.sign-out-modal .danger-modal__actions .button {
+  min-width: 112px;
+  margin-top: 0;
+}
 :is(:root.hell-mode, body.hell-mode, .profile-page--hell) .danger-modal {
   background: #080507d9;
 }
@@ -1392,7 +1397,8 @@ body.hell-mode .game-placeholder__status {
   color: #fff2e9;
   box-shadow: 0 4px 0 #58130d;
 }
-:is(:root.hell-mode, body.hell-mode, .profile-page--hell) .button--danger-solid:hover:not(:disabled) {
+:is(:root.hell-mode, body.hell-mode, .profile-page--hell)
+  .button--danger-solid:hover:not(:disabled) {
   background: #c43a24;
   box-shadow: 0 2px 0 #58130d;
   transform: translateY(2px);
@@ -1452,6 +1458,14 @@ body.hell-mode .game-placeholder__status {
   }
   .danger-modal__actions .button {
     width: 100%;
+  }
+  .sign-out-modal .danger-modal__actions {
+    flex-direction: row;
+    justify-content: stretch;
+  }
+  .sign-out-modal .danger-modal__actions .button {
+    flex: 1;
+    width: auto;
   }
 }
 .stats-section__heading {
@@ -1635,6 +1649,13 @@ body.hell-mode .game-placeholder__status {
   content: "";
   transition: transform 160ms ease;
 }
+body.hell-mode .hell-mode-toggle__control {
+  border-color: #8d3b2e;
+  background: #3a1719;
+}
+body.hell-mode .hell-mode-toggle__control::after {
+  background: #d8b9af;
+}
 .hell-mode-toggle input:checked + .hell-mode-toggle__control {
   border-color: #8e2d20;
   background: var(--accent);
@@ -1707,7 +1728,7 @@ body.hell-mode .game-placeholder__status {
 }
 .profile-page--hell .distribution__track {
   border-color: #69372f;
-  background: #201014;
+  background: #160b0f;
   box-shadow: inset 0 1px 3px #0008;
 }
 .profile-page--hell .distribution__fill {
@@ -1718,7 +1739,7 @@ body.hell-mode .game-placeholder__status {
 }
 .profile-page--hell .distribution__row[data-hot] .distribution__track {
   border-color: #ff9a78;
-  background: #321215;
+  background: #2a1014;
 }
 .profile-page--hell .distribution__row[data-hot] .distribution__fill {
   background: linear-gradient(135deg, #ffd06f 0%, #e05a38 48%, #7f2118 100%);
@@ -1741,7 +1762,7 @@ body.hell-mode .game-placeholder__status {
 }
 .profile-page--hell .history-pagination__button {
   border-color: #a94432;
-  background: #321215;
+  background: #251013;
   color: #ffd1c4;
 }
 .profile-page--hell .history-pagination__button:hover:not(:disabled) {
@@ -1750,7 +1771,7 @@ body.hell-mode .game-placeholder__status {
 }
 .profile-page--hell .history-pagination__button:disabled {
   border-color: #4b2929;
-  background: #211416;
+  background: #1a0d10;
   color: #81635e;
 }
 .profile-page--hell .stats-empty {
@@ -2122,8 +2143,13 @@ body.hell-mode .issue-report__form label {
   color: #ffd1c4;
 }
 body.hell-mode .issue-report__form input,
-body.hell-mode .issue-report__form textarea {
+body.hell-mode .issue-report__form textarea,
+body.hell-mode .issue-report__form select {
   border-color: #7f4a42;
+  background: #261116;
+  color: #fff2e9;
+}
+body.hell-mode .issue-report__form select option {
   background: #261116;
   color: #fff2e9;
 }
@@ -2473,7 +2499,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   filter: blur(0.35px);
 }
 .game-intro {
-  min-height: 360px;
+  min-height: max-content;
   padding-top: 52px;
 }
 .timeline-page .game-intro {
@@ -2510,7 +2536,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 }
 .game-page > .board-wrap {
   width: min(calc(100vw - 32px), var(--guess-board-width, 1720px));
-  margin: 28px 50% 0;
+  margin: 0 50% 0;
   transform: translateX(-50%);
 }
 .board-wrap {
@@ -3094,6 +3120,9 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   border: 1px solid var(--line);
   border-radius: 7px;
   background: var(--line);
+}
+.completed__stats--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .completed__ritual-notice {
   position: relative;
@@ -3965,7 +3994,9 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   color: #fff2e9;
   box-shadow: 0 4px 0 #58130d;
 }
-:is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary:hover:not(:disabled),
+:is(:root.hell-mode, body.hell-mode)
+  .how-to-play-modal__actions
+  .button--primary:hover:not(:disabled),
 :is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary:focus-visible {
   background: #c43a24;
   box-shadow: 0 2px 0 #58130d;
@@ -4432,7 +4463,6 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   text-transform: capitalize;
 }
 .emoji {
-  margin-top: 24px;
   margin-bottom: 80px;
 }
 .emoji__clues {
@@ -4681,6 +4711,41 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   text-transform: capitalize;
 }
 
+body.hell-mode .completed-modal {
+  background: #080507d9;
+}
+body.hell-mode .completed {
+  border: 1px solid #72362e;
+  background:
+    radial-gradient(circle at 78% 0%, #5a1a18 0, transparent 42%),
+    radial-gradient(circle at 4% 100%, #351218 0, transparent 48%), #190d12;
+  box-shadow:
+    0 28px 80px #000c,
+    inset 0 1px #ffb89b1f;
+  color: #f7eee8;
+}
+body.hell-mode .completed__close,
+body.hell-mode .completed h2 {
+  color: #fff2e9;
+}
+body.hell-mode .completed__message,
+body.hell-mode .completed__stats span {
+  color: #d8b9af;
+}
+body.hell-mode .completed__stats {
+  border-color: #69372f;
+  background: #69372f;
+}
+body.hell-mode .completed__stats > div {
+  background: #261116;
+}
+body.hell-mode .completed__stats strong {
+  color: #fff2e9;
+}
+body.hell-mode .completed--timeline {
+  border-top-color: #e05a38;
+}
+
 .timeline-page {
   --timeline-card-width: 158px;
 }
@@ -4828,7 +4893,7 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  justify-content: space-between;
+  justify-content: flex-start;
   background: var(--panel);
   color: var(--ink);
   animation: timeline-card-arrive 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -4853,6 +4918,9 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   color: var(--accent);
   font-size: 13px;
   font-weight: 800;
+}
+.timeline-card__date {
+  margin-top: auto;
 }
 .timeline-card__date-help {
   align-items: center;
@@ -4972,6 +5040,24 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 .timeline-card--same-year .timeline-card__feedback {
   color: #855d0d;
 }
+:is(:root.hell-mode, body.hell-mode) .timeline-card--correct {
+  border-color: #63ad83;
+  background: #237a45;
+  color: #e1ffe8;
+  box-shadow: inset 0 4px 0 #63ad83;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--correct .timeline-card__feedback {
+  color: #e1ffe8;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--incorrect {
+  border-color: #a94432;
+  background: #68221d;
+  color: #ffe0d8;
+  box-shadow: inset 0 4px 0 #a94432;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--incorrect .timeline-card__feedback {
+  color: #ffe0d8;
+}
 .timeline-slot__empty {
   display: grid;
   border-style: dashed;
@@ -5051,6 +5137,9 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   transform: translateY(2px);
 }
 .completed--timeline {
+  width: min(560px, 100%);
+  min-height: 0;
+  padding: 24px;
   border-top: 5px solid var(--accent);
 }
 @keyframes timeline-card-arrive {
@@ -5186,7 +5275,7 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
     animation: none;
   }
 }
-.timeline-card--neighbour { 
+.timeline-card--neighbour {
   border: 2px solid #2878c8;
   background: #e9f4ff;
   box-shadow: inset 0 4px 0 #2878c8;

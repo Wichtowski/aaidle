@@ -111,6 +111,40 @@ body.hell-mode .admin-soundtrack-settings .button:hover:not(:disabled) {
 body.hell-mode .admin-soundtrack-settings__saved {
   color: #9ad4b0 !important;
 }
+body.hell-mode .admin-progress {
+  border-color: #69372f;
+  background: #1a0d10;
+}
+body.hell-mode .admin-progress__summary {
+  background: #69372f;
+}
+body.hell-mode .admin-progress__summary div,
+body.hell-mode .admin-progress__game-tabs button,
+body.hell-mode .admin-progress__date-tabs button {
+  border-color: #69372f;
+  background: #201014;
+  color: #d8b9af;
+}
+body.hell-mode .admin-progress__summary dd,
+body.hell-mode .admin-progress__game-tabs button[aria-selected="true"],
+body.hell-mode .admin-progress__date-tabs button[aria-current="page"] {
+  color: #fff2e9;
+}
+body.hell-mode .admin-progress__preferences strong {
+  background: #63231c;
+  color: #ffd1c4;
+}
+body.hell-mode .admin-progress__distribution [role="progressbar"] {
+  border-color: #69372f;
+  background: #321215;
+}
+body.hell-mode .admin-progress__distribution i {
+  background: linear-gradient(90deg, #e05a38, #8e2d20);
+}
+body.hell-mode .admin-progress__game-detail,
+body.hell-mode .admin-progress__guess-list li {
+  border-color: #69372f;
+}
 .admin-workspace {
   display: grid;
   grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.15fr);

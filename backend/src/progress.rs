@@ -138,8 +138,10 @@ pub async fn synchronize(
     let player_id = incoming.player_id.to_string();
     let mut transaction = pool.begin().await?;
     let has_hardcore_access = sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM user_hardcore_access WHERE user_id = ?)",
+        "SELECT EXISTS(SELECT 1 FROM user_hardcore_access WHERE user_id = ?) \
+         OR EXISTS(SELECT 1 FROM user_unlocks WHERE user_id = ? AND unlock_key = 'hardcore-mode')",
     )
+    .bind(user_id)
     .bind(user_id)
     .fetch_one(&mut *transaction)
     .await?

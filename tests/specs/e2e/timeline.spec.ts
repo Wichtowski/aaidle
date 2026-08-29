@@ -2,6 +2,20 @@ import { expect, test } from "../../fixtures/e2e";
 
 const itemOrder = ["anchor-old", "movable-a", "movable-b", "movable-c", "movable-d", "anchor-new"];
 
+test("Timeline screen loads with difficulty navigation", async ({ timelinePage }) => {
+  await timelinePage.goto();
+
+  await expect(timelinePage.heading).toBeVisible();
+  await expect(timelinePage.difficultyNavigation).toBeVisible();
+});
+
+test("Timeline keeps submission disabled until every slot is filled", async ({ timelinePage }) => {
+  await timelinePage.goto();
+
+  await expect(timelinePage.heading).toBeVisible();
+  await expect(timelinePage.submitButton).toBeDisabled();
+});
+
 test("Timeline supports arranging, positional feedback, retrying, and winning", async ({
   page,
   timelinePage,

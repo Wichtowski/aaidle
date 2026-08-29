@@ -7,6 +7,10 @@ import { SiteNavbar } from "../../ui/SiteNavbar";
 import { ClassicHTP } from "./ClassicHTP";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { updateProgress } from "@lib/storage/local-progress-store";
+import {
+  hasSeenClassicHowToPlay,
+  markClassicHowToPlaySeen,
+} from "@lib/storage/how-to-play-preferences";
 import { useAuth } from "../../auth/useAuth";
 import { applySolvedStreak } from "@lib/domain/players/streak-service";
 import { saveClassicPreference } from "@lib/storage/game-preferences";
@@ -330,10 +334,24 @@ export function ClassicGame({
   }, [category, challenge, key, loadedDifficulty, progress.playerId, progressReady]);
 
   useEffect(() => {
-    if (progressReady && challenge && !progress.preferences.hasSeenClassicHowToPlay) {
+    if (
+      progressReady &&
+      challenge &&
+      !hasSeenClassicHowToPlay(
+        category,
+        loadedDifficulty,
+        progress.preferences.hasSeenClassicHowToPlay,
+      )
+    ) {
       setShowHowToPlay(true);
     }
-  }, [challenge, progress.preferences.hasSeenClassicHowToPlay, progressReady]);
+  }, [
+    category,
+    challenge,
+    loadedDifficulty,
+    progress.preferences.hasSeenClassicHowToPlay,
+    progressReady,
+  ]);
 
   useEffect(() => {
     if (innerCircleActive && category !== "hardcore") {
@@ -343,6 +361,7 @@ export function ClassicGame({
 
   const closeHowToPlay = () => {
     setShowHowToPlay(false);
+    markClassicHowToPlaySeen(category, loadedDifficulty);
     if (!progress.preferences.hasSeenClassicHowToPlay) {
       updateProgress((state) => ({
         ...state,

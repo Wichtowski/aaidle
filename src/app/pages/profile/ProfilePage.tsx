@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
@@ -252,20 +252,12 @@ export function ProfilePage() {
       ...progress,
       preferences: { ...progress.preferences, hellMode },
     };
-    window.localStorage.setItem("aaidle:hell-mode:v1", hellMode ? "1" : "0");
-    document.cookie = [
-      `aaidle_hell_mode=${hellMode ? "1" : "0"}`,
-      "Path=/",
-      "Max-Age=31536000",
-      "SameSite=Lax",
-    ].join("; ");
-    window.dispatchEvent(new Event("aaidle:hell-mode-change"));
     updateProgress(() => nextProgress);
   };
 
   const toggleHellMode = () => setHellMode(!progress.preferences.hellMode);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.classList.toggle("profile-hell", hellActive);
     return () => document.body.classList.remove("profile-hell");
   }, [hellActive]);

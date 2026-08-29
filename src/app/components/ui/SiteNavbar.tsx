@@ -1,34 +1,10 @@
-import { useId, useLayoutEffect, useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { canManageUsers } from "@lib/auth/permissions";
+import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { SignOutConfirmation } from "../auth/SignOutConfirmation";
 import { useAuth } from "../auth/useAuth";
 import { BuyMeCoffeeLink } from "./BuyMeCoffeeLink";
-
-const hellModeStorageKey = "aaidle:hell-mode:v1";
-
-function savedHellMode() {
-  if (typeof window === "undefined" || typeof window.localStorage?.getItem !== "function") {
-    return false;
-  }
-  return window.localStorage.getItem(hellModeStorageKey) === "1";
-}
-
-function useHellModeEnabled(user: ReturnType<typeof useAuth>["user"], hardcoreUnlocked: boolean) {
-  const [saved, setSaved] = useState(savedHellMode);
-
-  useLayoutEffect(() => {
-    const sync = () => setSaved(savedHellMode());
-    window.addEventListener("storage", sync);
-    window.addEventListener("aaidle:hell-mode-change", sync);
-    return () => {
-      window.removeEventListener("storage", sync);
-      window.removeEventListener("aaidle:hell-mode-change", sync);
-    };
-  }, []);
-
-  return Boolean(user && hardcoreUnlocked && saved);
-}
 
 export function SiteNavbar({
   children,
@@ -38,7 +14,8 @@ export function SiteNavbar({
   hardcore?: boolean;
 }) {
   const { hardcoreUnlocked, unavailable, user, signOut, retry } = useAuth();
-  const hellModeEnabled = useHellModeEnabled(user, hardcoreUnlocked);
+  const progress = useLocalProgress();
+  const hellModeEnabled = Boolean(user && hardcoreUnlocked && progress.preferences.hellMode);
   const infernal = hardcore || hellModeEnabled;
   const [menuOpen, setMenuOpen] = useState(false);
   const [signOutConfirmationOpen, setSignOutConfirmationOpen] = useState(false);

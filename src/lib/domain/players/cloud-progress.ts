@@ -87,6 +87,7 @@ export function mergeServerProgress(server: LocalProgress, local: LocalProgress)
     preferences: {
       ...local.preferences,
       ...server.preferences,
+      hellMode: server.preferences.hardcoreUnlocked ? local.preferences.hellMode : false,
     },
   });
 }

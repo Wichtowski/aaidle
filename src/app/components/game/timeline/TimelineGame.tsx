@@ -67,8 +67,13 @@ const timelineWinningAnimationStagger = 90;
 const timelineFeedbackIconSize = 16;
 
 function formatReleaseDate(value: string) {
-  if (/^\d{4}$/.test(value)) return value;
-  return new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, {
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return year ?? value;
+
+  const date = new Date(`${year}-${month}-${day}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return year;
+
+  return date.toLocaleDateString(undefined, {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
@@ -85,7 +90,11 @@ function YearAnnotationTrigger({
 }) {
   if (!item.releaseDate || !item.yearAnnotation) {
     if (!item.releaseDate) return null;
-    return <time dateTime={item.releaseDate}>{formatReleaseDate(item.releaseDate)}</time>;
+    return (
+      <time className="timeline-card__date" dateTime={item.releaseDate}>
+        {formatReleaseDate(item.releaseDate)}
+      </time>
+    );
   }
 
   const activate = (event: KeyboardEvent<HTMLSpanElement>) => {
@@ -98,7 +107,7 @@ function YearAnnotationTrigger({
   return (
     <span
       aria-label={`Show year note for ${item.name}`}
-      className="timeline-card__date-help"
+      className="timeline-card__date timeline-card__date-help"
       onClick={(event) => {
         event.stopPropagation();
         onOpen();

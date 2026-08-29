@@ -12,7 +12,7 @@ export function GameIntro({
   navigation,
   difficulty,
   input,
-  reserveInputSlot = true,
+  reserveInputSlot = false,
   status,
 }: {
   eyebrow: ReactNode;

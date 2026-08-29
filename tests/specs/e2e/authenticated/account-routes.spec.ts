@@ -1,10 +1,7 @@
 import { env } from "../../../env";
 import { expect, test } from "../../../fixtures/e2e";
 
-// Never publish browser artifacts from tests that receive a production password.
-test.use({ trace: "off", screenshot: "off", video: "off" });
-
-test.beforeEach(async ({ issueReportPage, loginPage, profilePage }) => {
+test.beforeEach(async ({ loginPage, profilePage }) => {
   const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GlobalHellMode } from "../../../src/app/components/ui/GlobalHellMode";
 
 let hardcoreUnlocked = false;
+let hellMode = false;
 
 vi.mock("../../../src/app/components/auth/useAuth", () => ({
   useAuth: () => ({
@@ -14,27 +15,24 @@ vi.mock("../../../src/app/components/auth/useAuth", () => ({
   }),
 }));
 
+vi.mock("../../../src/lib/storage/use-local-progress", () => ({
+  useLocalProgress: () => ({ preferences: { hellMode } }),
+}));
+
 beforeEach(() => {
-  const values = new Map<string, string>();
-  Object.defineProperty(window, "localStorage", {
-    configurable: true,
-    value: {
-      getItem: (key: string) => values.get(key) ?? null,
-      removeItem: (key: string) => values.delete(key),
-      setItem: (key: string, value: string) => values.set(key, value),
-    },
-  });
+  hellMode = false;
 });
 
 afterEach(() => {
   document.documentElement.classList.remove("hell-mode");
   document.body.classList.remove("hell-mode");
   hardcoreUnlocked = false;
+  hellMode = false;
 });
 
 describe("GlobalHellMode", () => {
-  it("does not enable Hell mode from stale browser storage without server access", () => {
-    window.localStorage.setItem("aaidle:hell-mode:v1", "1");
+  it("does not enable Hell mode without server access", () => {
+    hellMode = true;
 
     render(createElement(GlobalHellMode));
 
@@ -43,10 +41,18 @@ describe("GlobalHellMode", () => {
 
   it("enables Hell mode only after the server confirms Hardcore access", () => {
     hardcoreUnlocked = true;
-    window.localStorage.setItem("aaidle:hell-mode:v1", "1");
+    hellMode = true;
 
     render(createElement(GlobalHellMode));
 
     expect(document.body.classList.contains("hell-mode")).toBe(true);
+  });
+
+  it("stays off when the profile preference is off", () => {
+    hardcoreUnlocked = true;
+
+    render(createElement(GlobalHellMode));
+
+    expect(document.body.classList.contains("hell-mode")).toBe(false);
   });
 });

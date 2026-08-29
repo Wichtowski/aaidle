@@ -39,6 +39,16 @@ await cp(resolve("reports/accessibility"), resolve(releaseDirectory, "accessibil
 await cp(resolve("reports/lighthouse"), resolve(releaseDirectory, "lighthouse"), {
   recursive: true,
 });
+await cp(resolve("reports/visual/html_report"), resolve(releaseDirectory, "visual"), {
+  recursive: true,
+});
+await cp(
+  resolve("reports/visual/bitmaps_reference"),
+  resolve(releaseDirectory, "visual/baselines"),
+  {
+    recursive: true,
+  },
+);
 
 const releases = (await readdir(site, { withFileTypes: true }))
   .filter((entry) => entry.isDirectory() && /^v\d+\.\d+\.\d+$/.test(entry.name))

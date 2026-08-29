@@ -49,6 +49,13 @@ export class ApiClient {
     return this.get("/api/v1/games/emoji/normal", this.authorizationHeaders());
   }
 
+  getTimelineGame(playerId: string): Promise<ApiResponse> {
+    return this.get(
+      `/api/v1/games/timeline/normal?playerId=${encodeURIComponent(playerId)}`,
+      this.authorizationHeaders(),
+    );
+  }
+
   getHardcoreGame(): Promise<ApiResponse> {
     return this.get("/api/v1/games/classic/hardcore", this.authorizationHeaders());
   }

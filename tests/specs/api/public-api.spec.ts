@@ -49,6 +49,9 @@ test("normal account can access public game modes but not unlock Hardcore", asyn
   const emoji = await apiClient.getEmojiGame();
   expect((await expectSuccessfulJson(emoji)).challenge).toBeTruthy();
 
+  const timeline = await apiClient.getTimelineGame("75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9");
+  expect((await expectSuccessfulJson(timeline)).challenge).toBeTruthy();
+
   const hardcore = await apiClient.postHardcoreAccess();
   const hardcoreBody = hardcore.json<{ error: { message: string } }>();
   expect(hardcore.status, `Response body:\n${hardcore.body}`).toBe(403);

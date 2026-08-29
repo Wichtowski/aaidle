@@ -108,6 +108,7 @@ export function ClassicGameControls({
         )
       }
       navigation={<ClassicCategoryNav category={category} />}
+      reserveInputSlot
       status={
         busy && (
           <p aria-live="polite" className="attempts">

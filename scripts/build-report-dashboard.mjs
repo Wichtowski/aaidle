@@ -3,7 +3,14 @@ import { join } from "node:path";
 
 const siteDirectory = process.argv[2] ?? "site";
 const releasePattern = /^v\d+\.\d+\.\d+$/;
-const domains = ["e2e", "api", "accessibility", "lighthouse"];
+const domains = ["e2e", "visual", "api", "accessibility", "lighthouse"];
+const domainLabels = {
+  e2e: "E2E",
+  visual: "VISUAL DIFF",
+  api: "API",
+  accessibility: "A11Y",
+  lighthouse: "LIGHTHOUSE",
+};
 const lighthouseCategories = [
   ["performance", "Performance"],
   ["accessibility", "Accessibility"],
@@ -125,7 +132,7 @@ const releaseList = newestFirst
     const reportLinks = availableDomains
       .map(
         (domain) =>
-          `<a class="report-link" data-domain="${domain}" href="${name}/${domain}/">${domain.toUpperCase()}</a>`,
+          `<a class="report-link" data-domain="${domain}" href="${name}/${domain}/">${domainLabels[domain]}</a>`,
       )
       .join("");
     return `<article class="release-card"><div><p class="eyebrow">Production release</p><h3>${escapeHtml(name)}</h3></div><div class="metrics">${scoreList || '<span class="metric">No Lighthouse data</span>'}</div><nav aria-label="Reports for ${escapeHtml(name)}">${reportLinks}</nav></article>`;

@@ -36,12 +36,15 @@ function AuthenticatedProgressSync() {
       .syncProgress(localProgress)
       .then(({ progress: cloudProgress }) => {
         if (cancelled) return;
-        const nextProgress = mergeServerProgress(cloudProgress, localProgress);
-        const nextSerialized = JSON.stringify(nextProgress);
+        const acknowledgedProgress = mergeServerProgress(cloudProgress, localProgress);
+        const currentProgress = getSnapshot();
+        const requestWasSuperseded =
+          JSON.stringify(currentProgress) !== JSON.stringify(localProgress);
+        const nextProgress = requestWasSuperseded ? currentProgress : acknowledgedProgress;
 
         replaceProgress(nextProgress);
         startCloudProgress();
-        lastSynced.current = nextSerialized;
+        lastSynced.current = JSON.stringify(acknowledgedProgress);
         setCloudReady(true);
       })
       .catch(() => {

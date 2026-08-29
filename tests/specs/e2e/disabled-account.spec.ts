@@ -1,9 +1,6 @@
 import { env } from "../../env";
 import { expect, test } from "../../fixtures/e2e";
 
-// Never publish browser artifacts from the test that receives a production password
-test.use({ trace: "off", screenshot: "off", video: "off" });
-
 test("disabled user receives a restricted session with the disable reason", async ({
   accountDisabledPage,
   loginPage,

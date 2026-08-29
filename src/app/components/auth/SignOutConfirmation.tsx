@@ -49,7 +49,7 @@ export function SignOutConfirmation({
       aria-describedby="sign-out-confirmation-description"
       aria-labelledby="sign-out-confirmation-title"
       aria-modal="true"
-      className="danger-modal"
+      className="danger-modal sign-out-modal"
       onClick={(event) => {
         if (event.target === event.currentTarget && !signingOut) onClose();
       }}

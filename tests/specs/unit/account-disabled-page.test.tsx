@@ -21,6 +21,10 @@ vi.mock("../../../src/app/components/auth/useAuth", () => ({
   }),
 }));
 
+vi.mock("../../../src/lib/storage/use-local-progress", () => ({
+  useLocalProgress: () => ({ preferences: { hellMode: false } }),
+}));
+
 afterEach(() => {
   cleanup();
   signOut.mockClear();

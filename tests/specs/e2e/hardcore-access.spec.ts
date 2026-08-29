@@ -1,9 +1,6 @@
 import { env } from "../../env";
 import { expect, test } from "../../fixtures/e2e";
 
-// Never publish browser artifacts from the test that receives a production password
-test.use({ trace: "off", screenshot: "off", video: "off" });
-
 test("Hardcore account can open the Hardcore game", async ({ loginPage, page }) => {
   const { email, password } = env.hardcoreTestCredentials;
   test.skip(!email || !password, "Production Hardcore credentials are not configured.");
