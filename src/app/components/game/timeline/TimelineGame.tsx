@@ -653,6 +653,7 @@ export function TimelineGame() {
                       ? "incorrect"
                       : null;
               const showDate = solved || feedback === "correct";
+              const isDragOrigin = draggingModelId === item?.id;
               const visualPosition = timelineVisualPosition(position, TIMELINE_DESKTOP_COLUMNS);
               const positionWithinRow = position % TIMELINE_DESKTOP_COLUMNS;
               const isRowEnd =
@@ -710,7 +711,7 @@ export function TimelineGame() {
                     <button
                       aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${draggingModelId === item.id ? " timeline-card--dragging" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
+                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
                       draggable={!solved && feedback !== "correct"}
                       onClick={() => {
                         if (selectedModelId && selectedModelId !== item.id) {
@@ -725,45 +726,49 @@ export function TimelineGame() {
                       onPointerDown={(event) => startPointerDrag(event, item.id)}
                       type="button"
                     >
-                      <span className="timeline-card__meta">
-                        <FaGripVertical aria-hidden />{" "}
-                        {timelineCategoryLabel(item.categories, item.itemKind)}
-                      </span>
-                      <strong>{item.name}</strong>
-                      {showDate && item.releaseDate && (
+                      {isDragOrigin ? (
+                        <span>Drop here</span>
+                      ) : (
                         <>
-                          <YearAnnotationTrigger
-                            item={item}
-                            onOpen={() =>
-                              item.yearAnnotation &&
-                              setYearAnnotation({
-                                name: item.name,
-                                releaseDate: item.releaseDate!,
-                                annotation: item.yearAnnotation,
-                              })
-                            }
-                          />
-                        </>
-                      )}
-                      {feedback && (
-                        <span className="timeline-card__feedback">
-                          {feedback === "correct" ? (
-                            <>
-                              <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} /> Correct
-                              position
-                            </>
-                          ) : feedback === "same-year" ? (
-                            <>
-                              <FaEquals aria-hidden="true" size={timelineFeedbackIconSize} /> Same
-                              year
-                            </>
-                          ) : (
-                            <>
-                              <FaXmark aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                              Incorrect position
-                            </>
+                          <span className="timeline-card__meta">
+                            <FaGripVertical aria-hidden />{" "}
+                            {timelineCategoryLabel(item.categories, item.itemKind)}
+                          </span>
+                          <strong>{item.name}</strong>
+                          {showDate && item.releaseDate && (
+                            <YearAnnotationTrigger
+                              item={item}
+                              onOpen={() =>
+                                item.yearAnnotation &&
+                                setYearAnnotation({
+                                  name: item.name,
+                                  releaseDate: item.releaseDate!,
+                                  annotation: item.yearAnnotation,
+                                })
+                              }
+                            />
                           )}
-                        </span>
+                          {feedback && (
+                            <span className="timeline-card__feedback">
+                              {feedback === "correct" ? (
+                                <>
+                                  <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                  Correct position
+                                </>
+                              ) : feedback === "same-year" ? (
+                                <>
+                                  <FaEquals aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                  Same year
+                                </>
+                              ) : (
+                                <>
+                                  <FaXmark aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                  Incorrect position
+                                </>
+                              )}
+                            </span>
+                          )}
+                        </>
                       )}
                     </button>
                   ) : (

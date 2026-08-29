@@ -1,4 +1,3 @@
-@import "tailwindcss";
 :root {
   --ink: #17202c;
   --muted: #607084;
@@ -10,6 +9,17 @@
   --amber: #d8901e;
   --sky: #3f7da8;
   --api-unavailable-border: #d8b06c;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 * {
   box-sizing: border-box;
@@ -356,6 +366,10 @@ a {
 }
 .home .hero {
   max-width: none;
+  padding-top: 24px;
+}
+.home .hero > .eyebrow {
+  margin-top: 0;
 }
 .home .hero__actions {
   display: flex;
@@ -885,8 +899,8 @@ body.hell-mode .game-placeholder__status {
   color: var(--muted);
   line-height: 1.6;
 }
-.game-page > section {
-  padding-top: 3vh;
+.game-page > .game-intro {
+  padding-top: 24px;
 }
 .game-page h1 {
   font-size: clamp(38px, 6vw, 65px);
@@ -961,6 +975,10 @@ body.hell-mode .game-placeholder__status {
   border: 1px solid var(--ink);
   border-radius: 8px;
   background: var(--panel);
+}
+:is(:root.hell-mode, body.hell-mode) .game-page input::placeholder {
+  color: #fff;
+  opacity: 1;
 }
 .autocomplete__field {
   display: flex;
@@ -2224,7 +2242,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     padding: 12vh 0 8vh;
   }
   .home .hero {
-    padding: 36px 0 24px;
+    padding: 24px 0;
   }
   .home {
     text-align: center;
@@ -2333,9 +2351,20 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   .login h1 {
     white-space: normal;
   }
+  .game-intro__meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .game-intro__timing {
+    justify-items: start;
+  }
   .countdown {
     max-width: 135px;
-    text-align: right;
+    text-align: left;
+  }
+  .game-intro__completed {
+    text-align: left;
   }
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2407,6 +2436,11 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .game-page--hardcore .autocomplete input::placeholder,
 .game-page--hardcore .autocomplete small {
   color: #705a53;
+}
+:is(:root.hell-mode, body.hell-mode) .game-page--hardcore .autocomplete input {
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--ink);
 }
 .game-page--hardcore .autocomplete button {
   color: var(--ink);
@@ -4463,7 +4497,24 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   text-transform: capitalize;
 }
 .emoji {
+  animation: emoji-game-enter 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.emoji-stage {
+  min-height: 250px;
   margin-bottom: 80px;
+  padding-top: 24px;
+}
+.emoji-page .game-intro__timing {
+  min-width: 135px;
+  min-height: 33px;
+}
+.emoji-page .game-intro__meta {
+  align-items: flex-start;
+}
+@keyframes emoji-game-enter {
+  from {
+    opacity: 0;
+  }
 }
 .emoji__clues {
   display: grid;
@@ -4565,7 +4616,15 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   max-height: 100%;
   object-fit: contain;
 }
+@media (max-width: 700px) {
+  .emoji-page .game-intro__timing {
+    min-height: 48px;
+  }
+}
 @media (max-width: 520px) {
+  .emoji-stage {
+    min-height: 320px;
+  }
   .emoji__clues {
     grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
     gap: 8px;
@@ -4590,6 +4649,9 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .emoji {
+    animation: none;
+  }
   .emoji__clue {
     animation: none;
   }
@@ -4966,6 +5028,18 @@ body.hell-mode .completed--timeline {
   box-shadow: 0 8px 16px rgb(23 36 29 / 14%);
   cursor: grabbing;
   transform: translateY(-4px) scale(1.01);
+}
+.timeline-card--drag-origin {
+  display: grid;
+  border-color: var(--line);
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  place-items: center;
+  transform: none;
 }
 .timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--dragging):not(
     .timeline-card--winning

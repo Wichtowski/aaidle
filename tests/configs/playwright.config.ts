@@ -46,6 +46,12 @@ export default defineConfig({
       },
     },
     {
+      name: "firefox",
+      dependencies: ["release-readiness"],
+      testMatch: "specs/e2e/**/*.spec.ts",
+      use: { ...devices["Desktop Firefox"], storageState: consentState(env.baseURL) },
+    },
+    {
       name: "mobile-chromium",
       dependencies: ["release-readiness"],
       testMatch: "specs/e2e/**/*.spec.ts",

@@ -287,7 +287,7 @@ export function EmojiGame({
         }
       />
       {difficulty === "hardcore" && !hardcore?.unlocked ? (
-        <section className="emoji__locked" aria-live="polite">
+        <section className="emoji__locked emoji-stage" aria-live="polite">
           <p className="eyebrow">
             <FaLock aria-hidden /> Hardcore locked
           </p>
@@ -306,9 +306,9 @@ export function EmojiGame({
           </ul>
         </section>
       ) : isLoadingGame ? (
-        <GameLoadingState label="Loading today’s Emoji…" />
+        <GameLoadingState className="emoji-stage" label="Loading today’s Emoji…" />
       ) : game ? (
-        <section className="emoji" aria-label="Visual clues and guesses">
+        <section className="emoji emoji-stage" aria-label="Visual clues and guesses">
           <ol className="emoji__clues" aria-label="Visual clues">
             {Array.from({ length: game.challenge.maximumClues }, (_, index) => {
               const clue = game.challenge.clues[index];

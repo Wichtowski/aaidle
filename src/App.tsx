@@ -10,7 +10,7 @@ import { HomePage } from "@app/pages/home/HomePage";
 import { useAuth } from "@components/auth/useAuth";
 import { SeoMetadata } from "@components/ui/SeoMetadata";
 import { InstallPrompt } from "@components/ui/InstallPrompt";
-import { NotFoundPage } from "@app/pages/other/NotFoundPage";
+import { EmojiPage } from "@app/pages/game/EmojiPage";
 
 const ProfilePage = lazy(() => import("@app/pages/profile/ProfilePage").then(({ ProfilePage }) => ({ default: ProfilePage })));
 const AdminPage = lazy(() => import("@app/pages/admin/AdminPage").then(({ AdminPage }) => ({ default: AdminPage })));
@@ -24,7 +24,9 @@ const AccountDisabledPage = lazy(() => import("@app/pages/auth/AccountDisabledPa
 const DeleteAccountPage = lazy(() => import("@app/pages/auth/DeleteAccountPage").then(({ DeleteAccountPage }) => ({ default: DeleteAccountPage })));
 const DeferredIssuePage = lazy(() => import("@app/pages/issues/DeferredIssuePage").then(({ DeferredIssuePage }) => ({ default: DeferredIssuePage })));
 const TimelinePage = lazy(() => import("@app/pages/game/TimelinePage").then(({ TimelinePage }) => ({ default: TimelinePage })));
-const EmojiPage = lazy(() => import("@app/pages/game/EmojiPage").then(({ EmojiPage }) => ({ default: EmojiPage })));
+const NotFoundPage = lazy(() =>
+  import("@app/pages/other/NotFoundPage").then(({ NotFoundPage }) => ({ default: NotFoundPage })),
+);
 const ProgressSync = lazy(() =>
   import("@components/auth/ProgressSync").then(({ ProgressSync }) => ({ default: ProgressSync })),
 );

@@ -19,7 +19,7 @@ export function HomePage() {
             className="button button--primary"
             data-testid="home-play-classic"
             to="/classic"
-            prefetch="render"
+            prefetch="intent"
           >
             <span>Play Classic</span> <FaArrowRight aria-hidden="true" />
           </Link>

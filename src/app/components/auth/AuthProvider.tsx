@@ -30,49 +30,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     const checkAuthentication = () => {
-    void (async () => {
-      try {
-        const user = await apiClient.currentUser();
-        if (cancelled) return;
-        setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
-        if (!user || user.disabled) return;
-
+      void (async () => {
         try {
-          const status = await apiClient.hardcoreStatus();
-          if (!cancelled) {
-            setState((current) => ({
-              ...current,
-              hardcoreUnlocked: Boolean(current.user && status.signedIn && status.unlocked),
-            }));
+          const user = await apiClient.currentUser();
+          if (cancelled) return;
+          setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
+          if (!user || user.disabled) return;
+
+          try {
+            const status = await apiClient.hardcoreStatus();
+            if (!cancelled) {
+              setState((current) => ({
+                ...current,
+                hardcoreUnlocked: Boolean(current.user && status.signedIn && status.unlocked),
+              }));
+            }
+          } catch {
+            // Access remains locked until the server can confirm the entitlement
           }
-        } catch {
-          // Access remains locked until the server can confirm the entitlement
+        } catch (error) {
+          if (!cancelled) {
+            setState({
+              hardcoreUnlocked: false,
+              loading: false,
+              unavailable: isApiUnavailable(error),
+              user: null,
+            });
+          }
         }
-      } catch (error) {
-        if (!cancelled) {
-          setState({
-            hardcoreUnlocked: false,
-            loading: false,
-            unavailable: isApiUnavailable(error),
-            user: null,
-          });
-        }
-      }
-    })();
+      })();
     };
 
-    // Authentication is non-critical for the public shell, so let it paint first.
-    const hasIdleCallback = typeof window.requestIdleCallback === "function";
-    const idleHandle = hasIdleCallback
-      ? window.requestIdleCallback(checkAuthentication, { timeout: 1_000 })
-      : window.setTimeout(checkAuthentication, 0);
+    // Authentication is non-critical for the public shell, so wait until all
+    // critical resources have loaded before discovering the current user
+    let idleHandle: number | undefined;
+    const scheduleAuthentication = () => {
+      const hasIdleCallback = typeof window.requestIdleCallback === "function";
+      idleHandle = hasIdleCallback
+        ? window.requestIdleCallback(checkAuthentication, { timeout: 1_000 })
+        : window.setTimeout(checkAuthentication, 0);
+    };
+
+    if (document.readyState === "complete") {
+      scheduleAuthentication();
+    } else {
+      window.addEventListener("load", scheduleAuthentication, { once: true });
+    }
 
     return () => {
       cancelled = true;
-      if (hasIdleCallback) {
-        window.cancelIdleCallback(idleHandle);
-      } else {
-        window.clearTimeout(idleHandle);
+      window.removeEventListener("load", scheduleAuthentication);
+      if (idleHandle !== undefined) {
+        if (typeof window.cancelIdleCallback === "function") {
+          window.cancelIdleCallback(idleHandle);
+        } else {
+          window.clearTimeout(idleHandle);
+        }
       }
     };
   }, [retryKey]);

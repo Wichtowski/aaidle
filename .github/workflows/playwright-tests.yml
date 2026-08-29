@@ -20,6 +20,7 @@ env:
   SETUP_PNPM: "Set up pnpm"
   SETUP_NODE: "Set up Node.js"
   CACHE_PLAYWRIGHT_CHROMIUM: "Cache Playwright Chromium"
+  CACHE_PLAYWRIGHT_FIREFOX: "Cache Playwright Firefox"
   INSTALL_DEPENDENCIES: "Install dependencies"
   UPLOAD_ARTIFACTS: "Upload artifacts"
   DOWNLOAD_ARTIFACTS: "Download artifacts"
@@ -46,7 +47,7 @@ jobs:
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ env.PW_CACHE_DIR }}
-          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
       - name: ${{ env.INSTALL_DEPENDENCIES }}
         run: pnpm install --frozen-lockfile
       - name: Install Playwright Chromium and system dependencies
@@ -57,7 +58,7 @@ jobs:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
         run: pnpm run test:release-rediness
 
-  e2e:
+  e2e-chromium:
     needs: readiness
     runs-on: ubuntu-latest
     steps:
@@ -92,7 +93,107 @@ jobs:
           AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
-        run: pnpm run test:e2e
+        run: pnpm run test:e2e:chromium
+      - name: Redact E2E secrets from test artifacts
+        if: always()
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword PlaywrightTestEmail
+      - name: ${{ env.UPLOAD_ARTIFACTS }}
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: allure-results
+          path: tests/reports/allure-results
+          if-no-files-found: ignore
+
+  e2e-firefox:
+    needs: readiness
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ env.CHECKOUT_REPO }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: "${{ inputs.release_tag }}"
+      - name: ${{ env.SETUP_PNPM }}
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: ${{ vars.PNPM_VERSION }}
+      - name: ${{ env.SETUP_NODE }}
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          cache: ${{ env.PACKAGE_MANAGER }}
+      - name: ${{ env.CACHE_PLAYWRIGHT_FIREFOX }}
+        id: playwright-cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ env.PW_CACHE_DIR }}
+          key: ${{ runner.os }}-playwright-firefox-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: ${{ env.INSTALL_DEPENDENCIES }}
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright Firefox and system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps firefox
+      - name: Run browser end-to-end tests
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm run test:e2e:firefox
+      - name: Redact E2E secrets from test artifacts
+        if: always()
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword PlaywrightTestEmail
+      - name: ${{ env.UPLOAD_ARTIFACTS }}
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: allure-results
+          path: tests/reports/allure-results
+          if-no-files-found: ignore
+
+  e2e-mobile:
+    needs: readiness
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ env.CHECKOUT_REPO }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: "${{ inputs.release_tag }}"
+      - name: ${{ env.SETUP_PNPM }}
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: ${{ vars.PNPM_VERSION }}
+      - name: ${{ env.SETUP_NODE }}
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          cache: ${{ env.PACKAGE_MANAGER }}
+      - name: ${{ env.CACHE_PLAYWRIGHT_CHROMIUM }}
+        id: playwright-cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ env.PW_CACHE_DIR }}
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: ${{ env.INSTALL_DEPENDENCIES }}
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright Chromium and system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run browser end-to-end tests
+        env:
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
+          AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: pnpm run test:e2e:mobile
       - name: Redact E2E secrets from test artifacts
         if: always()
         env:
@@ -318,7 +419,7 @@ jobs:
 
   publish-reports:
     if: ${{ !cancelled() }}
-    needs: [e2e, api, accessibility, lighthouse, visual]
+    needs: [e2e-chromium, e2e-firefox, e2e-mobile, api, accessibility, lighthouse, visual]
     runs-on: ubuntu-latest
     steps:
       - name: ${{ env.CHECKOUT_REPO }}

@@ -140,6 +140,20 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
       .click();
   }
 
+  const draggedCard = page.getByRole("button", { name: "Position 2: Movable B" });
+  const draggedCardBox = await draggedCard.boundingBox();
+  expect(draggedCardBox).not.toBeNull();
+  await page.mouse.move(draggedCardBox!.x + 20, draggedCardBox!.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(draggedCardBox!.x + 60, draggedCardBox!.y + 60, { steps: 5 });
+  await expect(draggedCard).toHaveClass(/timeline-card--drag-origin/);
+  await expect(draggedCard).toHaveText("Drop here");
+  await page.waitForTimeout(700);
+  await expect(draggedCard).toHaveClass(/timeline-card--drag-origin/);
+  await expect(draggedCard).toHaveText("Drop here");
+  await page.mouse.move(draggedCardBox!.x + 20, draggedCardBox!.y + 20);
+  await page.mouse.up();
+
   await expect(timelinePage.submitButton).toBeEnabled();
   await timelinePage.submitButton.click();
   await expect(page.getByText("Incorrect position").first()).toBeVisible();
