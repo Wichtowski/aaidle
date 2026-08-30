@@ -498,7 +498,7 @@ export function ClassicGame({
                   challenge.date,
                 );
                 const guessDistribution = { ...current.guessDistribution };
-                const bucket = entry.attemptNumber > 9 ? "10+" : String(entry.attemptNumber);
+                const bucket = entry.attemptNumber > 8 ? "8+" : String(entry.attemptNumber);
                 guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
                 return {
                   ...state.stats,

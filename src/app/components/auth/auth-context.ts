@@ -3,6 +3,7 @@ import type { AuthUser } from "@lib/api/client";
 
 export type AuthContextValue = {
   hardcoreUnlocked: boolean;
+  hardcoreAccessLoading: boolean;
   loading: boolean;
   unavailable: boolean;
   user: AuthUser | null;

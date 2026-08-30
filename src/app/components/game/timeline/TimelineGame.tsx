@@ -11,6 +11,7 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
+import { Link } from "react-router-dom";
 import {
   FaCheck,
   FaCircleQuestion,
@@ -51,6 +52,7 @@ import { GameEyebrow } from "../common/layout/GameEyebrow";
 import { GameIntro } from "../common/layout/GameLayout";
 import { DifficultySwitch } from "../common/layout/DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
+import { SpeedrunUsernameDialog } from "./SpeedrunUsernameDialog";
 import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
 import { readGamePreferences, saveTimelineDifficulty } from "@lib/storage/game-preferences";
 
@@ -141,13 +143,14 @@ function hydrateGame(game: TimelineGamePayload) {
     acceptedAttempts: Math.max(saved?.acceptedAttempts ?? 0, serverAttempt?.attemptNumber ?? 0),
     attemptsRemaining: game.progress.attemptsRemaining,
     solved: game.progress.solved || Boolean(useSaved && saved.solved),
-    speedrunStartedAt: useSaved ? saved?.speedrunStartedAt : undefined,
+    speedrunStartedAt: game.progress.speedrunStartedAt ?? undefined,
+    speedrunTimeMs: serverAttempt?.speedrunTimeMs,
   };
 }
 
 export function TimelineGame() {
   const progress = useLocalProgress();
-  const { hardcoreUnlocked, user } = useAuth();
+  const { hardcoreUnlocked, setAuthenticatedUser, user } = useAuth();
   const [difficulty, setDifficulty] = useState<TimelineDifficulty>(
     () => readGamePreferences().timeline,
   );
@@ -168,6 +171,9 @@ export function TimelineGame() {
   const [dragOverTarget, setDragOverTarget] = useState<number | "tray" | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
+  const [showSpeedrunUsername, setShowSpeedrunUsername] = useState(false);
+  const speedrunUsernameHandled = useRef(false);
   const [yearAnnotation, setYearAnnotation] = useState<{
     name: string;
     releaseDate: string;
@@ -186,12 +192,27 @@ export function TimelineGame() {
   const pointerDragActive = useRef(false);
   const autoScrollFrame = useRef<number | null>(null);
   const gameCache = useRef<Partial<Record<TimelineDifficulty, TimelineGamePayload>>>({});
+  const speedrunStartPromise = useRef<Promise<number | null> | null>(null);
 
   const selectDifficulty = (nextDifficulty: string) => {
     const value = nextDifficulty as TimelineDifficulty;
     saveTimelineDifficulty(value);
     setDifficulty(value);
   };
+
+  useEffect(() => {
+    if (difficulty !== "speedrun") {
+      setFocusMode(false);
+      setShowSpeedrunUsername(false);
+      speedrunUsernameHandled.current = false;
+    }
+  }, [difficulty]);
+
+  useEffect(() => {
+    if (difficulty === "speedrun" && solved && user && !user.username) {
+      setShowSpeedrunUsername(true);
+    }
+  }, [difficulty, solved, user]);
 
   useEffect(() => {
     if (difficulty === "speedrun" && !user) {
@@ -212,6 +233,7 @@ export function TimelineGame() {
       setAttemptsRemaining(hydrated.attemptsRemaining);
       setSolved(hydrated.solved);
       setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
+      setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
       setSelectedModelId(null);
       setLoading(false);
       setError(null);
@@ -233,6 +255,7 @@ export function TimelineGame() {
         setAttemptsRemaining(hydrated.attemptsRemaining);
         setSolved(hydrated.solved);
         setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
+        setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
         setSelectedModelId(null);
       })
       .catch((loadError: unknown) => {
@@ -268,6 +291,16 @@ export function TimelineGame() {
     return () => window.clearInterval(timer);
   }, [difficulty, solved, speedrunStartedAt]);
 
+  useEffect(() => {
+    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
+    const preventSpeedrunExit = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "Your Speedrun timer will continue if you leave this page.";
+    };
+    window.addEventListener("beforeunload", preventSpeedrunExit);
+    return () => window.removeEventListener("beforeunload", preventSpeedrunExit);
+  }, [difficulty, solved, speedrunStartedAt]);
+
   useEffect(
     () => () => {
       if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
@@ -293,12 +326,41 @@ export function TimelineGame() {
     [game],
   );
   const expectedModelIds = useMemo(() => new Set(itemById.keys()), [itemById]);
+  const speedrunCovered = difficulty === "speedrun" && speedrunStartedAt === null;
   const arrangedModelIds = useMemo(
     () => new Set(positions.filter((modelId): modelId is string => modelId !== null)),
     [positions],
   );
   const complete = timelineArrangementIsComplete(positions, expectedModelIds);
   const exhausted = attemptsRemaining === 0 && !solved;
+
+  const startSpeedrun = useCallback(() => {
+    if (difficulty !== "speedrun" || !game || speedrunStartedAt !== null) {
+      return Promise.resolve(speedrunStartedAt);
+    }
+    if (speedrunStartPromise.current) return speedrunStartPromise.current;
+    const promise = apiClient
+      .startTimelineSpeedrun(game.challenge.id, progress.playerId)
+      .then(({ startedAt }) => {
+        const cachedGame = gameCache.current[difficulty];
+        if (cachedGame) {
+          gameCache.current[difficulty] = {
+            ...cachedGame,
+            progress: { ...cachedGame.progress, speedrunStartedAt: startedAt },
+          };
+        }
+        setSpeedrunStartedAt((current) => current ?? startedAt);
+        delete gameCache.current[difficulty];
+        setLoadAttempt((attempt) => attempt + 1);
+        return startedAt;
+      })
+      .catch((startError: unknown) => {
+        speedrunStartPromise.current = null;
+        throw startError;
+      });
+    speedrunStartPromise.current = promise;
+    return promise;
+  }, [difficulty, game, progress.playerId, speedrunStartedAt]);
 
   const triggerLanding = useCallback((modelId: string) => {
     if (landingTimer.current !== null) window.clearTimeout(landingTimer.current);
@@ -309,6 +371,21 @@ export function TimelineGame() {
       landingTimer.current = null;
     }, 560);
   }, []);
+
+  const chooseSpeedrunUsername = async (username: string | null) => {
+    try {
+      if (username) {
+        const result = await apiClient.updateUsername(username);
+        setAuthenticatedUser(result.user);
+      }
+      speedrunUsernameHandled.current = true;
+      setShowSpeedrunUsername(false);
+    } catch (usernameError) {
+      setToast(
+        usernameError instanceof Error ? usernameError.message : "Could not save your username.",
+      );
+    }
+  };
 
   const moveModel = useCallback(
     (modelId: string, targetPosition: number | null) => {
@@ -339,10 +416,10 @@ export function TimelineGame() {
 
   useEffect(() => {
     if (!draggingModelId || !pointerDragActive.current) return;
-    const scrollEdge = 72;
-    const maxScrollStep = 10;
+    const maxScrollStep = 150;
     const autoScroll = () => {
       const y = pointerY.current;
+      const scrollEdge = window.innerHeight * 0.2;
       if (y !== null) {
         const scrollStep =
           y < scrollEdge
@@ -478,8 +555,7 @@ export function TimelineGame() {
 
   const submit = async () => {
     if (!game || !complete || busy || solved || exhausted) return;
-    const startedAt = difficulty === "speedrun" ? (speedrunStartedAt ?? Date.now()) : null;
-    if (difficulty === "speedrun" && speedrunStartedAt === null) setSpeedrunStartedAt(startedAt);
+    if (difficulty === "speedrun") await startSpeedrun();
     const requestId = pendingRequestId.current ?? crypto.randomUUID();
     pendingRequestId.current = requestId;
     setBusy(true);
@@ -490,7 +566,6 @@ export function TimelineGame() {
         progress.playerId,
         requestId,
         positions as string[],
-        startedAt,
       );
       pendingRequestId.current = null;
       const didSolve = result.placements.every((placement) => placement === 1);
@@ -507,6 +582,9 @@ export function TimelineGame() {
       setAttemptsRemaining(result.attemptsRemaining);
       setAcceptedAttempts((current) => current + 1);
       setSolved(didSolve);
+      if (didSolve && result.speedrunTimeMs !== undefined) {
+        setSpeedrunElapsed(result.speedrunTimeMs);
+      }
       gameCache.current[difficulty] = {
         ...revealedGame,
         progress: {
@@ -562,7 +640,7 @@ export function TimelineGame() {
     }
   };
 
-  const difficultyControls = (
+  const difficultySwitch = (
     <DifficultySwitch
       ariaLabel="Timeline difficulty"
       disabled={(option) => busy || loading || (option.value === "speedrun" && !user)}
@@ -578,10 +656,39 @@ export function TimelineGame() {
       testId="timeline-difficulty"
     />
   );
+  const speedrunActions = (
+    <div className="timeline-speedrun-controls__actions">
+      <Link
+        className="button"
+        to={game ? `/timeline/leaderboard/${game.challenge.date.replaceAll("-", "")}` : "/timeline/leaderboard"}
+      >
+        Leaderboard
+      </Link>
+      <button
+        aria-pressed={focusMode}
+        className="button"
+        onClick={() => setFocusMode((focused) => !focused)}
+        type="button"
+      >
+        {focusMode ? "Exit focus" : "Focus mode"}
+      </button>
+    </div>
+  );
+  const difficultyControls =
+    difficulty === "speedrun" ? (
+      <div className="timeline-speedrun-controls">
+        {difficultySwitch}
+        {!focusMode && speedrunActions}
+      </div>
+    ) : (
+      difficultySwitch
+    );
 
   return (
-    <main className="page game-page timeline-page">
-      <SiteNavbar />
+    <main
+      className={`page game-page timeline-page${focusMode && difficulty === "speedrun" ? " timeline-page--focus" : ""}`}
+    >
+      {!focusMode && <SiteNavbar />}
       <GameIntro
         description="Place events in chronological order. Dates stay hidden until every position is correct."
         difficulty={difficultyControls}
@@ -613,21 +720,51 @@ export function TimelineGame() {
 
       {game && (
         <section className="timeline-game" aria-label="Timeline arrangement">
-          <div className="timeline-game__status" aria-live="polite">
-            <p>
+          <div className="timeline-game__status">
+            <p aria-live="polite">
               <strong>{arrangedModelIds.size}</strong> / {positions.length} positions filled
             </p>
-            {difficulty === "speedrun" && !solved && (
-              <p>
-                <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong> elapsed
-              </p>
-            )}
-            {attemptsRemaining !== null && (
-              <p>
-                <strong>{attemptsRemaining}</strong> of {game.progress.attemptLimit} submissions
-                remaining
-              </p>
-            )}
+            <div className="timeline-game__status-details">
+              <div className="timeline-game__status-metrics" aria-live="polite">
+                {difficulty === "speedrun" && (
+                  <p>
+                    {solved ? (
+                      <>
+                        Your today’s time: <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong>
+                      </>
+                    ) : (
+                      <>
+                        <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong> elapsed
+                      </>
+                    )}
+                  </p>
+                )}
+                {difficulty === "speedrun" && !solved && speedrunStartedAt === null && (
+                  <button
+                    className="button button--primary"
+                    onClick={() => {
+                      void startSpeedrun().catch((startError: unknown) => {
+                        setToast(
+                          startError instanceof Error
+                            ? startError.message
+                            : "We could not start the Speedrun timer.",
+                        );
+                      });
+                    }}
+                    type="button"
+                  >
+                    Show cards and start
+                  </button>
+                )}
+                {attemptsRemaining !== null && (
+                  <p>
+                    <strong>{attemptsRemaining}</strong> of {game.progress.attemptLimit} submissions
+                    remaining
+                  </p>
+                )}
+              </div>
+              {difficulty === "speedrun" && focusMode && speedrunActions}
+            </div>
           </div>
 
           <ol
@@ -711,9 +848,15 @@ export function TimelineGame() {
                     <button
                       aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
-                      draggable={!solved && feedback !== "correct"}
+                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
+                      disabled={difficulty === "speedrun" && speedrunStartedAt === null}
+                      draggable={
+                        !solved &&
+                        feedback !== "correct" &&
+                        (difficulty !== "speedrun" || speedrunStartedAt !== null)
+                      }
                       onClick={() => {
+                        if (difficulty === "speedrun" && speedrunStartedAt === null) return;
                         if (selectedModelId && selectedModelId !== item.id) {
                           moveModel(selectedModelId, position);
                         } else if (feedback !== "correct") {
@@ -726,7 +869,9 @@ export function TimelineGame() {
                       onPointerDown={(event) => startPointerDrag(event, item.id)}
                       type="button"
                     >
-                      {isDragOrigin ? (
+                      {speedrunCovered ? (
+                        <span className="timeline-card__covered-label">Covered card</span>
+                      ) : isDragOrigin ? (
                         <span>Drop here</span>
                       ) : (
                         <>
@@ -788,7 +933,9 @@ export function TimelineGame() {
             })}
           </ol>
 
-          {!solved && (
+          {!solved &&
+            (difficulty !== "speedrun" ||
+              game.movableModels.some((item) => !arrangedModelIds.has(item.id))) && (
             <section
               aria-labelledby="timeline-tray-title"
               className={`timeline-tray timeline-tray--${difficulty}${dragOverTarget === "tray" ? " timeline-tray--drop-target" : ""}`}
@@ -907,10 +1054,14 @@ export function TimelineGame() {
             attempts={acceptedAttempts}
             date={game.challenge.date}
             difficulty={game.challenge.difficulty}
+            speedrunTimeMs={difficulty === "speedrun" ? speedrunElapsed : undefined}
             onClose={() => setShowCompletion(false)}
             totalPositions={game.slots.length}
           />
         </Suspense>
+      )}
+      {difficulty === "speedrun" && solved && showSpeedrunUsername && user && (
+        <SpeedrunUsernameDialog email={user.email} onChoose={(value) => void chooseSpeedrunUsername(value)} />
       )}
       <Toast message={toast} onDismiss={() => setToast(null)} />
     </main>

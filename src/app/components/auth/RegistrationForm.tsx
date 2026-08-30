@@ -9,6 +9,7 @@ type ToastState = { message: string; variant: ToastVariant } | null;
 
 export function RegistrationForm() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -27,7 +28,7 @@ export function RegistrationForm() {
     setBusy(true);
     setToast(null);
     try {
-      const { activationUrl } = await apiClient.register(email, password);
+      const { activationUrl } = await apiClient.register(email, password, username);
       setSuccess({ email, activationUrl: activationUrl ?? null });
     } catch (error) {
       setToast({
@@ -64,6 +65,21 @@ export function RegistrationForm() {
         toolDescription="Create a new aAIdle account with an email address and password."
         toolName="createAccount"
       >
+        <label className="auth-field">
+          <span className="auth-field__label">Username <small>(optional)</small></span>
+          <input
+            autoComplete="username"
+            data-testid="register-username"
+            maxLength={24}
+            minLength={3}
+            name="username"
+            onChange={(event) => setUsername(event.target.value)}
+            pattern="[A-Za-z0-9_-]{3,24}"
+            toolparamdescription="The optional public leaderboard username."
+            type="text"
+            value={username}
+          />
+        </label>
         <label className="auth-field">
           Retype password
           <span className="password-input">

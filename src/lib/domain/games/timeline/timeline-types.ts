@@ -31,10 +31,12 @@ export type TimelineGamePayload = {
     solved: boolean;
     attemptLimit: number | null;
     attemptsRemaining: number | null;
+    speedrunStartedAt?: number | null;
     latestAttempt: {
       modelOrder: string[];
       placements: Array<0 | 1 | 2>;
       attemptNumber: number;
+      speedrunTimeMs?: number;
     } | null;
   };
 };
@@ -43,7 +45,49 @@ export type TimelineAttemptPayload = {
   placements: Array<0 | 1 | 2>;
   attemptsRemaining: number | null;
   revealedModels?: TimelineModel[];
+  speedrunTimeMs?: number;
 };
+
+export type TimelineSpeedrunStartPayload = {
+  startedAt: number;
+};
+
+export type TimelineLeaderboardPayload = {
+  challengeDate: string;
+  entries: Array<{
+    rank: number;
+    displayName: string;
+    isCurrentUser: boolean;
+    submissions: number;
+    timeMs: number;
+  }>;
+};
+
+export type TimelineGlobalRunPoint = {
+  date: string;
+  submissions: number;
+  timeMs: number;
+};
+
+export type TimelineGlobalLeaderboardEntry = {
+  rank: number;
+  displayName: string;
+  isCurrentUser: boolean;
+  completedSpeedruns: number;
+  averageTimeMs: number;
+  averageSubmissions: number;
+  fastestTimeMs: number;
+  recentRuns: TimelineGlobalRunPoint[];
+};
+
+export type TimelineGlobalLeaderboardPayload = {
+  fastest: TimelineGlobalLeaderboardEntry[];
+  average: TimelineGlobalLeaderboardEntry[];
+  completions: TimelineGlobalLeaderboardEntry[];
+};
+
+export const timelineLeaderboardPath = (date: string) =>
+  `/timeline/leaderboard/${date.replaceAll("-", "")}`;
 
 export const timelineDifficultyLabel = (difficulty: TimelineDifficulty) =>
   difficulty[0]!.toUpperCase() + difficulty.slice(1);

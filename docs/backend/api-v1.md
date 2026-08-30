@@ -89,6 +89,17 @@ Attempts must be sequential, and their hard limit is the eligible entity-pool si
 Emoji supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
 
 `GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress. Normal and Challenge puzzles use distinct release years. Hardcore may contain multiple items from one year only when every item in that same-year group has a full `YYYY-MM-DD` date, so the chronological order remains unambiguous. Timeline attempt placements use `0` for an incorrect position, `1` for an exact position, and `2` when the submitted item shares the expected position's year but is not in its exact position. The attempt response also returns `revealedModels` containing date metadata only for models in exact positions.
+Speedrun requires authentication. `POST /api/v1/games/timeline/challenges/{challengeId}/start` records the first card-drop timestamp for the signed-in player and challenge idempotently, returning the server timestamp as `startedAt`. The timestamp is included in Speedrun progress and is used by the server to calculate the completion time.
+`GET /api/v1/games/timeline/challenges/{challengeId}/leaderboard` returns the ten fastest completed Speedruns for that challenge with display name, submission count, and server-measured duration.
+Entries rank by duration, then by fewer submissions when durations tie.
+When the request has an authenticated session, `isCurrentUser` identifies that account's entry without exposing its user ID.
+`GET /api/v1/games/timeline/leaderboard` returns the same leaderboard for the current UTC Speedrun challenge and is public.
+`GET /api/v1/games/timeline/leaderboard/{date}` returns a historical daily leaderboard, where `date` uses `YYYYMMDD` format.
+Valid dates without a recorded Speedrun return an empty `entries` array.
+`GET /api/v1/games/timeline/leaderboard/global` returns public top-ten rankings for fastest completion, average completion time, and total completed Speedruns.
+Each global entry includes completed Speedruns, average time, average submissions, fastest time, and up to 30 recent completed runs for charting.
+Global responses expose display names and aggregate run data without exposing account IDs or email addresses.
+Before the Speedrun start endpoint is called, movable card names and metadata are returned as covered placeholders.
 
 Classic and Emoji guess requests share persisted abuse limits: 360 requests per minute for a player and challenge, 1,500 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
@@ -99,9 +110,11 @@ Authenticated browser mutations additionally use double-submit CSRF protection: 
 Authentication request limits are persisted in SQLite and keyed by an HMAC of the validated client IP and normalized email address.
 
 `POST /api/v1/auth/register` creates an unverified password account and sends a verification message through Resend.
+The optional username must be 3-24 ASCII letters, numbers, underscores, or hyphens and must be unique regardless of letter case.
 It always returns `202` for an existing account to avoid account enumeration.
 In non-production without `RESEND_API_KEY`, the response includes `activationUrl` for local development.
 
+`PUT /api/v1/auth/username` sets or removes the authenticated account's public username and returns `409 USERNAME_TAKEN` if another account already uses it, regardless of letter case.
 `POST /api/v1/auth/password` rotates any existing browser session and creates new `aaidle_session` and CSRF cookies after password verification. It does not return a bearer token.
 `GET /api/v1/auth/me` returns the session account or `null`.
 `POST /api/v1/auth/logout` deletes the session and clears both authentication cookies.

@@ -1,6 +1,6 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
-use sqlx::{FromRow, SqliteConnection, SqlitePool};
+use sqlx::{FromRow, QueryBuilder, Sqlite, SqliteConnection, SqlitePool};
 use uuid::Uuid;
 
 use crate::{
@@ -64,10 +64,46 @@ pub struct TimelineAttemptResult {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct TimelineLeaderboardEntry {
+    pub rank: u32,
+    pub display_name: String,
+    pub is_current_user: bool,
+    pub submissions: u16,
+    pub time_ms: i64,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct TimelineGlobalRunPoint {
+    pub challenge_date: String,
+    pub submissions: u16,
+    pub time_ms: i64,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct TimelineGlobalLeaderboardEntry {
+    pub rank: u32,
+    pub display_name: String,
+    pub is_current_user: bool,
+    pub completed_speedruns: u32,
+    pub average_time_ms: i64,
+    pub average_submissions: f64,
+    pub fastest_time_ms: i64,
+    pub recent_runs: Vec<TimelineGlobalRunPoint>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct TimelineGlobalLeaderboard {
+    pub fastest: Vec<TimelineGlobalLeaderboardEntry>,
+    pub average: Vec<TimelineGlobalLeaderboardEntry>,
+    pub completions: Vec<TimelineGlobalLeaderboardEntry>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TimelineLatestAttempt {
     pub model_order: Vec<String>,
     pub placements: Vec<u8>,
     pub attempt_number: u16,
+    pub speedrun_time_ms: Option<i64>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -76,6 +112,7 @@ pub struct TimelineGameData {
     pub attempt_limit: Option<u16>,
     pub attempts_remaining: Option<u16>,
     pub solved: bool,
+    pub speedrun_started_at: Option<i64>,
     pub latest_attempt: Option<TimelineLatestAttempt>,
 }
 
@@ -86,7 +123,6 @@ pub struct TimelineAttemptInput {
     pub hardcore_access: bool,
     pub request_id: Uuid,
     pub model_order: Vec<String>,
-    pub speedrun_started_at: Option<i64>,
 }
 
 pub async fn timeline_game(
@@ -99,6 +135,17 @@ pub async fn timeline_game(
     let challenge = ensure_timeline_challenge(pool, date, difficulty, secret).await?;
     let config = difficulty.config();
     let attempt_count = timeline_attempt_count(pool, challenge.id, player_id).await?;
+    let speedrun_started_at = if difficulty == TimelineDifficulty::Speedrun {
+        sqlx::query_scalar::<_, i64>(
+            "SELECT started_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+        )
+        .bind(challenge.id.to_string())
+        .bind(player_id.to_string())
+        .fetch_optional(pool)
+        .await?
+    } else {
+        None
+    };
     let latest = sqlx::query_as::<_, TimelineAttemptRow>(
         "SELECT challenge_id, player_id, model_order_json, placements_json, attempt_number, \
          is_correct, attempts_remaining_after, speedrun_time_ms FROM timeline_attempts \
@@ -119,6 +166,7 @@ pub async fn timeline_game(
                 attempt_number: u16::try_from(attempt.attempt_number).map_err(|_| {
                     AppError::Unavailable("Stored Timeline attempt number is invalid.".to_owned())
                 })?,
+                speedrun_time_ms: attempt.speedrun_time_ms,
             })
         })
         .transpose()?;
@@ -130,8 +178,229 @@ pub async fn timeline_game(
             .attempt_limit
             .map(|limit| limit.saturating_sub(attempt_count)),
         solved,
+        speedrun_started_at,
         latest_attempt,
     })
+}
+
+pub async fn start_speedrun(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+) -> AppResult<i64> {
+    let mut transaction = pool.begin().await?;
+    let challenge = find_timeline_challenge(&mut transaction, challenge_id)
+        .await?
+        .ok_or_else(|| AppError::NotFound("Timeline challenge not found.".to_owned()))?;
+    if challenge.difficulty != TimelineDifficulty::Speedrun.as_str() {
+        return Err(AppError::validation(
+            "Speedrun start is only valid for Speedrun challenges.",
+        ));
+    }
+    let now = super::now_unix_millis();
+    super::ensure_anonymous_player(&mut transaction, player_id, now).await?;
+    sqlx::query(
+        "INSERT INTO timeline_speedrun_starts (challenge_id, player_id, started_at) \
+         VALUES (?, ?, ?) ON CONFLICT(challenge_id, player_id) DO NOTHING",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .bind(now)
+    .execute(&mut *transaction)
+    .await?;
+    let started_at = sqlx::query_scalar::<_, i64>(
+        "SELECT started_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .fetch_one(&mut *transaction)
+    .await?;
+    transaction.commit().await?;
+    Ok(started_at)
+}
+
+pub async fn timeline_leaderboard(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    current_user_id: Option<&str>,
+) -> AppResult<Vec<TimelineLeaderboardEntry>> {
+    let difficulty =
+        sqlx::query_scalar::<_, String>("SELECT difficulty FROM timeline_challenges WHERE id = ?")
+            .bind(challenge_id.to_string())
+            .fetch_optional(pool)
+            .await?
+            .ok_or_else(|| AppError::NotFound("Timeline challenge not found.".to_owned()))?;
+    if difficulty != TimelineDifficulty::Speedrun.as_str() {
+        return Err(AppError::validation(
+            "Leaderboard is only available for Speedrun challenges.",
+        ));
+    }
+    let rows = sqlx::query_as::<_, (String, String, i64, i64)>(
+        "SELECT COALESCE(NULLIF(u.username, ''), 'Anonymous runner'), \
+                u.id, a.speedrun_time_ms, a.attempt_number \
+         FROM timeline_attempts a \
+         JOIN users u ON u.id = a.user_id \
+         WHERE a.challenge_id = ? AND a.is_correct = 1 AND a.speedrun_time_ms IS NOT NULL \
+           AND u.disabled_at IS NULL \
+         ORDER BY a.speedrun_time_ms ASC, a.attempt_number ASC, a.created_at ASC, a.user_id ASC \
+         LIMIT 10",
+    )
+    .bind(challenge_id.to_string())
+    .fetch_all(pool)
+    .await?;
+    rows.into_iter()
+        .enumerate()
+        .map(|(index, (display_name, user_id, time_ms, submissions))| {
+            Ok(TimelineLeaderboardEntry {
+                rank: index as u32 + 1,
+                display_name,
+                is_current_user: current_user_id == Some(user_id.as_str()),
+                submissions: u16::try_from(submissions).map_err(|_| {
+                    AppError::Unavailable("Stored Timeline submission count is invalid.".to_owned())
+                })?,
+                time_ms,
+            })
+        })
+        .collect::<AppResult<Vec<_>>>()
+}
+
+pub async fn timeline_global_leaderboard(
+    pool: &SqlitePool,
+    current_user_id: Option<&str>,
+) -> AppResult<TimelineGlobalLeaderboard> {
+    let fastest = timeline_global_ranking(
+        pool,
+        current_user_id,
+        "fastest_time_ms ASC, average_time_ms ASC, completed_speedruns DESC, user_id ASC",
+    )
+    .await?;
+    let average = timeline_global_ranking(
+        pool,
+        current_user_id,
+        "average_time_ms ASC, completed_speedruns DESC, fastest_time_ms ASC, user_id ASC",
+    )
+    .await?;
+    let completions = timeline_global_ranking(
+        pool,
+        current_user_id,
+        "completed_speedruns DESC, average_time_ms ASC, fastest_time_ms ASC, user_id ASC",
+    )
+    .await?;
+    let user_ids = fastest
+        .iter()
+        .chain(&average)
+        .chain(&completions)
+        .map(|entry| entry.0.clone())
+        .collect::<BTreeSet<_>>();
+    let recent_runs = timeline_recent_speedruns(pool, &user_ids).await?;
+
+    Ok(TimelineGlobalLeaderboard {
+        fastest: map_global_ranking(fastest, &recent_runs),
+        average: map_global_ranking(average, &recent_runs),
+        completions: map_global_ranking(completions, &recent_runs),
+    })
+}
+
+type TimelineGlobalRankingRow = (String, String, i64, i64, f64, i64);
+
+async fn timeline_global_ranking(
+    pool: &SqlitePool,
+    current_user_id: Option<&str>,
+    ordering: &str,
+) -> AppResult<Vec<(String, TimelineGlobalLeaderboardEntry)>> {
+    let query = format!(
+        "SELECT user_id, display_name, completed_speedruns, average_time_ms, \
+         average_submissions, fastest_time_ms FROM timeline_speedrun_public_stats \
+         ORDER BY {ordering} LIMIT 10"
+    );
+    let rows = sqlx::query_as::<_, TimelineGlobalRankingRow>(&query)
+        .fetch_all(pool)
+        .await?;
+    rows.into_iter()
+        .enumerate()
+        .map(
+            |(
+                index,
+                (
+                    user_id,
+                    display_name,
+                    completed_speedruns,
+                    average_time_ms,
+                    average_submissions,
+                    fastest_time_ms,
+                ),
+            )| {
+                Ok((
+                    user_id.clone(),
+                    TimelineGlobalLeaderboardEntry {
+                        rank: index as u32 + 1,
+                        display_name,
+                        is_current_user: current_user_id == Some(user_id.as_str()),
+                        completed_speedruns: u32::try_from(completed_speedruns).map_err(|_| {
+                            AppError::Unavailable(
+                                "Stored Timeline completion count is invalid.".to_owned(),
+                            )
+                        })?,
+                        average_time_ms,
+                        average_submissions,
+                        fastest_time_ms,
+                        recent_runs: Vec::new(),
+                    },
+                ))
+            },
+        )
+        .collect()
+}
+
+async fn timeline_recent_speedruns(
+    pool: &SqlitePool,
+    user_ids: &BTreeSet<String>,
+) -> AppResult<BTreeMap<String, Vec<TimelineGlobalRunPoint>>> {
+    if user_ids.is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    let mut query = QueryBuilder::<Sqlite>::new(
+        "SELECT user_id, challenge_date, submissions, time_ms FROM (\
+         SELECT user_id, challenge_date, submissions, time_ms, \
+         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY challenge_date DESC) AS run_rank \
+         FROM timeline_speedrun_public_runs WHERE user_id IN (",
+    );
+    let mut separated = query.separated(", ");
+    for user_id in user_ids {
+        separated.push_bind(user_id);
+    }
+    separated.push_unseparated(")) WHERE run_rank <= 30 ORDER BY user_id ASC, challenge_date ASC");
+    let rows = query
+        .build_query_as::<(String, String, i64, i64)>()
+        .fetch_all(pool)
+        .await?;
+    let mut result = BTreeMap::<String, Vec<TimelineGlobalRunPoint>>::new();
+    for (user_id, challenge_date, submissions, time_ms) in rows {
+        result
+            .entry(user_id)
+            .or_default()
+            .push(TimelineGlobalRunPoint {
+                challenge_date,
+                submissions: u16::try_from(submissions).map_err(|_| {
+                    AppError::Unavailable("Stored Timeline submission count is invalid.".to_owned())
+                })?,
+                time_ms,
+            });
+    }
+    Ok(result)
+}
+
+fn map_global_ranking(
+    entries: Vec<(String, TimelineGlobalLeaderboardEntry)>,
+    recent_runs: &BTreeMap<String, Vec<TimelineGlobalRunPoint>>,
+) -> Vec<TimelineGlobalLeaderboardEntry> {
+    entries
+        .into_iter()
+        .map(|(user_id, mut entry)| {
+            entry.recent_runs = recent_runs.get(&user_id).cloned().unwrap_or_default();
+            entry
+        })
+        .collect()
 }
 
 pub async fn ensure_timeline_challenge(
@@ -253,12 +522,24 @@ async fn process_timeline_attempt_once(
 
     let now = super::now_unix_millis();
     super::ensure_anonymous_player(connection, input.player_id, now).await?;
+    let speedrun_started_at = if challenge.difficulty == TimelineDifficulty::Speedrun {
+        sqlx::query_scalar::<_, i64>(
+            "SELECT started_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+        )
+        .bind(input.challenge_id.to_string())
+        .bind(input.player_id.to_string())
+        .fetch_optional(&mut *connection)
+        .await?
+        .ok_or_else(|| AppError::Conflict("TIMELINE_SPEEDRUN_NOT_STARTED".to_owned()))?
+        .into()
+    } else {
+        None
+    };
     let placements = timeline_placements(&challenge, &input.model_order);
     let is_correct = placements.iter().all(|placement| *placement == 1);
     let speedrun_time_ms = (challenge.difficulty == TimelineDifficulty::Speedrun && is_correct)
         .then(|| {
-            input
-                .speedrun_started_at
+            speedrun_started_at
                 .map(|started| now.saturating_sub(started))
                 .unwrap_or_default()
         });
@@ -282,7 +563,7 @@ async fn process_timeline_attempt_once(
     .bind(attempt_number)
     .bind(is_correct)
     .bind(attempts_remaining.map(i64::from))
-    .bind(input.speedrun_started_at)
+    .bind(speedrun_started_at)
     .bind(speedrun_time_ms)
     .bind(now)
     .execute(&mut *connection)

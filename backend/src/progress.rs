@@ -928,20 +928,16 @@ async fn history_stats(
 
 fn history_stats_from_rows(
     rows: &[HistoryRow],
-    timeline_distribution: bool,
+    _timeline_distribution: bool,
 ) -> AppResult<ProgressHistoryStats> {
     let solved = rows
         .iter()
         .filter(|row| row.solved != 0)
         .collect::<Vec<_>>();
-    let mut distribution = if timeline_distribution {
-        (1..=12).map(|key| (key.to_string(), 0)).collect()
-    } else {
-        default_distribution()
-    };
+    let mut distribution = default_distribution();
     for row in &solved {
-        let bucket = if !timeline_distribution && row.guess_count > 9 {
-            "10+".to_owned()
+        let bucket = if row.guess_count > 8 {
+            "8+".to_owned()
         } else {
             row.guess_count.to_string()
         };
@@ -983,8 +979,8 @@ async fn player_stats_summary(
             let bucket = bucket
                 .parse::<i64>()
                 .ok()
-                .filter(|count| *count <= 9)
-                .map_or_else(|| "10+".to_owned(), |count| count.to_string());
+                .filter(|count| *count <= 7)
+                .map_or_else(|| "8+".to_owned(), |count| count.to_string());
             *distribution.entry(bucket).or_default() += count;
         }
     }
@@ -998,7 +994,7 @@ async fn player_stats_summary(
 }
 
 fn default_distribution() -> BTreeMap<String, i64> {
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+    ["1", "2", "3", "4", "5", "6", "7", "8+"]
         .into_iter()
         .map(|key| (key.to_owned(), 0))
         .collect()

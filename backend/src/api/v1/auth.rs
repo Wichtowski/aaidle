@@ -11,7 +11,8 @@ use crate::{
     dto::{
         AcceptedResponse, AccountDeletionCompletionRequest, AccountDeletionStatusResponse,
         ApiTokenResponse, AuthMeResponse, AuthenticatedResponse, EmailAcceptedResponse,
-        HardcoreStatusResponse, PasswordCredentialsRequest,
+        HardcoreStatusResponse, PasswordCredentialsRequest, RegistrationRequest,
+        UsernameUpdateRequest,
     },
     error::{AppError, AppResult},
     state::AppState,
@@ -30,7 +31,7 @@ pub(super) async fn register(
     State(state): State<AppState>,
     headers: HeaderMap,
     ConnectInfo(peer): ConnectInfo<SocketAddr>,
-    payload: Result<Json<PasswordCredentialsRequest>, JsonRejection>,
+    payload: Result<Json<RegistrationRequest>, JsonRejection>,
 ) -> AppResult<(
     StatusCode,
     [(&'static str, &'static str); 1],
@@ -50,8 +51,14 @@ pub(super) async fn register(
     )
     .await?;
     let now = now_millis();
-    let user = match crate::auth::register_with_password(&state.db, &email, &payload.password, now)
-        .await
+    let user = match crate::auth::register_with_password_and_username(
+        &state.db,
+        &email,
+        &payload.password,
+        payload.username.as_deref(),
+        now,
+    )
+    .await
     {
         Ok(user) => user,
         Err(AppError::Conflict(value)) if value == "ACCOUNT_EXISTS" => {
@@ -83,6 +90,34 @@ pub(super) async fn register(
             activation_url: delivery.local_url,
         }),
     ))
+}
+
+pub(super) async fn update_username(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    payload: Result<Json<UsernameUpdateRequest>, JsonRejection>,
+) -> AppResult<Json<AuthenticatedResponse>> {
+    assert_same_origin(&state, &headers)?;
+    assert_csrf(&headers)?;
+    let payload = parse_json_payload(payload)?;
+    let mut user = authenticated_user(&state, &headers).await?;
+    let username = crate::auth::validate_username(payload.username.as_deref())?;
+    let result = sqlx::query("UPDATE users SET username = ?, updated_at = ? WHERE id = ?")
+        .bind(&username)
+        .bind(now_millis())
+        .bind(&user.id)
+        .execute(&state.db)
+        .await;
+    if let Err(error) = result {
+        if crate::auth::is_username_unique_violation(&error) {
+            return Err(AppError::Conflict("USERNAME_TAKEN".to_owned()));
+        }
+        return Err(error.into());
+    }
+    user.username = username;
+    Ok(Json(AuthenticatedResponse {
+        user: auth_user_response(user),
+    }))
 }
 
 pub(super) async fn password_login(

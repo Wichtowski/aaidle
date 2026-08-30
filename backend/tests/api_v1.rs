@@ -403,6 +403,157 @@ async fn routes_are_versioned_and_hide_the_answer() {
     assert!(challenge.get("answer_model_id").is_none());
 }
 
+#[tokio::test]
+async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
+    let (app, pool) = test_app().await;
+    let runner_user_id = Uuid::new_v4().to_string();
+    let rival_user_id = Uuid::new_v4().to_string();
+    for (user_id, email, username) in [
+        (&runner_user_id, "runner@example.test", "runner"),
+        (&rival_user_id, "rival@example.test", "rival"),
+    ] {
+        sqlx::query(
+            "INSERT INTO users (id, email, email_normalized, username, created_at, updated_at) \
+             VALUES (?, ?, ?, ?, 0, 0)",
+        )
+        .bind(user_id)
+        .bind(email)
+        .bind(email)
+        .bind(username)
+        .execute(&pool)
+        .await
+        .expect("insert leaderboard user");
+    }
+    let runner_player_id = Uuid::new_v4();
+    let rival_player_id = Uuid::new_v4();
+    for player_id in [runner_player_id, rival_player_id] {
+        sqlx::query(
+            "INSERT INTO anonymous_players (id, created_at, last_seen_at) VALUES (?, 0, 0)",
+        )
+        .bind(player_id.to_string())
+        .execute(&pool)
+        .await
+        .expect("insert leaderboard player");
+    }
+    let first_challenge = repository::timeline::ensure_timeline_challenge(
+        &pool,
+        "2026-08-29",
+        TimelineDifficulty::Speedrun,
+        "test secret that is longer than thirty two bytes",
+    )
+    .await
+    .expect("first speedrun challenge");
+    let second_challenge = repository::timeline::ensure_timeline_challenge(
+        &pool,
+        "2026-08-30",
+        TimelineDifficulty::Speedrun,
+        "test secret that is longer than thirty two bytes",
+    )
+    .await
+    .expect("second speedrun challenge");
+    for (challenge_id, player_id, user_id, submissions, time_ms, created_at) in [
+        (
+            first_challenge.id,
+            runner_player_id,
+            &runner_user_id,
+            2_i64,
+            10_000_i64,
+            1_i64,
+        ),
+        (
+            second_challenge.id,
+            runner_player_id,
+            &runner_user_id,
+            4,
+            20_000,
+            2,
+        ),
+        (
+            first_challenge.id,
+            rival_player_id,
+            &rival_user_id,
+            3,
+            9_000,
+            3,
+        ),
+    ] {
+        sqlx::query(
+            "INSERT INTO timeline_attempts (id, request_id, challenge_id, player_id, user_id, \
+             model_order_json, placements_json, attempt_number, is_correct, speedrun_time_ms, created_at) \
+             VALUES (?, ?, ?, ?, ?, '[]', '[]', ?, 1, ?, ?)",
+        )
+        .bind(Uuid::new_v4().to_string())
+        .bind(Uuid::new_v4().to_string())
+        .bind(challenge_id.to_string())
+        .bind(player_id.to_string())
+        .bind(user_id)
+        .bind(submissions)
+        .bind(time_ms)
+        .bind(created_at)
+        .execute(&pool)
+        .await
+        .expect("insert completed speedrun");
+    }
+    let session = auth::create_session(&pool, &runner_user_id, current_millis())
+        .await
+        .expect("runner session");
+
+    let global = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/games/timeline/leaderboard/global")
+                .header("cookie", format!("aaidle_session={session}"))
+                .body(Body::empty())
+                .expect("global leaderboard request"),
+        )
+        .await
+        .expect("global leaderboard response");
+    assert_eq!(global.status(), StatusCode::OK);
+    let global_body = response_json(global).await;
+    assert_eq!(global_body["fastest"][0]["displayName"], "rival");
+    assert_eq!(global_body["average"][0]["averageTimeMs"], 9_000);
+    assert_eq!(global_body["completions"][0]["displayName"], "runner");
+    assert_eq!(global_body["completions"][0]["completedSpeedruns"], 2);
+    assert_eq!(global_body["completions"][0]["averageSubmissions"], 3.0);
+    assert_eq!(
+        global_body["completions"][0]["recentRuns"]
+            .as_array()
+            .unwrap()
+            .len(),
+        2
+    );
+    assert_eq!(global_body["completions"][0]["isCurrentUser"], true);
+    assert!(global_body["completions"][0].get("userId").is_none());
+
+    let dated = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/games/timeline/leaderboard/20260829")
+                .body(Body::empty())
+                .expect("dated leaderboard request"),
+        )
+        .await
+        .expect("dated leaderboard response");
+    assert_eq!(dated.status(), StatusCode::OK);
+    let dated_body = response_json(dated).await;
+    assert_eq!(dated_body["challengeDate"], "2026-08-29");
+    assert_eq!(dated_body["entries"][0]["displayName"], "rival");
+    assert_eq!(dated_body["entries"][1]["displayName"], "runner");
+
+    let missing = app
+        .oneshot(
+            Request::get("/api/v1/games/timeline/leaderboard/20250101")
+                .body(Body::empty())
+                .expect("missing dated leaderboard request"),
+        )
+        .await
+        .expect("missing dated leaderboard response");
+    assert_eq!(missing.status(), StatusCode::OK);
+    let missing_body = response_json(missing).await;
+    assert_eq!(missing_body["challengeDate"], "2025-01-01");
+    assert_eq!(missing_body["entries"], serde_json::json!([]));
+}
+
 #[test]
 fn classic_category_set_matches_the_legacy_domain() {
     let categories = repository::ClassicCategory::ALL
@@ -502,6 +653,98 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
         .await
         .expect("logout response");
     assert_eq!(logout.status(), StatusCode::NO_CONTENT);
+}
+
+#[tokio::test]
+async fn usernames_are_unique_regardless_of_letter_case() {
+    let (app, pool) = test_app().await;
+    let first_registration = app
+        .clone()
+        .oneshot(
+            Request::post("/api/v1/auth/register")
+                .header("origin", "http://localhost:3000")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({
+                        "email": "first@example.test",
+                        "password": "correct horse battery staple",
+                        "username": "UniqueRunner"
+                    })
+                    .to_string(),
+                ))
+                .expect("first registration request"),
+        )
+        .await
+        .expect("first registration response");
+    assert_eq!(first_registration.status(), StatusCode::ACCEPTED);
+
+    let duplicate_registration = app
+        .clone()
+        .oneshot(
+            Request::post("/api/v1/auth/register")
+                .header("origin", "http://localhost:3000")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({
+                        "email": "second@example.test",
+                        "password": "correct horse battery staple",
+                        "username": "uniquerunner"
+                    })
+                    .to_string(),
+                ))
+                .expect("duplicate registration request"),
+        )
+        .await
+        .expect("duplicate registration response");
+    assert_eq!(duplicate_registration.status(), StatusCode::CONFLICT);
+    let duplicate_registration = response_json(duplicate_registration).await;
+    assert_eq!(duplicate_registration["error"]["code"], "USERNAME_TAKEN");
+    assert_eq!(
+        duplicate_registration["error"]["message"],
+        "That username is already taken."
+    );
+
+    let second_user = auth::register_with_password(
+        &pool,
+        "second@example.test",
+        "correct horse battery staple",
+        current_millis(),
+    )
+    .await
+    .expect("second user");
+    let second_session = auth::create_session(&pool, &second_user.id, current_millis())
+        .await
+        .expect("second user session");
+    let duplicate_update = app
+        .oneshot(
+            Request::put("/api/v1/auth/username")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={second_session}; aaidle_csrf={CSRF_TOKEN}"),
+                )
+                .header(CSRF_HEADER, CSRF_TOKEN)
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({"username": "UNIQUERUNNER"}).to_string(),
+                ))
+                .expect("duplicate username update request"),
+        )
+        .await
+        .expect("duplicate username update response");
+    assert_eq!(duplicate_update.status(), StatusCode::CONFLICT);
+    assert_eq!(
+        response_json(duplicate_update).await["error"]["code"],
+        "USERNAME_TAKEN"
+    );
+
+    let matching_usernames =
+        sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM users WHERE LOWER(username) = ?")
+            .bind("uniquerunner")
+            .fetch_one(&pool)
+            .await
+            .expect("matching username count");
+    assert_eq!(matching_usernames, 1);
 }
 
 #[tokio::test]
@@ -2165,7 +2408,6 @@ async fn timeline_hardcore_concurrent_final_submission_cannot_exceed_limit() {
                 hardcore_access: true,
                 request_id: Uuid::new_v4(),
                 model_order: wrong.clone(),
-                speedrun_started_at: None,
             },
         )
         .await
@@ -2186,7 +2428,6 @@ async fn timeline_hardcore_concurrent_final_submission_cannot_exceed_limit() {
                     hardcore_access: true,
                     request_id: Uuid::new_v4(),
                     model_order: order,
-                    speedrun_started_at: None,
                 },
             )
             .await

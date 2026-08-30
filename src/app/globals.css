@@ -48,6 +48,10 @@ body {
 }
 body.profile-hell {
   background: #120d12;
+  overflow-x: clip;
+}
+html:has(body.profile-hell) {
+  overflow-x: hidden;
 }
 .install-prompt {
   position: fixed;
@@ -508,6 +512,11 @@ a {
   color: var(--ink);
   font-size: 13px;
   font-weight: 800;
+}
+.auth-field__label small {
+  color: var(--muted);
+  font-size: 0.85em;
+  font-weight: 400;
 }
 .auth-field input {
   width: 100%;
@@ -980,6 +989,9 @@ body.hell-mode .game-placeholder__status {
   color: #fff;
   opacity: 1;
 }
+:is(:root.hell-mode, body.hell-mode) .autocomplete input {
+  border-color: var(--line);
+}
 .autocomplete__field {
   display: flex;
   gap: 8px;
@@ -1287,6 +1299,34 @@ body.hell-mode .game-placeholder__status {
   margin-top: 8px !important;
   color: #71491d !important;
   font-weight: 700;
+}
+.profile-username {
+  margin-top: 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--panel);
+}
+.profile-username h2 {
+  margin: 4px 0 8px;
+}
+.profile-username > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.5;
+}
+.profile-username form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+.profile-username .auth-field {
+  flex: 1;
+}
+.profile-username .button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
 }
 .stats-section {
   margin-top: 48px;
@@ -1829,10 +1869,10 @@ body.hell-mode .hell-mode-toggle__control::after {
   height: 100%;
   min-width: 0;
   border-radius: 5px;
-  background: linear-gradient(135deg, #5f917b 0%, #30705d 52%, #164c42 100%);
+  background: linear-gradient(135deg, #f28a68 0%, #e05a38 52%, #9e3020 100%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 30%),
-    1px 2px 3px rgb(20 50 42 / 20%);
+    1px 2px 3px rgb(126 43 26 / 24%);
   transform: perspective(120px) rotateX(1.5deg);
   transform-origin: center bottom;
   transition:
@@ -2163,7 +2203,7 @@ body.hell-mode .issue-report__form label {
 body.hell-mode .issue-report__form input,
 body.hell-mode .issue-report__form textarea,
 body.hell-mode .issue-report__form select {
-  border-color: #7f4a42;
+  border-color: var(--line);
   background: #261116;
   color: #fff2e9;
 }
@@ -2310,13 +2350,23 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     height: 2px;
     background: currentColor;
     pointer-events: none;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+  .site-navbar__menu-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .site-navbar__menu-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+  .site-navbar__menu-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
   .site-navbar__menu-toggle:focus-visible {
     outline: 3px solid var(--accent);
     outline-offset: 3px;
   }
   .site-navbar__actions {
-    display: none;
+    display: grid;
     width: 100%;
     flex: 0 0 100%;
     grid-column: 1 / -1;
@@ -2325,9 +2375,24 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     border-top: 1px solid var(--line);
     font-size: 17px;
     text-align: center;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      max-height 220ms ease,
+      opacity 180ms ease,
+      visibility 0s linear 220ms;
   }
   .site-navbar__actions--open {
-    display: grid;
+    max-height: 600px;
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+      max-height 220ms ease,
+      opacity 180ms ease;
   }
   .site-navbar__actions > a,
   .site-navbar__actions > button {
@@ -2415,6 +2480,15 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 }
 .game-page--hardcore .site-navbar {
   border-color: #6c3b35;
+}
+.game-page--hardcore .game-help__button--floating {
+  border-color: #72362e;
+  background: #1a0d10;
+  color: #ff7846;
+}
+.game-page--hardcore .game-help__button--floating:hover,
+.game-page--hardcore .game-help__button--floating:focus-visible {
+  color: #ffb08c;
 }
 .game-page--hardcore .lede,
 .game-page--hardcore .game-intro__difficulty > span,
@@ -2523,13 +2597,10 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .hardcore-atmosphere {
   position: fixed;
   z-index: -1;
-  right: 0;
-  bottom: -15px;
-  left: 0;
-  height: 180px;
+  inset: 0;
   overflow: hidden;
   pointer-events: none;
-  background: url("/hardcore-fire.webp") bottom left / 100% 180px no-repeat;
+  background: url("/fire_frame.webp") center / 115% 140% no-repeat;
   filter: blur(0.35px);
 }
 .game-intro {
@@ -2790,7 +2861,6 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
     justify-content: flex-end;
   }
   .game-intro {
-    min-height: 430px;
     padding-top: 34px;
   }
   .game-page > .board-wrap {
@@ -4820,6 +4890,81 @@ body.hell-mode .completed--timeline {
 .timeline-game {
   margin-top: 28px;
 }
+.timeline-speedrun-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  margin: 28px 0 -12px;
+}
+.timeline-speedrun-controls .game-intro__difficulty {
+  margin: 0;
+}
+.timeline-speedrun-controls__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.timeline-speedrun-controls__actions .button {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.timeline-page--focus {
+  padding: 6px 32px 72px;
+}
+.timeline-page--focus .game-intro,
+.timeline-page--focus .game-help__button {
+  display: none;
+}
+.timeline-page--focus .timeline-game {
+  margin-top: 0;
+}
+.completed .timeline-leaderboard {
+  max-width: none;
+  margin-top: 24px;
+  text-align: left;
+}
+.speedrun-username-modal {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(23 32 44 / 55%);
+}
+.speedrun-username-modal__content {
+  width: min(100%, 520px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px;
+  background: var(--panel);
+  box-shadow: 0 22px 54px rgb(23 32 44 / 25%);
+}
+.speedrun-username-modal__content h2 {
+  margin: 8px 0 12px;
+}
+.speedrun-username-modal__content > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.5;
+}
+.speedrun-username-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+.speedrun-username-modal__actions .button--primary {
+  margin-top: 0;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
 .timeline-game__status {
   display: flex;
   align-items: center;
@@ -4831,6 +4976,13 @@ body.hell-mode .completed--timeline {
 }
 .timeline-game__status p {
   margin: 0;
+}
+.timeline-game__status-details,
+.timeline-game__status-metrics {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
 }
 .timeline-game__status strong {
   color: var(--ink);
@@ -4976,6 +5128,26 @@ body.hell-mode .completed--timeline {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.timeline-card--covered {
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--panel), var(--line) 18%),
+    color-mix(in srgb, var(--panel), var(--line) 18%) 8px,
+    var(--panel) 8px,
+    var(--panel) 16px
+  );
+  color: var(--muted);
+  cursor: not-allowed;
+  text-align: center;
+}
+.timeline-card__covered-label {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .timeline-card time {
   color: var(--accent);
   font-size: 13px;
@@ -4993,11 +5165,196 @@ body.hell-mode .completed--timeline {
   justify-content: flex-start;
 }
 .timeline-card__date-help svg {
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 .timeline-card__date-help:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
+}
+.timeline-leaderboard {
+  max-width: 520px;
+  margin: 32px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  background: var(--panel);
+}
+.timeline-leaderboard-page {
+  max-width: 960px;
+}
+.timeline-leaderboard-page > :not(.site-navbar) {
+  max-width: 850px;
+  margin-inline: auto;
+}
+.timeline-leaderboard-page h1 {
+  margin-bottom: 10px;
+}
+.timeline-leaderboard-page__description-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.timeline-leaderboard-page__description-row .lede {
+  margin-block: 0;
+}
+.timeline-leaderboard-page__description-row .button {
+  flex: 0 0 auto;
+}
+.timeline-leaderboard-page .timeline-leaderboard {
+  margin-top: 30px;
+}
+.timeline-leaderboard__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--accent);
+}
+.timeline-leaderboard__heading > svg {
+  flex: 0 0 auto;
+  font-size: 22px;
+}
+.timeline-leaderboard__heading .eyebrow,
+.timeline-leaderboard__heading h2 {
+  margin: 0;
+}
+.timeline-leaderboard__heading h2 {
+  color: var(--ink);
+  font-size: 20px;
+}
+.timeline-leaderboard__empty {
+  margin: 18px 0 0;
+  color: var(--muted);
+}
+.timeline-leaderboard__entries {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.timeline-leaderboard__entries li {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.timeline-leaderboard__rank {
+  width: 100%;
+  color: var(--muted);
+  font-weight: 800;
+  text-align: center;
+}
+.timeline-leaderboard__rank[data-podium] {
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  line-height: 1;
+}
+.timeline-leaderboard__name {
+  font-weight: 400;
+}
+.timeline-leaderboard__name--current {
+  font-weight: 800;
+}
+.timeline-leaderboard__time {
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+.timeline-leaderboard__submissions {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.timeline-leaderboard__submissions strong {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+.timeline-global-leaderboard {
+  max-width: 850px;
+}
+.timeline-global-leaderboard__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.timeline-global-leaderboard__tabs .button {
+  min-height: 38px;
+  padding: 8px 14px;
+}
+.timeline-global-leaderboard__tabs .button[aria-selected="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+.timeline-global-leaderboard__entries {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.timeline-global-leaderboard__entries li {
+  display: grid;
+  grid-template-columns: 40px minmax(180px, 1fr) 120px minmax(90px, auto);
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.timeline-global-leaderboard__runner {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.timeline-global-leaderboard__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.timeline-global-leaderboard__meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+.timeline-global-leaderboard__chart {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+}
+.timeline-global-leaderboard__chart > svg:first-child {
+  flex: 0 0 auto;
+  font-size: 11px;
+}
+.timeline-global-leaderboard__trend {
+  width: 100%;
+  height: 32px;
+  overflow: visible;
+}
+.timeline-global-leaderboard__trend polyline {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.timeline-global-leaderboard__no-trend {
+  font-size: 12px;
+  font-weight: 700;
+}
+.timeline-global-leaderboard__value {
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-align: right;
+  white-space: nowrap;
 }
 .timeline-card--anchor {
   border-color: color-mix(in srgb, var(--accent), var(--line) 55%);
@@ -5030,6 +5387,7 @@ body.hell-mode .completed--timeline {
   transform: translateY(-4px) scale(1.01);
 }
 .timeline-card--drag-origin {
+  animation: none;
   display: grid;
   border-color: var(--line);
   border-style: dashed;
@@ -5038,8 +5396,11 @@ body.hell-mode .completed--timeline {
   color: var(--muted);
   font-size: 12px;
   font-weight: 800;
+  place-content: center;
   place-items: center;
+  text-align: center;
   transform: none;
+  transition: none;
 }
 .timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--dragging):not(
     .timeline-card--winning
@@ -5271,6 +5632,28 @@ body.hell-mode .completed--timeline {
   }
 }
 @media (max-width: 720px) {
+  .timeline-speedrun-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .timeline-speedrun-controls__actions {
+    justify-content: flex-start;
+    order: -1;
+  }
+  .timeline-leaderboard-page__description-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .timeline-global-leaderboard__entries li {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+  }
+  .timeline-global-leaderboard__chart {
+    display: none;
+  }
+  .timeline-global-leaderboard__meta {
+    line-height: 1.35;
+  }
   .timeline-game__status,
   .timeline-tray {
     align-items: stretch;
@@ -5334,6 +5717,12 @@ body.hell-mode .completed--timeline {
   .timeline-slot__empty {
     min-height: 112px;
   }
+  .timeline-card--landing {
+    animation-duration: 320ms;
+  }
+  .timeline-tray__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .timeline-card,
@@ -5357,4 +5746,13 @@ body.hell-mode .completed--timeline {
 }
 .timeline-card--neighbour .timeline-card__feedback {
   color: #1d5f9f;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour {
+  border-color: #a94432;
+  background: #68221d;
+  color: #ffe0d8;
+  box-shadow: inset 0 4px 0 #a94432;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour .timeline-card__feedback {
+  color: #ffe0d8;
 }

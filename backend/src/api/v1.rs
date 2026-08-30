@@ -4,7 +4,7 @@ use axum::{
     extract::{Query, State, rejection::JsonRejection},
     http::{HeaderMap, HeaderName, HeaderValue, StatusCode, header},
     response::{IntoResponse, Response},
-    routing::{get, post},
+    routing::{get, post, put},
 };
 use serde::Deserialize;
 use std::net::{IpAddr, SocketAddr};
@@ -50,6 +50,7 @@ pub fn router(state: AppState) -> Router {
         .route("/health", get(health))
         .route("/health/ready", get(ready))
         .route("/auth/register", post(auth::register))
+        .route("/auth/username", put(auth::update_username))
         .route("/auth/password", post(auth::password_login))
         .route("/auth/token", post(auth::api_token))
         .route("/auth/password-reset", post(auth::password_reset))
@@ -123,6 +124,26 @@ pub fn router(state: AppState) -> Router {
         .route(
             "/games/timeline/challenges/{challenge_id}/attempts",
             post(timeline::attempt),
+        )
+        .route(
+            "/games/timeline/challenges/{challenge_id}/start",
+            post(timeline::start),
+        )
+        .route(
+            "/games/timeline/challenges/{challenge_id}/leaderboard",
+            get(timeline::leaderboard),
+        )
+        .route(
+            "/games/timeline/leaderboard",
+            get(timeline::current_leaderboard),
+        )
+        .route(
+            "/games/timeline/leaderboard/global",
+            get(timeline::global_leaderboard),
+        )
+        .route(
+            "/games/timeline/leaderboard/{date}",
+            get(timeline::dated_leaderboard),
         )
         .route(
             "/games/emoji/challenges/{challenge_id}/guesses",
@@ -262,6 +283,7 @@ pub(super) fn auth_user_response(user: crate::auth::SessionUser) -> AuthUserResp
         id: user.id,
         email: user.email,
         display_name: user.display_name,
+        username: user.username,
         email_verified: user.email_verified,
         permission: user.permission.as_str(),
         disabled: user.disabled,

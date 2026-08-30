@@ -20,6 +20,7 @@ function renderLoginForm() {
       {
         value: {
           hardcoreUnlocked: false,
+          hardcoreAccessLoading: false,
           loading: false,
           refreshHardcoreAccess: async () => {},
           unavailable: false,

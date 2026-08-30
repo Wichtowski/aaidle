@@ -4,6 +4,8 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
 import { ActivationPrompt } from "@components/auth/ActivationPrompt";
 import { ProfileDangerZone } from "@components/auth/ProfileDangerZone";
+import { UsernameForm } from "@components/auth/UsernameForm";
+import { DistributionChart } from "@components/ui/DistributionChart";
 import { useAuth } from "@components/auth/useAuth";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import {
@@ -13,6 +15,7 @@ import {
   focusedClassicCategories,
   type ClassicCategory,
 } from "@lib/domain/models/model-types";
+import { difficulties, type Difficulty } from "@lib/domain/difficulty";
 import { distribution } from "@lib/utils/dates";
 import {
   hasCompletedChallengeRitual,
@@ -24,12 +27,12 @@ import { mergeServerProgress } from "@lib/domain/players/cloud-progress";
 import { readSavedTimelineGames } from "@lib/domain/games/timeline/timeline-progress-store";
 import {
   timelineDifficulties,
-  timelineDifficultyLabel,
   type TimelineDifficulty,
 } from "@lib/domain/games/timeline/timeline-types";
 
 const historyPageSize = 3;
 type StatsGame = "classic" | "emoji" | "timeline";
+type ProfileDifficulty = Difficulty | TimelineDifficulty;
 const ritualHints = [
   "Complete focused Challenge boards to see whether the ledger starts watching back.",
   "Something is not right. One seal has warmed. Complete the remaining Challenges today.",
@@ -97,14 +100,14 @@ export function ProfilePage() {
       game.mode === classicChallengeMode("hardcore", "hardcore") && game.status === "solved",
   );
   const canSeeInnerCircle = Boolean(user);
-  const showRitualChallenge = canSeeInnerCircle && !hasCompletedHardcore;
+  const showRitualChallenge = canSeeInnerCircle && !hardcoreUnlocked && !hasCompletedHardcore;
   const hellAwake = canSeeInnerCircle && ritualComplete && !hardcoreUnlocked;
   const hellModeEnabled = canSeeInnerCircle && hardcoreUnlocked && progress.preferences.hellMode;
   const hellActive = hellAwake || hellModeEnabled;
   const [historyPage, setHistoryPage] = useState(1);
   const [statsGame, setStatsGame] = useState<StatsGame>("classic");
   const [category, setCategory] = useState<ClassicCategory>("llm");
-  const [difficulty, setDifficulty] = useState<TimelineDifficulty>("normal");
+  const [difficulty, setDifficulty] = useState<ProfileDifficulty>("normal");
   const [cloudHistory, setCloudHistory] = useState<ProgressHistory | null>(null);
   const activeCategory = statsGame === "classic" ? category : difficulty;
   const attemptTerm = statsGame === "timeline" ? "submissions" : "guesses";
@@ -160,15 +163,11 @@ export function ProfilePage() {
               (_, index) => `Submission ${index + 1}`,
             ),
           }))
-      : [];
+        : [];
   const solved = localHistory.filter((game) => game.status === "solved");
-  const guessDistribution =
-    statsGame === "timeline"
-      ? Object.fromEntries(Array.from({ length: 12 }, (_, index) => [String(index + 1), 0]))
-      : distribution();
+  const guessDistribution = distribution();
   for (const game of solved) {
-    const bucket =
-      statsGame !== "timeline" && game.attemptCount > 9 ? "10+" : String(game.attemptCount);
+    const bucket = game.attemptCount > 8 ? "8+" : String(game.attemptCount);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
   const dates = [...new Set(solved.map((game) => game.challengeDate))].sort().reverse();
@@ -196,9 +195,7 @@ export function ProfilePage() {
     guessDistribution,
   };
   const stats = user && cloudHistory ? cloudHistory.stats : localStats;
-  const distributionValues = Object.entries(stats.guessDistribution);
-  const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
-  const totalWins = distributionValues.reduce((total, [, value]) => total + value, 0);
+  const distributionBuckets = ["1", "2", "3", "4", "5", "6", "7", "8+"];
   const historyCount = user ? (cloudHistory?.total ?? 0) : localHistory.length;
   const totalPages = Math.max(1, Math.ceil(historyCount / historyPageSize));
   const page = Math.min(historyPage, totalPages);
@@ -317,7 +314,9 @@ export function ProfilePage() {
             key={game}
             onClick={() => {
               setStatsGame(game);
-              setHellMode(game === "classic" && category === "hardcore");
+              if (game === "emoji" && !difficulties.includes(difficulty as Difficulty)) {
+                setDifficulty("normal");
+              }
               setHistoryPage(1);
             }}
             role="tab"
@@ -350,7 +349,7 @@ export function ProfilePage() {
                   {classicCategoryDetails[item].label}
                 </button>
               ))
-          : timelineDifficulties
+          : (statsGame === "emoji" ? difficulties : timelineDifficulties)
               .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
               .map((item) => (
                 <button
@@ -363,7 +362,7 @@ export function ProfilePage() {
                   type="button"
                   key={item}
                 >
-                  {timelineDifficultyLabel(item)}
+                  {item[0]!.toUpperCase() + item.slice(1)}
                 </button>
               ))}
       </div>
@@ -392,29 +391,15 @@ export function ProfilePage() {
           </div>
           <span>{stats.gamesWon} wins</span>
         </div>
-        <div className="distribution" aria-label={`Win distribution by number of ${attemptTerm}`}>
-          {distributionValues.map(([attempts, value]) => {
-            const width = totalWins ? (value / totalWins) * 100 : 0;
-            const isHot = value > 0 && value === largestBucket;
-            return (
-              <div className="distribution__row" data-hot={isHot || undefined} key={attempts}>
-                <span className="distribution__label">{attempts}</span>
-                <div
-                  aria-label={`${value} wins in ${attempts} ${Number(attempts) === 1 ? attemptTermSingular : attemptTerm}`}
-                  aria-valuemax={totalWins}
-                  aria-valuemin={0}
-                  aria-valuenow={value}
-                  className="distribution__track"
-                  role="progressbar"
-                >
-                  <i className="distribution__fill" style={{ width: `${width}%` }} />
-                </div>
-                <strong>{value}</strong>
-              </div>
-            );
-          })}
-        </div>
+        <DistributionChart
+          attemptTerm={attemptTerm}
+          attemptTermSingular={attemptTermSingular}
+          buckets={distributionBuckets}
+          distribution={stats.guessDistribution}
+        />
       </section>
+
+      {user && <UsernameForm />}
 
       <section className="stats-section" aria-labelledby="history-title">
         <div className="stats-section__heading">

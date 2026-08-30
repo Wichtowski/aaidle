@@ -38,6 +38,7 @@ pub struct SessionUser {
     pub id: String,
     pub email: String,
     pub display_name: Option<String>,
+    pub username: Option<String>,
     pub email_verified: bool,
     pub permission: Permission,
     pub disabled: bool,
@@ -190,6 +191,7 @@ struct UserRow {
     id: String,
     email: String,
     display_name: Option<String>,
+    username: Option<String>,
     password_hash: Option<String>,
     email_verified_at: Option<i64>,
     permission: String,
@@ -206,6 +208,7 @@ impl TryFrom<UserRow> for SessionUser {
             id: value.id,
             email: value.email,
             display_name: value.display_name,
+            username: value.username,
             email_verified: value.email_verified_at.is_some(),
             permission: Permission::parse(&value.permission)?,
             disabled: value.disabled_at.is_some(),
@@ -392,36 +395,93 @@ pub async fn register_with_password(
     password: &str,
     now: i64,
 ) -> AppResult<SessionUser> {
+    register_with_password_and_username(pool, email, password, None, now).await
+}
+
+pub async fn register_with_password_and_username(
+    pool: &SqlitePool,
+    email: &str,
+    password: &str,
+    username: Option<&str>,
+    now: i64,
+) -> AppResult<SessionUser> {
     let email = normalize_email(email)?;
     validate_password(password, 12)?;
+    let username = validate_username(username)?;
     let user_id = Uuid::new_v4().to_string();
     let password_hash = hash_password(password)?;
     let inserted = sqlx::query(
-        "INSERT INTO users (id, email, email_normalized, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?) \
-         ON CONFLICT(email_normalized) DO NOTHING",
+        "INSERT INTO users (id, email, email_normalized, password_hash, username, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) \
+         ON CONFLICT DO NOTHING",
     )
     .bind(&user_id)
     .bind(&email)
     .bind(&email)
     .bind(password_hash)
+    .bind(&username)
     .bind(now)
     .bind(now)
     .execute(pool)
     .await?
     .rows_affected();
     if inserted == 0 {
-        return Err(AppError::Conflict("ACCOUNT_EXISTS".to_owned()));
+        let email_exists = sqlx::query_scalar::<_, bool>(
+            "SELECT EXISTS(SELECT 1 FROM users WHERE email_normalized = ?)",
+        )
+        .bind(&email)
+        .fetch_one(pool)
+        .await?;
+        let conflict = if email_exists {
+            "ACCOUNT_EXISTS"
+        } else {
+            "USERNAME_TAKEN"
+        };
+        return Err(AppError::Conflict(conflict.to_owned()));
     }
     Ok(SessionUser {
         id: user_id,
         email,
         display_name: None,
+        username,
         email_verified: false,
         permission: Permission::User,
         disabled: false,
         disabled_reason: None,
         issue_report_limit: 3,
     })
+}
+
+pub fn is_username_unique_violation(error: &sqlx::Error) -> bool {
+    let sqlx::Error::Database(error) = error else {
+        return false;
+    };
+    if !error.is_unique_violation() {
+        return false;
+    }
+    let message = error.message();
+    message.contains("users.username")
+        || message.contains("users_username_idx")
+        || message.contains("users_username_ci_idx")
+}
+
+pub fn validate_username(username: Option<&str>) -> AppResult<Option<String>> {
+    let Some(username) = username else {
+        return Ok(None);
+    };
+    let username = username.trim();
+    if username.is_empty() {
+        return Ok(None);
+    }
+    if !(3..=24).contains(&username.chars().count())
+        || !username
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric() || matches!(character, '_' | '-'))
+    {
+        return Err(AppError::validation(
+            "Username must be 3-24 characters using only letters, numbers, underscores, or hyphens.",
+        ));
+    }
+    Ok(Some(username.to_owned()))
 }
 
 pub async fn verify_password_credentials(
@@ -432,7 +492,7 @@ pub async fn verify_password_credentials(
     validate_password(password, 1)?;
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit \
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit \
          FROM users WHERE email_normalized = ?",
     )
     .bind(email)
@@ -511,7 +571,7 @@ pub async fn create_email_verification_token_for_email(
 ) -> AppResult<Option<(String, String)>> {
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
     )
     .bind(email)
     .fetch_optional(pool)
@@ -532,7 +592,7 @@ pub async fn create_password_reset_token(
 ) -> AppResult<Option<(String, String)>> {
     let email = normalize_email(email)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
     )
     .bind(email)
     .fetch_optional(pool)
@@ -701,7 +761,7 @@ pub async fn find_or_create_oauth_user(
     let normalized_email = normalize_email(&identity.email)?;
     let mut transaction = pool.begin().await?;
     if let Some(user) = sqlx::query_as::<_, UserRow>(
-        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason, u.issue_report_limit FROM user_identities i JOIN users u ON u.id = i.user_id WHERE i.provider = ? AND i.provider_user_id = ?",
+        "SELECT u.id, u.email, u.display_name, u.username, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason, u.issue_report_limit FROM user_identities i JOIN users u ON u.id = i.user_id WHERE i.provider = ? AND i.provider_user_id = ?",
     )
     .bind(provider.as_str())
     .bind(&identity.provider_user_id)
@@ -711,7 +771,7 @@ pub async fn find_or_create_oauth_user(
         return SessionUser::try_from(user);
     }
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE email_normalized = ?",
     )
     .bind(&normalized_email)
     .fetch_optional(&mut *transaction)
@@ -750,7 +810,7 @@ pub async fn find_or_create_oauth_user(
         .execute(&mut *transaction)
         .await?;
     let result = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE id = ?",
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE id = ?",
     )
     .bind(&user)
     .fetch_one(&mut *transaction)
@@ -962,7 +1022,7 @@ pub async fn user_for_session(
     };
     let token_hash = token_hash(token);
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT u.id, u.email, u.display_name, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason, u.issue_report_limit \
+        "SELECT u.id, u.email, u.display_name, u.username, u.password_hash, u.email_verified_at, u.permission, u.disabled_at, u.disabled_reason, u.issue_report_limit \
          FROM user_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ?",
     )
     .bind(&token_hash)
@@ -989,7 +1049,7 @@ pub async fn user_for_access_token(
     };
     let claims = verify_access_token(token, config)?;
     let user = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE id = ?",
+        "SELECT id, email, display_name, username, password_hash, email_verified_at, permission, disabled_at, disabled_reason, issue_report_limit FROM users WHERE id = ?",
     )
     .bind(&claims.sub)
     .fetch_optional(pool)

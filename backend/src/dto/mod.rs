@@ -22,16 +22,31 @@ pub struct PasswordCredentialsRequest {
     pub password: String,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct RegistrationRequest {
+    pub email: String,
+    pub password: String,
+    pub username: Option<String>,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthUserResponse {
     pub id: String,
     pub email: String,
     pub display_name: Option<String>,
+    pub username: Option<String>,
     pub email_verified: bool,
     pub permission: &'static str,
     pub disabled: bool,
     pub disabled_reason: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct UsernameUpdateRequest {
+    pub username: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -369,6 +384,8 @@ pub struct TimelineLatestAttemptResponse {
     pub model_order: Vec<String>,
     pub placements: Vec<u8>,
     pub attempt_number: u16,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub speedrun_time_ms: Option<i64>,
 }
 
 #[derive(Serialize)]
@@ -377,6 +394,7 @@ pub struct TimelineProgressResponse {
     pub solved: bool,
     pub attempt_limit: Option<u16>,
     pub attempts_remaining: Option<u16>,
+    pub speedrun_started_at: Option<i64>,
     pub latest_attempt: Option<TimelineLatestAttemptResponse>,
 }
 
@@ -395,7 +413,64 @@ pub struct TimelineAttemptRequest {
     pub player_id: Uuid,
     pub request_id: Uuid,
     pub model_order: Vec<String>,
-    pub speedrun_started_at: Option<i64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct TimelineSpeedrunStartRequest {
+    pub player_id: Uuid,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineSpeedrunStartResponse {
+    pub started_at: i64,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineLeaderboardEntry {
+    pub rank: u32,
+    pub display_name: String,
+    pub is_current_user: bool,
+    pub submissions: u16,
+    pub time_ms: i64,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineLeaderboardResponse {
+    pub challenge_date: String,
+    pub entries: Vec<TimelineLeaderboardEntry>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineGlobalRunPoint {
+    pub date: String,
+    pub submissions: u16,
+    pub time_ms: i64,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineGlobalLeaderboardEntry {
+    pub rank: u32,
+    pub display_name: String,
+    pub is_current_user: bool,
+    pub completed_speedruns: u32,
+    pub average_time_ms: i64,
+    pub average_submissions: f64,
+    pub fastest_time_ms: i64,
+    pub recent_runs: Vec<TimelineGlobalRunPoint>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineGlobalLeaderboardResponse {
+    pub fastest: Vec<TimelineGlobalLeaderboardEntry>,
+    pub average: Vec<TimelineGlobalLeaderboardEntry>,
+    pub completions: Vec<TimelineGlobalLeaderboardEntry>,
 }
 
 #[derive(Serialize)]

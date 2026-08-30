@@ -6,14 +6,17 @@ use axum::{
     http::HeaderMap,
 };
 use serde::Deserialize;
+use time::{Date, macros::format_description};
 use uuid::Uuid;
 
 use crate::{
     domain::timeline::TimelineDifficulty,
     dto::{
         TimelineAnchorModel, TimelineAttemptRequest, TimelineAttemptResponse,
-        TimelineChallengeResponse, TimelineGameResponse, TimelineLatestAttemptResponse,
+        TimelineChallengeResponse, TimelineGameResponse, TimelineGlobalLeaderboardResponse,
+        TimelineGlobalRunPoint, TimelineLatestAttemptResponse, TimelineLeaderboardResponse,
         TimelineProgressResponse, TimelinePublicModel, TimelineSlotResponse,
+        TimelineSpeedrunStartRequest, TimelineSpeedrunStartResponse,
     },
     error::{AppError, AppResult},
     progress,
@@ -44,6 +47,11 @@ pub(super) async fn game(
     if user.as_ref().is_some_and(|user| user.disabled) {
         return Err(AppError::Forbidden(
             "This account has been disabled.".to_owned(),
+        ));
+    }
+    if difficulty == TimelineDifficulty::Speedrun && user.is_none() {
+        return Err(AppError::Unauthorized(
+            "Sign in to access this game mode.".to_owned(),
         ));
     }
     if difficulty == TimelineDifficulty::Hardcore {
@@ -105,13 +113,33 @@ pub(super) async fn game(
                 .model_order
                 .iter()
                 .find(|model| model.id == *model_id)
-                .map(|model| TimelinePublicModel {
-                    id: model.id.clone(),
-                    name: model.name.clone(),
-                    item_kind: model.item_kind.clone(),
-                    categories: model.categories.clone(),
-                    release_date: game.solved.then(|| model.release_date.clone()),
-                    year_annotation: game.solved.then(|| model.year_annotation.clone()).flatten(),
+                .map(|model| {
+                    let revealed = difficulty != TimelineDifficulty::Speedrun
+                        || game.speedrun_started_at.is_some()
+                        || game.solved;
+                    TimelinePublicModel {
+                        id: model.id.clone(),
+                        name: if revealed {
+                            model.name.clone()
+                        } else {
+                            "Covered card".to_owned()
+                        },
+                        item_kind: if revealed {
+                            model.item_kind.clone()
+                        } else {
+                            "model".to_owned()
+                        },
+                        categories: if revealed {
+                            model.categories.clone()
+                        } else {
+                            Vec::new()
+                        },
+                        release_date: game.solved.then(|| model.release_date.clone()),
+                        year_annotation: game
+                            .solved
+                            .then(|| model.year_annotation.clone())
+                            .flatten(),
+                    }
                 })
                 .ok_or_else(|| AppError::Unavailable("Stored Timeline tray is invalid.".to_owned()))
         })
@@ -130,15 +158,227 @@ pub(super) async fn game(
             solved: game.solved,
             attempt_limit: game.attempt_limit,
             attempts_remaining: game.attempts_remaining,
+            speedrun_started_at: game.speedrun_started_at,
             latest_attempt: game
                 .latest_attempt
                 .map(|attempt| TimelineLatestAttemptResponse {
                     model_order: attempt.model_order,
                     placements: attempt.placements,
                     attempt_number: attempt.attempt_number,
+                    speedrun_time_ms: attempt.speedrun_time_ms,
                 }),
         },
     }))
+}
+
+pub(super) async fn start(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+    payload: Result<Json<TimelineSpeedrunStartRequest>, JsonRejection>,
+) -> AppResult<Json<TimelineSpeedrunStartResponse>> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    let payload = parse_json_payload(payload)?;
+    let user = optional_authenticated_user(&state, &headers)
+        .await?
+        .filter(|user| !user.disabled)
+        .ok_or_else(|| AppError::Unauthorized("Sign in to access this game mode.".to_owned()))?;
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
+    let player_id =
+        progress::canonical_player_id(&state.db, &user.id, payload.player_id, now_millis()).await?;
+    let started_at = timeline::start_speedrun(&state.db, challenge_id, player_id).await?;
+    Ok(Json(TimelineSpeedrunStartResponse { started_at }))
+}
+
+pub(super) async fn leaderboard(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+) -> AppResult<Json<TimelineLeaderboardResponse>> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    let user = optional_authenticated_user(&state, &headers).await?;
+    let entries = timeline::timeline_leaderboard(
+        &state.db,
+        challenge_id,
+        user.as_ref().map(|user| user.id.as_str()),
+    )
+    .await?;
+    Ok(Json(TimelineLeaderboardResponse {
+        challenge_date: sqlx::query_scalar::<_, String>(
+            "SELECT challenge_date FROM timeline_challenges WHERE id = ?",
+        )
+        .bind(challenge_id.to_string())
+        .fetch_one(&state.db)
+        .await?,
+        entries: entries
+            .into_iter()
+            .map(|entry| crate::dto::TimelineLeaderboardEntry {
+                rank: entry.rank,
+                display_name: entry.display_name,
+                is_current_user: entry.is_current_user,
+                submissions: entry.submissions,
+                time_ms: entry.time_ms,
+            })
+            .collect(),
+    }))
+}
+
+pub(super) async fn current_leaderboard(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<Json<TimelineLeaderboardResponse>> {
+    let challenge = timeline::ensure_timeline_challenge(
+        &state.db,
+        &current_utc_date()?,
+        TimelineDifficulty::Speedrun,
+        &state.config.daily_selection_secret,
+    )
+    .await?;
+    let user = optional_authenticated_user(&state, &headers).await?;
+    let entries = timeline::timeline_leaderboard(
+        &state.db,
+        challenge.id,
+        user.as_ref().map(|user| user.id.as_str()),
+    )
+    .await?;
+    Ok(Json(TimelineLeaderboardResponse {
+        challenge_date: challenge.challenge_date,
+        entries: entries
+            .into_iter()
+            .map(|entry| crate::dto::TimelineLeaderboardEntry {
+                rank: entry.rank,
+                display_name: entry.display_name,
+                is_current_user: entry.is_current_user,
+                submissions: entry.submissions,
+                time_ms: entry.time_ms,
+            })
+            .collect(),
+    }))
+}
+
+pub(super) async fn dated_leaderboard(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(date): Path<String>,
+) -> AppResult<Json<TimelineLeaderboardResponse>> {
+    let date = parse_leaderboard_date(&date)?;
+    let challenge_id = if date == current_utc_date()? {
+        Some(
+            timeline::ensure_timeline_challenge(
+                &state.db,
+                &date,
+                TimelineDifficulty::Speedrun,
+                &state.config.daily_selection_secret,
+            )
+            .await?
+            .id,
+        )
+    } else {
+        sqlx::query_scalar::<_, String>(
+            "SELECT id FROM timeline_challenges WHERE challenge_date = ? AND difficulty = 'speedrun'",
+        )
+        .bind(&date)
+        .fetch_optional(&state.db)
+        .await?
+        .map(|challenge_id| {
+            Uuid::parse_str(&challenge_id).map_err(|_| {
+                AppError::Unavailable("Stored Timeline challenge ID is invalid.".to_owned())
+            })
+        })
+        .transpose()?
+    };
+    let Some(challenge_id) = challenge_id else {
+        return Ok(Json(TimelineLeaderboardResponse {
+            challenge_date: date,
+            entries: Vec::new(),
+        }));
+    };
+    let user = optional_authenticated_user(&state, &headers).await?;
+    let entries = timeline::timeline_leaderboard(
+        &state.db,
+        challenge_id,
+        user.as_ref().map(|user| user.id.as_str()),
+    )
+    .await?;
+    Ok(Json(TimelineLeaderboardResponse {
+        challenge_date: date,
+        entries: entries.into_iter().map(map_leaderboard_entry).collect(),
+    }))
+}
+
+pub(super) async fn global_leaderboard(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<Json<TimelineGlobalLeaderboardResponse>> {
+    let user = optional_authenticated_user(&state, &headers).await?;
+    let leaderboard = timeline::timeline_global_leaderboard(
+        &state.db,
+        user.as_ref().map(|user| user.id.as_str()),
+    )
+    .await?;
+    Ok(Json(TimelineGlobalLeaderboardResponse {
+        fastest: leaderboard
+            .fastest
+            .into_iter()
+            .map(map_global_leaderboard_entry)
+            .collect(),
+        average: leaderboard
+            .average
+            .into_iter()
+            .map(map_global_leaderboard_entry)
+            .collect(),
+        completions: leaderboard
+            .completions
+            .into_iter()
+            .map(map_global_leaderboard_entry)
+            .collect(),
+    }))
+}
+
+fn parse_leaderboard_date(value: &str) -> AppResult<String> {
+    if value.len() != 8 || !value.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(AppError::validation("date must use YYYYMMDD format"));
+    }
+    let date = Date::parse(value, format_description!("[year][month][day]"))
+        .map_err(|_| AppError::validation("date must be a valid YYYYMMDD date"))?;
+    date.format(format_description!("[year]-[month]-[day]"))
+        .map_err(|_| AppError::Unavailable("Timeline date could not be formatted.".to_owned()))
+}
+
+fn map_leaderboard_entry(
+    entry: timeline::TimelineLeaderboardEntry,
+) -> crate::dto::TimelineLeaderboardEntry {
+    crate::dto::TimelineLeaderboardEntry {
+        rank: entry.rank,
+        display_name: entry.display_name,
+        is_current_user: entry.is_current_user,
+        submissions: entry.submissions,
+        time_ms: entry.time_ms,
+    }
+}
+
+fn map_global_leaderboard_entry(
+    entry: timeline::TimelineGlobalLeaderboardEntry,
+) -> crate::dto::TimelineGlobalLeaderboardEntry {
+    crate::dto::TimelineGlobalLeaderboardEntry {
+        rank: entry.rank,
+        display_name: entry.display_name,
+        is_current_user: entry.is_current_user,
+        completed_speedruns: entry.completed_speedruns,
+        average_time_ms: entry.average_time_ms,
+        average_submissions: entry.average_submissions,
+        fastest_time_ms: entry.fastest_time_ms,
+        recent_runs: entry
+            .recent_runs
+            .into_iter()
+            .map(|run| TimelineGlobalRunPoint {
+                date: run.challenge_date,
+                submissions: run.submissions,
+                time_ms: run.time_ms,
+            })
+            .collect(),
+    }
 }
 
 pub(super) async fn attempt(
@@ -199,7 +439,6 @@ pub(super) async fn attempt(
             hardcore_access,
             request_id: payload.request_id,
             model_order: payload.model_order,
-            speedrun_started_at: payload.speedrun_started_at,
         },
     )
     .await?;

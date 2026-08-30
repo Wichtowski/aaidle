@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { apiClient, isApiUnavailable, type AuthUser } from "@lib/api/client";
+import { hellModeActiveKey } from "@lib/storage/local-progress-store";
 import { AuthContext, type AuthContextValue } from "./auth-context";
 
 type AuthState = {
   hardcoreUnlocked: boolean;
+  hardcoreAccessLoading: boolean;
   loading: boolean;
   unavailable: boolean;
   user: AuthUser | null;
@@ -13,6 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [retryKey, setRetryKey] = useState(0);
   const [state, setState] = useState<AuthState>({
     hardcoreUnlocked: false,
+    hardcoreAccessLoading: true,
     loading: true,
     unavailable: false,
     user: null,
@@ -34,7 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const user = await apiClient.currentUser();
           if (cancelled) return;
-          setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
+          setState({
+            hardcoreUnlocked: false,
+            hardcoreAccessLoading: Boolean(user && !user.disabled),
+            loading: false,
+            unavailable: false,
+            user,
+          });
           if (!user || user.disabled) return;
 
           try {
@@ -42,16 +51,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (!cancelled) {
               setState((current) => ({
                 ...current,
+                hardcoreAccessLoading: false,
                 hardcoreUnlocked: Boolean(current.user && status.signedIn && status.unlocked),
               }));
             }
           } catch {
             // Access remains locked until the server can confirm the entitlement
+            if (!cancelled) {
+              setState((current) => ({ ...current, hardcoreAccessLoading: false }));
+            }
           }
         } catch (error) {
           if (!cancelled) {
             setState({
               hardcoreUnlocked: false,
+              hardcoreAccessLoading: false,
               loading: false,
               unavailable: isApiUnavailable(error),
               user: null,
@@ -91,13 +105,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [retryKey]);
 
   const setAuthenticatedUser = useCallback((user: AuthUser | null) => {
-    setState({ hardcoreUnlocked: false, loading: false, unavailable: false, user });
+    setState((current) => {
+      if (user && current.user?.id === user.id) {
+        return { ...current, loading: false, unavailable: false, user };
+      }
+
+      return {
+        hardcoreUnlocked: false,
+        hardcoreAccessLoading: Boolean(user && !user.disabled),
+        loading: false,
+        unavailable: false,
+        user,
+      };
+    });
     if (!user || user.disabled) return;
 
     void apiClient.hardcoreStatus().then((status) => {
       setState((current) =>
         current.user?.id === user.id
-          ? { ...current, hardcoreUnlocked: status.signedIn && status.unlocked }
+          ? {
+              ...current,
+              hardcoreAccessLoading: false,
+              hardcoreUnlocked: status.signedIn && status.unlocked,
+            }
           : current,
       );
     });
@@ -107,6 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState((current) => ({
       ...current,
       hardcoreUnlocked: false,
+      hardcoreAccessLoading: true,
       loading: true,
       unavailable: false,
     }));
@@ -116,12 +147,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       hardcoreUnlocked: state.hardcoreUnlocked,
+      hardcoreAccessLoading: state.hardcoreAccessLoading,
       loading: state.loading,
       refreshHardcoreAccess,
       unavailable: state.unavailable,
       user: state.user,
       setAuthenticatedUser,
       signOut: async () => {
+        window.localStorage.removeItem(hellModeActiveKey);
         await apiClient.signOut();
         setAuthenticatedUser(null);
         window.location.assign("/");

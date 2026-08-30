@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "@components/auth/AuthProvider";
 import { AuthenticatedRoute } from "@components/auth/AuthenticatedRoute";
+import { PublicOnlyRoute } from "@components/auth/PublicOnlyRoute";
 import { DisabledAccountRoute } from "@components/auth/DisabledAccountRoute";
 import { CookieConsent } from "@components/ui/CookieConsent";
 import { GameLoadingState } from "@components/ui/GameLoadingState";
@@ -12,18 +13,60 @@ import { SeoMetadata } from "@components/ui/SeoMetadata";
 import { InstallPrompt } from "@components/ui/InstallPrompt";
 import { EmojiPage } from "@app/pages/game/EmojiPage";
 
-const ProfilePage = lazy(() => import("@app/pages/profile/ProfilePage").then(({ ProfilePage }) => ({ default: ProfilePage })));
-const AdminPage = lazy(() => import("@app/pages/admin/AdminPage").then(({ AdminPage }) => ({ default: AdminPage })));
-const CreditsPage = lazy(() => import("@app/pages/other/CreditsPage").then(({ CreditsPage }) => ({ default: CreditsPage })));
-const PrivacyPage = lazy(() => import("@app/pages/other/PrivacyPage").then(({ PrivacyV1Page }) => ({ default: PrivacyV1Page })));
-const LoginPage = lazy(() => import("@app/pages/auth/LoginPage").then(({ LoginPage }) => ({ default: LoginPage })));
-const RegisterPage = lazy(() => import("@app/pages/auth/RegisterPage").then(({ RegisterPage }) => ({ default: RegisterPage })));
-const ResetPasswordPage = lazy(() => import("@app/pages/auth/ResetPasswordPage").then(({ ResetPasswordPage }) => ({ default: ResetPasswordPage })));
-const ClassicPage = lazy(() => import("@app/pages/game/ClassicPage").then(({ ClassicPage }) => ({ default: ClassicPage })));
-const AccountDisabledPage = lazy(() => import("@app/pages/auth/AccountDisabledPage").then(({ AccountDisabledPage }) => ({ default: AccountDisabledPage })));
-const DeleteAccountPage = lazy(() => import("@app/pages/auth/DeleteAccountPage").then(({ DeleteAccountPage }) => ({ default: DeleteAccountPage })));
-const DeferredIssuePage = lazy(() => import("@app/pages/issues/DeferredIssuePage").then(({ DeferredIssuePage }) => ({ default: DeferredIssuePage })));
-const TimelinePage = lazy(() => import("@app/pages/game/TimelinePage").then(({ TimelinePage }) => ({ default: TimelinePage })));
+const ProfilePage = lazy(() =>
+  import("@app/pages/profile/ProfilePage").then(({ ProfilePage }) => ({ default: ProfilePage })),
+);
+const AdminPage = lazy(() =>
+  import("@app/pages/admin/AdminPage").then(({ AdminPage }) => ({ default: AdminPage })),
+);
+const CreditsPage = lazy(() =>
+  import("@app/pages/other/CreditsPage").then(({ CreditsPage }) => ({ default: CreditsPage })),
+);
+const PrivacyPage = lazy(() =>
+  import("@app/pages/other/PrivacyPage").then(({ PrivacyV1Page }) => ({ default: PrivacyV1Page })),
+);
+const LoginPage = lazy(() =>
+  import("@app/pages/auth/LoginPage").then(({ LoginPage }) => ({ default: LoginPage })),
+);
+const RegisterPage = lazy(() =>
+  import("@app/pages/auth/RegisterPage").then(({ RegisterPage }) => ({ default: RegisterPage })),
+);
+const ResetPasswordPage = lazy(() =>
+  import("@app/pages/auth/ResetPasswordPage").then(({ ResetPasswordPage }) => ({
+    default: ResetPasswordPage,
+  })),
+);
+const ClassicPage = lazy(() =>
+  import("@app/pages/game/ClassicPage").then(({ ClassicPage }) => ({ default: ClassicPage })),
+);
+const AccountDisabledPage = lazy(() =>
+  import("@app/pages/auth/AccountDisabledPage").then(({ AccountDisabledPage }) => ({
+    default: AccountDisabledPage,
+  })),
+);
+const DeleteAccountPage = lazy(() =>
+  import("@app/pages/auth/DeleteAccountPage").then(({ DeleteAccountPage }) => ({
+    default: DeleteAccountPage,
+  })),
+);
+const DeferredIssuePage = lazy(() =>
+  import("@app/pages/issues/DeferredIssuePage").then(({ DeferredIssuePage }) => ({
+    default: DeferredIssuePage,
+  })),
+);
+const TimelinePage = lazy(() =>
+  import("@app/pages/game/TimelinePage").then(({ TimelinePage }) => ({ default: TimelinePage })),
+);
+const TimelineLeaderboardPage = lazy(() =>
+  import("@app/pages/game/TimelineLeaderboardPage").then(({ TimelineLeaderboardPage }) => ({
+    default: TimelineLeaderboardPage,
+  })),
+);
+const TimelineDailyLeaderboardPage = lazy(() =>
+  import("@app/pages/game/TimelineLeaderboardPage").then(({ TimelineDailyLeaderboardPage }) => ({
+    default: TimelineDailyLeaderboardPage,
+  })),
+);
 const NotFoundPage = lazy(() =>
   import("@app/pages/other/NotFoundPage").then(({ NotFoundPage }) => ({ default: NotFoundPage })),
 );
@@ -57,8 +100,12 @@ function Content() {
           <Route path="/classic/:category" element={<ClassicPage />} />
           <Route path="/emoji" element={<EmojiPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/timeline/leaderboard" element={<TimelineLeaderboardPage />} />
+          <Route path="/timeline/leaderboard/:date" element={<TimelineDailyLeaderboardPage />} />
+          <Route element={<PublicOnlyRoute />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
           <Route element={<DisabledAccountRoute />}>
             <Route path="/account-disabled" element={<AccountDisabledPage />} />
           </Route>

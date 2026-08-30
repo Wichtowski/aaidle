@@ -148,6 +148,9 @@ test("Timeline supports arranging, positional feedback, retrying, and winning", 
   await page.mouse.move(draggedCardBox!.x + 60, draggedCardBox!.y + 60, { steps: 5 });
   await expect(draggedCard).toHaveClass(/timeline-card--drag-origin/);
   await expect(draggedCard).toHaveText("Drop here");
+  await expect(draggedCard).toHaveCSS("animation-name", "none");
+  await expect(draggedCard).toHaveCSS("justify-content", "center");
+  await expect(draggedCard).toHaveCSS("text-align", "center");
   await page.waitForTimeout(700);
   await expect(draggedCard).toHaveClass(/timeline-card--drag-origin/);
   await expect(draggedCard).toHaveText("Drop here");

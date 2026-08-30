@@ -28,7 +28,7 @@ function reconcileStats(progress: LocalProgress): LocalProgress {
   const solvedGames = Object.values(progress.games).filter((game) => game.status === "solved");
   const guessDistribution = distribution();
   for (const game of solvedGames) {
-    const bucket = game.guesses.length > 9 ? "10+" : String(game.guesses.length);
+    const bucket = game.guesses.length > 8 ? "8+" : String(game.guesses.length);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
 

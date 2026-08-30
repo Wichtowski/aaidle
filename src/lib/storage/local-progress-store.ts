@@ -5,6 +5,7 @@ import { localProgressSchema, type LocalProgress } from "./local-progress-schema
 export const progressKey = "aaidle:progress:v1";
 export const playerIdKey = "aaidle:player-id:v1";
 export const innerCircleKey = "aaidle:inner-circle:v1";
+export const hellModeActiveKey = "aaidle:hell-mode-active:v1";
 const serverPlayerId = "00000000-0000-4000-8000-000000000000";
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -123,7 +124,7 @@ function reconcileLocalStats(progress: LocalProgress): LocalProgress {
   const solvedGames = Object.values(progress.games).filter((game) => game.status === "solved");
   const guessDistribution = distribution();
   for (const game of solvedGames) {
-    const bucket = game.guesses.length > 9 ? "10+" : String(game.guesses.length);
+    const bucket = game.guesses.length > 8 ? "8+" : String(game.guesses.length);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
 

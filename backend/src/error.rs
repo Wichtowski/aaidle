@@ -121,6 +121,11 @@ impl IntoResponse for AppError {
                     "CHALLENGE_COMPLETED",
                     "This Timeline challenge has already been completed by this player.",
                 ),
+                "USERNAME_TAKEN" => (
+                    StatusCode::CONFLICT,
+                    "USERNAME_TAKEN",
+                    "That username is already taken.",
+                ),
                 _ => (
                     StatusCode::CONFLICT,
                     "CONFLICT",

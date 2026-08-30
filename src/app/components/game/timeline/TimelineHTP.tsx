@@ -53,10 +53,10 @@ export function TimelineHTP({
         <li>Movable dates stay hidden until you solve the complete order.</li>
         <li>Some older scientific papers were recorded with only a publication year, so their date may appear as just a year.</li>
         <li>Normal and Challenge use non-overlapping years.</li>
-        <li>Normal has 2 anchors out of 6 items. Challenge has 3 out of 12.</li>
+        <li>Normal has 2 anchors out of 6 items. Challenge has 4 out of 12.</li>
         {hardcoreUnlocked && (
           <>
-            <li>Hardcore has 4 anchors out of 18 and a strict 8-submission cap.</li>
+            <li>Hardcore has 6 anchors out of 18 and a strict 8-submission cap.</li>
             <li>Hardcore allows for the same year verification with the yellow highlight. <br/>Just to make your suffering little less painful.</li>
           </>
         )}

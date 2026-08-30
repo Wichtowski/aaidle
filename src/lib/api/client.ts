@@ -13,6 +13,9 @@ import type {
   TimelineAttemptPayload,
   TimelineDifficulty,
   TimelineGamePayload,
+  TimelineGlobalLeaderboardPayload,
+  TimelineLeaderboardPayload,
+  TimelineSpeedrunStartPayload,
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
 
@@ -41,6 +44,7 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName: string | null;
+  username?: string | null;
   emailVerified: boolean;
   permission: UserPermission;
   disabled: boolean;
@@ -319,11 +323,19 @@ class ApiClient {
     });
   }
 
-  register(email: string, password: string) {
+  register(email: string, password: string, username?: string) {
     return this.request<{ accepted: true; activationUrl?: string }>("/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, username: username || undefined }),
+    });
+  }
+
+  updateUsername(username: string | null) {
+    return this.request<{ user: AuthUser }>("/auth/username", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
     });
   }
 
@@ -570,19 +582,54 @@ class ApiClient {
     });
   }
 
+  startTimelineSpeedrun(challengeId: string, playerId: string) {
+    return this.request<TimelineSpeedrunStartPayload>(
+      `/games/timeline/challenges/${challengeId}/start`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId }),
+      },
+    );
+  }
+
+  timelineLeaderboard(challengeId: string) {
+    return this.request<TimelineLeaderboardPayload>(
+      `/games/timeline/challenges/${challengeId}/leaderboard`,
+      { cache: "no-store" },
+    );
+  }
+
+  currentTimelineLeaderboard() {
+    return this.request<TimelineLeaderboardPayload>("/games/timeline/leaderboard", {
+      cache: "no-store",
+    });
+  }
+
+  datedTimelineLeaderboard(date: string) {
+    return this.request<TimelineLeaderboardPayload>(`/games/timeline/leaderboard/${date}`, {
+      cache: "no-store",
+    });
+  }
+
+  globalTimelineLeaderboard() {
+    return this.request<TimelineGlobalLeaderboardPayload>("/games/timeline/leaderboard/global", {
+      cache: "no-store",
+    });
+  }
+
   submitTimelineAttempt(
     challengeId: string,
     playerId: string,
     requestId: string,
     modelOrder: string[],
-    speedrunStartedAt?: number | null,
   ) {
     return this.request<TimelineAttemptPayload>(
       `/games/timeline/challenges/${challengeId}/attempts`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId, requestId, modelOrder, speedrunStartedAt }),
+        body: JSON.stringify({ playerId, requestId, modelOrder }),
       },
     );
   }

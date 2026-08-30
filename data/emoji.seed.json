@@ -85,7 +85,7 @@
         "visuals": [
           {
             "type": "image",
-            "src": "/emoji-visual/monet.png.webp",
+            "src": "/emoji-visual/monet.png",
             "alt": "An impressionist painter",
             "revealPriority": 1
           },
@@ -2245,7 +2245,7 @@
         "id": "jensen-green",
         "minPool": 0,
         "weight": 4,
-        "initialRevealCount": 3,
+        "initialRevealCount": 1,
         "visuals": [
           {
             "type": "image",

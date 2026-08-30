@@ -11,7 +11,8 @@ type Particle = {
   launched: boolean;
 };
 
-const particleCount = 52;
+const particleCount = 45;
+const mobileParticleCount = 25;
 const particleRadius = 28;
 const emojiChoices = ["🎉", "🥳", "🎊", "✨", "🎈"];
 const lifetime = 5_400;
@@ -40,6 +41,9 @@ export function CelebrationPhysics({
 
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const activeParticleCount = window.matchMedia("(max-width: 720px)").matches
+      ? mobileParticleCount
+      : particleCount;
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
     canvas.width = width * pixelRatio;
     canvas.height = height * pixelRatio;
@@ -76,7 +80,7 @@ export function CelebrationPhysics({
       );
     }
 
-    const particles: Particle[] = Array.from({ length: particleCount }, (_, index) => ({
+    const particles: Particle[] = Array.from({ length: activeParticleCount }, (_, index) => ({
       body: null,
       emoji: emojiChoices[(index * 3) % emojiChoices.length],
       fromLeft: index % 2 === 0,
