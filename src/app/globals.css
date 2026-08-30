@@ -4090,6 +4090,22 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   justify-content: flex-end;
   margin-top: 24px;
 }
+.how-to-play-modal__actions .button--primary {
+  border-color: #c83f27;
+  background: linear-gradient(135deg, #ef6548, #d94029);
+  color: #fff;
+  box-shadow: 0 4px 0 #9d2e20;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+.how-to-play-modal__actions .button--primary:hover:not(:disabled),
+.how-to-play-modal__actions .button--primary:focus-visible {
+  background: linear-gradient(135deg, #df5136, #b93622);
+  box-shadow: 0 2px 0 #8b281c;
+  transform: translateY(2px);
+}
 :is(:root.hell-mode, body.hell-mode) .how-to-play-modal__actions .button--primary {
   min-width: 132px;
   padding: 9px 24px;
@@ -4310,9 +4326,6 @@ body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
   height: 5px;
   border-radius: 50%;
   background: var(--accent);
-}
-.how-to-play-modal__modes-intro {
-  margin: 14px 0 0;
 }
 .how-to-play-modal__modes {
   gap: 8px !important;
@@ -4927,6 +4940,18 @@ body.hell-mode .completed--timeline {
   max-width: none;
   margin-top: 24px;
   text-align: left;
+}
+.completed--timeline .completed__actions {
+  gap: 8px;
+}
+.completed--timeline .completed__actions .button {
+  padding: 8px 14px;
+}
+.completed--timeline .completed__actions .button--primary {
+  margin-top: 0;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
 }
 .speedrun-username-modal {
   position: fixed;

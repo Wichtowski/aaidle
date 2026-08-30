@@ -36,7 +36,7 @@ export function TimelineCompletedDialog({
             totalPositions={totalPositions}
           />
           {difficulty === "speedrun" && (
-            <Link className="button" to={timelineLeaderboardPath(date)}>
+            <Link className="button button--primary" to={timelineLeaderboardPath(date)}>
               View leaderboard
             </Link>
           )}

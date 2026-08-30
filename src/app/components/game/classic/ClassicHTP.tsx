@@ -97,12 +97,14 @@ export function ClassicHTP({
             ? "Previously guessed models remain as a monument to your suffering."
             : "Previously guessed models stay visible but cannot be submitted again."}
         </li>
+        <li>
+          {hardcore
+            ? "There is no guess limit. The pit is patient; be more patient."
+            : "There is no guess limit: follow the clues, keep narrowing, and protect your streak."}
+        </li>
       </ul>
 
       <h3 className="how-to-play-modal__section-title">Choose your difficulty</h3>
-      <p className="how-to-play-modal__modes-intro">
-        Choose a focused category, then decide how broad you want today’s search to be.
-      </p>
       <ul className="how-to-play-modal__modes">
         <li>
           <strong>Normal</strong>
@@ -129,11 +131,6 @@ export function ClassicHTP({
         Clearing browser or site data removes them. Account sync will be available after sign in.
       </p>
 
-      <p className="how-to-play-modal__tip">
-        {hardcore
-          ? "There is no guess limit. The pit is patient; be more patient."
-          : "There is no guess limit: follow the clues, keep narrowing, and protect your streak."}
-      </p>
     </HowToPlayDialog>
   );
 }

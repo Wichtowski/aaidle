@@ -47,12 +47,10 @@ export function EmojiHTP({
           difficulty.
         </li>
         <li>Some challenges show every clue immediately; others reveal them one at a time.</li>
+        <li>Follow the association, not a letter-by-letter rebus. There is no guess limit.</li>
       </ul>
 
       <h3 className="how-to-play-modal__section-title">Choose your difficulty</h3>
-      <p className="how-to-play-modal__modes-intro">
-        Pick how broad you want today’s answer pool to be.
-      </p>
       <ul className="how-to-play-modal__modes">
         <li>
           <strong>Normal</strong>
@@ -75,9 +73,6 @@ export function EmojiHTP({
       <p className="how-to-play-modal__privacy">
         <FaHardDrive aria-hidden="true" /> Your local guesses and progress stay in this browser.
         Signing in can synchronize them with your account.
-      </p>
-      <p className="how-to-play-modal__tip">
-        Follow the association, not a letter-by-letter rebus. There is no guess limit.
       </p>
     </HowToPlayDialog>
   );
