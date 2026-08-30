@@ -56,6 +56,7 @@ jobs:
       - name: Run release readiness tests
         env:
           AAIDLE_VERSION: "${{ inputs.release_tag }}"
+          AAIDLE_CF_E2E_TOKEN: ${{ secrets.AAIDLE_CF_E2E_TOKEN }}
         run: pnpm run test:release-rediness
 
   e2e-chromium:
@@ -395,7 +396,10 @@ jobs:
         run: |
           git clone --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" .visual-pages
           previous_release=$(find .visual-pages -mindepth 1 -maxdepth 1 -type d -name 'v*' | sort -V | tail -n 1)
-          if [ -n "$previous_release" ] && [ -d "$previous_release/visual/baselines" ]; then
+          if [ -n "$previous_release" ] && [ -d "$previous_release/visual/bitmaps_reference" ]; then
+            mkdir -p tests/reports/visual/bitmaps_reference
+            cp -R "$previous_release/visual/bitmaps_reference/." tests/reports/visual/bitmaps_reference/
+          elif [ -n "$previous_release" ] && [ -d "$previous_release/visual/baselines" ]; then
             mkdir -p tests/reports/visual/bitmaps_reference
             cp -R "$previous_release/visual/baselines/." tests/reports/visual/bitmaps_reference/
           fi

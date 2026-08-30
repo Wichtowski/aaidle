@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { env } from "../env";
+import { cloudflareE2EHeaders } from "../http-headers";
 import { consentState } from "../state/consent-state";
 
 export default defineConfig({
@@ -19,9 +20,8 @@ export default defineConfig({
     : [["list"], ["html", { open: "never", outputFolder: "../reports/playwright" }]],
   use: {
     baseURL: env.baseURL,
-    extraHTTPHeaders: env.cloudflareE2EToken
-      ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken }
-      : undefined,
+    extraHTTPHeaders: cloudflareE2EHeaders(),
+    serviceWorkers: "block",
     trace: "on",
     screenshot: "on",
     video: "on",

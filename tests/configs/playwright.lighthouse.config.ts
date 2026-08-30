@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { env } from "../env";
+import { cloudflareE2EHeaders } from "../http-headers";
 
 export default defineConfig({
   testDir: "..",
@@ -10,6 +11,8 @@ export default defineConfig({
   reporter: [["list"], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
+    extraHTTPHeaders: cloudflareE2EHeaders(),
+    serviceWorkers: "block",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "off",

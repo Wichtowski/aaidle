@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { playAudit } from "playwright-lighthouse";
 import { env } from "../../env";
 import { lighthouseTest as test } from "../../fixtures/lighthouse";
+import { cloudflareE2EHeaders } from "../../http-headers";
 
 const lighthouseThresholds = Object.fromEntries(
   Object.entries(env.reporting.lighthouse).map(([category, threshold]) => [
@@ -18,7 +19,10 @@ test("homepage meets the Lighthouse performance threshold", async ({ lighthouseP
     page: lighthousePage,
     port,
     thresholds: lighthouseThresholds,
-    opts: { disableStorageReset: true },
+    opts: {
+      disableStorageReset: true,
+      extraHeaders: cloudflareE2EHeaders(),
+    },
     reports: {
       formats: { html: true, json: true },
       name: "homepage",

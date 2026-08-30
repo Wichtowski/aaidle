@@ -1,5 +1,5 @@
 import { test as base, type APIRequestContext } from "@playwright/test";
-import { env } from "../env";
+import { cloudflareE2EHeaders } from "../http-headers";
 
 export type ApiResponse = {
   body: string;
@@ -11,10 +11,7 @@ export type ApiResponse = {
 export class ApiClient {
   private bearerToken: string | undefined;
 
-  constructor(
-    private readonly request: APIRequestContext,
-    private readonly cloudflareE2EToken: string | undefined,
-  ) {}
+  constructor(private readonly request: APIRequestContext) {}
 
   async get(path: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
     return this.send("GET", path, headers);
@@ -80,9 +77,7 @@ export class ApiClient {
     const response = await this.request.fetch(path, {
       method,
       headers: {
-        ...(this.cloudflareE2EToken
-          ? { "x-aaidle-cf-e2e-token": this.cloudflareE2EToken }
-          : {}),
+        ...(cloudflareE2EHeaders() ?? {}),
         ...(data === undefined ? {} : { "content-type": "application/json" }),
         ...headers,
       },
@@ -110,7 +105,7 @@ type ApiFixtures = {
 
 export const test = base.extend<ApiFixtures>({
   apiClient: async ({ request }, use) => {
-    await use(new ApiClient(request, env.cloudflareE2EToken));
+    await use(new ApiClient(request));
   },
 });
 

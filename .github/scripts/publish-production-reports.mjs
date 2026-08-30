@@ -1,6 +1,7 @@
 import { cp, mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { execFileSync, spawnSync } from "node:child_process";
 import { resolve } from "node:path";
+import { publishBackstopReport } from "./publish-backstop-report.mjs";
 
 const releaseTag = process.env.RELEASE_TAG;
 const repository = process.env.GITHUB_REPOSITORY;
@@ -39,16 +40,8 @@ await cp(resolve("reports/accessibility"), resolve(releaseDirectory, "accessibil
 await cp(resolve("reports/lighthouse"), resolve(releaseDirectory, "lighthouse"), {
   recursive: true,
 });
-await cp(resolve("reports/visual/html_report"), resolve(releaseDirectory, "visual"), {
-  recursive: true,
-});
-await cp(
-  resolve("reports/visual/bitmaps_reference"),
-  resolve(releaseDirectory, "visual/baselines"),
-  {
-    recursive: true,
-  },
-);
+const visualReportDirectory = resolve(releaseDirectory, "visual");
+await publishBackstopReport(resolve("reports/visual"), visualReportDirectory);
 
 const releases = (await readdir(site, { withFileTypes: true }))
   .filter((entry) => entry.isDirectory() && /^v\d+\.\d+\.\d+$/.test(entry.name))

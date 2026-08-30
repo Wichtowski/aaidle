@@ -1,6 +1,8 @@
 import { chromium, type Browser, type Page } from "playwright";
 import { test as base } from "@playwright/test";
 import getPort from "get-port";
+import { env } from "../env";
+import { applyCloudflareE2EHeaders, cloudflareE2EHeaders } from "../http-headers";
 
 type LighthouseFixtures = {
   lighthousePage: Page;
@@ -33,7 +35,12 @@ export const lighthouseTest = base.extend<LighthouseFixtures, LighthouseWorkerFi
   ],
 
   lighthousePage: async ({ lighthouseBrowser }, use) => {
-    const context = await lighthouseBrowser.newContext();
+    const context = await lighthouseBrowser.newContext({
+      baseURL: env.baseURL,
+      extraHTTPHeaders: cloudflareE2EHeaders(),
+      serviceWorkers: "block",
+    });
+    await applyCloudflareE2EHeaders(context);
     const page = await context.newPage();
 
     await use(page);

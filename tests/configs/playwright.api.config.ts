@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { env } from "../env";
+import { cloudflareE2EHeaders } from "../http-headers";
 
 export default defineConfig({
   testDir: "..",
@@ -10,16 +11,11 @@ export default defineConfig({
   workers: env.isCI ? 1 : undefined,
   outputDir: "../results/api",
   reporter: env.isCI
-    ? [
-        ["list"],
-        ["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }],
-      ]
+    ? [["list"], ["allure-playwright", { resultsDir: "tests/reports/api-allure-results" }]]
     : [["list"]],
   use: {
     baseURL: env.baseURL,
-    extraHTTPHeaders: env.cloudflareE2EToken
-      ? { "x-aaidle-cf-e2e-token": env.cloudflareE2EToken }
-      : undefined,
+    extraHTTPHeaders: cloudflareE2EHeaders(),
   },
   projects: [
     {

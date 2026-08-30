@@ -1,8 +1,8 @@
 import { writeFile } from "node:fs/promises";
 import { mkdir } from "node:fs/promises";
-import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { env } from "../../env";
+import { expect, test } from "../../fixtures/e2e";
 
 const routes = ["/", "/classic", "/emoji", "/privacy", "/credits"];
 const cloudflareChallengeRoutes = new Set(["/classic", "/emoji", "/privacy", "/credits"]);

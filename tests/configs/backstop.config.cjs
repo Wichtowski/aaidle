@@ -21,6 +21,11 @@ module.exports = {
     { label: "Classic", url: `${baseUrl}/classic` },
     { label: "Emoji", url: `${baseUrl}/emoji` },
     { label: "Timeline", url: `${baseUrl}/timeline` },
+    { label: "Timeline global leaderboard", url: `${baseUrl}/timeline/leaderboard` },
+    {
+      label: "Timeline daily leaderboard",
+      url: `${baseUrl}/timeline/leaderboard/20260826`,
+    },
     { label: "Profile", url: `${baseUrl}/profile` },
     { label: "Login", url: `${baseUrl}/login` },
     { label: "Register", url: `${baseUrl}/register` },

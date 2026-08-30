@@ -1,5 +1,5 @@
 import { test as base } from "@playwright/test";
-import { env } from "../env";
+import { applyCloudflareE2EHeaders } from "../http-headers";
 import { AccountDisabledPage } from "../pages/AccountDisabledPage";
 import { BasePage } from "../pages/BasePage";
 import { ClassicPage } from "../pages/ClassicPage";
@@ -14,6 +14,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 import { TimelinePage } from "../pages/TimelinePage";
+import { TimelineLeaderboardPage } from "../pages/TimelineLeaderboardPage";
 
 type PageFixtures = {
   accountDisabledPage: AccountDisabledPage;
@@ -30,15 +31,12 @@ type PageFixtures = {
   registerPage: RegisterPage;
   resetPasswordPage: ResetPasswordPage;
   timelinePage: TimelinePage;
+  timelineLeaderboardPage: TimelineLeaderboardPage;
 };
 
 export const test = base.extend<PageFixtures>({
   context: async ({ context }, use) => {
-    if (env.cloudflareE2EToken) {
-      await context.setExtraHTTPHeaders({
-        "x-aaidle-cf-e2e-token": env.cloudflareE2EToken,
-      });
-    }
+    await applyCloudflareE2EHeaders(context);
     await use(context);
   },
   accountDisabledPage: async ({ page }, use) => use(new AccountDisabledPage(page)),
@@ -55,6 +53,7 @@ export const test = base.extend<PageFixtures>({
   registerPage: async ({ page }, use) => use(new RegisterPage(page)),
   resetPasswordPage: async ({ page }, use) => use(new ResetPasswordPage(page)),
   timelinePage: async ({ page }, use) => use(new TimelinePage(page)),
+  timelineLeaderboardPage: async ({ page }, use) => use(new TimelineLeaderboardPage(page)),
 });
 
 export { expect } from "@playwright/test";

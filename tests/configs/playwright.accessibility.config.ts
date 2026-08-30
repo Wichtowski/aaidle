@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { env } from "../env";
+import { cloudflareE2EHeaders } from "../http-headers";
 import { consentState } from "../state/consent-state";
 
 export default defineConfig({
@@ -11,6 +12,8 @@ export default defineConfig({
   reporter: [["list"], ["../env.ts"]],
   use: {
     baseURL: env.baseURL,
+    extraHTTPHeaders: cloudflareE2EHeaders(),
+    serviceWorkers: "block",
     trace: "off",
     screenshot: "only-on-failure",
     video: "off",
