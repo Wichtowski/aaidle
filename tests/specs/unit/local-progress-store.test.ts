@@ -14,9 +14,18 @@ describe("local progress storage", () => {
         removeItem: (key: string) => values.delete(key),
       },
     });
+    const sessionValues = new Map<string, string>();
+    Object.defineProperty(window, "sessionStorage", {
+      configurable: true,
+      value: {
+        getItem: (key: string) => sessionValues.get(key) ?? null,
+        setItem: (key: string, value: string) => sessionValues.set(key, value),
+        removeItem: (key: string) => sessionValues.delete(key),
+      },
+    });
   });
 
-  it("clears browser progress and keeps authenticated updates out of local storage", async () => {
+  it("keeps authenticated progress in a tab-scoped UI cache", async () => {
     const store = await import("../../../src/lib/storage/local-progress-store");
     window.localStorage.removeItem(store.progressKey);
     window.localStorage.removeItem(store.playerIdKey);
@@ -24,7 +33,7 @@ describe("local progress storage", () => {
     window.localStorage.setItem(store.progressKey, JSON.stringify(localProgress));
 
     store.initialiseProgress();
-    store.startCloudProgress();
+    store.startCloudProgress("user-1");
     store.updateProgress((progress) => ({
       ...progress,
       preferences: { ...progress.preferences, hellMode: true },
@@ -32,7 +41,23 @@ describe("local progress storage", () => {
 
     expect(window.localStorage.getItem(store.progressKey)).toBeNull();
     expect(window.localStorage.getItem(store.playerIdKey)).toBeNull();
+    expect(window.sessionStorage.getItem(store.authenticatedProgressKey)).not.toBeNull();
     expect(store.getSnapshot().preferences.hellMode).toBe(true);
+  });
+
+  it("starts a fresh anonymous cache after sign out", async () => {
+    const store = await import("../../../src/lib/storage/local-progress-store");
+    const authenticatedProgress = store.freshProgress();
+    store.initialiseProgress();
+    store.replaceProgress(authenticatedProgress);
+    store.startCloudProgress("user-1");
+
+    store.resetProgressAfterSignOut();
+
+    expect(store.getSnapshot().playerId).not.toBe(authenticatedProgress.playerId);
+    expect(store.getSnapshot().games).toEqual({});
+    expect(window.localStorage.getItem(store.progressKey)).not.toBeNull();
+    expect(window.sessionStorage.getItem(store.authenticatedProgressKey)).toBeNull();
   });
 
   it("keeps permanent Inner Circle state outside disposable progress", async () => {

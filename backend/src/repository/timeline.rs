@@ -187,7 +187,7 @@ pub async fn start_speedrun(
     pool: &SqlitePool,
     challenge_id: Uuid,
     player_id: Uuid,
-) -> AppResult<i64> {
+) -> AppResult<(i64, TimelineChallenge)> {
     let mut transaction = pool.begin().await?;
     let challenge = find_timeline_challenge(&mut transaction, challenge_id)
         .await?
@@ -216,7 +216,7 @@ pub async fn start_speedrun(
     .fetch_one(&mut *transaction)
     .await?;
     transaction.commit().await?;
-    Ok(started_at)
+    Ok((started_at, parse_challenge(challenge)?))
 }
 
 pub async fn timeline_leaderboard(

@@ -60,6 +60,38 @@ describe("AdminProgressRecord", () => {
     expect(screen.getByText(/cannot be displayed/)).toBeTruthy();
   });
 
+  it("renders the compact server progress format", () => {
+    render(
+      createElement(AdminProgressRecord, {
+        progress: {
+          version: 1,
+          playerId: "00000000-0000-4000-8000-000000000000",
+          games: [
+            {
+              challengeId: "challenge-1",
+              challengeDate: "2026-08-13",
+              mode: "classic:llm:normal",
+              startedAt: "2026-08-13T12:00:00.000Z",
+              completedAt: "2026-08-13T12:01:00.000Z",
+            },
+          ],
+          stats: { currentStreak: 1, bestStreak: 2, gamesPlayed: 3 },
+          preferences: {
+            hasSeenClassicHowToPlay: true,
+            innerCircleActive: false,
+            hellMode: false,
+            hasAutoplayedHardcoreSoundtrack: false,
+          },
+        },
+        trajectoryTargets: {},
+        trajectoryReferenceModels: [],
+      }),
+    );
+
+    expect(screen.getByText("2026-08-13")).toBeTruthy();
+    expect(screen.queryByText(/cannot be displayed/)).toBeNull();
+  });
+
   it("shows an interactive trajectory only for a solved game with an available answer", () => {
     render(
       createElement(AdminProgressRecord, {

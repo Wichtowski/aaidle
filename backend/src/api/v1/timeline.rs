@@ -35,6 +35,33 @@ pub(super) struct TimelineGameQuery {
     player_id: Uuid,
 }
 
+fn public_movable_models(
+    challenge: &timeline::TimelineChallenge,
+    reveal_dates: bool,
+) -> AppResult<Vec<TimelinePublicModel>> {
+    challenge
+        .tray_order
+        .iter()
+        .map(|model_id| {
+            challenge
+                .model_order
+                .iter()
+                .find(|model| model.id == *model_id)
+                .map(|model| TimelinePublicModel {
+                    id: model.id.clone(),
+                    name: model.name.clone(),
+                    item_kind: model.item_kind.clone(),
+                    categories: model.categories.clone(),
+                    release_date: reveal_dates.then(|| model.release_date.clone()),
+                    year_annotation: reveal_dates
+                        .then(|| model.year_annotation.clone())
+                        .flatten(),
+                })
+                .ok_or_else(|| AppError::Unavailable("Stored Timeline tray is invalid.".to_owned()))
+        })
+        .collect()
+}
+
 pub(super) async fn game(
     State(state): State<AppState>,
     headers: HeaderMap,
@@ -104,46 +131,14 @@ pub(super) async fn game(
                 }),
         })
         .collect();
-    let movable_models = game
-        .challenge
-        .tray_order
-        .iter()
-        .map(|model_id| {
-            game.challenge
-                .model_order
-                .iter()
-                .find(|model| model.id == *model_id)
-                .map(|model| {
-                    let revealed = difficulty != TimelineDifficulty::Speedrun
-                        || game.speedrun_started_at.is_some()
-                        || game.solved;
-                    TimelinePublicModel {
-                        id: model.id.clone(),
-                        name: if revealed {
-                            model.name.clone()
-                        } else {
-                            "Covered card".to_owned()
-                        },
-                        item_kind: if revealed {
-                            model.item_kind.clone()
-                        } else {
-                            "model".to_owned()
-                        },
-                        categories: if revealed {
-                            model.categories.clone()
-                        } else {
-                            Vec::new()
-                        },
-                        release_date: game.solved.then(|| model.release_date.clone()),
-                        year_annotation: game
-                            .solved
-                            .then(|| model.year_annotation.clone())
-                            .flatten(),
-                    }
-                })
-                .ok_or_else(|| AppError::Unavailable("Stored Timeline tray is invalid.".to_owned()))
-        })
-        .collect::<AppResult<Vec<_>>>()?;
+    let movable_models = if difficulty == TimelineDifficulty::Speedrun
+        && game.speedrun_started_at.is_none()
+        && !game.solved
+    {
+        Vec::new()
+    } else {
+        public_movable_models(&game.challenge, game.solved)?
+    };
 
     Ok(Json(TimelineGameResponse {
         challenge: TimelineChallengeResponse {
@@ -187,8 +182,13 @@ pub(super) async fn start(
     assert_csrf_or_bearer(&headers)?;
     let player_id =
         progress::canonical_player_id(&state.db, &user.id, payload.player_id, now_millis()).await?;
-    let started_at = timeline::start_speedrun(&state.db, challenge_id, player_id).await?;
-    Ok(Json(TimelineSpeedrunStartResponse { started_at }))
+    let (started_at, challenge) =
+        timeline::start_speedrun(&state.db, challenge_id, player_id).await?;
+    let movable_models = public_movable_models(&challenge, false)?;
+    Ok(Json(TimelineSpeedrunStartResponse {
+        started_at,
+        movable_models,
+    }))
 }
 
 pub(super) async fn leaderboard(

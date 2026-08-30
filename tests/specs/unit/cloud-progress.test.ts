@@ -1,10 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
+  type ServerProgress,
   mergeCloudProgress,
   mergeServerProgress,
 } from "../../../src/lib/domain/players/cloud-progress";
 import { classicChallengeMode } from "../../../src/lib/domain/models/model-types";
 import { freshProgress } from "../../../src/lib/storage/local-progress-store";
+
+function serverProgress(overrides: Partial<ServerProgress> = {}): ServerProgress {
+  return {
+    version: 1,
+    playerId: "11111111-1111-4111-8111-111111111111",
+    games: [],
+    stats: { currentStreak: 0, bestStreak: 0, gamesPlayed: 0 },
+    preferences: {
+      hasSeenClassicHowToPlay: false,
+      innerCircleActive: false,
+      hellMode: false,
+      hasAutoplayedHardcoreSoundtrack: false,
+    },
+    ...overrides,
+  };
+}
 
 describe("cloud progress", () => {
   it("preserves solved games from both devices while merging sync data", () => {
@@ -74,14 +91,11 @@ describe("cloud progress", () => {
   });
 
   it("uses the server identity, statistics, and authorization-backed preferences", () => {
-    const server = freshProgress();
+    const server = serverProgress({
+      stats: { currentStreak: 4, bestStreak: 8, gamesPlayed: 42 },
+    });
     const local = freshProgress();
-    server.playerId = "11111111-1111-4111-8111-111111111111";
     local.playerId = "22222222-2222-4222-8222-222222222222";
-    server.stats.classic.gamesWon = 42;
-    server.stats.classic.gamesPlayed = 42;
-    server.preferences.hardcoreUnlocked = false;
-    server.preferences.hellMode = false;
     local.preferences.hardcoreUnlocked = true;
     local.preferences.hellMode = true;
 
@@ -89,19 +103,17 @@ describe("cloud progress", () => {
 
     expect(merged.playerId).toBe(server.playerId);
     expect(merged.stats.classic.gamesWon).toBe(42);
-    expect(merged.preferences.hardcoreUnlocked).toBe(false);
+    expect(merged.preferences.hardcoreUnlocked).toBe(true);
     expect(merged.preferences.hellMode).toBe(false);
   });
 
-  it("keeps an authorized local Hell Mode preference across a stale response", () => {
-    const server = freshProgress();
+  it("uses the authorization-filtered Hell Mode preference from the server", () => {
+    const server = serverProgress();
     const local = freshProgress();
-    server.preferences.hardcoreUnlocked = true;
-    server.preferences.hellMode = false;
     local.preferences.hellMode = true;
 
     const merged = mergeServerProgress(server, local);
 
-    expect(merged.preferences.hellMode).toBe(true);
+    expect(merged.preferences.hellMode).toBe(false);
   });
 });

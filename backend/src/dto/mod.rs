@@ -425,6 +425,7 @@ pub struct TimelineSpeedrunStartRequest {
 #[serde(rename_all = "camelCase")]
 pub struct TimelineSpeedrunStartResponse {
     pub started_at: i64,
+    pub movable_models: Vec<TimelinePublicModel>,
 }
 
 #[derive(Serialize)]

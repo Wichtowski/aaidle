@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { apiClient, isApiUnavailable, type AuthUser } from "@lib/api/client";
-import { hellModeActiveKey } from "@lib/storage/local-progress-store";
+import { hellModeActiveKey, resetProgressAfterSignOut } from "@lib/storage/local-progress-store";
 import { AuthContext, type AuthContextValue } from "./auth-context";
 
 type AuthState = {
@@ -156,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut: async () => {
         window.localStorage.removeItem(hellModeActiveKey);
         await apiClient.signOut();
+        resetProgressAfterSignOut();
         setAuthenticatedUser(null);
         window.location.assign("/");
       },

@@ -23,7 +23,6 @@ import {
 } from "@lib/domain/games/classic/hardcore-unlock";
 import { updateProgress } from "@lib/storage/local-progress-store";
 import { apiClient, type ProgressHistory } from "@lib/api/client";
-import { mergeServerProgress } from "@lib/domain/players/cloud-progress";
 import { readSavedTimelineGames } from "@lib/domain/games/timeline/timeline-progress-store";
 import {
   timelineDifficulties,
@@ -237,9 +236,8 @@ export function ProfilePage() {
 
     void apiClient
       .enableHardcoreAccess()
-      .then(() => apiClient.syncProgress(nextProgress))
-      .then(({ progress: syncedProgress }) => {
-        updateProgress(() => mergeServerProgress(syncedProgress, nextProgress));
+      .then(() => {
+        updateProgress(() => nextProgress);
         return refreshHardcoreAccess();
       })
       .then(() => navigate("/classic/hardcore"));

@@ -88,8 +88,16 @@ Generic `/challenges/*` routes are not part of the public v2 contract.
 Attempts must be sequential, and their hard limit is the eligible entity-pool size for the challenge difficulty.
 Emoji supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
 
-`GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress. Normal and Challenge puzzles use distinct release years. Hardcore may contain multiple items from one year only when every item in that same-year group has a full `YYYY-MM-DD` date, so the chronological order remains unambiguous. Timeline attempt placements use `0` for an incorrect position, `1` for an exact position, and `2` when the submitted item shares the expected position's year but is not in its exact position. The attempt response also returns `revealedModels` containing date metadata only for models in exact positions.
-Speedrun requires authentication. `POST /api/v1/games/timeline/challenges/{challengeId}/start` records the first card-drop timestamp for the signed-in player and challenge idempotently, returning the server timestamp as `startedAt`. The timestamp is included in Speedrun progress and is used by the server to calculate the completion time.
+`GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress.
+Normal and Challenge puzzles use distinct release years.
+Hardcore may contain multiple items from one year only when every item in that same-year group has a full `YYYY-MM-DD` date, so the chronological order remains unambiguous.
+Timeline attempt placements use `0` for an incorrect position, `1` for an exact position, and `2` when the submitted item shares the expected position's year but is not in its exact position.
+The attempt response also returns `revealedModels` containing date metadata only for models in exact positions.
+Speedrun requires authentication.
+Before the timer starts, the Speedrun response returns an empty `movableModels` array so covered cards do not expose canonical model identifiers.
+`POST /api/v1/games/timeline/challenges/{challengeId}/start` records the first card-drop timestamp for the signed-in player and challenge idempotently.
+It returns the server timestamp as `startedAt` together with the revealed `movableModels`, without release-date metadata.
+The timestamp is included in subsequent Speedrun progress and is used by the server to calculate the completion time.
 `GET /api/v1/games/timeline/challenges/{challengeId}/leaderboard` returns the ten fastest completed Speedruns for that challenge with display name, submission count, and server-measured duration.
 Entries rank by duration, then by fewer submissions when durations tie.
 When the request has an authenticated session, `isCurrentUser` identifies that account's entry without exposing its user ID.
@@ -137,9 +145,17 @@ External API clients can exchange password credentials at `POST /api/v1/auth/tok
 `GET /api/v1/auth/oauth/{provider}/callback` validates that state, exchanges the authorization code, links or creates the persisted identity, and starts a newly rotated session.
 Both provider credentials must be configured together for a provider to be available.
 
-`GET /api/v1/auth/progress` returns the authenticated account's persisted progress or `null`.
-`PUT /api/v1/auth/progress` validates and merges local progress from another device.
-The account retains its original player ID, deduplicates guesses by request ID, keeps solved games solved, preserves the earliest completion timestamp, and recalculates Classic saved-game statistics. A progress entry creates an account completion only when the persisted player ID has a matching server-accepted correct guess; client preferences never grant Hardcore access.
+`GET /api/v1/auth/progress` returns the authenticated account's compact persisted synchronization state or `null`.
+The response contains the canonical player ID, recent game timestamps, current Classic summary statistics, and synchronized UI preferences.
+Game status is derived from `completedAt`, and guess details remain available through the history and game-specific endpoints.
+`PUT /api/v1/auth/progress` performs one account reconciliation after login or registration, linking the anonymous player ID and merging server-accepted game records.
+Clients may send `Prefer: return=minimal` to receive `204 No Content` after a successful update instead of reloading the synchronization state.
+The account retains its original player ID, deduplicates guesses by request ID, keeps solved games solved, preserves the earliest completion timestamp, and recalculates Classic saved-game statistics.
+A progress entry creates an account completion only when the persisted player ID has a matching server-accepted correct guess.
+Client preferences never grant Hardcore access.
+`PATCH /api/v1/auth/progress/preferences` updates only `hasSeenClassicHowToPlay`, `innerCircleActive`, `hellMode`, and `hasAutoplayedHardcoreSoundtrack` after an explicit client-side preference change.
+Reconciliation preserves existing account preferences; toggle changes use the dedicated preference route.
+Accepted guesses and completions are persisted by their game-specific endpoints rather than repeated whole-progress synchronization.
 The request body limit for this route is 16 KB.
 
 ## Admin and public configuration

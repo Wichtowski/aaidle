@@ -8,7 +8,7 @@ import type {
   PublicGuessedModel,
   PublicModelIndex,
 } from "../domain/models/model-types";
-import type { LocalProgress } from "../storage/local-progress-schema";
+import { serverProgressSchema, type ServerProgress } from "../domain/players/cloud-progress";
 import type {
   TimelineAttemptPayload,
   TimelineDifficulty,
@@ -18,8 +18,25 @@ import type {
   TimelineSpeedrunStartPayload,
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
+import type { LocalProgress } from "../storage/local-progress-schema";
 
 const apiPath = (path: string) => `/api/v1${path}`;
+
+const progressSyncPayload = (progress: LocalProgress) => ({
+  version: 1,
+  playerId: progress.playerId,
+  preferences: {
+    hasSeenClassicHowToPlay: progress.preferences.hasSeenClassicHowToPlay ?? false,
+    innerCircleActive: progress.preferences.innerCircleActive,
+    hellMode: progress.preferences.hellMode,
+    hasAutoplayedHardcoreSoundtrack: progress.preferences.hasAutoplayedHardcoreSoundtrack,
+  },
+  activeGames: Object.values(progress.games)
+    .filter((game) => game.status === "in-progress")
+    .sort((left, right) => right.startedAt.localeCompare(left.startedAt))
+    .slice(0, 16)
+    .map((game) => ({ challengeId: game.challengeId, startedAt: game.startedAt })),
+});
 
 try {
   if (typeof sessionStorage !== "undefined") {
@@ -384,34 +401,34 @@ class ApiClient {
   }
 
   syncProgress(progress: LocalProgress) {
-    return this.request<{ progress: LocalProgress }>("/auth/progress", {
+    return this.request<{ progress: ServerProgress }>("/auth/progress", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(progressSyncPayload(progress)),
+    }).then(({ progress }) => ({ progress: serverProgressSchema.parse(progress) }));
+  }
+
+  updateProgressPreferences(preferences: LocalProgress["preferences"]) {
+    return this.request<void>("/auth/progress/preferences", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        version: 1,
-        playerId: progress.playerId,
-        preferences: {
-          reducedMotion: progress.preferences.reducedMotion,
-          highContrast: progress.preferences.highContrast,
-          hasSeenClassicPrivacy: progress.preferences.hasSeenClassicPrivacy,
-          hasSeenClassicHowToPlay: progress.preferences.hasSeenClassicHowToPlay ?? false,
-          innerCircleActive: progress.preferences.innerCircleActive,
-          hellMode: progress.preferences.hellMode,
-          hasAutoplayedHardcoreSoundtrack: progress.preferences.hasAutoplayedHardcoreSoundtrack,
-        },
-        activeGames: Object.values(progress.games)
-          .filter((game) => game.status === "in-progress")
-          .sort((left, right) => right.startedAt.localeCompare(left.startedAt))
-          .slice(0, 16)
-          .map((game) => ({ challengeId: game.challengeId, startedAt: game.startedAt })),
+        hasSeenClassicHowToPlay: preferences.hasSeenClassicHowToPlay ?? false,
+        innerCircleActive: preferences.innerCircleActive,
+        hellMode: preferences.hellMode,
+        hasAutoplayedHardcoreSoundtrack: preferences.hasAutoplayedHardcoreSoundtrack,
       }),
     });
   }
 
   cloudProgress() {
-    return this.request<{ progress: LocalProgress | null }>("/auth/progress", {
+    return this.request<{ progress: ServerProgress | null }>("/auth/progress", {
       cache: "no-store",
-    });
+    }).then(({ progress }) => ({
+      progress: progress === null ? null : serverProgressSchema.parse(progress),
+    }));
   }
 
   progressHistory(game: "classic" | "emoji" | "timeline", category: string, page: number) {

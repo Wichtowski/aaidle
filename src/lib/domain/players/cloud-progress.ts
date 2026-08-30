@@ -1,5 +1,33 @@
+import { z } from "zod";
 import { localProgressSchema, type LocalProgress } from "../../storage/local-progress-schema";
 import { distribution } from "../../utils/dates";
+
+export const serverProgressSchema = z.object({
+  version: z.literal(1),
+  playerId: z.uuid(),
+  games: z.array(
+    z.object({
+      challengeId: z.string(),
+      challengeDate: z.string(),
+      mode: z.string(),
+      startedAt: z.string(),
+      completedAt: z.string().nullable(),
+    }),
+  ),
+  stats: z.object({
+    currentStreak: z.number(),
+    bestStreak: z.number(),
+    gamesPlayed: z.number(),
+  }),
+  preferences: z.object({
+    hasSeenClassicHowToPlay: z.boolean(),
+    innerCircleActive: z.boolean(),
+    hellMode: z.boolean(),
+    hasAutoplayedHardcoreSoundtrack: z.boolean(),
+  }),
+});
+
+export type ServerProgress = z.infer<typeof serverProgressSchema>;
 
 type StoredGame = LocalProgress["games"][string];
 
@@ -50,6 +78,43 @@ export function parseCloudProgress(value: unknown): LocalProgress {
   return reconcileStats(localProgressSchema.parse(value));
 }
 
+export function expandServerProgress(server: ServerProgress): LocalProgress {
+  return localProgressSchema.parse({
+    version: server.version,
+    playerId: server.playerId,
+    activeMode: "classic",
+    games: Object.fromEntries(
+      server.games.map((game) => [
+        `${game.mode}:${game.challengeDate}`,
+        {
+          ...game,
+          status: game.completedAt ? "solved" : "in-progress",
+          guesses: [],
+        },
+      ]),
+    ),
+    stats: {
+      classic: {
+        ...server.stats,
+        gamesWon: server.stats.gamesPlayed,
+        lastPlayedDate: null,
+        lastSolvedDate: null,
+        guessDistribution: distribution(),
+      },
+    },
+    preferences: {
+      reducedMotion: false,
+      highContrast: false,
+      hasSeenClassicPrivacy: false,
+      hasSeenClassicHowToPlay: server.preferences.hasSeenClassicHowToPlay,
+      hardcoreUnlocked: false,
+      innerCircleActive: server.preferences.innerCircleActive,
+      hellMode: server.preferences.hellMode,
+      hasAutoplayedHardcoreSoundtrack: server.preferences.hasAutoplayedHardcoreSoundtrack,
+    },
+  });
+}
+
 export function mergeCloudProgress(
   current: LocalProgress | null,
   incoming: LocalProgress,
@@ -78,16 +143,21 @@ export function mergeCloudProgress(
   });
 }
 
-export function mergeServerProgress(server: LocalProgress, local: LocalProgress): LocalProgress {
-  const merged = mergeCloudProgress(server, local);
+export function mergeServerProgress(server: ServerProgress, local: LocalProgress): LocalProgress {
+  const merged = mergeCloudProgress(expandServerProgress(server), local);
   return localProgressSchema.parse({
     ...merged,
     playerId: server.playerId,
-    stats: server.stats,
+    stats: {
+      classic: {
+        ...merged.stats.classic,
+        ...server.stats,
+        gamesWon: server.stats.gamesPlayed,
+      },
+    },
     preferences: {
-      ...local.preferences,
+      ...merged.preferences,
       ...server.preferences,
-      hellMode: server.preferences.hardcoreUnlocked ? local.preferences.hellMode : false,
     },
   });
 }

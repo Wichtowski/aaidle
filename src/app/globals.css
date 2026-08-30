@@ -26,6 +26,7 @@
 }
 body {
   margin: 0;
+  overflow-x: clip;
   background: var(--paper);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
@@ -4224,97 +4225,39 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 
 html {
   scroll-behavior: smooth;
-  scrollbar-color: var(--accent) transparent;
+  overflow-x: clip;
+}
+* {
+  scrollbar-color: var(--accent) var(--paper);
   scrollbar-width: thin;
 }
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-.how-to-play-modal__content::-webkit-scrollbar,
-.completed::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 10px;
-  background: transparent;
+  height: 10px;
+  background: var(--paper);
 }
-html::-webkit-scrollbar-button,
-body::-webkit-scrollbar-button,
-.how-to-play-modal__content::-webkit-scrollbar-button,
-.completed::-webkit-scrollbar-button {
+*::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
 }
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track,
-.how-to-play-modal__content::-webkit-scrollbar-track,
-.completed::-webkit-scrollbar-track {
-  background: transparent;
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: var(--paper);
 }
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb,
-.how-to-play-modal__content::-webkit-scrollbar-thumb,
-.completed::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: var(--accent);
   background-clip: padding-box;
-  border: 3px solid transparent;
+  border: 2px solid var(--paper);
   border-radius: 999px;
 }
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover,
-.how-to-play-modal__content::-webkit-scrollbar-thumb:hover,
-.completed::-webkit-scrollbar-thumb:hover {
+*::-webkit-scrollbar-thumb:hover {
   background: #b83e28;
+  background-clip: padding-box;
 }
 .completed {
   max-height: min(680px, calc(100vh - 40px));
   overflow-y: auto;
-  scrollbar-color: var(--accent) transparent;
-  scrollbar-width: thin;
-}
-.how-to-play-modal__content {
-  scrollbar-color: var(--accent) transparent;
-  scrollbar-width: thin;
-}
-@supports selector(::-webkit-scrollbar) {
-  html,
-  .completed,
-  .how-to-play-modal__content {
-    scrollbar-color: auto;
-    scrollbar-width: auto;
-  }
-}
-html:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]),
-body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
-  scrollbar-color: var(--accent) #17202c;
-}
-@supports selector(::-webkit-scrollbar) {
-  html:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]),
-  body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open]) {
-    scrollbar-color: auto;
-    scrollbar-width: auto;
-  }
-  html:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar,
-  html:has(
-      .how-to-play-modal,
-      .completed-modal,
-      .danger-modal,
-      dialog[open]
-    )::-webkit-scrollbar-track,
-  body:has(.how-to-play-modal, .completed-modal, .danger-modal, dialog[open])::-webkit-scrollbar,
-  body:has(
-      .how-to-play-modal,
-      .completed-modal,
-      .danger-modal,
-      dialog[open]
-    )::-webkit-scrollbar-track {
-    background: #17202c !important;
-    background-color: #17202c !important;
-  }
-}
-.how-to-play-modal__content {
-  scrollbar-color: var(--accent) var(--panel);
-}
-.how-to-play-modal__content::-webkit-scrollbar-track {
-  background: var(--panel);
-  background-color: var(--panel);
 }
 .how-to-play-modal__section-title {
   display: flex;

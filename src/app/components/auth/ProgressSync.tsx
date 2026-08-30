@@ -5,6 +5,7 @@ import { apiClient } from "@lib/api/client";
 import { useLocalProgress, useLocalProgressReady } from "@lib/storage/use-local-progress";
 import {
   getSnapshot,
+  prepareCloudProgress,
   replaceProgress,
   startCloudProgress,
 } from "@lib/storage/local-progress-store";
@@ -16,40 +17,39 @@ export function ProgressSync() {
 
   if (!user || user.disabled) return null;
 
-  return <AuthenticatedProgressSync key={user.id} />;
+  return <AuthenticatedProgressSync key={user.id} userId={user.id} />;
 }
 
-function AuthenticatedProgressSync() {
+function AuthenticatedProgressSync({ userId }: { userId: string }) {
   const progress = useLocalProgress();
   const ready = useLocalProgressReady();
-  const lastSynced = useRef<string | null>(null);
+  const lastSyncedPreferences = useRef<string | null>(null);
   const [cloudReady, setCloudReady] = useState(false);
-  const [retry, setRetry] = useState(0);
+  const [reconciliationRetry, setReconciliationRetry] = useState(0);
+  const [preferencesRetry, setPreferencesRetry] = useState(0);
 
   useEffect(() => {
     if (!ready || cloudReady) return;
 
     let cancelled = false;
     let retryTimer: number | undefined;
+    prepareCloudProgress(userId);
     const localProgress = getSnapshot();
     void apiClient
       .syncProgress(localProgress)
       .then(({ progress: cloudProgress }) => {
         if (cancelled) return;
-        const acknowledgedProgress = mergeServerProgress(cloudProgress, localProgress);
         const currentProgress = getSnapshot();
-        const requestWasSuperseded =
-          JSON.stringify(currentProgress) !== JSON.stringify(localProgress);
-        const nextProgress = requestWasSuperseded ? currentProgress : acknowledgedProgress;
+        const nextProgress = mergeServerProgress(cloudProgress, currentProgress);
 
         replaceProgress(nextProgress);
-        startCloudProgress();
-        lastSynced.current = JSON.stringify(acknowledgedProgress);
+        const cachedProgress = startCloudProgress(userId);
+        lastSyncedPreferences.current = JSON.stringify(cachedProgress.preferences);
         setCloudReady(true);
       })
       .catch(() => {
-        if (!cancelled && retry < 2) {
-          retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 2_000);
+        if (!cancelled && reconciliationRetry < 2) {
+          retryTimer = window.setTimeout(() => setReconciliationRetry((value) => value + 1), 2_000);
         }
       });
 
@@ -57,39 +57,45 @@ function AuthenticatedProgressSync() {
       cancelled = true;
       if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
-  }, [cloudReady, ready, retry]);
+  }, [cloudReady, ready, reconciliationRetry, userId]);
 
   useEffect(() => {
     if (!ready || !cloudReady) return;
 
-    const serialized = JSON.stringify(progress);
-    if (serialized === lastSynced.current) return;
+    const serialized = JSON.stringify(progress.preferences);
+    if (serialized === lastSyncedPreferences.current) return;
 
     let cancelled = false;
     let retryTimer: number | undefined;
-    const syncTimer = window.setTimeout(() => {
+    const updateTimer = window.setTimeout(() => {
       void apiClient
-        .syncProgress(progress)
-        .then(({ progress: synced }) => {
+        .updateProgressPreferences(progress.preferences)
+        .then(() => {
           if (cancelled) return;
-          const merged = mergeServerProgress(synced, getSnapshot());
-          const syncedSerialized = JSON.stringify(merged);
-          lastSynced.current = syncedSerialized;
-          if (syncedSerialized !== serialized) replaceProgress(merged);
+          lastSyncedPreferences.current = serialized;
+          setPreferencesRetry(0);
         })
         .catch(() => {
-          if (!cancelled && retry < 2) {
-            retryTimer = window.setTimeout(() => setRetry((value) => value + 1), 2_000);
+          if (!cancelled && preferencesRetry < 2) {
+            retryTimer = window.setTimeout(() => setPreferencesRetry((value) => value + 1), 2_000);
           }
         });
-    }, 750);
+    }, 250);
 
     return () => {
       cancelled = true;
-      window.clearTimeout(syncTimer);
+      window.clearTimeout(updateTimer);
       if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
-  }, [cloudReady, progress, ready, retry]);
+  }, [
+    cloudReady,
+    preferencesRetry,
+    progress.preferences.hasAutoplayedHardcoreSoundtrack,
+    progress.preferences.hasSeenClassicHowToPlay,
+    progress.preferences.hellMode,
+    progress.preferences.innerCircleActive,
+    ready,
+  ]);
 
   return null;
 }

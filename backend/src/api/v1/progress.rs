@@ -1,14 +1,15 @@
 use axum::{
     Json,
     extract::{Query, State, rejection::JsonRejection},
-    http::HeaderMap,
+    http::{HeaderMap, StatusCode},
+    response::{IntoResponse, Response},
 };
 use serde::Deserialize;
 
 use crate::{
     dto::ProgressResponse,
     error::{AppError, AppResult},
-    progress::{ProgressHistoryResponse, ProgressSyncRequest},
+    progress::{ProgressHistoryResponse, ProgressPreferencesUpdate, ProgressSyncRequest},
     state::AppState,
 };
 
@@ -18,6 +19,7 @@ use super::{
 };
 
 const PROGRESS_WRITES_PER_MINUTE: i64 = 60;
+const PREFERENCE_WRITES_PER_MINUTE: i64 = 20;
 
 #[derive(Deserialize)]
 pub(super) struct HistoryQuery {
@@ -43,7 +45,7 @@ pub(super) async fn put(
     State(state): State<AppState>,
     headers: HeaderMap,
     payload: Result<Json<ProgressSyncRequest>, JsonRejection>,
-) -> AppResult<([(&'static str, &'static str); 1], Json<ProgressResponse>)> {
+) -> AppResult<Response> {
     assert_same_origin_or_bearer(&state, &headers)?;
     assert_csrf_or_bearer(&headers)?;
     let user = authenticated_user(&state, &headers).await?;
@@ -64,14 +66,66 @@ pub(super) async fn put(
         ));
     }
     let incoming = parse_json_payload(payload)?;
-    let progress =
-        crate::progress::synchronize(&state.db, &user.id, &incoming, now_millis()).await?;
+    crate::progress::synchronize(&state.db, &user.id, &incoming, now_millis()).await?;
+    let return_minimal = headers.get("prefer").is_some_and(|value| {
+        value.to_str().is_ok_and(|value| {
+            value
+                .split(',')
+                .any(|preference| preference.trim().eq_ignore_ascii_case("return=minimal"))
+        })
+    });
+    if return_minimal {
+        return Ok((
+            StatusCode::NO_CONTENT,
+            [
+                ("cache-control", "no-store"),
+                ("preference-applied", "return=minimal"),
+            ],
+        )
+            .into_response());
+    }
+    let progress = crate::progress::load(&state.db, &user.id)
+        .await?
+        .ok_or_else(|| {
+            AppError::Unavailable("Synchronized progress could not be loaded.".to_owned())
+        })?;
     Ok((
         [("cache-control", "no-store")],
         Json(ProgressResponse {
             progress: Some(progress),
         }),
-    ))
+    )
+        .into_response())
+}
+
+pub(super) async fn preferences(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    payload: Result<Json<ProgressPreferencesUpdate>, JsonRejection>,
+) -> AppResult<StatusCode> {
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
+    let user = authenticated_user(&state, &headers).await?;
+    let subject =
+        crate::auth::rate_limit_subject(&state.config.auth_secret, "preferences", &user.id)?;
+    if !crate::auth::consume_rate_limit(
+        &state.db,
+        "progress-preferences",
+        &subject,
+        PREFERENCE_WRITES_PER_MINUTE,
+        60_000,
+        now_millis(),
+    )
+    .await?
+    {
+        return Err(AppError::rate_limited(
+            "Preferences are being updated too frequently.",
+            60,
+        ));
+    }
+    let incoming = parse_json_payload(payload)?;
+    crate::progress::update_preferences(&state.db, &user.id, &incoming, now_millis()).await?;
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub(super) async fn history(

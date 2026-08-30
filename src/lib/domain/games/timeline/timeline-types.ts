@@ -50,6 +50,7 @@ export type TimelineAttemptPayload = {
 
 export type TimelineSpeedrunStartPayload = {
   startedAt: number;
+  movableModels: TimelineModel[];
 };
 
 export type TimelineLeaderboardPayload = {

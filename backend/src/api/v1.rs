@@ -4,7 +4,7 @@ use axum::{
     extract::{Query, State, rejection::JsonRejection},
     http::{HeaderMap, HeaderName, HeaderValue, StatusCode, header},
     response::{IntoResponse, Response},
-    routing::{get, post, put},
+    routing::{get, patch, post, put},
 };
 use serde::Deserialize;
 use std::net::{IpAddr, SocketAddr};
@@ -81,6 +81,7 @@ pub fn router(state: AppState) -> Router {
             post(auth::account_deletion_complete),
         )
         .route("/auth/progress", get(progress::get).put(progress::put))
+        .route("/auth/progress/preferences", patch(progress::preferences))
         .route("/auth/progress/history", get(progress::history))
         .route("/auth/oauth/{provider}", get(auth::oauth_start))
         .route("/auth/oauth/{provider}/callback", get(auth::oauth_callback))

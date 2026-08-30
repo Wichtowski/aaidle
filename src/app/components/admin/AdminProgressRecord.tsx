@@ -5,6 +5,7 @@ import {
 } from "@lib/domain/models/model-types";
 import { modelSpaceAxes, modelSpacePoint } from "@lib/domain/models/model-space";
 import { localProgressSchema } from "@lib/storage/local-progress-schema";
+import { expandServerProgress, serverProgressSchema } from "@lib/domain/players/cloud-progress";
 import { distribution } from "@lib/utils/dates";
 
 const dateTime = new Intl.DateTimeFormat("en-GB", {
@@ -307,9 +308,15 @@ export function AdminProgressRecord({
   const [recentGamesPage, setRecentGamesPage] = useState(1);
   const [selectedGameMode, setSelectedGameMode] = useState<string | null>(null);
   const [selectedGameKey, setSelectedGameKey] = useState<string | null>(null);
-  const parsedProgress = localProgressSchema.safeParse(progress);
+  const localProgress = localProgressSchema.safeParse(progress);
+  const serverProgress = serverProgressSchema.safeParse(progress);
+  const progressData = localProgress.success
+    ? localProgress.data
+    : serverProgress.success
+      ? expandServerProgress(serverProgress.data)
+      : null;
 
-  if (!parsedProgress.success) {
+  if (!progressData) {
     return (
       <p className="admin-empty">
         This synced progress record cannot be displayed because it does not match the current game
@@ -318,7 +325,7 @@ export function AdminProgressRecord({
     );
   }
 
-  const games = Object.entries(parsedProgress.data.games)
+  const games = Object.entries(progressData.games)
     .map(([gameKey, game]) => ({ ...game, gameKey }))
     .sort(
       (left, right) =>
@@ -340,10 +347,10 @@ export function AdminProgressRecord({
   const distributionValues = Object.entries(guessDistribution);
   const largestBucket = Math.max(1, ...distributionValues.map(([, value]) => value));
   const enabledPreferences = [
-    parsedProgress.data.preferences.hardcoreUnlocked && "Hardcore unlocked",
-    parsedProgress.data.preferences.hellMode && "Hell mode",
-    parsedProgress.data.preferences.highContrast && "High contrast",
-    parsedProgress.data.preferences.reducedMotion && "Reduced motion",
+    progressData.preferences.hardcoreUnlocked && "Hardcore unlocked",
+    progressData.preferences.hellMode && "Hell mode",
+    progressData.preferences.highContrast && "High contrast",
+    progressData.preferences.reducedMotion && "Reduced motion",
   ].filter((value): value is string => Boolean(value));
   const latestSolvedGame = solvedGames.find((game) => trajectoryTargets[game.challengeId]);
   const gameModes = [...new Set(games.map((game) => game.mode.split(":")[0]))];
@@ -382,11 +389,11 @@ export function AdminProgressRecord({
         </div>
         <div>
           <dt>Current streak</dt>
-          <dd>{parsedProgress.data.stats.classic.currentStreak}</dd>
+          <dd>{progressData.stats.classic.currentStreak}</dd>
         </div>
         <div>
           <dt>Best streak</dt>
-          <dd>{parsedProgress.data.stats.classic.bestStreak}</dd>
+          <dd>{progressData.stats.classic.bestStreak}</dd>
         </div>
       </dl>
 

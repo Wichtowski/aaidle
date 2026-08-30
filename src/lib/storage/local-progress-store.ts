@@ -1,11 +1,13 @@
 import { distribution } from "../utils/dates";
 import { canonicalClassicChallengeMode } from "../domain/models/model-types";
+import { mergeCloudProgress } from "../domain/players/cloud-progress";
 import { localProgressSchema, type LocalProgress } from "./local-progress-schema";
 
 export const progressKey = "aaidle:progress:v1";
 export const playerIdKey = "aaidle:player-id:v1";
 export const innerCircleKey = "aaidle:inner-circle:v1";
 export const hellModeActiveKey = "aaidle:hell-mode-active:v1";
+export const authenticatedProgressKey = "aaidle:authenticated-progress:v1";
 const serverPlayerId = "00000000-0000-4000-8000-000000000000";
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -200,6 +202,7 @@ export function readProgress() {
 let snapshot: LocalProgress = serverSnapshot;
 let initialised = false;
 let storageMode: "local" | "cloud" = "local";
+let activeUserId: string | null = null;
 const listeners = new Set<() => void>();
 export const subscribe = (listener: () => void) => {
   listeners.add(listener);
@@ -225,12 +228,78 @@ export function initialiseProgress() {
   listeners.forEach((listener) => listener());
 }
 
-export function startCloudProgress() {
+function readAuthenticatedProgress(userId: string) {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const stored = JSON.parse(
+      window.sessionStorage.getItem(authenticatedProgressKey) ?? "null",
+    ) as {
+      userId?: unknown;
+      progress?: unknown;
+    } | null;
+    if (stored?.userId !== userId) return null;
+    return localProgressSchema.parse(stored.progress);
+  } catch {
+    return null;
+  }
+}
+
+function saveAuthenticatedProgress() {
+  if (typeof window === "undefined" || !activeUserId) return;
+  window.sessionStorage.setItem(
+    authenticatedProgressKey,
+    JSON.stringify({ userId: activeUserId, progress: snapshot }),
+  );
+}
+
+export function prepareCloudProgress(userId: string) {
+  const cached = readAuthenticatedProgress(userId);
+  const hasAnonymousState =
+    Object.keys(snapshot.games).length > 0 ||
+    snapshot.preferences.hasSeenClassicHowToPlay === true ||
+    snapshot.preferences.innerCircleActive ||
+    snapshot.preferences.hellMode ||
+    snapshot.preferences.hasAutoplayedHardcoreSoundtrack;
+  if (!cached || hasAnonymousState) return;
+
+  snapshot = cached;
+  listeners.forEach((listener) => listener());
+}
+
+export function startCloudProgress(userId: string) {
+  const cached = readAuthenticatedProgress(userId);
+  if (cached && cached !== snapshot) {
+    const merged = mergeCloudProgress(snapshot, cached);
+    snapshot = {
+      ...merged,
+      playerId: snapshot.playerId,
+      stats: snapshot.stats,
+      preferences: snapshot.preferences,
+    };
+  }
   storageMode = "cloud";
+  activeUserId = userId;
   if (typeof window !== "undefined") {
     window.localStorage.removeItem(playerIdKey);
     window.localStorage.removeItem(progressKey);
+    saveAuthenticatedProgress();
   }
+  listeners.forEach((listener) => listener());
+  return snapshot;
+}
+
+export function resetProgressAfterSignOut() {
+  if (typeof window === "undefined") return;
+
+  storageMode = "local";
+  activeUserId = null;
+  window.sessionStorage.removeItem(authenticatedProgressKey);
+  window.localStorage.removeItem(playerIdKey);
+  window.localStorage.removeItem(progressKey);
+  snapshot = readProgress();
+  window.localStorage.setItem(progressKey, JSON.stringify(snapshot));
+  listeners.forEach((listener) => listener());
 }
 
 export function replaceProgress(progress: LocalProgress) {
@@ -241,9 +310,13 @@ export function replaceProgress(progress: LocalProgress) {
 export function updateProgress(mutator: (state: LocalProgress) => LocalProgress) {
   snapshot = mutator(snapshot);
   saveInnerCirclePreferences(snapshot);
-  if (typeof window !== "undefined" && storageMode === "local") {
-    window.localStorage.setItem(playerIdKey, snapshot.playerId);
-    window.localStorage.setItem(progressKey, JSON.stringify(snapshot));
+  if (typeof window !== "undefined") {
+    if (storageMode === "cloud") {
+      saveAuthenticatedProgress();
+    } else {
+      window.localStorage.setItem(playerIdKey, snapshot.playerId);
+      window.localStorage.setItem(progressKey, JSON.stringify(snapshot));
+    }
   }
   listeners.forEach((listener) => listener());
   return snapshot;

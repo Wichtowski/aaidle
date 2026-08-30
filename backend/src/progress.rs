@@ -28,9 +28,21 @@ pub struct ProgressSyncRequest {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ProgressPreferencesInput {
+    #[serde(default)]
     pub reduced_motion: bool,
+    #[serde(default)]
     pub high_contrast: bool,
+    #[serde(default)]
     pub has_seen_classic_privacy: bool,
+    pub has_seen_classic_how_to_play: bool,
+    pub inner_circle_active: bool,
+    pub hell_mode: bool,
+    pub has_autoplayed_hardcore_soundtrack: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ProgressPreferencesUpdate {
     pub has_seen_classic_how_to_play: bool,
     pub inner_circle_active: bool,
     pub hell_mode: bool,
@@ -78,9 +90,6 @@ pub struct ProgressHistoryStats {
 #[derive(FromRow)]
 struct ProfileRow {
     primary_player_id: String,
-    reduced_motion: i64,
-    high_contrast: i64,
-    has_seen_classic_privacy: i64,
     has_seen_classic_how_to_play: i64,
     inner_circle_active: i64,
     hell_mode: i64,
@@ -110,7 +119,12 @@ struct PlayerStatsSummaryRow {
     current_streak: i64,
     best_streak: i64,
     games_won: i64,
-    guess_distribution_json: String,
+}
+
+struct PlayerStatsSummary {
+    current_streak: i64,
+    best_streak: i64,
+    games_played: i64,
 }
 
 pub async fn synchronize(
@@ -118,7 +132,7 @@ pub async fn synchronize(
     user_id: &str,
     incoming: &ProgressSyncRequest,
     now: i64,
-) -> AppResult<Value> {
+) -> AppResult<()> {
     if incoming.version != 1 {
         return Err(AppError::validation("Progress version must be 1."));
     }
@@ -179,23 +193,16 @@ pub async fn synchronize(
         == 1;
     sqlx::query(
         "INSERT INTO user_progress_profiles \
-         (user_id, primary_player_id, reduced_motion, high_contrast, has_seen_classic_privacy, \
-          has_seen_classic_how_to_play, inner_circle_active, hell_mode, \
+         (user_id, primary_player_id, has_seen_classic_how_to_play, inner_circle_active, hell_mode, \
           has_autoplayed_hardcore_soundtrack, updated_at) \
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) \
+         VALUES (?, ?, ?, ?, ?, ?, ?) \
          ON CONFLICT(user_id) DO UPDATE SET \
-          reduced_motion = excluded.reduced_motion, high_contrast = excluded.high_contrast, \
-          has_seen_classic_privacy = excluded.has_seen_classic_privacy, \
-          has_seen_classic_how_to_play = excluded.has_seen_classic_how_to_play, \
-          inner_circle_active = excluded.inner_circle_active, hell_mode = excluded.hell_mode, \
-          has_autoplayed_hardcore_soundtrack = excluded.has_autoplayed_hardcore_soundtrack, \
+          has_seen_classic_how_to_play = MAX(has_seen_classic_how_to_play, excluded.has_seen_classic_how_to_play), \
+          has_autoplayed_hardcore_soundtrack = MAX(has_autoplayed_hardcore_soundtrack, excluded.has_autoplayed_hardcore_soundtrack), \
           updated_at = excluded.updated_at",
     )
     .bind(user_id)
     .bind(&player_id)
-    .bind(incoming.preferences.reduced_motion)
-    .bind(incoming.preferences.high_contrast)
-    .bind(incoming.preferences.has_seen_classic_privacy)
     .bind(incoming.preferences.has_seen_classic_how_to_play)
     .bind(has_hardcore_access && incoming.preferences.inner_circle_active)
     .bind(has_hardcore_access && incoming.preferences.hell_mode)
@@ -386,9 +393,33 @@ pub async fn synchronize(
     if completed_challenge_categories(pool, user_id).await? == CHALLENGE_CATEGORIES.len() as i64 {
         crate::auth::grant_hardcore_access(pool, user_id, now).await?;
     }
-    load(pool, user_id).await?.ok_or_else(|| {
-        AppError::Unavailable("Synchronized progress could not be loaded.".to_owned())
-    })
+    Ok(())
+}
+
+pub async fn update_preferences(
+    pool: &SqlitePool,
+    user_id: &str,
+    incoming: &ProgressPreferencesUpdate,
+    now: i64,
+) -> AppResult<()> {
+    let has_hardcore_access = crate::auth::has_hardcore_access(pool, user_id).await?;
+    let result = sqlx::query(
+        "UPDATE user_progress_profiles SET has_seen_classic_how_to_play = ?, \
+         inner_circle_active = ?, hell_mode = ?, has_autoplayed_hardcore_soundtrack = ?, \
+         updated_at = ? WHERE user_id = ?",
+    )
+    .bind(incoming.has_seen_classic_how_to_play)
+    .bind(has_hardcore_access && incoming.inner_circle_active)
+    .bind(has_hardcore_access && incoming.hell_mode)
+    .bind(incoming.has_autoplayed_hardcore_soundtrack)
+    .bind(now)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
+    if result.rows_affected() == 0 {
+        return Err(AppError::NotFound("Progress profile not found.".to_owned()));
+    }
+    Ok(())
 }
 
 async fn rebuild_primary_player_stats(
@@ -423,8 +454,7 @@ async fn rebuild_primary_player_stats(
 
 pub async fn load(pool: &SqlitePool, user_id: &str) -> AppResult<Option<Value>> {
     let profile = sqlx::query_as::<_, ProfileRow>(
-        "SELECT primary_player_id, reduced_motion, high_contrast, has_seen_classic_privacy, \
-         has_seen_classic_how_to_play, inner_circle_active, hell_mode, \
+        "SELECT primary_player_id, has_seen_classic_how_to_play, inner_circle_active, hell_mode, \
          has_autoplayed_hardcore_soundtrack FROM user_progress_profiles WHERE user_id = ?",
     )
     .bind(user_id)
@@ -433,7 +463,6 @@ pub async fn load(pool: &SqlitePool, user_id: &str) -> AppResult<Option<Value>> 
     let Some(profile) = profile else {
         return Ok(None);
     };
-    let hardcore_unlocked = crate::auth::has_hardcore_access(pool, user_id).await?;
     let rows = sqlx::query_as::<_, ProgressGameRow>(
         "WITH recent_games AS (\
            SELECT d.id AS challenge_id, d.challenge_date, d.mode, MIN(g.created_at) AS started_at, \
@@ -462,45 +491,30 @@ pub async fn load(pool: &SqlitePool, user_id: &str) -> AppResult<Option<Value>> 
     let games = rows
         .into_iter()
         .map(|row| {
-            let key = format!("{}:{}", row.mode, row.challenge_date);
             let completed_at = row.completed_at.map(format_millis).transpose()?;
-            Ok((
-                key,
-                json!({
-                    "challengeId": row.challenge_id,
-                    "challengeDate": row.challenge_date,
-                    "mode": row.mode,
-                    "status": if completed_at.is_some() { "solved" } else { "in-progress" },
-                    "guesses": [],
-                    "startedAt": format_millis(row.started_at)?,
-                    "completedAt": completed_at,
-                }),
-            ))
+            Ok(json!({
+                "challengeId": row.challenge_id,
+                "challengeDate": row.challenge_date,
+                "mode": row.mode,
+                "startedAt": format_millis(row.started_at)?,
+                "completedAt": completed_at,
+            }))
         })
-        .collect::<AppResult<serde_json::Map<String, Value>>>()?;
+        .collect::<AppResult<Vec<Value>>>()?;
     let stats = player_stats_summary(pool, &profile.primary_player_id).await?;
     let progress = json!({
         "version": 1,
         "playerId": profile.primary_player_id,
-        "activeMode": "classic",
         "games": games,
-        "stats": {"classic": {
+        "stats": {
             "currentStreak": stats.current_streak,
             "bestStreak": stats.best_streak,
             "gamesPlayed": stats.games_played,
-            "gamesWon": stats.games_won,
-            "lastPlayedDate": Value::Null,
-            "lastSolvedDate": Value::Null,
-            "guessDistribution": stats.guess_distribution,
-        }},
+        },
         "preferences": {
-            "reducedMotion": profile.reduced_motion != 0,
-            "highContrast": profile.high_contrast != 0,
-            "hasSeenClassicPrivacy": profile.has_seen_classic_privacy != 0,
             "hasSeenClassicHowToPlay": profile.has_seen_classic_how_to_play != 0,
-            "hardcoreUnlocked": hardcore_unlocked,
             "innerCircleActive": profile.inner_circle_active != 0,
-            "hellMode": hardcore_unlocked && profile.hell_mode != 0,
+            "hellMode": profile.hell_mode != 0,
             "hasAutoplayedHardcoreSoundtrack": profile.has_autoplayed_hardcore_soundtrack != 0,
         }
     });
@@ -960,36 +974,18 @@ fn history_stats_from_rows(
     })
 }
 
-async fn player_stats_summary(
-    pool: &SqlitePool,
-    player_id: &str,
-) -> AppResult<ProgressHistoryStats> {
+async fn player_stats_summary(pool: &SqlitePool, player_id: &str) -> AppResult<PlayerStatsSummary> {
     let rows = sqlx::query_as::<_, PlayerStatsSummaryRow>(
-        "SELECT current_streak, best_streak, games_won, guess_distribution_json \
-         FROM player_mode_stats WHERE player_id = ? AND mode LIKE 'classic:%'",
+        "SELECT current_streak, best_streak, games_won FROM player_mode_stats \
+         WHERE player_id = ? AND mode LIKE 'classic:%'",
     )
     .bind(player_id)
     .fetch_all(pool)
     .await?;
-    let mut distribution = default_distribution();
-    for row in &rows {
-        for (bucket, count) in
-            serde_json::from_str::<BTreeMap<String, i64>>(&row.guess_distribution_json)?
-        {
-            let bucket = bucket
-                .parse::<i64>()
-                .ok()
-                .filter(|count| *count <= 7)
-                .map_or_else(|| "8+".to_owned(), |count| count.to_string());
-            *distribution.entry(bucket).or_default() += count;
-        }
-    }
-    Ok(ProgressHistoryStats {
+    Ok(PlayerStatsSummary {
         current_streak: rows.iter().map(|row| row.current_streak).max().unwrap_or(0),
         best_streak: rows.iter().map(|row| row.best_streak).max().unwrap_or(0),
         games_played: rows.iter().map(|row| row.games_won).sum(),
-        games_won: rows.iter().map(|row| row.games_won).sum(),
-        guess_distribution: distribution,
     })
 }
 

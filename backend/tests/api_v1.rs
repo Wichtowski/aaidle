@@ -1158,6 +1158,104 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .await
         .expect("initial progress response");
     assert_eq!(initial_sync.status(), StatusCode::OK);
+    let initial_sync = response_json(initial_sync).await;
+    let synced_progress = &initial_sync["progress"];
+    assert!(synced_progress.get("activeMode").is_none());
+    assert!(synced_progress["stats"].get("classic").is_none());
+    assert!(synced_progress["stats"].get("gamesWon").is_none());
+    assert!(
+        synced_progress["preferences"]
+            .get("hardcoreUnlocked")
+            .is_none()
+    );
+    let synced_game = synced_progress["games"]
+        .as_array()
+        .and_then(|games| games.first())
+        .expect("synced active game");
+    assert!(synced_game.get("status").is_none());
+    assert!(synced_game.get("guesses").is_none());
+    let minimal_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .header("prefer", "return=minimal")
+                .body(Body::from(progress.to_string()))
+                .expect("minimal progress request"),
+        )
+        .await
+        .expect("minimal progress response");
+    assert_eq!(minimal_sync.status(), StatusCode::NO_CONTENT);
+    assert_eq!(
+        minimal_sync.headers()["preference-applied"],
+        "return=minimal"
+    );
+    assert!(
+        minimal_sync
+            .into_body()
+            .collect()
+            .await
+            .expect("minimal progress body")
+            .to_bytes()
+            .is_empty()
+    );
+    let preference_update = app
+        .clone()
+        .oneshot(
+            Request::patch("/api/v1/auth/progress/preferences")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({
+                        "hasSeenClassicHowToPlay": true,
+                        "innerCircleActive": false,
+                        "hellMode": false,
+                        "hasAutoplayedHardcoreSoundtrack": true
+                    })
+                    .to_string(),
+                ))
+                .expect("preference update request"),
+        )
+        .await
+        .expect("preference update response");
+    assert_eq!(preference_update.status(), StatusCode::NO_CONTENT);
+    let repeated_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(progress.to_string()))
+                .expect("repeated progress request"),
+        )
+        .await
+        .expect("repeated progress response");
+    assert_eq!(repeated_sync.status(), StatusCode::OK);
+    let repeated_sync = response_json(repeated_sync).await;
+    assert_eq!(
+        repeated_sync["progress"]["preferences"]["hasSeenClassicHowToPlay"],
+        true
+    );
+    assert_eq!(
+        repeated_sync["progress"]["preferences"]["hasAutoplayedHardcoreSoundtrack"],
+        true
+    );
     let mut excessive_progress = progress.clone();
     excessive_progress["activeGames"] = serde_json::Value::Array(
         (0..17)
@@ -1323,8 +1421,8 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         .await
         .expect("progress response");
     let synced = response_json(synced).await;
-    assert_eq!(synced["progress"]["stats"]["classic"]["gamesPlayed"], 1);
-    assert_eq!(synced["progress"]["stats"]["classic"]["gamesWon"], 1);
+    assert_eq!(synced["progress"]["stats"]["gamesPlayed"], 1);
+    assert!(synced["progress"]["stats"].get("gamesWon").is_none());
     assert!(
         !auth::has_hardcore_access(&pool, &user_id)
             .await
@@ -2249,6 +2347,80 @@ async fn timeline_modes_expose_only_public_puzzle_data_and_exact_configuration()
         .await
         .expect("Timeline Hardcore response");
     assert_eq!(hardcore.status(), StatusCode::UNAUTHORIZED);
+}
+
+#[tokio::test]
+async fn timeline_speedrun_reveals_movable_models_only_after_start() {
+    let (app, pool) = test_app().await;
+    let user = auth::register_with_password(
+        &pool,
+        "speedrun@example.com",
+        "correct horse battery staple",
+        current_millis(),
+    )
+    .await
+    .expect("register Speedrun user");
+    let session = auth::create_session(&pool, &user.id, current_millis())
+        .await
+        .expect("create Speedrun session");
+    let player_id = Uuid::new_v4();
+
+    let covered = app
+        .clone()
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/timeline/speedrun?playerId={player_id}"
+            ))
+            .header("cookie", format!("aaidle_session={session}"))
+            .body(Body::empty())
+            .expect("covered Speedrun request"),
+        )
+        .await
+        .expect("covered Speedrun response");
+    assert_eq!(covered.status(), StatusCode::OK);
+    let covered = response_json(covered).await;
+    assert!(
+        covered["movableModels"]
+            .as_array()
+            .expect("covered cards")
+            .is_empty()
+    );
+    let challenge_id = covered["challenge"]["id"]
+        .as_str()
+        .expect("Speedrun challenge ID");
+
+    let started = app
+        .clone()
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/timeline/challenges/{challenge_id}/start"
+            ))
+            .header("origin", "http://localhost:3000")
+            .header(
+                "cookie",
+                format!("aaidle_session={session}; aaidle_csrf={CSRF_TOKEN}"),
+            )
+            .header(CSRF_HEADER, CSRF_TOKEN)
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({"playerId": player_id}).to_string(),
+            ))
+            .expect("start Speedrun request"),
+        )
+        .await
+        .expect("start Speedrun response");
+    assert_eq!(started.status(), StatusCode::OK);
+    let started = response_json(started).await;
+    assert!(started["startedAt"].as_i64().is_some());
+    let movable_models = started["movableModels"]
+        .as_array()
+        .expect("revealed Speedrun cards");
+    assert_eq!(movable_models.len(), 14);
+    assert!(movable_models.iter().all(|model| {
+        model["id"].as_str().is_some_and(|id| !id.is_empty())
+            && model["name"].as_str().is_some_and(|name| !name.is_empty())
+            && model.get("releaseDate").is_none()
+    }));
 }
 
 #[tokio::test]

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError, apiClient, isApiUnavailable, NetworkError } from "../../../src/lib/api/client";
+import { freshProgress } from "../../../src/lib/storage/local-progress-store";
 
 const response = (body: unknown) =>
   new Response(JSON.stringify(body), {
@@ -146,6 +147,26 @@ describe("v1 API client", () => {
       }),
     );
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty("Authorization");
+  });
+
+  it("updates only synchronized preferences after reconciliation", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiClient.updateProgressPreferences(freshProgress().preferences);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/auth/progress/preferences",
+      expect.objectContaining({
+        method: "PATCH",
+      }),
+    );
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      hasSeenClassicHowToPlay: false,
+      innerCircleActive: false,
+      hellMode: false,
+      hasAutoplayedHardcoreSoundtrack: false,
+    });
   });
 
   it("keeps unauthenticated auth checks anonymous and distinguishes connectivity failures", async () => {

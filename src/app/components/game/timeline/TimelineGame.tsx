@@ -341,17 +341,25 @@ export function TimelineGame() {
     if (speedrunStartPromise.current) return speedrunStartPromise.current;
     const promise = apiClient
       .startTimelineSpeedrun(game.challenge.id, progress.playerId)
-      .then(({ startedAt }) => {
+      .then(({ startedAt, movableModels }) => {
         const cachedGame = gameCache.current[difficulty];
         if (cachedGame) {
           gameCache.current[difficulty] = {
             ...cachedGame,
+            movableModels,
             progress: { ...cachedGame.progress, speedrunStartedAt: startedAt },
           };
         }
+        setGame((current) =>
+          current
+            ? {
+                ...current,
+                movableModels,
+                progress: { ...current.progress, speedrunStartedAt: startedAt },
+              }
+            : current,
+        );
         setSpeedrunStartedAt((current) => current ?? startedAt);
-        delete gameCache.current[difficulty];
-        setLoadAttempt((attempt) => attempt + 1);
         return startedAt;
       })
       .catch((startError: unknown) => {
