@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 import { SignOutConfirmation } from "@components/auth/SignOutConfirmation";
 import { useAuth } from "@components/auth/useAuth";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 
 export function AccountDisabledPage() {
   const { signOut, user } = useAuth();
@@ -11,7 +12,7 @@ export function AccountDisabledPage() {
   return (
     <AppPageLayout className="account-disabled-page">
       <section className="account-disabled-card">
-        <p className="eyebrow">Account unavailable</p>
+        <PageEyebrow>Account unavailable</PageEyebrow>
         <h1 data-testid="account-disabled-heading">Your account has been disabled.</h1>
         <p className="account-disabled-card__reason" data-testid="account-disabled-reason">
           <strong>Reason:</strong> {reason}

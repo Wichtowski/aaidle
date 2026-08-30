@@ -51,15 +51,20 @@ export function CookieConsent() {
         <h2 id="cookie-consent-title">Cookies? Cookies! Cookies...</h2>
         <p id="cookie-consent-description">
           We use essential cookies to keep the site working, remember this choice, and keep
-          signed-in sessions secure. Your game progress stays in your browser&apos;s local storage.
-          We do not use advertising or third-party tracking cookies.
+          signed-in sessions secure. Anonymous progress stays in your browser. If you sign in,
+          server-accepted game history is associated with your account. We do not use advertising or
+          third-party tracking cookies.
         </p>
         <p>
           Choose how you want to proceed. You can find the full, less exciting version in our
           Cookies &amp; Privacy page after making your choice.
         </p>
         <div className="cookie-consent__actions">
-          <button data-testid="cookie-consent-essential" className="button" onClick={() => choose("essential")}>
+          <button
+            data-testid="cookie-consent-essential"
+            className="button"
+            onClick={() => choose("essential")}
+          >
             Essential only
           </button>
           <button className="button button--primary" onClick={() => choose("accepted")}>

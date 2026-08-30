@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { apiClient } from "@lib/api/client";
+import { usernamePattern } from "@lib/auth/username";
 import { Toast, type ToastVariant } from "../ui/Toast";
 import { useAuth } from "./useAuth";
 
@@ -70,7 +71,7 @@ export function UsernameForm() {
             maxLength={24}
             minLength={3}
             onChange={(event) => setUsername(event.target.value)}
-            pattern="[A-Za-z0-9_-]{3,24}"
+            pattern={usernamePattern}
             type="text"
             value={username}
           />

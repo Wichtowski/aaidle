@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { applySolvedStreak } from "../../../src/lib/domain/players/streak-service";
+import {
+  applySolvedStreak,
+  calculateSolvedStreaks,
+} from "../../../src/lib/domain/players/streak-service";
 describe("streaks", () => {
   it("starts a streak", () =>
     expect(
@@ -27,4 +30,16 @@ describe("streaks", () => {
         "2026-08-11",
       ),
     ).toMatchObject({ currentStreak: 1, bestStreak: 4 }));
+
+  it("keeps the most recent streak when older solved history contains a gap", () => {
+    expect(
+      calculateSolvedStreaks([
+        "2026-08-31",
+        "2026-08-30",
+        "2026-08-20",
+        "2026-08-19",
+        "2026-08-18",
+      ]),
+    ).toEqual({ currentStreak: 2, bestStreak: 3 });
+  });
 });

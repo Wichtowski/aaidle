@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { apiClient } from "@lib/api/client";
+import { usernamePattern } from "@lib/auth/username";
 import { CommonAuthForm } from "./CommonAuthForm";
 import { RegistrationSuccessDialog } from "./RegistrationSuccessDialog";
 import type { ToastVariant } from "../ui/Toast";
@@ -66,7 +67,9 @@ export function RegistrationForm() {
         toolName="createAccount"
       >
         <label className="auth-field">
-          <span className="auth-field__label">Username <small>(optional)</small></span>
+          <span className="auth-field__label">
+            Username <small>(optional)</small>
+          </span>
           <input
             autoComplete="username"
             data-testid="register-username"
@@ -74,7 +77,7 @@ export function RegistrationForm() {
             minLength={3}
             name="username"
             onChange={(event) => setUsername(event.target.value)}
-            pattern="[A-Za-z0-9_-]{3,24}"
+            pattern={usernamePattern}
             toolparamdescription="The optional public leaderboard username."
             type="text"
             value={username}

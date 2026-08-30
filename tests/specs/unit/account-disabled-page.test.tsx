@@ -47,7 +47,12 @@ describe("AccountDisabledPage", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
 
     fireEvent.click(screen.getAllByRole("button", { name: "Sign out" }).at(-1)!);
-    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Sign out" }));
+    const confirmButton = within(screen.getByRole("dialog")).getByRole("button", {
+      name: "Sign out",
+    });
+    expect(confirmButton).toHaveClass("button--accent");
+    expect(confirmButton).not.toHaveClass("button--primary");
+    fireEvent.click(confirmButton);
     expect(signOut).toHaveBeenCalledOnce();
   });
 });

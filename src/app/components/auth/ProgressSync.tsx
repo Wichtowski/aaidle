@@ -12,6 +12,13 @@ import {
 import { mergeServerProgress } from "@lib/domain/players/cloud-progress";
 import { useAuth } from "./useAuth";
 
+const preferenceRetryDelayMs = 2_000;
+const preferenceRetryCount = 2;
+
+function wait(milliseconds: number) {
+  return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds));
+}
+
 export function ProgressSync() {
   const { user } = useAuth();
 
@@ -24,19 +31,41 @@ function AuthenticatedProgressSync({ userId }: { userId: string }) {
   const progress = useLocalProgress();
   const ready = useLocalProgressReady();
   const lastSyncedPreferences = useRef<string | null>(null);
+  const preferenceQueue = useRef(Promise.resolve());
+  const preferenceGeneration = useRef(0);
   const [cloudReady, setCloudReady] = useState(false);
   const [reconciliationRetry, setReconciliationRetry] = useState(0);
-  const [preferencesRetry, setPreferencesRetry] = useState(0);
+
+  useEffect(
+    () => () => {
+      preferenceGeneration.current += 1;
+    },
+    [userId],
+  );
 
   useEffect(() => {
     if (!ready || cloudReady) return;
 
     let cancelled = false;
     let retryTimer: number | undefined;
-    prepareCloudProgress(userId);
+    const preparation = prepareCloudProgress(userId);
+    if (preparation.source === "cache") {
+      const activeProgress = startCloudProgress(userId);
+      lastSyncedPreferences.current = JSON.stringify(activeProgress.preferences);
+      setCloudReady(true);
+      return;
+    }
+
     const localProgress = getSnapshot();
-    void apiClient
-      .syncProgress(localProgress)
+    const cloudProgress =
+      preparation.source === "server"
+        ? apiClient
+            .cloudProgress()
+            .then(({ progress: serverProgress }) =>
+              serverProgress ? { progress: serverProgress } : apiClient.syncProgress(localProgress),
+            )
+        : apiClient.syncProgress(localProgress);
+    void cloudProgress
       .then(({ progress: cloudProgress }) => {
         if (cancelled) return;
         const currentProgress = getSnapshot();
@@ -65,31 +94,33 @@ function AuthenticatedProgressSync({ userId }: { userId: string }) {
     const serialized = JSON.stringify(progress.preferences);
     if (serialized === lastSyncedPreferences.current) return;
 
-    let cancelled = false;
-    let retryTimer: number | undefined;
+    const generation = preferenceGeneration.current;
     const updateTimer = window.setTimeout(() => {
-      void apiClient
-        .updateProgressPreferences(progress.preferences)
-        .then(() => {
-          if (cancelled) return;
-          lastSyncedPreferences.current = serialized;
-          setPreferencesRetry(0);
-        })
-        .catch(() => {
-          if (!cancelled && preferencesRetry < 2) {
-            retryTimer = window.setTimeout(() => setPreferencesRetry((value) => value + 1), 2_000);
+      preferenceQueue.current = preferenceQueue.current
+        .catch(() => undefined)
+        .then(async () => {
+          for (let attempt = 0; attempt <= preferenceRetryCount; attempt += 1) {
+            if (generation !== preferenceGeneration.current) return;
+
+            try {
+              await apiClient.updateProgressPreferences(progress.preferences);
+              if (generation === preferenceGeneration.current) {
+                lastSyncedPreferences.current = serialized;
+              }
+              return;
+            } catch {
+              if (attempt === preferenceRetryCount) return;
+              await wait(preferenceRetryDelayMs);
+            }
           }
         });
     }, 250);
 
     return () => {
-      cancelled = true;
       window.clearTimeout(updateTimer);
-      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
   }, [
     cloudReady,
-    preferencesRetry,
     progress.preferences.hasAutoplayedHardcoreSoundtrack,
     progress.preferences.hasSeenClassicHowToPlay,
     progress.preferences.hellMode,

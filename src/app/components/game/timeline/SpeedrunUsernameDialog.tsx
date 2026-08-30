@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { isValidUsername, usernamePattern } from "@lib/auth/username";
 
 export function SpeedrunUsernameDialog({
   email,
@@ -9,15 +10,21 @@ export function SpeedrunUsernameDialog({
 }) {
   const [username, setUsername] = useState("");
   const emailName = email.split("@", 1)[0] ?? email;
-  const usernameIsValid = /^[A-Za-z0-9_-]{3,24}$/.test(username);
+  const usernameIsValid = isValidUsername(username);
 
   return (
-    <div className="speedrun-username-modal" role="dialog" aria-modal="true" aria-labelledby="speedrun-username-title">
+    <div
+      className="speedrun-username-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="speedrun-username-title"
+    >
       <section className="speedrun-username-modal__content">
         <p className="eyebrow">Speedrun complete</p>
         <h2 id="speedrun-username-title">Choose your leaderboard name</h2>
         <p>
-          Add a username to use on the public leaderboard, or continue with <strong>{emailName}</strong>
+          Add a username to use on the public leaderboard, or continue with{" "}
+          <strong>{emailName}</strong>
           <> from your email address.</>
         </p>
         <form
@@ -34,7 +41,7 @@ export function SpeedrunUsernameDialog({
               maxLength={24}
               minLength={3}
               onChange={(event) => setUsername(event.target.value)}
-              pattern="[A-Za-z0-9_-]{3,24}"
+              pattern={usernamePattern}
               required
               type="text"
               value={username}

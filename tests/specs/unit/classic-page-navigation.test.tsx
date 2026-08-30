@@ -2,12 +2,24 @@
 
 import { createElement, useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClassicPage } from "../../../src/app/pages/game/ClassicPage";
+import { ClassicCategoryNav } from "../../../src/app/components/game/classic/controls/ClassicCategoryNav";
 
 vi.mock("../../../src/app/components/auth/useAuth", () => ({
   useAuth: () => ({ hardcoreUnlocked: true, user: { id: "user-1" } }),
+}));
+
+vi.mock("../../../src/lib/storage/use-local-progress", () => ({
+  useLocalProgress: () => ({ preferences: { innerCircleActive: false } }),
 }));
 
 vi.mock("../../../src/app/components/game/classic/ClassicGame", () => ({
@@ -28,6 +40,18 @@ function ChangeCategory() {
 
 function LocationProbe() {
   return createElement("p", null, useLocation().pathname);
+}
+
+function CategoryNavigationHarness() {
+  const navigate = useNavigate();
+  const { category = "llm" } = useParams();
+  return createElement(
+    "div",
+    null,
+    createElement(ClassicCategoryNav, { category: category as "llm" }),
+    createElement("button", { onClick: () => navigate(-1), type: "button" }, "Go back"),
+    createElement(LocationProbe),
+  );
 }
 
 describe("ClassicPage navigation", () => {
@@ -98,5 +122,29 @@ describe("ClassicPage navigation", () => {
     expect(screen.getByText("hardcore:hardcore")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Open filters" }));
     expect(screen.getByText("filters:normal")).toBeTruthy();
+  });
+
+  it("does not add Classic category changes to navigation history", () => {
+    render(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ["/profile", "/classic/llm"], initialIndex: 1 },
+        createElement(
+          Routes,
+          null,
+          createElement(Route, { path: "/profile", element: createElement(LocationProbe) }),
+          createElement(Route, {
+            path: "/classic/:category",
+            element: createElement(CategoryNavigationHarness),
+          }),
+        ),
+      ),
+    );
+
+    fireEvent.click(screen.getByRole("link", { name: "Filters" }));
+    expect(screen.getByText("/classic/filters")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Go back" }));
+    expect(screen.getByText("/profile")).toBeTruthy();
   });
 });

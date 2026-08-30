@@ -77,7 +77,7 @@ export function SignOutConfirmation({
             Cancel
           </button>
           <button
-            className="button button--primary"
+            className="button button--accent"
             disabled={signingOut}
             onClick={() => void confirm()}
             type="button"

@@ -1,14 +1,17 @@
 import { FaArrowRight, FaHouse } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 
 export function NotFoundPage() {
   return (
     <main className="page not-found-page">
       <SiteNavbar />
       <section aria-labelledby="not-found-title" className="not-found">
-        <span aria-hidden="true" className="not-found__code">404</span>
-        <p className="eyebrow">Wrong turn</p>
+        <span aria-hidden="true" className="not-found__code">
+          404
+        </span>
+        <PageEyebrow>Wrong turn</PageEyebrow>
         <h1 id="not-found-title">This page isn’t in the catalogue.</h1>
         <p>
           The address you followed doesn’t lead to an available game or page. The timeline can

@@ -1,13 +1,14 @@
 import { SiteNavbar } from "../../components/ui/SiteNavbar";
+import { PageEyebrow } from "../../components/ui/PageEyebrow";
 
 export function PrivacyV1Page() {
   return (
     <main className="page privacy-page">
       <SiteNavbar />
       <article className="prose privacy-page__content">
-        <p className="eyebrow">
-          Cookies &amp; privacy · Last updated <time dateTime="2026-08-12">12 August 2026</time>
-        </p>
+        <PageEyebrow>
+          Cookies &amp; privacy · Last updated <time dateTime="2026-08-31">31 August 2026</time>
+        </PageEyebrow>
         <h1 data-testid="privacy-heading">The necessary corporate stuff.</h1>
         <p className="lede">
           aAIdle is a daily game, not a surveillance operation. We collect and use only what is
@@ -15,9 +16,13 @@ export function PrivacyV1Page() {
         </p>
         <h2>What we store on your device</h2>
         <p>
-          Your game progress, streak, preferences, and a random player identifier are stored in your
-          browser&apos;s local storage. That information stays on your device unless your browser
-          clears it.
+          While you play anonymously, your game progress, streak, preferences, and a random player
+          identifier are stored in your browser&apos;s local storage.
+        </p>
+        <p>
+          After you sign in, we keep a bounded tab cache of recent game summaries and a local
+          account marker so reloads and additional tabs do not repeat account linking. Signing out,
+          deleting the account, or using Clear local data removes this cache and marker.
         </p>
         <p>
           We also use essential cookies to remember your cookie choice and, if you sign in, to
@@ -29,9 +34,7 @@ export function PrivacyV1Page() {
         <ul>
           <li>We do not use advertising cookies or sell personal data</li>
           <li>We do not use third-party tracking cookies to follow you around the web</li>
-          <li>
-            We do not store your game history in an account unless that feature is clearly offered
-          </li>
+          <li>We do not attach anonymous game history to an account until you choose to sign in</li>
         </ul>
 
         <h2>Your choices</h2>
@@ -43,7 +46,8 @@ export function PrivacyV1Page() {
         <p>
           You can remove cookies and local storage at any time in your browser settings. Doing so
           resets your local game progress, preferences, and cookie choice. Signing out removes the
-          active session cookie.
+          active session cookie and signed-in browser cache. Server-accepted game history remains
+          associated with your account until you delete the account.
         </p>
 
         <h2>Changes to this page</h2>

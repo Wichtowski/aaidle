@@ -26,6 +26,7 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
             key={item}
             prefetch="intent"
             preventScrollReset
+            replace
           >
             {classicCategoryDetails[item].label}
           </Link>

@@ -139,7 +139,7 @@ pub(super) async fn user_update(
         ));
     }
     let disabled_reason = payload.disabled_reason.as_deref().map(str::trim);
-    if disabled_reason.is_some_and(|value| value.len() > 500)
+    if disabled_reason.is_some_and(|value| value.encode_utf16().count() > 500)
         || payload.disabled == Some(true) && disabled_reason.is_none_or(str::is_empty)
     {
         return Err(AppError::validation(
@@ -476,6 +476,11 @@ fn normalize_soundcloud_url(value: &str) -> AppResult<Option<String>> {
     if value.is_empty() {
         return Ok(None);
     }
+    if value.encode_utf16().count() > 2_048 {
+        return Err(AppError::validation(
+            "SoundCloud URL must not exceed 2048 characters.",
+        ));
+    }
     let url = reqwest::Url::parse(value).map_err(|_| {
         AppError::validation("Enter a public HTTPS SoundCloud track or playlist URL.")
     })?;
@@ -486,4 +491,21 @@ fn normalize_soundcloud_url(value: &str) -> AppResult<Option<String>> {
         ));
     }
     Ok(Some(url.to_string()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_soundcloud_url;
+
+    #[test]
+    fn soundtrack_url_requires_a_bounded_public_https_soundcloud_url() {
+        assert!(normalize_soundcloud_url("").is_ok_and(|value| value.is_none()));
+        assert!(normalize_soundcloud_url("https://soundcloud.com/artist/track").is_ok());
+        assert!(normalize_soundcloud_url("http://soundcloud.com/artist/track").is_err());
+        assert!(normalize_soundcloud_url("https://soundcloud.example/artist/track").is_err());
+        assert!(
+            normalize_soundcloud_url(&format!("https://soundcloud.com/{}", "a".repeat(2_100)))
+                .is_err()
+        );
+    }
 }

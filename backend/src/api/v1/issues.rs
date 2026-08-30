@@ -34,16 +34,7 @@ pub(super) async fn create(
     }
     let title = payload.title.trim();
     let description = payload.description.trim();
-    if !(8..=120).contains(&title.len()) {
-        return Err(AppError::validation(
-            "title must be between 8 and 120 characters",
-        ));
-    }
-    if !(20..=5_000).contains(&description.len()) {
-        return Err(AppError::validation(
-            "description must be between 20 and 5000 characters",
-        ));
-    }
+    validate_issue_text(title, description)?;
     let subject =
         crate::auth::rate_limit_subject(&state.config.auth_secret, "issue-report-user", &user.id)?;
     if !crate::auth::consume_rate_limit(
@@ -65,4 +56,32 @@ pub(super) async fn create(
         url: crate::issues::create_report(&state.http, &state.config, title, description, game)
             .await?,
     }))
+}
+
+fn validate_issue_text(title: &str, description: &str) -> AppResult<()> {
+    if !(8..=120).contains(&title.encode_utf16().count()) {
+        return Err(AppError::validation(
+            "title must be between 8 and 120 characters",
+        ));
+    }
+    if !(20..=5_000).contains(&description.encode_utf16().count()) {
+        return Err(AppError::validation(
+            "description must be between 20 and 5000 characters",
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::validate_issue_text;
+
+    #[test]
+    fn issue_text_limits_match_browser_utf16_length_rules() {
+        assert!(validate_issue_text("12345678", &"a".repeat(5_000)).is_ok());
+        assert!(validate_issue_text("12345678", &"😀".repeat(2_500)).is_ok());
+        assert!(validate_issue_text("12345678", &"😀".repeat(2_501)).is_err());
+        assert!(validate_issue_text(&"é".repeat(120), &"a".repeat(20)).is_ok());
+        assert!(validate_issue_text(&"é".repeat(121), &"a".repeat(20)).is_err());
+    }
 }

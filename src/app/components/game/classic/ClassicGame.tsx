@@ -4,6 +4,7 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { apiClient, isApiUnavailable, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./board/GuessBoard";
 import { SiteNavbar } from "../../ui/SiteNavbar";
+import { PageEyebrow } from "../../ui/PageEyebrow";
 import { ClassicHTP } from "./ClassicHTP";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { updateProgress } from "@lib/storage/local-progress-store";
@@ -545,7 +546,7 @@ export function ClassicGame({
       <main className="page game-page game-page--locked">
         <SiteNavbar />
         <section className="hardcore-lock" aria-labelledby="hardcore-lock-title">
-          <p className="eyebrow">Sealed</p>
+          <PageEyebrow>Sealed</PageEyebrow>
           <h1 id="hardcore-lock-title">Nothing answers.</h1>
           <p>
             {user

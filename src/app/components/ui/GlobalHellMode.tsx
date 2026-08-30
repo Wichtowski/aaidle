@@ -15,10 +15,14 @@ export function GlobalHellMode() {
 
     document.documentElement.classList.toggle("hell-mode", enabled);
     document.body.classList.toggle("hell-mode", enabled);
-    if (enabled) {
-      window.localStorage.setItem(hellModeActiveKey, "true");
-    } else {
-      window.localStorage.removeItem(hellModeActiveKey);
+    try {
+      if (enabled) {
+        window.localStorage.setItem(hellModeActiveKey, "true");
+      } else {
+        window.localStorage.removeItem(hellModeActiveKey);
+      }
+    } catch {
+      // The DOM theme remains authoritative when storage is unavailable
     }
     return () => {
       document.documentElement.classList.remove("hell-mode");

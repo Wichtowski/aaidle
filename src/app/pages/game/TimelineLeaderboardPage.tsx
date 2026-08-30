@@ -1,4 +1,5 @@
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 import { TimelineLeaderboard } from "@components/game/timeline/TimelineLeaderboard";
 import { TimelineGlobalLeaderboard } from "@components/game/timeline/TimelineGlobalLeaderboard";
 import { timelineLeaderboardPath } from "@lib/domain/games/timeline/timeline-types";
@@ -8,7 +9,7 @@ import { Link, useParams } from "react-router-dom";
 export function TimelineLeaderboardPage() {
   return (
     <AppPageLayout className="timeline-leaderboard-page">
-      <p className="eyebrow">Timeline Speedrun</p>
+      <PageEyebrow>Timeline Speedrun</PageEyebrow>
       <h1>Global leaderboard.</h1>
       <div className="timeline-leaderboard-page__description-row">
         <p className="lede">The fastest runs and most consistent players across every day.</p>
@@ -30,7 +31,7 @@ export function TimelineDailyLeaderboardPage() {
 
   return (
     <AppPageLayout className="timeline-leaderboard-page">
-      <p className="eyebrow">Timeline Speedrun · {formattedDate}</p>
+      <PageEyebrow>Timeline Speedrun · {formattedDate}</PageEyebrow>
       <h1>Daily leaderboard.</h1>
       <div className="timeline-leaderboard-page__description-row">
         <p className="lede">See who placed this timeline fastest.</p>

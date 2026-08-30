@@ -7,6 +7,7 @@ import { freshProgress } from "../../../src/lib/storage/local-progress-store";
 const mocks = vi.hoisted(() => ({
   progress: null as ReturnType<typeof freshProgress> | null,
   syncProgress: vi.fn(),
+  cloudProgress: vi.fn(),
   updateProgressPreferences: vi.fn(),
   replaceProgress: vi.fn(),
   prepareCloudProgress: vi.fn(),
@@ -20,6 +21,7 @@ vi.mock("../../../src/app/components/auth/useAuth", () => ({
 vi.mock("../../../src/lib/api/client", () => ({
   apiClient: {
     syncProgress: mocks.syncProgress,
+    cloudProgress: mocks.cloudProgress,
     updateProgressPreferences: mocks.updateProgressPreferences,
   },
 }));
@@ -61,9 +63,10 @@ describe("progress reconciliation", () => {
     });
     mocks.progress = freshProgress();
     mocks.syncProgress.mockReset().mockResolvedValue({ progress: {} });
+    mocks.cloudProgress.mockReset().mockResolvedValue({ progress: {} });
     mocks.updateProgressPreferences.mockReset().mockResolvedValue(undefined);
     mocks.replaceProgress.mockReset();
-    mocks.prepareCloudProgress.mockReset();
+    mocks.prepareCloudProgress.mockReset().mockReturnValue({ source: "reconciliation" });
     mocks.startCloudProgress.mockReset().mockImplementation(() => mocks.progress);
   });
 
@@ -109,5 +112,79 @@ describe("progress reconciliation", () => {
     await act(async () => vi.advanceTimersByTime(300));
 
     expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(1);
+  });
+
+  it("resumes the tab cache without reconciling again", async () => {
+    mocks.prepareCloudProgress.mockReturnValue({ source: "cache", progress: mocks.progress });
+
+    render(<ProgressSync />);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(mocks.syncProgress).not.toHaveBeenCalled();
+    expect(mocks.startCloudProgress).toHaveBeenCalledTimes(1);
+    expect(mocks.updateProgressPreferences).not.toHaveBeenCalled();
+  });
+
+  it("loads compact server progress instead of reconciling again in another tab", async () => {
+    mocks.prepareCloudProgress.mockReturnValue({ source: "server" });
+
+    render(<ProgressSync />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mocks.cloudProgress).toHaveBeenCalledTimes(1);
+    expect(mocks.syncProgress).not.toHaveBeenCalled();
+    expect(mocks.startCloudProgress).toHaveBeenCalledTimes(1);
+  });
+
+  it("serializes preference writes so an older request cannot overwrite a newer one", async () => {
+    let resolveFirstRequest: (() => void) | undefined;
+    mocks.updateProgressPreferences
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveFirstRequest = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(undefined);
+    const view = render(<ProgressSync />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    mocks.progress = {
+      ...mocks.progress!,
+      preferences: { ...mocks.progress!.preferences, hasSeenClassicHowToPlay: true },
+    };
+    view.rerender(<ProgressSync />);
+    await act(async () => vi.advanceTimersByTimeAsync(300));
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(1);
+
+    mocks.progress = {
+      ...mocks.progress,
+      preferences: { ...mocks.progress.preferences, hellMode: true },
+    };
+    view.rerender(<ProgressSync />);
+    await act(async () => vi.advanceTimersByTimeAsync(300));
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveFirstRequest?.();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(2);
+    expect(mocks.updateProgressPreferences).toHaveBeenLastCalledWith(
+      expect.objectContaining({ hasSeenClassicHowToPlay: true, hellMode: true }),
+    );
   });
 });

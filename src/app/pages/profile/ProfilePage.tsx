@@ -6,6 +6,7 @@ import { ActivationPrompt } from "@components/auth/ActivationPrompt";
 import { ProfileDangerZone } from "@components/auth/ProfileDangerZone";
 import { UsernameForm } from "@components/auth/UsernameForm";
 import { DistributionChart } from "@components/ui/DistributionChart";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 import { useAuth } from "@components/auth/useAuth";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import {
@@ -21,6 +22,7 @@ import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
 } from "@lib/domain/games/classic/hardcore-unlock";
+import { calculateSolvedStreaks } from "@lib/domain/players/streak-service";
 import { updateProgress } from "@lib/storage/local-progress-store";
 import { apiClient, type ProgressHistory } from "@lib/api/client";
 import { readSavedTimelineGames } from "@lib/domain/games/timeline/timeline-progress-store";
@@ -169,23 +171,9 @@ export function ProfilePage() {
     const bucket = game.attemptCount > 8 ? "8+" : String(game.attemptCount);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
-  const dates = [...new Set(solved.map((game) => game.challengeDate))].sort().reverse();
-  let currentStreak = 0;
-  let bestStreak = 0;
-  let runningStreak = 0;
-  for (let index = 0; index < dates.length; index += 1) {
-    if (
-      index === 0 ||
-      new Date(`${dates[index - 1]}T00:00:00Z`).getTime() -
-        new Date(`${dates[index]}T00:00:00Z`).getTime() ===
-        86_400_000
-    ) {
-      runningStreak += 1;
-    } else runningStreak = 1;
-    if (index === 0) currentStreak = runningStreak;
-    else if (currentStreak === index) currentStreak = runningStreak;
-    bestStreak = Math.max(bestStreak, runningStreak);
-  }
+  const { currentStreak, bestStreak } = calculateSolvedStreaks(
+    solved.map((game) => game.challengeDate),
+  );
   const localStats = {
     currentStreak,
     bestStreak,
@@ -260,7 +248,7 @@ export function ProfilePage() {
   return (
     <main className={`page prose profile-page${hellActive ? " profile-page--hell" : ""}`}>
       <SiteNavbar hardcore={hellActive} />
-      <p className="eyebrow">{hellActive ? "The ledger has noticed you" : "Your device record"}</p>
+      <PageEyebrow>{hellActive ? "The ledger has noticed you" : "Your device record"}</PageEyebrow>
       <h1 data-testid="profile-heading">{hellActive ? "The infernal" : "Profile"}</h1>
       {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
       {showRitualChallenge && !ritualComplete && (
@@ -337,7 +325,6 @@ export function ProfilePage() {
                   aria-selected={category === item}
                   onClick={() => {
                     setCategory(item);
-                    setHellMode(item === "hardcore");
                     setHistoryPage(1);
                   }}
                   role="tab"

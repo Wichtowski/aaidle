@@ -6,6 +6,7 @@ import { apiClient, type AdminUserDetail, type AdminUserSummary } from "@lib/api
 import { AdminProgressRecord } from "@components/admin/AdminProgressRecord";
 import { useAuth } from "@components/auth/useAuth";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 
 const dateTime = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "medium",
@@ -148,7 +149,7 @@ export function AdminPage() {
   return (
     <main className="page admin-page">
       <SiteNavbar />
-      <p className="eyebrow">Restricted area</p>
+      <PageEyebrow>Restricted area</PageEyebrow>
       <h1>Admin</h1>
       <p className="lede">
         Inspect registered accounts and their synced game data. Authentication secrets are never
@@ -343,6 +344,7 @@ function HardcoreSoundtrackSettings() {
           <input
             disabled={loading || saving}
             id="hardcore-soundtrack-url"
+            maxLength={2_048}
             name="url"
             onChange={(event) => setUrl(event.target.value)}
             placeholder="https://soundcloud.com/artist/track"

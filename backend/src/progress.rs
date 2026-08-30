@@ -11,6 +11,7 @@ use crate::domain::timeline::TIMELINE_HARDCORE_ATTEMPT_LIMIT;
 use crate::error::{AppError, AppResult};
 
 const MAX_ACTIVE_GAMES: usize = 16;
+const MAX_ACTIVE_GAME_CLOCK_SKEW_MS: i64 = 5 * 60 * 1_000;
 const MAX_PROGRESS_RESPONSE_BYTES: usize = 256 * 1024;
 pub const HISTORY_PAGE_SIZE: i64 = 3;
 const CHALLENGE_CATEGORIES: [&str; 6] = ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
@@ -148,6 +149,25 @@ pub async fn synchronize(
             Ok((game.challenge_id.to_string(), unix_millis(started_at)?))
         })
         .collect::<AppResult<Vec<_>>>()?;
+    if active_games
+        .iter()
+        .any(|(_, started_at)| *started_at > now.saturating_add(MAX_ACTIVE_GAME_CLOCK_SKEW_MS))
+    {
+        return Err(AppError::validation(
+            "Progress game startedAt is too far in the future.",
+        ));
+    }
+    if active_games
+        .iter()
+        .map(|(challenge_id, _)| challenge_id)
+        .collect::<BTreeSet<_>>()
+        .len()
+        != active_games.len()
+    {
+        return Err(AppError::validation(
+            "Progress activeGames must contain unique challenge IDs.",
+        ));
+    }
 
     let player_id = incoming.player_id.to_string();
     let mut transaction = pool.begin().await?;

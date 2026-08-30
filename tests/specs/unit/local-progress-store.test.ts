@@ -45,6 +45,91 @@ describe("local progress storage", () => {
     expect(store.getSnapshot().preferences.hellMode).toBe(true);
   });
 
+  it("resumes a matching tab cache without another reconciliation", async () => {
+    const store = await import("../../../src/lib/storage/local-progress-store");
+    const cachedProgress = store.freshProgress();
+    cachedProgress.preferences.hasSeenClassicHowToPlay = true;
+    window.sessionStorage.setItem(
+      store.authenticatedProgressKey,
+      JSON.stringify({ userId: "user-1", progress: cachedProgress }),
+    );
+
+    store.initialiseProgress();
+
+    expect(store.prepareCloudProgress("user-1")).toEqual({
+      source: "cache",
+      progress: cachedProgress,
+    });
+    expect(store.getSnapshot()).toEqual(cachedProgress);
+  });
+
+  it("loads compact server progress for a known user in a new tab", async () => {
+    const store = await import("../../../src/lib/storage/local-progress-store");
+    window.localStorage.setItem(store.authenticatedUserKey, "user-1");
+    store.initialiseProgress();
+
+    expect(store.prepareCloudProgress("user-1")).toEqual({ source: "server" });
+  });
+
+  it("stores bounded game summaries instead of full authenticated guess history", async () => {
+    const store = await import("../../../src/lib/storage/local-progress-store");
+    const progress = store.freshProgress();
+    progress.games.game = {
+      challengeId: crypto.randomUUID(),
+      challengeDate: "2026-08-31",
+      mode: "classic:llm:normal",
+      status: "in-progress",
+      guesses: [
+        {
+          requestId: crypto.randomUUID(),
+          modelId: "private-model-id",
+          modelName: "Model",
+          attemptedAt: "2026-08-31T12:00:00.000Z",
+          attemptNumber: 1,
+          isCorrect: false,
+          sameGuessCount: 1,
+          matchingFamily: [],
+          matchingCategories: [],
+          matchingInputModalities: [],
+          matchingOutputModalities: [],
+          matchingUseCases: [],
+          model: { large: "payload" },
+          comparison: {},
+        },
+      ],
+      startedAt: "2026-08-31T12:00:00.000Z",
+      completedAt: null,
+    };
+
+    store.initialiseProgress();
+    store.replaceProgress(progress);
+    store.startCloudProgress("user-1");
+
+    const cached = JSON.parse(window.sessionStorage.getItem(store.authenticatedProgressKey) ?? "");
+    expect(cached.progress.games.game.guesses).toEqual([]);
+    expect(window.sessionStorage.getItem(store.authenticatedProgressKey)).not.toContain(
+      "private-model-id",
+    );
+    expect(store.getSnapshot().games.game.guesses).toHaveLength(1);
+  });
+
+  it("keeps progress usable when the authenticated cache is full", async () => {
+    const store = await import("../../../src/lib/storage/local-progress-store");
+    store.initialiseProgress();
+    store.startCloudProgress("user-1");
+    vi.spyOn(window.sessionStorage, "setItem").mockImplementation(() => {
+      throw new DOMException("Quota exceeded", "QuotaExceededError");
+    });
+
+    expect(() =>
+      store.updateProgress((progress) => ({
+        ...progress,
+        preferences: { ...progress.preferences, hellMode: true },
+      })),
+    ).not.toThrow();
+    expect(store.getSnapshot().preferences.hellMode).toBe(true);
+  });
+
   it("starts a fresh anonymous cache after sign out", async () => {
     const store = await import("../../../src/lib/storage/local-progress-store");
     const authenticatedProgress = store.freshProgress();

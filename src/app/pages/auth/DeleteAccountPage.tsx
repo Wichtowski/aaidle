@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 import { apiClient } from "@lib/api/client";
+import { resetProgressAfterSignOut } from "@lib/storage/local-progress-store";
 
 export function DeleteAccountPage() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ export function DeleteAccountPage() {
     setError(null);
     try {
       await apiClient.completeAccountDeletion(confirmation);
+      resetProgressAfterSignOut();
       window.location.assign("/?account-deleted=true");
     } catch (requestError) {
       setError(
@@ -59,7 +62,7 @@ export function DeleteAccountPage() {
     <AppPageLayout className="prose delete-account-page">
       <section className="delete-account-card">
         <FaTriangleExclamation aria-hidden />
-        <p className="eyebrow">Final confirmation</p>
+        <PageEyebrow>Final confirmation</PageEyebrow>
         <h1 data-testid="delete-account-heading">Delete your account?</h1>
         {!maskedEmail && !error && <p>Verifying your single-use deletion link…</p>}
         {maskedEmail && (

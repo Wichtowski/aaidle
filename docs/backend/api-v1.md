@@ -149,6 +149,8 @@ Both provider credentials must be configured together for a provider to be avail
 The response contains the canonical player ID, recent game timestamps, current Classic summary statistics, and synchronized UI preferences.
 Game status is derived from `completedAt`, and guess details remain available through the history and game-specific endpoints.
 `PUT /api/v1/auth/progress` performs one account reconciliation after login or registration, linking the anonymous player ID and merging server-accepted game records.
+After successful reconciliation, the browser uses its bounded tab cache or `GET /api/v1/auth/progress` on subsequent loads instead of repeating the linking write.
+New anonymous progress still triggers reconciliation so accepted device activity can be linked safely.
 Clients may send `Prefer: return=minimal` to receive `204 No Content` after a successful update instead of reloading the synchronization state.
 The account retains its original player ID, deduplicates guesses by request ID, keeps solved games solved, preserves the earliest completion timestamp, and recalculates Classic saved-game statistics.
 A progress entry creates an account completion only when the persisted player ID has a matching server-accepted correct guess.
@@ -156,6 +158,7 @@ Client preferences never grant Hardcore access.
 `PATCH /api/v1/auth/progress/preferences` updates only `hasSeenClassicHowToPlay`, `innerCircleActive`, `hellMode`, and `hasAutoplayedHardcoreSoundtrack` after an explicit client-side preference change.
 Reconciliation preserves existing account preferences; toggle changes use the dedicated preference route.
 Accepted guesses and completions are persisted by their game-specific endpoints rather than repeated whole-progress synchronization.
+Active reconciliation games must reference distinct Classic challenge IDs, use valid RFC 3339 timestamps, and cannot start more than five minutes in the future.
 The request body limit for this route is 16 KB.
 
 ## Admin and public configuration

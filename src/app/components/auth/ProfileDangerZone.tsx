@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FaTriangleExclamation, FaXmark } from "react-icons/fa6";
 import { apiClient } from "@lib/api/client";
-import { playerIdKey, progressKey } from "@lib/storage/local-progress-store";
+import { resetProgressAfterSignOut } from "@lib/storage/local-progress-store";
 import { useAuth } from "./useAuth";
 
 type Confirmation = "local-data" | "account" | null;
@@ -32,8 +32,7 @@ export function ProfileDangerZone() {
   };
 
   const clearLocalData = () => {
-    window.localStorage.removeItem(progressKey);
-    window.localStorage.removeItem(playerIdKey);
+    resetProgressAfterSignOut();
     window.location.assign("/");
   };
 

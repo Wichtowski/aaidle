@@ -1,4 +1,5 @@
 import { SiteNavbar } from "@components/ui/SiteNavbar";
+import { PageEyebrow } from "@components/ui/PageEyebrow";
 import { FaGithub } from "react-icons/fa6";
 import { githubRepositoryUrl } from "@lib/github/repository";
 
@@ -7,7 +8,7 @@ export function CreditsPage() {
     <main className="page credits-page">
       <SiteNavbar />
       <section className="credits">
-        <p className="eyebrow">The people behind the game</p>
+        <PageEyebrow>The people behind the game</PageEyebrow>
         <h1 data-testid="credits-heading">Credits</h1>
         <p className="credits__lede">
           <span>Some games make a prompt the destination</span>

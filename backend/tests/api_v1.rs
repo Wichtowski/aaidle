@@ -1256,6 +1256,54 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         repeated_sync["progress"]["preferences"]["hasAutoplayedHardcoreSoundtrack"],
         true
     );
+    let mut duplicate_progress = progress.clone();
+    duplicate_progress["activeGames"] = serde_json::json!([
+        {
+            "challengeId": challenge_id,
+            "startedAt": "2026-08-16T11:00:00Z"
+        },
+        {
+            "challengeId": challenge_id,
+            "startedAt": "2026-08-16T12:00:00Z"
+        }
+    ]);
+    let duplicate_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(duplicate_progress.to_string()))
+                .expect("duplicate progress request"),
+        )
+        .await
+        .expect("duplicate progress response");
+    assert_eq!(duplicate_sync.status(), StatusCode::BAD_REQUEST);
+    let mut future_progress = progress.clone();
+    future_progress["activeGames"][0]["startedAt"] =
+        serde_json::Value::String("2999-01-01T00:00:00Z".to_owned());
+    let future_sync = app
+        .clone()
+        .oneshot(
+            Request::put("/api/v1/auth/progress")
+                .header("origin", "http://localhost:3000")
+                .header(
+                    "cookie",
+                    format!("aaidle_session={session}; aaidle_csrf={csrf}"),
+                )
+                .header(CSRF_HEADER, &csrf)
+                .header("content-type", "application/json")
+                .body(Body::from(future_progress.to_string()))
+                .expect("future progress request"),
+        )
+        .await
+        .expect("future progress response");
+    assert_eq!(future_sync.status(), StatusCode::BAD_REQUEST);
     let mut excessive_progress = progress.clone();
     excessive_progress["activeGames"] = serde_json::Value::Array(
         (0..17)

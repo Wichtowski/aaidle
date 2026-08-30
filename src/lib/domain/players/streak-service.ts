@@ -18,3 +18,28 @@ export function applySolvedStreak(previous: StreakState, today: string): StreakS
     lastSolvedDate: today,
   };
 }
+
+export function calculateSolvedStreaks(challengeDates: string[]) {
+  const dates = [...new Set(challengeDates)].sort().reverse();
+  let currentStreak = 0;
+  let runningStreak = 0;
+  let bestStreak = 0;
+
+  for (let index = 0; index < dates.length; index += 1) {
+    const consecutive =
+      index === 0 ||
+      new Date(`${dates[index - 1]}T00:00:00Z`).getTime() -
+        new Date(`${dates[index]}T00:00:00Z`).getTime() ===
+        86_400_000;
+    if (consecutive) {
+      runningStreak += 1;
+    } else {
+      if (currentStreak === 0) currentStreak = runningStreak;
+      runningStreak = 1;
+    }
+    bestStreak = Math.max(bestStreak, runningStreak);
+  }
+
+  if (currentStreak === 0) currentStreak = runningStreak;
+  return { currentStreak, bestStreak };
+}

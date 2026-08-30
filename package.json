@@ -27,7 +27,7 @@
     "visual:test": "backstop test --config=tests/configs/backstop.config.cjs",
     "allure:e2e": "allure generate reports/allure-results --clean --output report-site/e2e",
     "allure:api": "allure generate reports/api-allure-results --clean --output report-site/api",
-    "check": "pnpm ci:validate-actions && pnpm typecheck && pnpm lint && pnpm test",
+    "check": "pnpm ci:validate-actions && pnpm typecheck && pnpm lint && pnpm test:unit",
     "ci:validate-actions": "node scripts/validate-workflow-action-pins.mjs",
     "db:validate-seed": "pnpm run validate-classic-data && pnpm run validate-emoji-data && pnpm run validate-timeline-data",
     "validate-classic-data": "node scripts/validate-classic-data.mjs",

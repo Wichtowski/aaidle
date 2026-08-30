@@ -45,16 +45,18 @@ Production serves the static `dist/` assets through the platform Caddy instance.
 
 ## State ownership
 
-| State                              | Owner                | Notes                                                                          |
-| ---------------------------------- | -------------------- | ------------------------------------------------------------------------------ |
-| Challenge answer and eligible pool | API/database         | Never sent in a public challenge DTO                                           |
-| Accepted guesses and attempt order | API/database         | Server validates sequence and limits                                           |
-| Anonymous player identity          | Browser              | UUID only; no IP, device, or location is attached                              |
-| Anonymous UI progress              | Browser localStorage | Key `aaidle:progress:v1`; validated and synchronized across tabs               |
-| Verified account progress          | API/database         | Local progress is merged only when backed by accepted server events            |
-| Sessions and one-time auth tokens  | API cookies/API      | Browser sessions use HttpOnly cookies plus readable CSRF cookie/header pairing |
-| Aggregate completion statistics    | API/database         | Derived from server-confirmed completions                                      |
-| Admin permissions                  | API/database         | Roles are `user`, `developer`, and `superadmin`                                |
+| State                              | Owner                  | Notes                                                                          |
+| ---------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| Challenge answer and eligible pool | API/database           | Never sent in a public challenge DTO                                           |
+| Accepted guesses and attempt order | API/database           | Server validates sequence and limits                                           |
+| Anonymous player identity          | Browser                | UUID only; no IP, device, or location is attached                              |
+| Anonymous UI progress              | Browser localStorage   | Key `aaidle:progress:v1`; validated and synchronized across tabs               |
+| Authenticated UI cache             | Browser sessionStorage | Bounded game summaries for reload continuity; accepted game data stays on API  |
+| Reconciled account marker          | Browser localStorage   | User ID only; prevents repeat linking writes in other tabs                     |
+| Verified account progress          | API/database           | Local progress is merged only when backed by accepted server events            |
+| Sessions and one-time auth tokens  | API cookies/API        | Browser sessions use HttpOnly cookies plus readable CSRF cookie/header pairing |
+| Aggregate completion statistics    | API/database           | Derived from server-confirmed completions                                      |
+| Admin permissions                  | API/database           | Roles are `user`, `developer`, and `superadmin`                                |
 
 ## Game flow and invariants
 
