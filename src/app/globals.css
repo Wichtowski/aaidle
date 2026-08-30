@@ -83,6 +83,31 @@ html:has(body.profile-hell) {
   gap: 8px;
   flex-shrink: 0;
 }
+.install-prompt__actions .button {
+  margin-top: 0;
+}
+.install-prompt__actions .button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.install-prompt__actions .button--primary:hover:not(:disabled),
+.install-prompt__actions .button--primary:focus-visible {
+  background: color-mix(in srgb, var(--accent) 82%, var(--paper));
+}
+:is(body.hell-mode, body.profile-hell) .install-prompt {
+  border-color: #69372f;
+  background: #201014;
+  color: #fff2e9;
+  box-shadow: 0 12px 36px #0008;
+}
+:is(body.hell-mode, body.profile-hell) .install-prompt p {
+  color: #d8b9af;
+}
+:is(body.hell-mode, body.profile-hell) .install-prompt__actions .button:not(.button--primary) {
+  border-color: #d8b9af;
+  color: #fff2e9;
+}
 @media (max-width: 560px) {
   .install-prompt {
     right: 16px;
@@ -92,7 +117,11 @@ html:has(body.profile-hell) {
     gap: 12px;
   }
   .install-prompt__actions {
-    justify-content: flex-end;
+    align-items: stretch;
+  }
+  .install-prompt__actions .button {
+    flex: 1;
+    text-align: center;
   }
 }
 .page {
