@@ -70,7 +70,15 @@ const timelineGame: TimelineGamePayload = {
 describe("game submit regressions", () => {
   beforeEach(() => {
     authState.user = { id: "user-1", username: "tester" };
-    window.localStorage.clear();
+    const values = new Map<string, string>();
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: (key: string) => values.get(key) ?? null,
+        setItem: (key: string, value: string) => values.set(key, value),
+        clear: () => values.clear(),
+      },
+    });
   });
 
   afterEach(() => {
@@ -118,6 +126,77 @@ describe("game submit regressions", () => {
         "anchor-new",
       ]),
     );
+  });
+
+  it("opens and closes Timeline rules and year annotations", async () => {
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue({
+      ...timelineGame,
+      slots: timelineGame.slots.map((slot) =>
+        slot.anchor
+          ? {
+              ...slot,
+              anchor: { ...slot.anchor, yearAnnotation: "Recorded publication year." },
+            }
+          : slot,
+      ),
+    });
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: "Timeline rules" }));
+    expect(screen.getByRole("dialog", { name: "How to play" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Close Timeline rules" }));
+    expect(screen.queryByRole("dialog", { name: "How to play" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Show year note for Old anchor" }));
+    expect(screen.getByRole("dialog", { name: "Old anchor" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Close year note" }));
+    expect(screen.queryByRole("dialog", { name: "Old anchor" })).not.toBeInTheDocument();
+  });
+
+  it("moves a selected Timeline card with keyboard navigation", async () => {
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue(timelineGame);
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    const model = await screen.findByRole("button", { name: /Model A/ });
+    fireEvent.click(model);
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Empty timeline position 2, place selected card",
+      }),
+    );
+
+    fireEvent.keyDown(screen.getByRole("button", { name: /Position 2: Model A/ }), {
+      key: "ArrowRight",
+    });
+    expect(screen.getByRole("button", { name: /Position 3: Model A/ })).toBeInTheDocument();
+  });
+
+  it("shows the Timeline retry state after a load failure", async () => {
+    const load = vi
+      .spyOn(apiClient, "timelineGame")
+      .mockRejectedValueOnce(new Error("unavailable"))
+      .mockResolvedValueOnce(timelineGame);
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Game unavailable"));
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    expect(await screen.findByRole("region", { name: "Timeline arrangement" })).toBeInTheDocument();
+    expect(load).toHaveBeenCalledTimes(2);
   });
 
   it("does not remount Timeline cards when resubmitting an unchanged arrangement", async () => {

@@ -51,6 +51,11 @@ const game: TimelineGamePayload = {
 };
 
 describe("Timeline arrangement", () => {
+  it("rejects invalid visual positions", () => {
+    expect(timelineVisualPosition(0, 0)).toBeNull();
+    expect(timelineVisualPosition(-1, 6)).toBeNull();
+  });
+
   it.each([
     [
       6,
@@ -195,12 +200,46 @@ describe("Timeline arrangement", () => {
   });
 
   it("rejects corrupt saved arrangements and skips anchors for keyboard movement", () => {
+    expect(restoreTimelinePositions(game, ["anchor-old", "movable-a"])).toBeNull();
     expect(
       restoreTimelinePositions(game, ["anchor-old", "movable-a", "movable-a", "anchor-new"]),
     ).toBeNull();
     expect(
+      restoreTimelinePositions(game, ["anchor-old", "unknown", "movable-b", "anchor-new"]),
+    ).toBeNull();
+    expect(
       restoreTimelinePositions(game, ["movable-a", "anchor-old", "movable-b", "anchor-new"]),
     ).toBeNull();
+    expect(
+      timelineArrangementIsComplete(
+        ["anchor-old", null, "movable-b", "anchor-new"],
+        new Set(["anchor-old", "movable-b", "anchor-new"]),
+      ),
+    ).toBe(false);
+    expect(
+      timelineArrangementIsComplete(["anchor-old", "movable-a"], new Set(["anchor-old"])),
+    ).toBe(false);
+    expect(
+      moveTimelineModel(["anchor-old", null, null, "anchor-new"], new Set([0, 3]), "missing", null),
+    ).toEqual(["anchor-old", null, null, "anchor-new"]);
+    expect(
+      moveTimelineModel(
+        ["anchor-old", "movable-a", null, "anchor-new"],
+        new Set([0, 3]),
+        "movable-a",
+        null,
+      ),
+    ).toEqual(["anchor-old", null, null, "anchor-new"]);
+    expect(
+      moveTimelineModel(
+        ["anchor-old", "movable-a", null, "anchor-new"],
+        new Set([0, 3]),
+        "movable-a",
+        1,
+      ),
+    ).toEqual(["anchor-old", "movable-a", null, "anchor-new"]);
+    expect(adjacentMovablePosition(0, -1, 4, new Set([0, 3]))).toBe(0);
+    expect(adjacentMovablePosition(3, 1, 4, new Set([0, 3]))).toBe(3);
     expect(adjacentMovablePosition(2, 1, 4, new Set([3]))).toBe(2);
     expect(adjacentMovablePosition(2, -1, 4, new Set([0]))).toBe(1);
   });

@@ -60,6 +60,7 @@ describe("progress reconciliation", () => {
         getItem: (key: string) => values.get(key) ?? null,
         setItem: (key: string, value: string) => values.set(key, value),
         removeItem: (key: string) => values.delete(key),
+        clear: () => values.clear(),
       },
     });
     mocks.progress = freshProgress();
@@ -160,6 +161,50 @@ describe("progress reconciliation", () => {
     expect(mocks.cloudProgress).toHaveBeenCalledTimes(1);
     expect(mocks.syncProgress).not.toHaveBeenCalled();
     expect(mocks.startCloudProgress).toHaveBeenCalledTimes(1);
+  });
+
+  it("reconciles when another tab has no compact server progress", async () => {
+    mocks.prepareCloudProgress.mockReturnValue({ source: "server" });
+    mocks.cloudProgress.mockResolvedValue({ progress: undefined });
+
+    render(<ProgressSync />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mocks.cloudProgress).toHaveBeenCalledTimes(1);
+    expect(mocks.syncProgress).toHaveBeenCalledTimes(1);
+    expect(mocks.replaceProgress).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries a failed preference update up to the retry limit", async () => {
+    mocks.updateProgressPreferences
+      .mockRejectedValueOnce(new Error("temporary failure"))
+      .mockRejectedValueOnce(new Error("temporary failure"))
+      .mockResolvedValueOnce(undefined);
+    const view = render(<ProgressSync />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    mocks.progress = {
+      ...mocks.progress!,
+      preferences: { ...mocks.progress!.preferences, hellMode: true },
+    };
+    view.rerender(<ProgressSync />);
+
+    await act(async () => vi.advanceTimersByTimeAsync(250));
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(1);
+
+    await act(async () => vi.advanceTimersByTimeAsync(2_000));
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(2);
+
+    await act(async () => vi.advanceTimersByTimeAsync(2_000));
+    expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(3);
   });
 
   it("serializes preference writes so an older request cannot overwrite a newer one", async () => {
