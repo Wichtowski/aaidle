@@ -49,6 +49,12 @@ pnpm check
 pnpm test:e2e
 ```
 
+## Unit tests
+
+Frontend unit tests are in `tests/specs/unit/` and run with `pnpm test:unit`; use `pnpm test:unit:coverage` to generate the frontend coverage report. Rust unit tests live in adjacent `tests.rs` modules under `backend/src/`, while integration and executable workflow tests live in `backend/tests/`; run all backend tests with `cd backend && cargo test`.
+
+Any API behavior change must update `docs/backend/api-v1.md` and the affected frontend, handler, domain, repository, and integration tests. New routes, response fields, validation rules, and error branches require corresponding tests. Release CI publishes separate frontend and backend coverage reports, and backend coverage enforces a 95% minimum for lines, functions, regions, and branches.
+
 ## Delivery
 
 Pull requests to `main` run `pnpm check`.

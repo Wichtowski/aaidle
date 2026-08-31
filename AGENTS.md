@@ -8,7 +8,7 @@ This file is the repository-level instruction set for coding agents. Keep it sho
 - Backend: Rust + Axum + SQLx in `backend/`; SQLite is the application database.
 - API: versioned under `/api/v1`; public JSON uses camelCase.
 - Data: canonical catalogs are in `data/`; SQLx migrations are in `backend/migrations/`.
-- Tests: frontend/API Playwright and Vitest tests are in `tests/`; Rust integration tests are in `backend/tests/`.
+- Tests: frontend/API Playwright and Vitest tests are in `tests/`; Rust unit tests are adjacent `tests.rs` modules under `backend/src/`, and integration/executable workflow tests are in `backend/tests/`.
 
 Read [docs/architecture.md](docs/architecture.md) for the detailed system map and invariants. Read [docs/backend/api-v1.md](docs/backend/api-v1.md) before changing an API boundary.
 
@@ -26,9 +26,11 @@ Read [docs/architecture.md](docs/architecture.md) for the detailed system map an
 2. Make the smallest change that satisfies the request; preserve unrelated user changes.
 3. Keep UI, client domain logic, API handlers, Rust domain logic, repositories, migrations, and seed data in their existing boundaries.
 4. For schema changes, add an additive migration and cover the repository/domain behavior with tests.
-5. For API changes, update the API contract, frontend validation, and relevant tests together.
-6. Do not edit generated `dist/` or `backend/target/` output.
-7. Do not restore removed legacy migration documentation or unversioned compatibility routes without an explicit requirement.
+5. For every API behavior change, update the API contract, frontend validation, and affected unit, integration, and end-to-end tests together; add tests for every new route, field, validation rule, and error branch.
+6. Keep Rust test bodies in adjacent `tests.rs` files or `backend/tests/`, never inline in production source files. Test-only modules must remain behind `#[cfg(test)]` and absent from release binaries.
+7. Keep backend coverage at or above 95% for lines, functions, regions, and branches.
+8. Do not edit generated `dist/` or `backend/target/` output.
+9. Do not restore removed legacy migration documentation or unversioned compatibility routes without an explicit requirement.
 
 ## Useful commands
 
