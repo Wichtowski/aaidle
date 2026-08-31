@@ -1,0 +1,2 @@
+[API POST /api/v1/games/classic/hardcore/access] HTTP 403
+{"error":{"code":"FORBIDDEN","message":"Complete every Classic Challenge category to enter Hardcore."}}

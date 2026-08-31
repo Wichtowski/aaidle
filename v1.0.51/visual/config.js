@@ -1,0 +1,642 @@
+report({
+  "testSuite": "BackstopJS",
+  "tests": [
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Homepage_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Homepage_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Homepage_0_document_0_desktop.png",
+        "label": "Homepage",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -114
+          },
+          "rawMisMatchPercentage": 70.96030998010264,
+          "misMatchPercentage": "70.96",
+          "analysisTime": 657
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Homepage_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Homepage_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Homepage_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Homepage_0_document_1_mobile.png",
+        "label": "Homepage",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -25
+          },
+          "rawMisMatchPercentage": 51.036120548315665,
+          "misMatchPercentage": "51.04",
+          "analysisTime": 493
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Homepage_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Classic_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Classic_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Classic_0_document_0_desktop.png",
+        "label": "Classic",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/classic",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 47
+          },
+          "rawMisMatchPercentage": 78.16819195119089,
+          "misMatchPercentage": "78.17",
+          "analysisTime": 824
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Classic_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Classic_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Classic_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Classic_0_document_1_mobile.png",
+        "label": "Classic",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/classic",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -673
+          },
+          "rawMisMatchPercentage": 33.73561178439227,
+          "misMatchPercentage": "33.74",
+          "analysisTime": 278
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Classic_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Emoji_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Emoji_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Emoji_0_document_0_desktop.png",
+        "label": "Emoji",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/emoji",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -47
+          },
+          "rawMisMatchPercentage": 77.95604540654699,
+          "misMatchPercentage": "77.96",
+          "analysisTime": 985
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Emoji_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Emoji_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Emoji_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Emoji_0_document_1_mobile.png",
+        "label": "Emoji",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/emoji",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -569
+          },
+          "rawMisMatchPercentage": 34.78035258523063,
+          "misMatchPercentage": "34.78",
+          "analysisTime": 463
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Emoji_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_0_document_0_desktop.png",
+        "label": "Timeline",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -68
+          },
+          "rawMisMatchPercentage": 73.30692391899288,
+          "misMatchPercentage": "73.31",
+          "analysisTime": 676
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Timeline_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_0_document_1_mobile.png",
+        "label": "Timeline",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 353
+          },
+          "rawMisMatchPercentage": 32.862607980255035,
+          "misMatchPercentage": "32.86",
+          "analysisTime": 443
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Timeline_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_global_leaderboard_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_global_leaderboard_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_global_leaderboard_0_document_0_desktop.png",
+        "label": "Timeline global leaderboard",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline/leaderboard",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "error": "Reference file not found /home/runner/work/aaidle/aaidle/tests/reports/visual/bitmaps_reference/aaidle-visual-regression_Timeline_global_leaderboard_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_global_leaderboard_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_global_leaderboard_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_global_leaderboard_0_document_1_mobile.png",
+        "label": "Timeline global leaderboard",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline/leaderboard",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "error": "Reference file not found /home/runner/work/aaidle/aaidle/tests/reports/visual/bitmaps_reference/aaidle-visual-regression_Timeline_global_leaderboard_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_daily_leaderboard_0_document_0_desktop.png",
+        "label": "Timeline daily leaderboard",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline/leaderboard/20260826",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "error": "Reference file not found /home/runner/work/aaidle/aaidle/tests/reports/visual/bitmaps_reference/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Timeline_daily_leaderboard_0_document_1_mobile.png",
+        "label": "Timeline daily leaderboard",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/timeline/leaderboard/20260826",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "error": "Reference file not found /home/runner/work/aaidle/aaidle/tests/reports/visual/bitmaps_reference/aaidle-visual-regression_Timeline_daily_leaderboard_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Profile_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Profile_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Profile_0_document_0_desktop.png",
+        "label": "Profile",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/profile",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -449
+          },
+          "rawMisMatchPercentage": 53.19777737981535,
+          "misMatchPercentage": "53.20",
+          "analysisTime": 554
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Profile_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Profile_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Profile_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Profile_0_document_1_mobile.png",
+        "label": "Profile",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/profile",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 50
+          },
+          "rawMisMatchPercentage": 42.548393958732184,
+          "misMatchPercentage": "42.55",
+          "analysisTime": 431
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Profile_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Login_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Login_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Login_0_document_0_desktop.png",
+        "label": "Login",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/login",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 18
+          },
+          "rawMisMatchPercentage": 76.59822970639033,
+          "misMatchPercentage": "76.60",
+          "analysisTime": 893
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Login_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Login_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Login_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Login_0_document_1_mobile.png",
+        "label": "Login",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/login",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -552
+          },
+          "rawMisMatchPercentage": 34.64665415884928,
+          "misMatchPercentage": "34.65",
+          "analysisTime": 409
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Login_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Register_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Register_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Register_0_document_0_desktop.png",
+        "label": "Register",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/register",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 130
+          },
+          "rawMisMatchPercentage": 68.77185855772207,
+          "misMatchPercentage": "68.77",
+          "analysisTime": 756
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Register_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Register_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Register_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Register_0_document_1_mobile.png",
+        "label": "Register",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/register",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -440
+          },
+          "rawMisMatchPercentage": 37.707350878082586,
+          "misMatchPercentage": "37.71",
+          "analysisTime": 328
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Register_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Privacy_policy_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Privacy_policy_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Privacy_policy_0_document_0_desktop.png",
+        "label": "Privacy policy",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/privacy/v1",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -327
+          },
+          "rawMisMatchPercentage": 58.43106793999651,
+          "misMatchPercentage": "58.43",
+          "analysisTime": 831
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Privacy_policy_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Privacy_policy_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Privacy_policy_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Privacy_policy_0_document_1_mobile.png",
+        "label": "Privacy policy",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/privacy/v1",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -449
+          },
+          "rawMisMatchPercentage": 33.56183321595326,
+          "misMatchPercentage": "33.56",
+          "analysisTime": 414
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Privacy_policy_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Credits_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Credits_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Credits_0_document_0_desktop.png",
+        "label": "Credits",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/credits",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 50
+          },
+          "rawMisMatchPercentage": 74.16652735985735,
+          "misMatchPercentage": "74.17",
+          "analysisTime": 806
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Credits_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Credits_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Credits_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Credits_0_document_1_mobile.png",
+        "label": "Credits",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/credits",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -314
+          },
+          "rawMisMatchPercentage": 37.80538512245829,
+          "misMatchPercentage": "37.81",
+          "analysisTime": 451
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Credits_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Report_an_issue_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Report_an_issue_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Report_an_issue_0_document_0_desktop.png",
+        "label": "Report an issue",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/report-issue",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": 18
+          },
+          "rawMisMatchPercentage": 76.59938111686816,
+          "misMatchPercentage": "76.60",
+          "analysisTime": 863
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Report_an_issue_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_Report_an_issue_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_Report_an_issue_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_Report_an_issue_0_document_1_mobile.png",
+        "label": "Report an issue",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/report-issue",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -552
+          },
+          "rawMisMatchPercentage": 34.64665415884928,
+          "misMatchPercentage": "34.65",
+          "analysisTime": 387
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_Report_an_issue_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_404_0_document_0_desktop.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_404_0_document_0_desktop.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_404_0_document_0_desktop.png",
+        "label": "404",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/404",
+        "expect": 0,
+        "viewportLabel": "desktop",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -47
+          },
+          "rawMisMatchPercentage": 77.89760061011381,
+          "misMatchPercentage": "77.90",
+          "analysisTime": 573
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_404_0_document_0_desktop.png"
+      },
+      "status": "fail"
+    },
+    {
+      "pair": {
+        "reference": "./bitmaps_reference/aaidle-visual-regression_404_0_document_1_mobile.png",
+        "test": "./bitmaps_test/20260831-095650/aaidle-visual-regression_404_0_document_1_mobile.png",
+        "selector": "document",
+        "fileName": "aaidle-visual-regression_404_0_document_1_mobile.png",
+        "label": "404",
+        "requireSameDimensions": true,
+        "misMatchThreshold": 0.1,
+        "url": "https://aaidle.com/404",
+        "expect": 0,
+        "viewportLabel": "mobile",
+        "diff": {
+          "isSameDimensions": false,
+          "dimensionDifference": {
+            "width": 0,
+            "height": -673
+          },
+          "rawMisMatchPercentage": 33.68270709734124,
+          "misMatchPercentage": "33.68",
+          "analysisTime": 124
+        },
+        "diffImage": "./bitmaps_test/20260831-095650/failed_diff_aaidle-visual-regression_404_0_document_1_mobile.png"
+      },
+      "status": "fail"
+    }
+  ],
+  "id": "aaidle-visual-regression"
+});

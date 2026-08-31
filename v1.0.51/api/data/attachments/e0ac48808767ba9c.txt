@@ -1,0 +1,2 @@
+[API POST /api/v1/auth/token] HTTP 403
+{"error":{"code":"FORBIDDEN","message":"This account has been disabled."}}
