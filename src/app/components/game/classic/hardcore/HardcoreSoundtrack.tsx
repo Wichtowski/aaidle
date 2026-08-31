@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaVolumeHigh } from "react-icons/fa6";
-import { updateProgress } from "@lib/storage/local-progress-store";
-import { useLocalProgress, useLocalProgressReady } from "@lib/storage/use-local-progress";
+import { readProgress, updateProgress } from "@lib/storage/local-progress-store";
 import { apiClient } from "@lib/api/client";
 
 type SoundCloudWidget = {
@@ -45,9 +44,7 @@ export function HardcoreSoundtrack() {
   const [trackUrl, setTrackUrl] = useState<string | null>(null);
   const [volume, setVolume] = useState(25);
   const [minimized, setMinimized] = useState(false);
-  const progress = useLocalProgress();
-  const progressReady = useLocalProgressReady();
-  const autoplayAttempted = useRef(false);
+  const hasPlayed = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -72,11 +69,21 @@ export function HardcoreSoundtrack() {
     if (!trackUrl || !iframe) return;
 
     let widget: SoundCloudWidget | null = null;
+    const retryAutoplay = () => {
+      if (!hasPlayed.current) widget?.play();
+    };
+    const removeAutoplayFallback = () => {
+      document.removeEventListener("keydown", retryAutoplay, true);
+      document.removeEventListener("pointerdown", retryAutoplay, true);
+    };
+    hasPlayed.current = false;
     void loadWidgetApi()
       .then((api) => {
         widget = api.Widget(iframe);
         widget.bind(api.Widget.Events.PLAY, () => {
-          if (!progress.preferences.hasAutoplayedHardcoreSoundtrack) {
+          hasPlayed.current = true;
+          removeAutoplayFallback();
+          if (!readProgress().preferences.hasAutoplayedHardcoreSoundtrack) {
             updateProgress((state) => ({
               ...state,
               preferences: { ...state.preferences, hasAutoplayedHardcoreSoundtrack: true },
@@ -85,28 +92,26 @@ export function HardcoreSoundtrack() {
         });
         widget.bind(api.Widget.Events.READY, () => {
           widget?.setVolume(volume);
-          if (
-            progressReady &&
-            !progress.preferences.hasAutoplayedHardcoreSoundtrack &&
-            !autoplayAttempted.current
-          ) {
-            autoplayAttempted.current = true;
-            widget?.play();
+          widget?.play();
+          if (!hasPlayed.current) {
+            document.addEventListener("keydown", retryAutoplay, true);
+            document.addEventListener("pointerdown", retryAutoplay, true);
           }
         });
       })
       .catch(() => {});
 
     return () => {
+      removeAutoplayFallback();
       widget = null;
     };
-  }, [progress.preferences.hasAutoplayedHardcoreSoundtrack, progressReady, trackUrl]);
+  }, [trackUrl]);
 
   if (!trackUrl) return null;
 
   const playerUrl = new URL("https://w.soundcloud.com/player/");
   playerUrl.searchParams.set("url", trackUrl);
-  playerUrl.searchParams.set("auto_play", "false");
+  playerUrl.searchParams.set("auto_play", "true");
   playerUrl.searchParams.set("show_artwork", "true");
   playerUrl.searchParams.set("show_playcount", "false");
   playerUrl.searchParams.set("show_user", "true");
@@ -157,7 +162,7 @@ export function HardcoreSoundtrack() {
         <iframe
           allow="autoplay"
           className="hardcore-soundtrack__player"
-          loading="lazy"
+          loading="eager"
           ref={iframeRef}
           src={playerUrl.toString()}
           tabIndex={minimized ? -1 : undefined}

@@ -27,6 +27,12 @@ const CSRF_HEADER: &str = "x-aaidle-csrf-token";
 const CSRF_TOKEN: &str = "test-csrf-token";
 
 async fn test_app() -> (axum::Router, SqlitePool) {
+    test_app_with_environment(AppEnvironment::Local).await
+}
+
+async fn test_app_with_environment(
+    environment: AppEnvironment,
+) -> (axum::Router, SqlitePool) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
         .connect("sqlite::memory:")
@@ -35,7 +41,7 @@ async fn test_app() -> (axum::Router, SqlitePool) {
     db::migrate(&pool).await.expect("migrate test database");
     seed(&pool).await;
     let config = Arc::new(AppConfig {
-        environment: AppEnvironment::Local,
+        environment,
         bind_addr: "127.0.0.1:0".parse().expect("socket address"),
         database_url: "sqlite::memory:".to_owned(),
         daily_selection_secret: "test secret that is longer than thirty two bytes".to_owned(),
@@ -409,8 +415,8 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
     let runner_user_id = Uuid::new_v4().to_string();
     let rival_user_id = Uuid::new_v4().to_string();
     for (user_id, email, username) in [
-        (&runner_user_id, "runner@example.test", "runner"),
-        (&rival_user_id, "rival@example.test", "rival"),
+        (&runner_user_id, "runner@example.test", Some("runner")),
+        (&rival_user_id, "email-rival@example.test", None),
     ] {
         sqlx::query(
             "INSERT INTO users (id, email, email_normalized, username, created_at, updated_at) \
@@ -510,7 +516,7 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
         .expect("global leaderboard response");
     assert_eq!(global.status(), StatusCode::OK);
     let global_body = response_json(global).await;
-    assert_eq!(global_body["fastest"][0]["displayName"], "rival");
+    assert_eq!(global_body["fastest"][0]["displayName"], "email-rival");
     assert_eq!(global_body["average"][0]["averageTimeMs"], 9_000);
     assert_eq!(global_body["completions"][0]["displayName"], "runner");
     assert_eq!(global_body["completions"][0]["completedSpeedruns"], 2);
@@ -537,8 +543,10 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
     assert_eq!(dated.status(), StatusCode::OK);
     let dated_body = response_json(dated).await;
     assert_eq!(dated_body["challengeDate"], "2026-08-29");
-    assert_eq!(dated_body["entries"][0]["displayName"], "rival");
-    assert_eq!(dated_body["entries"][1]["displayName"], "runner");
+    assert_eq!(dated_body["entries"][0]["displayName"], "runner");
+    assert_eq!(dated_body["entries"][0]["submissions"], 2);
+    assert_eq!(dated_body["entries"][1]["displayName"], "email-rival");
+    assert_eq!(dated_body["entries"][1]["submissions"], 3);
 
     let missing = app
         .oneshot(
@@ -653,6 +661,91 @@ async fn password_accounts_use_same_origin_sessions_and_are_readable_by_me() {
         .await
         .expect("logout response");
     assert_eq!(logout.status(), StatusCode::NO_CONTENT);
+}
+
+#[tokio::test]
+async fn production_does_not_create_the_reserved_fixture_admin_account() {
+    let (app, pool) = test_app_with_environment(AppEnvironment::Production).await;
+    let response = app
+        .oneshot(
+            Request::post("/api/v1/auth/register")
+                .header("origin", "http://localhost:3000")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    serde_json::json!({
+                        "email": " Admin@AAIdle.com ",
+                        "password": "correct horse battery staple"
+                    })
+                    .to_string(),
+                ))
+                .expect("register request"),
+        )
+        .await
+        .expect("register response");
+
+    assert_eq!(response.status(), StatusCode::ACCEPTED);
+    assert_eq!(response_json(response).await["accepted"], true);
+    let user_count = sqlx::query_scalar::<_, i64>(
+        "SELECT COUNT(*) FROM users WHERE email_normalized = 'admin@aaidle.com'",
+    )
+    .fetch_one(&pool)
+    .await
+    .expect("count reserved fixture admin accounts");
+    assert_eq!(user_count, 0);
+}
+
+#[tokio::test]
+async fn password_login_allows_one_hundred_attempts_per_five_minutes() {
+    let (app, pool) = test_app().await;
+    let email = "rate-limit@example.test";
+    let password = "correct horse battery staple";
+    auth::register_with_password(&pool, email, password, current_millis())
+        .await
+        .expect("rate-limit user");
+    let subject = auth::rate_limit_subject(
+        "test secret that is longer than thirty two bytes",
+        "127.0.0.1",
+        email,
+    )
+    .expect("rate-limit subject");
+    sqlx::query(
+        "INSERT INTO request_rate_limits \
+         (scope, subject_hash, window_started_at, count) VALUES ('password-login', ?, ?, 99)",
+    )
+    .bind(subject)
+    .bind(current_millis())
+    .execute(&pool)
+    .await
+    .expect("prime password login rate limit");
+    let login_request = || {
+        Request::post("/api/v1/auth/password")
+            .header("origin", "http://localhost:3000")
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({ "email": email, "password": password }).to_string(),
+            ))
+            .expect("login request")
+    };
+
+    let allowed = app
+        .clone()
+        .oneshot(login_request())
+        .await
+        .expect("allowed login response");
+    assert_eq!(allowed.status(), StatusCode::OK);
+
+    let limited = app
+        .oneshot(login_request())
+        .await
+        .expect("limited login response");
+    assert_eq!(limited.status(), StatusCode::TOO_MANY_REQUESTS);
+    assert_eq!(
+        limited
+            .headers()
+            .get("retry-after")
+            .and_then(|value| value.to_str().ok()),
+        Some("300")
+    );
 }
 
 #[tokio::test]

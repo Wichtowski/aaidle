@@ -236,13 +236,16 @@ pub async fn timeline_leaderboard(
         ));
     }
     let rows = sqlx::query_as::<_, (String, String, i64, i64)>(
-        "SELECT COALESCE(NULLIF(u.username, ''), 'Anonymous runner'), \
+        "SELECT COALESCE(NULLIF(u.username, ''), \
+                CASE WHEN INSTR(u.email, '@') > 1 \
+                     THEN SUBSTR(u.email, 1, INSTR(u.email, '@') - 1) \
+                     ELSE u.email END), \
                 u.id, a.speedrun_time_ms, a.attempt_number \
          FROM timeline_attempts a \
          JOIN users u ON u.id = a.user_id \
          WHERE a.challenge_id = ? AND a.is_correct = 1 AND a.speedrun_time_ms IS NOT NULL \
            AND u.disabled_at IS NULL \
-         ORDER BY a.speedrun_time_ms ASC, a.attempt_number ASC, a.created_at ASC, a.user_id ASC \
+         ORDER BY a.attempt_number ASC, a.speedrun_time_ms ASC, a.created_at ASC, a.user_id ASC \
          LIMIT 10",
     )
     .bind(challenge_id.to_string())

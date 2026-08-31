@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCircleQuestion } from "react-icons/fa6";
-import { apiClient, isApiUnavailable, type ClassicGamePayload } from "@lib/api/client";
+import { apiClient, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./board/GuessBoard";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { PageEyebrow } from "../../ui/PageEyebrow";
@@ -15,7 +15,6 @@ import {
 import { useAuth } from "../../auth/useAuth";
 import { applySolvedStreak } from "@lib/domain/players/streak-service";
 import { saveClassicPreference } from "@lib/storage/game-preferences";
-import type { PublicDailyChallengeDto } from "@lib/domain/challenges/challenge-types";
 import {
   classicChallengeMode,
   focusedClassicCategories,
@@ -36,6 +35,7 @@ import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
 } from "@lib/domain/games/classic/hardcore-unlock";
+import { useClassicGameLoader } from "./use-classic-game-loader";
 
 const GameCompletedDialog = lazy(() =>
   import("./completion/GameCompletedDialog").then(({ GameCompletedDialog }) => ({
@@ -144,19 +144,29 @@ export function ClassicGame({
   const navigate = useNavigate();
   const { hardcoreUnlocked, user } = useAuth();
   const progress = useLocalProgress();
-  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
-  const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
-  const [challenge, setChallenge] = useState<PublicDailyChallengeDto | null>(
-    initialGame?.challenge ?? null,
-  );
-  const [models, setModels] = useState<PublicModelIndex[]>(initialGame?.models ?? []);
-  const [columns, setColumns] = useState<string[]>(initialGame?.columns ?? []);
-  const [globalCompletionCount, setGlobalCompletionCount] = useState(
-    initialGame?.globalCompletionCount ?? 0,
-  );
-  const [error, setError] = useState<unknown>(null);
-  const [isLoadingGame, setIsLoadingGame] = useState(false);
-  const [loadAttempt, setLoadAttempt] = useState(0);
+  const [toast, setToast] = useState<string | null>(null);
+  const showRetryNotice = useCallback((message: string) => setToast(message), []);
+  const {
+    challenge,
+    columns,
+    error,
+    globalCompletionCount,
+    isLoadingGame,
+    loadedDifficulty,
+    models,
+    selectedDifficulty,
+    setError,
+    setGlobalCompletionCount,
+    setIsLoadingGame,
+    setLoadAttempt,
+    setSelectedDifficulty,
+  } = useClassicGameLoader({
+    category,
+    difficulty,
+    hasHardcoreAccess,
+    initialGame,
+    onRetryNotice: showRetryNotice,
+  });
   const [busy, setBusy] = useState(false);
   const [pendingGuess, setPendingGuess] = useState<PendingGuess | null>(null);
   const [retryGuess, setRetryGuess] = useState<PendingGuess | null>(null);
@@ -165,95 +175,11 @@ export function ClassicGame({
   const [showRitualGate, setShowRitualGate] = useState(false);
   const [progressReady, setProgressReady] = useState(false);
   const [animatedGuessId, setAnimatedGuessId] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
   const animatedGameKey = useRef<string | null>(null);
   const completionGameKey = useRef<string | null>(null);
   const hydratedHistoryKeys = useRef(new Set<string>());
-  const loadedDifficultyRef = useRef(difficulty);
-  const loadFailureKey = useRef<string | null>(null);
-  const loadFailureCount = useRef(0);
-  const previousRoute = useRef({ category, difficulty });
   const guessFailureModelId = useRef<string | null>(null);
   const guessFailureCount = useRef(0);
-  const gameCache = useRef<
-    Partial<Record<ClassicCategory, Partial<Record<ClassicDifficulty, GamePayload>>>>
-  >(initialGame ? { [category]: { [difficulty]: initialGame } } : {});
-
-  useEffect(() => {
-    const previous = previousRoute.current;
-    if (previous.category === category && previous.difficulty === difficulty) return;
-
-    previousRoute.current = { category, difficulty };
-    setSelectedDifficulty(difficulty);
-    setLoadedDifficulty(difficulty);
-    setChallenge(null);
-    setModels([]);
-    setColumns([]);
-    setError(null);
-  }, [category, difficulty]);
-
-  useEffect(() => {
-    if (category === "hardcore" && !hasHardcoreAccess) return;
-    const currentLoadKey = `${category}:${selectedDifficulty}`;
-    if (loadFailureKey.current !== currentLoadKey) {
-      loadFailureKey.current = currentLoadKey;
-      loadFailureCount.current = 0;
-    }
-    const cachedGame = gameCache.current[category]?.[selectedDifficulty];
-
-    if (cachedGame) {
-      setChallenge(cachedGame.challenge);
-      setModels(cachedGame.models);
-      setColumns(cachedGame.columns);
-      setGlobalCompletionCount(cachedGame.globalCompletionCount);
-      setLoadedDifficulty(selectedDifficulty);
-      loadedDifficultyRef.current = selectedDifficulty;
-      setIsLoadingGame(false);
-      setError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    let retrying = false;
-    setIsLoadingGame(true);
-    setError(null);
-
-    void apiClient
-      .classicGame(category, selectedDifficulty, controller.signal)
-      .then((game) => {
-        if (controller.signal.aborted) return;
-        loadFailureCount.current = 0;
-        (gameCache.current[category] ??= {})[selectedDifficulty] = game;
-        setChallenge(game.challenge);
-        setModels(game.models);
-        setColumns(game.columns);
-        setGlobalCompletionCount(game.globalCompletionCount);
-        setLoadedDifficulty(selectedDifficulty);
-        loadedDifficultyRef.current = selectedDifficulty;
-      })
-      .catch((fetchError: unknown) => {
-        if (controller.signal.aborted) return;
-        if (isApiUnavailable(fetchError) && loadFailureCount.current === 0) {
-          loadFailureCount.current += 1;
-          retrying = true;
-          setToast(
-            fetchError instanceof Error
-              ? fetchError.message
-              : "We could not load today’s game. Retrying now.",
-          );
-          setLoadAttempt((attempt) => attempt + 1);
-          return;
-        }
-        setSelectedDifficulty(loadedDifficultyRef.current);
-        setError(fetchError);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted && !retrying) setIsLoadingGame(false);
-      });
-
-    return () => controller.abort();
-  }, [category, hasHardcoreAccess, loadAttempt, selectedDifficulty]);
-
   const key = challenge
     ? `${classicChallengeMode(category, loadedDifficulty)}:${challenge.date}`
     : "";

@@ -6,11 +6,15 @@ This document records frontend cleanup and performance debt identified during th
 
 ### Split oversized game components
 
+- [x] Classic loading, caching, and retry lifecycle extracted.
+- [x] Timeline loading, hydration, persistence, and speedrun lifecycle extracted.
+- [x] Emoji loading, history, submission, retry, and completion lifecycle extracted.
+
 Files:
 
-- `src/app/components/game/ClassicGame.tsx` — 648 lines
-- `src/app/components/game/TimelineGame.tsx` — 530 lines
-- `src/app/components/game/EmojiDifficultyGame.tsx` — 496 lines
+- `src/app/components/game/classic/ClassicGame.tsx`
+- `src/app/components/game/timeline/TimelineGame.tsx`
+- `src/app/components/game/emoji/EmojiGame.tsx`
 
 These components combine data fetching, caching, local-progress hydration, submission handling, retries, animations, dialogs, navigation, and rendering.
 

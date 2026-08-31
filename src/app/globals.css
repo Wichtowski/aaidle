@@ -1246,7 +1246,7 @@ body.hell-mode .game-placeholder__status {
 .privacy-page {
   max-width: 960px;
 }
-.profile-page > :not(.site-navbar) {
+.profile-page > :not(.site-navbar):not(.danger-modal) {
   max-width: 850px;
   margin-inline: auto;
 }
@@ -5294,9 +5294,7 @@ body.hell-mode .completed--timeline {
   font-weight: 800;
   text-align: center;
 }
-.timeline-leaderboard__rank[data-podium] {
-  width: 100%;
-  text-align: center;
+.timeline-leaderboard__medal {
   font-size: 32px;
   line-height: 1;
 }

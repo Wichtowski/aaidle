@@ -117,13 +117,12 @@ export function TimelineGlobalLeaderboard() {
               );
             return (
               <li key={`${ranking}-${entry.rank}-${entry.displayName}`}>
-                <span
-                  className="timeline-leaderboard__rank"
-                  data-podium={podium ? true : undefined}
-                >
+                <span className="timeline-leaderboard__rank">
                   {podium ? (
                     <>
-                      <span aria-hidden="true" className="timeline-leaderboard__emoji">{podium.emoji}</span>
+                      <span aria-hidden="true" className="timeline-leaderboard__medal">
+                        {podium.emoji}
+                      </span>
                       <span className="sr-only">{podium.label}</span>
                     </>
                   ) : (

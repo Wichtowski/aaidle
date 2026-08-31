@@ -1,5 +1,7 @@
+// eslint-disable-next-line no-undef
 const baseUrl = process.env.AAIDLE_VISUAL_BASE_URL ?? "https://aaidle.com";
 
+// eslint-disable-next-line no-undef
 module.exports = {
   id: "aaidle-visual-regression",
   engine: "playwright",
@@ -18,6 +20,7 @@ module.exports = {
   },
   scenarios: [
     { label: "Homepage", url: `${baseUrl}/` },
+    { label: "Cookie Banner", url: `${baseUrl}/` },
     { label: "Classic", url: `${baseUrl}/classic` },
     { label: "Emoji", url: `${baseUrl}/emoji` },
     { label: "Timeline", url: `${baseUrl}/timeline` },

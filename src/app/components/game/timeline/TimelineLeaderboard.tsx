@@ -76,12 +76,12 @@ export function TimelineLeaderboard({
               );
             return (
               <li key={`${entry.rank}-${entry.displayName}-${entry.timeMs}`}>
-                <span
-                  data-podium={podium ? true : undefined}
-                >
+                <span className="timeline-leaderboard__rank">
                   {podium ? (
                     <>
-                      <span aria-hidden="true">{podium.emoji}</span>
+                      <span aria-hidden="true" className="timeline-leaderboard__medal">
+                        {podium.emoji}
+                      </span>
                       <span className="sr-only">{podium.label}</span>
                     </>
                   ) : (

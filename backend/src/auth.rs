@@ -9,11 +9,12 @@ use sqlx::{SqlitePool, Transaction};
 use uuid::Uuid;
 
 use crate::{
-    config::{AppConfig, OAuthClientConfig},
+    config::{AppConfig, AppEnvironment, OAuthClientConfig},
     error::{AppError, AppResult},
 };
 
 const PASSWORD_KEY_LENGTH: usize = 64;
+const PRODUCTION_RESERVED_EMAIL: &str = "admin@aaidle.com";
 const SESSION_LIFETIME_MILLIS: i64 = 30 * 24 * 60 * 60 * 1_000;
 pub const API_ACCESS_TOKEN_LIFETIME_SECONDS: i64 = 15 * 60;
 const EMAIL_VERIFICATION_LIFETIME_MILLIS: i64 = 30 * 60 * 1_000;
@@ -233,6 +234,11 @@ pub fn normalize_email(email: &str) -> AppResult<String> {
         return Err(AppError::validation("Enter a valid email address."));
     }
     Ok(normalized)
+}
+
+pub fn is_production_reserved_email(environment: AppEnvironment, email: &str) -> bool {
+    environment == AppEnvironment::Production
+        && email.trim().eq_ignore_ascii_case(PRODUCTION_RESERVED_EMAIL)
 }
 
 pub fn validate_password(password: &str, minimum_length: usize) -> AppResult<()> {
@@ -754,6 +760,7 @@ async fn consume_auth_email_token(
 
 pub async fn find_or_create_oauth_user(
     pool: &SqlitePool,
+    environment: AppEnvironment,
     provider: OAuthProvider,
     identity: OAuthIdentity,
     now: i64,
@@ -788,6 +795,11 @@ pub async fn find_or_create_oauth_user(
             user.id
         }
         None => {
+            if is_production_reserved_email(environment, &normalized_email) {
+                return Err(AppError::Forbidden(
+                    "This account cannot be created in production.".to_owned(),
+                ));
+            }
             let user_id = Uuid::new_v4().to_string();
             sqlx::query("INSERT INTO users (id, email, email_normalized, display_name, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
                 .bind(&user_id)
@@ -1102,6 +1114,22 @@ fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn production_reserves_the_fixture_admin_email() {
+        assert!(is_production_reserved_email(
+            AppEnvironment::Production,
+            " Admin@AAIdle.com "
+        ));
+        assert!(!is_production_reserved_email(
+            AppEnvironment::Local,
+            PRODUCTION_RESERVED_EMAIL
+        ));
+        assert!(!is_production_reserved_email(
+            AppEnvironment::Production,
+            "user@aaidle.com"
+        ));
+    }
 
     #[test]
     fn verifies_the_node_scrypt_wire_format() {

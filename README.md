@@ -1,7 +1,7 @@
 # aAIdle
 
 aAIdle is a daily guessing game for AI models.
-It runs on a VPS with Node.js and SQLite.
+It runs on a VPS with a React frontend, a Rust/Axum API, and SQLite.
 The daily answer stays server-side.
 
 ## Documentation
@@ -9,6 +9,24 @@ The daily answer stays server-side.
 - [Architecture](docs/architecture.md) describes system boundaries and data flow.
 - [Backend operations](docs/backend/operations.md) covers the Rust service, configuration, SQLite, and Docker.
 - [API v1 contract](docs/backend/api-v1.md) defines the public Rust API.
+
+## System overview
+
+```mermaid
+flowchart LR
+    browser[Browser]
+    caddy[Caddy]
+    frontend[React SPA]
+    api[Rust / Axum API<br/>/api/v1]
+    database[(SQLite)]
+
+    browser -->|HTTPS| caddy
+    caddy -->|Static assets and SPA fallback| frontend
+    caddy -->|/api/*| api
+    api -->|SQLx| database
+```
+
+Caddy serves the Vite-built frontend and proxies API requests to the private Rust container. The API owns server-authoritative game and account state, including the secret daily answer.
 
 ## Local development
 

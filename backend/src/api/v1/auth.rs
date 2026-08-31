@@ -26,6 +26,8 @@ use super::{
 };
 
 const FAILED_PASSWORD_LOGIN_DELAY: Duration = Duration::from_secs(3);
+const PASSWORD_AUTH_ATTEMPTS_PER_WINDOW: i64 = 100;
+const PASSWORD_AUTH_WINDOW_MILLIS: i64 = 5 * 60 * 1_000;
 
 pub(super) async fn register(
     State(state): State<AppState>,
@@ -50,6 +52,16 @@ pub(super) async fn register(
         60 * 60 * 1_000,
     )
     .await?;
+    if crate::auth::is_production_reserved_email(state.config.environment, &email) {
+        return Ok((
+            StatusCode::ACCEPTED,
+            [("cache-control", "no-store")],
+            Json(EmailAcceptedResponse {
+                accepted: true,
+                activation_url: None,
+            }),
+        ));
+    }
     let now = now_millis();
     let user = match crate::auth::register_with_password_and_username(
         &state.db,
@@ -135,8 +147,8 @@ pub(super) async fn password_login(
         Some(peer),
         "password-login",
         &email,
-        10,
-        5 * 60 * 1_000,
+        PASSWORD_AUTH_ATTEMPTS_PER_WINDOW,
+        PASSWORD_AUTH_WINDOW_MILLIS,
     )
     .await?;
     let user = match crate::auth::verify_password_credentials(&state.db, &email, &payload.password)
@@ -174,8 +186,8 @@ pub(super) async fn api_token(
         Some(peer),
         "api-token",
         &email,
-        10,
-        5 * 60 * 1_000,
+        PASSWORD_AUTH_ATTEMPTS_PER_WINDOW,
+        PASSWORD_AUTH_WINDOW_MILLIS,
     )
     .await?;
     let user =
@@ -582,9 +594,14 @@ pub(super) async fn oauth_callback(
     let result = async {
         let identity =
             crate::auth::oauth_identity(&state.http, &state.config, provider, &query.code).await?;
-        let user =
-            crate::auth::find_or_create_oauth_user(&state.db, provider, identity, now_millis())
-                .await?;
+        let user = crate::auth::find_or_create_oauth_user(
+            &state.db,
+            state.config.environment,
+            provider,
+            identity,
+            now_millis(),
+        )
+        .await?;
         let disabled = user.disabled;
         let session = crate::auth::rotate_session(
             &state.db,

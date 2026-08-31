@@ -23,7 +23,7 @@ module.exports = async (page, scenario, _viewport, _isReference, browserContext)
     });
   }
 
-  if (scenario.label.startsWith("Timeline ") && scenario.label.endsWith(" leaderboard")) {
+  if (scenario.label !== "Cookie Banner") {
     await browserContext.addCookies([
       {
         name: "aaidle_cookie_consent",

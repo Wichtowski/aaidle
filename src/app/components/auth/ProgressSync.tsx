@@ -34,7 +34,7 @@ function AuthenticatedProgressSync({ userId }: { userId: string }) {
   const preferenceQueue = useRef(Promise.resolve());
   const preferenceGeneration = useRef(0);
   const [cloudReady, setCloudReady] = useState(false);
-  const [reconciliationRetry, setReconciliationRetry] = useState(0);
+  const reconciliationAttempted = useRef(false);
 
   useEffect(
     () => () => {
@@ -44,10 +44,11 @@ function AuthenticatedProgressSync({ userId }: { userId: string }) {
   );
 
   useEffect(() => {
-    if (!ready || cloudReady) return;
+    if (!ready || cloudReady || reconciliationAttempted.current) return;
+
+    reconciliationAttempted.current = true;
 
     let cancelled = false;
-    let retryTimer: number | undefined;
     const preparation = prepareCloudProgress(userId);
     if (preparation.source === "cache") {
       const activeProgress = startCloudProgress(userId);
@@ -76,17 +77,12 @@ function AuthenticatedProgressSync({ userId }: { userId: string }) {
         lastSyncedPreferences.current = JSON.stringify(cachedProgress.preferences);
         setCloudReady(true);
       })
-      .catch(() => {
-        if (!cancelled && reconciliationRetry < 2) {
-          retryTimer = window.setTimeout(() => setReconciliationRetry((value) => value + 1), 2_000);
-        }
-      });
+      .catch(() => undefined);
 
     return () => {
       cancelled = true;
-      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
-  }, [cloudReady, ready, reconciliationRetry, userId]);
+  }, [cloudReady, ready, userId]);
 
   useEffect(() => {
     if (!ready || !cloudReady) return;

@@ -98,8 +98,8 @@ Before the timer starts, the Speedrun response returns an empty `movableModels` 
 `POST /api/v1/games/timeline/challenges/{challengeId}/start` records the first card-drop timestamp for the signed-in player and challenge idempotently.
 It returns the server timestamp as `startedAt` together with the revealed `movableModels`, without release-date metadata.
 The timestamp is included in subsequent Speedrun progress and is used by the server to calculate the completion time.
-`GET /api/v1/games/timeline/challenges/{challengeId}/leaderboard` returns the ten fastest completed Speedruns for that challenge with display name, submission count, and server-measured duration.
-Entries rank by duration, then by fewer submissions when durations tie.
+`GET /api/v1/games/timeline/challenges/{challengeId}/leaderboard` returns the top ten completed Speedruns for that challenge with display name, submission count, and server-measured duration.
+Entries rank by fewer submissions, then by duration when submission counts tie.
 When the request has an authenticated session, `isCurrentUser` identifies that account's entry without exposing its user ID.
 `GET /api/v1/games/timeline/leaderboard` returns the same leaderboard for the current UTC Speedrun challenge and is public.
 `GET /api/v1/games/timeline/leaderboard/{date}` returns a historical daily leaderboard, where `date` uses `YYYYMMDD` format.
@@ -107,6 +107,7 @@ Valid dates without a recorded Speedrun return an empty `entries` array.
 `GET /api/v1/games/timeline/leaderboard/global` returns public top-ten rankings for fastest completion, average completion time, and total completed Speedruns.
 Each global entry includes completed Speedruns, average time, average submissions, fastest time, and up to 30 recent completed runs for charting.
 Global responses expose display names and aggregate run data without exposing account IDs or email addresses.
+Leaderboard display names use the saved username, or the part before `@` in the account email when no username is set.
 Before the Speedrun start endpoint is called, movable card names and metadata are returned as covered placeholders.
 
 Classic and Emoji guess requests share persisted abuse limits: 360 requests per minute for a player and challenge, 1,500 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
@@ -115,11 +116,12 @@ Classic and Emoji guess requests share persisted abuse limits: 360 requests per 
 
 All browser account mutations require an `Origin` exactly matching `APP_ORIGIN`.
 Authenticated browser mutations additionally use double-submit CSRF protection: the frontend copies the readable `aaidle_csrf` cookie into the `X-AAIdle-CSRF-Token` header. The opaque `aaidle_session` and one-time-token cookies remain `HttpOnly` and `SameSite=Lax`; all authentication cookies are marked `Secure` in production.
-Authentication request limits are persisted in SQLite and keyed by an HMAC of the validated client IP and normalized email address.
+Authentication request limits are persisted in SQLite and keyed by an HMAC of the validated client IP and normalized email address. Password-session and API-token authentication each allow 100 attempts per five-minute window; registration, verification, recovery, and account-deletion routes retain their stricter limits.
 
 `POST /api/v1/auth/register` creates an unverified password account and sends a verification message through Resend.
 The optional username must be 3-24 ASCII letters, numbers, underscores, or hyphens and must be unique regardless of letter case.
-It always returns `202` for an existing account to avoid account enumeration.
+Production reserves `admin@aaidle.com` for the local fixture and does not create that address through password registration or OAuth.
+It always returns `202` for an existing or reserved account to avoid account enumeration.
 In non-production without `RESEND_API_KEY`, the response includes `activationUrl` for local development.
 
 `PUT /api/v1/auth/username` sets or removes the authenticated account's public username and returns `409 USERNAME_TAKEN` if another account already uses it, regardless of letter case.

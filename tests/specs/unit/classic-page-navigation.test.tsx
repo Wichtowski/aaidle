@@ -2,20 +2,20 @@
 
 import { createElement, useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClassicPage } from "../../../src/app/pages/game/ClassicPage";
 import { ClassicCategoryNav } from "../../../src/app/components/game/classic/controls/ClassicCategoryNav";
 
+const authState = vi.hoisted(() => ({
+  hardcoreAccessLoading: false,
+  hardcoreUnlocked: true,
+  loading: false,
+  user: { id: "user-1" } as { id: string } | null,
+}));
+
 vi.mock("../../../src/app/components/auth/useAuth", () => ({
-  useAuth: () => ({ hardcoreUnlocked: true, user: { id: "user-1" } }),
+  useAuth: () => authState,
 }));
 
 vi.mock("../../../src/lib/storage/use-local-progress", () => ({
@@ -56,6 +56,10 @@ function CategoryNavigationHarness() {
 
 describe("ClassicPage navigation", () => {
   beforeEach(() => {
+    authState.hardcoreAccessLoading = false;
+    authState.hardcoreUnlocked = true;
+    authState.loading = false;
+    authState.user = { id: "user-1" };
     const values = new Map<string, string>();
     Object.defineProperty(window, "localStorage", {
       configurable: true,
@@ -96,6 +100,42 @@ describe("ClassicPage navigation", () => {
     );
 
     expect(await screen.findByText("/classic/hardcore")).toBeTruthy();
+  });
+
+  it("opens the regular Classic game for signed-out visitors with a saved Hardcore game", () => {
+    authState.hardcoreUnlocked = false;
+    authState.user = null;
+    window.localStorage.setItem(
+      "aaidle:game-preferences:v1",
+      JSON.stringify({ classic: { category: "hardcore", difficulty: "hardcore" } }),
+    );
+
+    render(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ["/classic"] },
+        createElement(
+          Routes,
+          null,
+          createElement(Route, {
+            path: "/classic",
+            element: createElement(
+              "div",
+              null,
+              createElement(ClassicPage),
+              createElement(LocationProbe),
+            ),
+          }),
+          createElement(Route, {
+            path: "/classic/hardcore",
+            element: createElement(LocationProbe),
+          }),
+        ),
+      ),
+    );
+
+    expect(screen.getByText("llm:normal")).toBeTruthy();
+    expect(screen.getByText("/classic")).toBeTruthy();
   });
 
   it("resets Hardcore difficulty when moving to a regular category", () => {

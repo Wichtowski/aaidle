@@ -2,18 +2,30 @@
 
 use std::sync::Arc;
 
-use aidle_api::{auth, config::AppConfig, db, error::AppResult};
+use aidle_api::{
+    auth,
+    config::AppConfig,
+    db,
+    error::{AppError, AppResult},
+};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-const EMAIL: &str = "admin@test.com";
+const EMAIL: &str = "admin@aaidle.com";
 const PASSWORD: &str = "zaq1@WSX";
 const PLAYER_ID: &str = "00000000-0000-4000-8000-000000000001";
+const HARDCORE_SOUNDTRACK_URL: &str =
+    "https://soundcloud.com/user-348797964/the-only-thing-they-fear-is";
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
     dotenvy::dotenv().ok();
     let config = Arc::new(AppConfig::from_env()?);
+    if auth::is_production_reserved_email(config.environment, EMAIL) {
+        return Err(AppError::config(
+            "the development fixture admin cannot be provisioned in production",
+        ));
+    }
     let pool = db::connect(&config).await?;
     db::migrate(&pool).await?;
 
@@ -79,6 +91,15 @@ async fn main() -> AppResult<()> {
     )
     .bind(&user_id)
     .bind(PLAYER_ID)
+    .bind(now)
+    .execute(&pool)
+    .await?;
+    sqlx::query(
+        "INSERT INTO site_settings (key, value, updated_at) \
+         VALUES ('hardcore_soundcloud_url', ?, ?) \
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at",
+    )
+    .bind(HARDCORE_SOUNDTRACK_URL)
     .bind(now)
     .execute(&pool)
     .await?;

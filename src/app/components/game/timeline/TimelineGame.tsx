@@ -23,22 +23,14 @@ import {
 import { ApiError, apiClient } from "@lib/api/client";
 import {
   adjacentMovablePosition,
-  initialTimelinePositions,
   moveTimelineModel,
-  restoreTimelinePositions,
   TIMELINE_DESKTOP_COLUMNS,
   timelineArrangementIsComplete,
   timelineVisualPosition,
 } from "@lib/domain/games/timeline/timeline-arrangement";
 import {
-  readSavedTimelineGame,
-  saveTimelineGame,
-} from "@lib/domain/games/timeline/timeline-progress-store";
-import {
   timelineDifficulties,
   timelineDifficultyLabel,
-  type TimelineDifficulty,
-  type TimelineGamePayload,
 } from "@lib/domain/games/timeline/timeline-types";
 import { timelineCategoryLabel } from "@lib/domain/games/timeline/timeline-category";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
@@ -54,7 +46,7 @@ import { DifficultySwitch } from "../common/layout/DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
 import { SpeedrunUsernameDialog } from "./SpeedrunUsernameDialog";
 import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
-import { readGamePreferences, saveTimelineDifficulty } from "@lib/storage/game-preferences";
+import { useTimelineGame } from "./use-timeline-game";
 
 const TimelineCompletedDialog = lazy(() =>
   import("./TimelineCompletedDialog").then(({ TimelineCompletedDialog }) => ({
@@ -67,6 +59,7 @@ const timelineCardAnimationStagger = 70;
 const timelineWinningAnimationDuration = 900;
 const timelineWinningAnimationStagger = 90;
 const timelineFeedbackIconSize = 16;
+const speedrunSubmissionCooldownSeconds = 5;
 
 function formatReleaseDate(value: string) {
   const [year, month, day] = value.split("-");
@@ -124,49 +117,41 @@ function YearAnnotationTrigger({
   );
 }
 
-function hydrateGame(game: TimelineGamePayload) {
-  const serverAttempt = game.progress.latestAttempt;
-  const serverPositions = serverAttempt
-    ? restoreTimelinePositions(game, serverAttempt.modelOrder)
-    : null;
-  const saved = readSavedTimelineGame(game.challenge.id);
-  const savedPositions = saved ? restoreTimelinePositions(game, saved.positions) : null;
-  const useSaved =
-    !game.progress.solved &&
-    savedPositions !== null &&
-    saved !== null &&
-    saved.acceptedAttempts >= (serverAttempt?.attemptNumber ?? 0);
-
-  return {
-    positions: useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game)),
-    placements: useSaved ? saved.placements : (serverAttempt?.placements ?? null),
-    acceptedAttempts: Math.max(saved?.acceptedAttempts ?? 0, serverAttempt?.attemptNumber ?? 0),
-    attemptsRemaining: game.progress.attemptsRemaining,
-    solved: game.progress.solved || Boolean(useSaved && saved.solved),
-    speedrunStartedAt: game.progress.speedrunStartedAt ?? undefined,
-    speedrunTimeMs: serverAttempt?.speedrunTimeMs,
-  };
-}
-
 export function TimelineGame() {
   const progress = useLocalProgress();
   const { hardcoreUnlocked, setAuthenticatedUser, user } = useAuth();
-  const [difficulty, setDifficulty] = useState<TimelineDifficulty>(
-    () => readGamePreferences().timeline,
-  );
-  const [game, setGame] = useState<TimelineGamePayload | null>(null);
-  const [positions, setPositions] = useState<Array<string | null>>([]);
-  const [placements, setPlacements] = useState<Array<0 | 1 | 2 | null> | null>(null);
-  const [acceptedAttempts, setAcceptedAttempts] = useState(0);
-  const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
-  const [solved, setSolved] = useState(false);
-  const [speedrunStartedAt, setSpeedrunStartedAt] = useState<number | null>(null);
-  const [speedrunElapsed, setSpeedrunElapsed] = useState(0);
+  const {
+    acceptedAttempts,
+    attemptsRemaining,
+    difficulty,
+    error,
+    game,
+    gameCache,
+    loading,
+    placements,
+    positions,
+    selectDifficulty,
+    selectedModelId,
+    setAcceptedAttempts,
+    setAttemptsRemaining,
+    setError,
+    setGame,
+    setLoadAttempt,
+    setPlacements,
+    setPositions,
+    setSelectedModelId,
+    setSolved,
+    setSpeedrunElapsed,
+    setSpeedrunStartedAt,
+    solved,
+    speedrunElapsed,
+    speedrunStartedAt,
+  } = useTimelineGame({
+    canSpeedrun: Boolean(user),
+    hardcoreUnlocked,
+    playerId: progress.playerId,
+  });
   const [busy, setBusy] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<unknown>(null);
-  const [loadAttempt, setLoadAttempt] = useState(0);
-  const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
   const [draggingModelId, setDraggingModelId] = useState<string | null>(null);
   const [dragOverTarget, setDragOverTarget] = useState<number | "tray" | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -183,6 +168,7 @@ export function TimelineGame() {
   const [validationSequence, setValidationSequence] = useState(0);
   const [landingModelId, setLandingModelId] = useState<string | null>(null);
   const [landedModelIds, setLandedModelIds] = useState<Set<string>>(() => new Set());
+  const [submissionCooldownRemaining, setSubmissionCooldownRemaining] = useState(0);
   const pendingRequestId = useRef<string | null>(null);
   const completionTimer = useRef<number | null>(null);
   const landingTimer = useRef<number | null>(null);
@@ -191,14 +177,7 @@ export function TimelineGame() {
   const pointerY = useRef<number | null>(null);
   const pointerDragActive = useRef(false);
   const autoScrollFrame = useRef<number | null>(null);
-  const gameCache = useRef<Partial<Record<TimelineDifficulty, TimelineGamePayload>>>({});
   const speedrunStartPromise = useRef<Promise<number | null> | null>(null);
-
-  const selectDifficulty = (nextDifficulty: string) => {
-    const value = nextDifficulty as TimelineDifficulty;
-    saveTimelineDifficulty(value);
-    setDifficulty(value);
-  };
 
   useEffect(() => {
     if (difficulty !== "speedrun") {
@@ -214,93 +193,6 @@ export function TimelineGame() {
     }
   }, [difficulty, solved, user]);
 
-  useEffect(() => {
-    if (difficulty === "speedrun" && !user) {
-      setDifficulty("normal");
-      return;
-    }
-    if (difficulty === "hardcore" && !hardcoreUnlocked) {
-      setDifficulty("normal");
-      return;
-    }
-    const cachedGame = gameCache.current[difficulty];
-    if (cachedGame && cachedGame.challenge.date === utcDate()) {
-      const hydrated = hydrateGame(cachedGame);
-      setGame(cachedGame);
-      setPositions(hydrated.positions);
-      setPlacements(hydrated.placements);
-      setAcceptedAttempts(hydrated.acceptedAttempts);
-      setAttemptsRemaining(hydrated.attemptsRemaining);
-      setSolved(hydrated.solved);
-      setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
-      setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
-      setSelectedModelId(null);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-    const controller = new AbortController();
-    setLoading(true);
-    setError(null);
-    void apiClient
-      .timelineGame(difficulty, progress.playerId, controller.signal)
-      .then((nextGame) => {
-        if (controller.signal.aborted) return;
-        const hydrated = hydrateGame(nextGame);
-        gameCache.current[difficulty] = nextGame;
-        setGame(nextGame);
-        setPositions(hydrated.positions);
-        setPlacements(hydrated.placements);
-        setAcceptedAttempts(hydrated.acceptedAttempts);
-        setAttemptsRemaining(hydrated.attemptsRemaining);
-        setSolved(hydrated.solved);
-        setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
-        setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
-        setSelectedModelId(null);
-      })
-      .catch((loadError: unknown) => {
-        if (!controller.signal.aborted) setError(loadError);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-    return () => controller.abort();
-  }, [difficulty, hardcoreUnlocked, loadAttempt, progress.playerId, user]);
-
-  useEffect(() => {
-    if (!game || positions.length !== game.slots.length) return;
-    saveTimelineGame({
-      challengeId: game.challenge.id,
-      challengeDate: game.challenge.date,
-      difficulty: game.challenge.difficulty,
-      positions,
-      placements,
-      acceptedAttempts,
-      attemptsRemaining,
-      solved,
-      updatedAt: new Date().toISOString(),
-      speedrunStartedAt: speedrunStartedAt ?? undefined,
-    });
-  }, [acceptedAttempts, attemptsRemaining, game, placements, positions, solved, speedrunStartedAt]);
-
-  useEffect(() => {
-    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
-    const update = () => setSpeedrunElapsed(Math.max(0, Date.now() - speedrunStartedAt));
-    update();
-    const timer = window.setInterval(update, 100);
-    return () => window.clearInterval(timer);
-  }, [difficulty, solved, speedrunStartedAt]);
-
-  useEffect(() => {
-    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
-    const preventSpeedrunExit = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "Your Speedrun timer will continue if you leave this page.";
-    };
-    window.addEventListener("beforeunload", preventSpeedrunExit);
-    return () => window.removeEventListener("beforeunload", preventSpeedrunExit);
-  }, [difficulty, solved, speedrunStartedAt]);
-
   useEffect(
     () => () => {
       if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
@@ -308,6 +200,15 @@ export function TimelineGame() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (submissionCooldownRemaining <= 0) return;
+    const timer = window.setTimeout(
+      () => setSubmissionCooldownRemaining((remaining) => Math.max(0, remaining - 1)),
+      1_000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [submissionCooldownRemaining]);
 
   const anchorPositions = useMemo(
     () => new Set(game?.slots.filter((slot) => slot.anchor).map((slot) => slot.position) ?? []),
@@ -334,6 +235,7 @@ export function TimelineGame() {
   const complete = timelineArrangementIsComplete(positions, expectedModelIds);
   const exhausted = attemptsRemaining === 0 && !solved;
 
+  const submissionCoolingDown = difficulty === "speedrun" && submissionCooldownRemaining > 0;
   const startSpeedrun = useCallback(() => {
     if (difficulty !== "speedrun" || !game || speedrunStartedAt !== null) {
       return Promise.resolve(speedrunStartedAt);
@@ -562,7 +464,7 @@ export function TimelineGame() {
   };
 
   const submit = async () => {
-    if (!game || !complete || busy || solved || exhausted) return;
+    if (!game || !complete || busy || solved || exhausted || submissionCoolingDown) return;
     if (difficulty === "speedrun") await startSpeedrun();
     const requestId = pendingRequestId.current ?? crypto.randomUUID();
     pendingRequestId.current = requestId;
@@ -609,6 +511,9 @@ export function TimelineGame() {
       setGame(revealedGame);
       if (!didSolve) {
         setValidationSequence((sequence) => sequence + 1);
+        if (difficulty === "speedrun") {
+          setSubmissionCooldownRemaining(speedrunSubmissionCooldownSeconds);
+        }
       }
       if (didSolve) {
         void apiClient
@@ -668,7 +573,11 @@ export function TimelineGame() {
     <div className="timeline-speedrun-controls__actions">
       <Link
         className="button"
-        to={game ? `/timeline/leaderboard/${game.challenge.date.replaceAll("-", "")}` : "/timeline/leaderboard"}
+        to={
+          game
+            ? `/timeline/leaderboard/${game.challenge.date.replaceAll("-", "")}`
+            : "/timeline/leaderboard"
+        }
       >
         Leaderboard
       </Link>
@@ -944,63 +853,63 @@ export function TimelineGame() {
           {!solved &&
             (difficulty !== "speedrun" ||
               game.movableModels.some((item) => !arrangedModelIds.has(item.id))) && (
-            <section
-              aria-labelledby="timeline-tray-title"
-              className={`timeline-tray timeline-tray--${difficulty}${dragOverTarget === "tray" ? " timeline-tray--drop-target" : ""}`}
-              data-timeline-tray
-              onDragEnter={() => setDragOverTarget("tray")}
-              onDragLeave={(event) => {
-                const relatedTarget = event.relatedTarget as Node | null;
-                if (!relatedTarget || !event.currentTarget.contains(relatedTarget)) {
-                  setDragOverTarget(null);
-                }
-              }}
-              onDragOver={(event) => {
-                event.preventDefault();
-                setDragOverTarget("tray");
-              }}
-              onDrop={(event) => dropAt(event, null)}
-            >
-              <div>
-                <p className="eyebrow">Movable cards</p>
-                <h2 id="timeline-tray-title">Place these without seeing their dates</h2>
-              </div>
-              <div className="timeline-tray__cards">
-                {game.movableModels
-                  .filter((item) => !arrangedModelIds.has(item.id))
-                  .map((item) => (
-                    <button
-                      aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${draggingModelId === item.id ? " timeline-card--dragging" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}`}
-                      draggable
-                      key={item.id}
-                      onClick={() =>
-                        setSelectedModelId(selectedModelId === item.id ? null : item.id)
-                      }
-                      onDragStart={(event) => dragStart(event, item.id)}
-                      onDragEnd={dragEnd}
-                      onPointerDown={(event) => startPointerDrag(event, item.id)}
-                      type="button"
-                    >
-                      <span className="timeline-card__meta">
-                        <FaGripVertical aria-hidden />{" "}
-                        {timelineCategoryLabel(item.categories, item.itemKind)}
-                      </span>
-                      <strong>{item.name}</strong>
-                    </button>
-                  ))}
-                {game.movableModels.every((item) => arrangedModelIds.has(item.id)) && (
-                  <p className="timeline-tray__empty">Every card is on the timeline.</p>
-                )}
-              </div>
-            </section>
-          )}
+              <section
+                aria-labelledby="timeline-tray-title"
+                className={`timeline-tray timeline-tray--${difficulty}${dragOverTarget === "tray" ? " timeline-tray--drop-target" : ""}`}
+                data-timeline-tray
+                onDragEnter={() => setDragOverTarget("tray")}
+                onDragLeave={(event) => {
+                  const relatedTarget = event.relatedTarget as Node | null;
+                  if (!relatedTarget || !event.currentTarget.contains(relatedTarget)) {
+                    setDragOverTarget(null);
+                  }
+                }}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  setDragOverTarget("tray");
+                }}
+                onDrop={(event) => dropAt(event, null)}
+              >
+                <div>
+                  <p className="eyebrow">Movable cards</p>
+                  <h2 id="timeline-tray-title">Place these without seeing their dates</h2>
+                </div>
+                <div className="timeline-tray__cards">
+                  {game.movableModels
+                    .filter((item) => !arrangedModelIds.has(item.id))
+                    .map((item) => (
+                      <button
+                        aria-pressed={selectedModelId === item.id}
+                        className={`timeline-card timeline-card--movable${draggingModelId === item.id ? " timeline-card--dragging" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}`}
+                        draggable
+                        key={item.id}
+                        onClick={() =>
+                          setSelectedModelId(selectedModelId === item.id ? null : item.id)
+                        }
+                        onDragStart={(event) => dragStart(event, item.id)}
+                        onDragEnd={dragEnd}
+                        onPointerDown={(event) => startPointerDrag(event, item.id)}
+                        type="button"
+                      >
+                        <span className="timeline-card__meta">
+                          <FaGripVertical aria-hidden />{" "}
+                          {timelineCategoryLabel(item.categories, item.itemKind)}
+                        </span>
+                        <strong>{item.name}</strong>
+                      </button>
+                    ))}
+                  {game.movableModels.every((item) => arrangedModelIds.has(item.id)) && (
+                    <p className="timeline-tray__empty">Every card is on the timeline.</p>
+                  )}
+                </div>
+              </section>
+            )}
 
           <div className="timeline-submit">
             {!solved && (
               <button
                 className="button button--primary"
-                disabled={!complete || busy || solved || exhausted}
+                disabled={!complete || busy || solved || exhausted || submissionCoolingDown}
                 onClick={() => void submit()}
                 type="button"
               >
@@ -1008,9 +917,11 @@ export function TimelineGame() {
                   ? "Checking arrangement…"
                   : solved
                     ? "Timeline solved"
-                    : exhausted
-                      ? "No submissions remaining"
-                      : "Submit complete timeline"}
+                    : submissionCoolingDown
+                      ? `Submit again in ${submissionCooldownRemaining}s`
+                      : exhausted
+                        ? "No submissions remaining"
+                        : "Submit complete timeline"}
               </button>
             )}
             {!complete && <p>Fill every position exactly once to submit.</p>}
@@ -1069,7 +980,10 @@ export function TimelineGame() {
         </Suspense>
       )}
       {difficulty === "speedrun" && solved && showSpeedrunUsername && user && (
-        <SpeedrunUsernameDialog email={user.email} onChoose={(value) => void chooseSpeedrunUsername(value)} />
+        <SpeedrunUsernameDialog
+          email={user.email}
+          onChoose={(value) => void chooseSpeedrunUsername(value)}
+        />
       )}
       <Toast message={toast} onDismiss={() => setToast(null)} />
     </main>

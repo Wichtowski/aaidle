@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { ClassicGame } from "@components/game";
 import { useAuth } from "@components/auth/useAuth";
+import { GameLoadingState } from "@components/ui/GameLoadingState";
 import {
   classicCategoryFromRouteSegment,
   isClassicDifficulty,
@@ -31,11 +32,12 @@ export function ClassicPage() {
         : savedPreferences.classic.difficulty,
   };
   const routeCategoryValue = classicCategoryFromRouteSegment(routeCategory);
-  const category = routeCategoryValue ?? saved.category;
-  const { hardcoreUnlocked, user } = useAuth();
-  if (!routeCategoryValue && category === "hardcore") {
-    return <Navigate replace to="/classic/hardcore" />;
-  }
+  const { hardcoreAccessLoading, hardcoreUnlocked, loading, user } = useAuth();
+  const hasHardcoreAccess = Boolean(user && hardcoreUnlocked);
+  const hasSavedHardcoreRoute = !routeCategoryValue && saved.category === "hardcore";
+  const hardcoreAccessPending = loading || Boolean(user && hardcoreAccessLoading);
+  const category =
+    hasSavedHardcoreRoute && !hasHardcoreAccess ? "llm" : (routeCategoryValue ?? saved.category);
   const difficulty =
     category === "hardcore"
       ? "hardcore"
@@ -43,14 +45,25 @@ export function ClassicPage() {
         ? saved.difficulty
         : "normal";
   useEffect(() => {
+    if (hasSavedHardcoreRoute && hardcoreAccessPending) return;
     saveClassicPreference(category, difficulty);
-  }, [category, difficulty]);
+  }, [category, difficulty, hardcoreAccessPending, hasSavedHardcoreRoute]);
+  if (hasSavedHardcoreRoute && hardcoreAccessPending) {
+    return (
+      <main className="page">
+        <GameLoadingState label="Checking your account…" />
+      </main>
+    );
+  }
+  if (!routeCategoryValue && category === "hardcore") {
+    return <Navigate replace to="/classic/hardcore" />;
+  }
   return (
     <ClassicGame
       key={category === "hardcore" ? "hardcore" : "classic"}
       category={category}
       difficulty={difficulty}
-      hasHardcoreAccess={category !== "hardcore" || Boolean(user && hardcoreUnlocked)}
+      hasHardcoreAccess={category !== "hardcore" || hasHardcoreAccess}
     />
   );
 }

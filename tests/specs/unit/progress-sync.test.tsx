@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { act, render } from "@testing-library/react";
+import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freshProgress } from "../../../src/lib/storage/local-progress-store";
 
@@ -112,6 +113,24 @@ describe("progress reconciliation", () => {
     await act(async () => vi.advanceTimersByTime(300));
 
     expect(mocks.updateProgressPreferences).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not duplicate or retry a failed reconciliation", async () => {
+    mocks.syncProgress.mockRejectedValue(new Error("server failed"));
+
+    render(
+      <StrictMode>
+        <ProgressSync />
+      </StrictMode>,
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
+
+    expect(mocks.syncProgress).toHaveBeenCalledTimes(1);
   });
 
   it("resumes the tab cache without reconciling again", async () => {

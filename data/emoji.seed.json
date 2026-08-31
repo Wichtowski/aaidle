@@ -164,7 +164,7 @@
         "visuals": [
           {
             "type": "image",
-            "src": "/emoji-visual/stars.webp",
+            "src": "/emoji-visual/stars.png",
             "alt": "A pair of identical stars",
             "revealPriority": 1
           },
