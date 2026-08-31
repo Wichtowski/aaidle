@@ -12,7 +12,7 @@ export default defineConfig({
   workers: env.isCI ? 1 : undefined,
   outputDir: "../results/e2e",
   reporter: env.isCI
-    ? [["list"], ["blob", { outputDir: "tests/reports/blob" }]]
+    ? [["list"], ["blob", { outputDir: "../reports/blob" }]]
     : [["list"], ["html", { open: "never", outputFolder: "../reports/playwright" }]],
   use: {
     baseURL: env.baseURL,

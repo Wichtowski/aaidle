@@ -1,5 +1,5 @@
 name: Rust unit tests
-description: Run Rust unit tests and publish the test summary
+description: Run Rust unit tests with backend coverage and publish the test summary
 
 runs:
   using: composite
@@ -9,7 +9,8 @@ runs:
       shell: bash
       run: |
         set -o pipefail
-        cargo +1.94.0 test --locked 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
+        cargo +1.94.0 llvm-cov --locked --html --output-dir ../tests/reports/backend-coverage 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
+        cargo +1.94.0 llvm-cov report --json --summary-only --output-path ../tests/reports/backend-coverage/coverage-summary.json
     - name: Add Rust test report to summary
       if: always()
       shell: bash

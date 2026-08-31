@@ -1,5 +1,8 @@
 # aAIdle
 
+[![Frontend coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Freports.aaidle.com%2Ffrontend-coverage%2Fbadge.json)](https://reports.aaidle.com/frontend-coverage/)
+[![Backend coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Freports.aaidle.com%2Fbackend-coverage%2Fbadge.json)](https://reports.aaidle.com/backend-coverage/)
+
 aAIdle is a daily guessing game for AI models.
 It runs on a VPS with a React frontend, a Rust/Axum API, and SQLite.
 The daily answer stays server-side.
@@ -56,7 +59,7 @@ After merge, the release workflow creates a SemVer tag, verifies the application
 After `production` approval, the VPS pulls that image and keeps only the runtime Compose file, environment file, and persistent SQLite volume.
 Make the linked GitHub Container Registry package public so the VPS can pull it without a registry credential.
 The release tag is exposed as `html[version]` in the deployed page.
-Production browser tests run in two shards and publish an Allure report to GitHub Pages.
+Production browser tests run in Chromium, Firefox, and mobile projects and publish a merged Allure report to GitHub Pages alongside unit coverage.
 
 Configure the `production` GitHub Environment with a required reviewer.
 Set GitHub Pages to deploy from GitHub Actions.

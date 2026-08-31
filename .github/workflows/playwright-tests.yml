@@ -93,6 +93,7 @@ jobs:
           AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm run test:e2e:chromium
       - name: Redact E2E secrets from test artifacts
@@ -193,6 +194,7 @@ jobs:
           AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_DEACTIVATED_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_HARDCORE_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_NORMAL_TEST_EMAIL }}
+          AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL: ${{ secrets.AAIDLE_PLAYWRIGHT_UNVERIFIED_TEST_EMAIL }}
           AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
         run: pnpm run test:e2e:mobile
       - name: Redact E2E secrets from test artifacts
@@ -452,6 +454,16 @@ jobs:
         with:
           name: api-allure-results
           path: reports/api-allure-results
+      - name: ${{ env.DOWNLOAD_ARTIFACTS }} Frontend coverage
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: frontend-coverage-report
+          path: reports/frontend-coverage
+      - name: ${{ env.DOWNLOAD_ARTIFACTS }} Backend coverage
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: backend-coverage-report
+          path: reports/backend-coverage
       - name: ${{ env.DOWNLOAD_ARTIFACTS }} Accessibility
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:

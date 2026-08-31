@@ -21,5 +21,12 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     reporters: ["default", "json"],
     outputFile: { json: "tests/reports/vitest.json" },
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.d.ts"],
+      reporter: ["text", "html", "json-summary"],
+      reportsDirectory: "tests/reports/frontend-coverage",
+    },
   },
 });

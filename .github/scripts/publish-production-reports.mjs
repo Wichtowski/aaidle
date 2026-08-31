@@ -1,4 +1,4 @@
-import { cp, mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { execFileSync, spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { publishBackstopReport } from "./publish-backstop-report.mjs";
@@ -34,6 +34,48 @@ await rm(releaseDirectory, { recursive: true, force: true });
 await mkdir(releaseDirectory, { recursive: true });
 await cp(resolve(reportDirectory, "e2e"), resolve(releaseDirectory, "e2e"), { recursive: true });
 await cp(resolve(reportDirectory, "api"), resolve(releaseDirectory, "api"), { recursive: true });
+const coverageReports = [
+  {
+    name: "frontend-coverage",
+    label: "frontend coverage",
+    percentage: (summary) => summary.total?.lines?.pct,
+  },
+  {
+    name: "backend-coverage",
+    label: "backend coverage",
+    percentage: (summary) => summary.data?.[0]?.totals?.lines?.percent,
+  },
+];
+for (const { name, label, percentage } of coverageReports) {
+  const releaseCoverageDirectory = resolve(releaseDirectory, name);
+  await cp(resolve("reports", name), releaseCoverageDirectory, { recursive: true });
+  const coverageSummary = JSON.parse(
+    await readFile(resolve(releaseCoverageDirectory, "coverage-summary.json"), "utf8"),
+  );
+  const rawLineCoverage = percentage(coverageSummary);
+  if (typeof rawLineCoverage !== "number") throw new Error(`${label} is unavailable.`);
+  const lineCoverage = Number(rawLineCoverage.toFixed(2));
+  const coverageColor =
+    [
+      [90, "brightgreen"],
+      [80, "green"],
+      [70, "yellowgreen"],
+      [60, "yellow"],
+      [50, "orange"],
+    ].find(([minimum]) => lineCoverage >= minimum)?.[1] ?? "red";
+  await writeFile(
+    resolve(releaseCoverageDirectory, "badge.json"),
+    `${JSON.stringify({
+      schemaVersion: 1,
+      label,
+      message: `${lineCoverage}%`,
+      color: coverageColor,
+    })}\n`,
+  );
+  const latestCoverageDirectory = resolve(site, name);
+  await rm(latestCoverageDirectory, { recursive: true, force: true });
+  await cp(releaseCoverageDirectory, latestCoverageDirectory, { recursive: true });
+}
 await cp(resolve("reports/accessibility"), resolve(releaseDirectory, "accessibility"), {
   recursive: true,
 });

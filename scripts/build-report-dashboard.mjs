@@ -3,11 +3,21 @@ import { join } from "node:path";
 
 const siteDirectory = process.argv[2] ?? "site";
 const releasePattern = /^v\d+\.\d+\.\d+$/;
-const domains = ["e2e", "visual", "api", "accessibility", "lighthouse"];
+const domains = [
+  "e2e",
+  "visual",
+  "api",
+  "frontend-coverage",
+  "backend-coverage",
+  "accessibility",
+  "lighthouse",
+];
 const domainLabels = {
   e2e: "E2E",
   visual: "VISUAL DIFF",
   api: "API",
+  "frontend-coverage": "FRONTEND COVERAGE",
+  "backend-coverage": "BACKEND COVERAGE",
   accessibility: "A11Y",
   lighthouse: "LIGHTHOUSE",
 };

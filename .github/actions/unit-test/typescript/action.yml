@@ -1,12 +1,12 @@
 name: TypeScript unit tests
-description: Run Vitest unit tests and publish the test summary
+description: Run Vitest unit tests with frontend coverage and publish the test summary
 
 runs:
   using: composite
   steps:
     - name: Run Vitest unit tests
       shell: bash
-      run: pnpm run test:unit
+      run: pnpm run test:unit:coverage
 
     - name: Add Vitest test report to summary
       if: always()
