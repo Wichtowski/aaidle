@@ -43,14 +43,30 @@ const coverageReports = [
   {
     name: "backend-coverage",
     label: "backend coverage",
-    percentage: (summary) => summary.data?.[0]?.totals?.lines?.percent,
+    reportDirectory: "html",
+    percentage: (summary) => {
+      const totals = summary.data?.[0]?.totals;
+      return totals
+        ? Math.min(
+            totals.lines.percent,
+            totals.functions.percent,
+            totals.regions.percent,
+            totals.branches.percent,
+          )
+        : undefined;
+    },
   },
 ];
-for (const { name, label, percentage } of coverageReports) {
+for (const { name, label, reportDirectory, percentage } of coverageReports) {
+  const sourceCoverageDirectory = resolve("reports", name);
   const releaseCoverageDirectory = resolve(releaseDirectory, name);
-  await cp(resolve("reports", name), releaseCoverageDirectory, { recursive: true });
+  await cp(
+    reportDirectory ? resolve(sourceCoverageDirectory, reportDirectory) : sourceCoverageDirectory,
+    releaseCoverageDirectory,
+    { recursive: true },
+  );
   const coverageSummary = JSON.parse(
-    await readFile(resolve(releaseCoverageDirectory, "coverage-summary.json"), "utf8"),
+    await readFile(resolve(sourceCoverageDirectory, "coverage-summary.json"), "utf8"),
   );
   const rawLineCoverage = percentage(coverageSummary);
   if (typeof rawLineCoverage !== "number") throw new Error(`${label} is unavailable.`);

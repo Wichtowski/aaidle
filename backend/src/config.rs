@@ -174,3 +174,6 @@ where
         Err(_) => Ok(default),
     }
 }
+
+#[cfg(test)]
+mod tests;

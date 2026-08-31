@@ -89,6 +89,10 @@ pub fn router(state: AppState) -> Router {
         .route("/auth/hardcore-status", get(auth::hardcore_status))
         .route("/auth/logout", post(auth::logout))
         .route("/issues", post(issues::create))
+        .route(
+            "/issues/limit-request",
+            post(issues::request_limit_increase),
+        )
         .route("/admin/users", get(admin::users))
         .route(
             "/admin/users/{user_id}",
@@ -129,6 +133,10 @@ pub fn router(state: AppState) -> Router {
         .route(
             "/games/timeline/challenges/{challenge_id}/start",
             post(timeline::start),
+        )
+        .route(
+            "/games/timeline/challenges/{challenge_id}/give-up",
+            post(timeline::give_up),
         )
         .route(
             "/games/timeline/challenges/{challenge_id}/leaderboard",
@@ -587,93 +595,6 @@ pub(super) fn parse_json_payload<T>(payload: Result<Json<T>, JsonRejection>) -> 
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn validates_known_modes_and_model_ids() {
-        assert!(is_model_id("gpt-4o"));
-        assert!(!is_model_id("gpt 4o"));
-    }
-
-    #[test]
-    fn guess_rate_limits_group_ipv6_privacy_addresses_by_prefix() {
-        assert_eq!(
-            guess_rate_limit_ip("2001:db8:1234:5678:1111:2222:3333:4444"),
-            "2001:db8:1234:5678::"
-        );
-        assert_eq!(guess_rate_limit_ip("203.0.113.10"), "203.0.113.10");
-    }
-
-    #[test]
-    fn cloudflare_proxied_request_uses_caddys_normalized_client_ip() {
-        let mut headers = HeaderMap::new();
-        headers.insert("cf-connecting-ip", HeaderValue::from_static("203.0.113.10"));
-        headers.insert(
-            "x-aaidle-client-ip",
-            HeaderValue::from_static("203.0.113.10"),
-        );
-
-        assert_eq!(
-            client_ip_for_request(
-                crate::config::AppEnvironment::Production,
-                &headers,
-                Some("172.20.0.2:43210".parse().expect("Caddy peer")),
-            ),
-            "203.0.113.10"
-        );
-    }
-
-    #[test]
-    fn spoofed_forwarding_headers_are_ignored_without_caddys_header() {
-        let mut headers = HeaderMap::new();
-        headers.insert("cf-connecting-ip", HeaderValue::from_static("203.0.113.10"));
-        headers.insert(
-            "x-forwarded-for",
-            HeaderValue::from_static("203.0.113.10, 198.51.100.10"),
-        );
-
-        assert_eq!(
-            client_ip_for_request(
-                crate::config::AppEnvironment::Production,
-                &headers,
-                Some("172.20.0.2:43210".parse().expect("direct peer")),
-            ),
-            "172.20.0.2"
-        );
-    }
-
-    #[test]
-    fn local_direct_request_uses_the_socket_peer_not_forwarded_headers() {
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            "x-aaidle-client-ip",
-            HeaderValue::from_static("203.0.113.10"),
-        );
-        headers.insert("cf-connecting-ip", HeaderValue::from_static("203.0.113.11"));
-
-        assert_eq!(
-            client_ip_for_request(
-                crate::config::AppEnvironment::Local,
-                &headers,
-                Some("127.0.0.1:43210".parse().expect("local peer")),
-            ),
-            "127.0.0.1"
-        );
-    }
-
-    #[test]
-    fn missing_cf_connecting_ip_falls_back_to_the_socket_peer() {
-        let mut headers = HeaderMap::new();
-        headers.insert("x-forwarded-for", HeaderValue::from_static("203.0.113.10"));
-
-        assert_eq!(
-            client_ip_for_request(
-                crate::config::AppEnvironment::Production,
-                &headers,
-                Some("172.20.0.2:43210".parse().expect("direct peer")),
-            ),
-            "172.20.0.2"
-        );
-    }
-}
+mod test_support;
+#[cfg(test)]
+mod tests;

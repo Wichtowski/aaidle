@@ -5,7 +5,7 @@ use axum::{
 };
 
 use crate::{
-    dto::{IssueReportRequest, IssueReportResponse},
+    dto::{AcceptedResponse, IssueReportRequest, IssueReportResponse},
     error::{AppError, AppResult},
     state::AppState,
 };
@@ -37,15 +37,16 @@ pub(super) async fn create(
     validate_issue_text(title, description)?;
     let subject =
         crate::auth::rate_limit_subject(&state.config.auth_secret, "issue-report-user", &user.id)?;
-    if !crate::auth::consume_rate_limit(
-        &state.db,
-        "issue-report",
-        &subject,
-        user.issue_report_limit,
-        24 * 60 * 60 * 1_000,
-        now_millis(),
-    )
-    .await?
+    if user.issue_report_limit == 0
+        || !crate::auth::consume_rate_limit(
+            &state.db,
+            "issue-report",
+            &subject,
+            user.issue_report_limit,
+            24 * 60 * 60 * 1_000,
+            now_millis(),
+        )
+        .await?
     {
         return Err(AppError::rate_limited(
             "You have reached your issue report limit for today.",
@@ -56,6 +57,40 @@ pub(super) async fn create(
         url: crate::issues::create_report(&state.http, &state.config, title, description, game)
             .await?,
     }))
+}
+
+pub(super) async fn request_limit_increase(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> AppResult<Json<AcceptedResponse>> {
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
+    let user = authenticated_user(&state, &headers).await?;
+    let subject =
+        crate::auth::rate_limit_subject(&state.config.auth_secret, "issue-report-user", &user.id)?;
+    let now = now_millis();
+    let count = sqlx::query_scalar::<_, i64>(
+        "SELECT count FROM request_rate_limits WHERE scope = 'issue-report' AND subject_hash = ? AND window_started_at > ?",
+    )
+    .bind(subject)
+    .bind(now - 24 * 60 * 60 * 1_000)
+    .fetch_optional(&state.db)
+    .await?
+    .unwrap_or(0);
+    if user.issue_report_limit > 0 && count < user.issue_report_limit {
+        return Err(AppError::validation(
+            "You can request more reports after reaching your daily limit.",
+        ));
+    }
+    sqlx::query(
+        "UPDATE users SET issue_report_limit_requested_at = COALESCE(issue_report_limit_requested_at, ?), updated_at = ? WHERE id = ?",
+    )
+    .bind(now)
+    .bind(now)
+    .bind(user.id)
+    .execute(&state.db)
+    .await?;
+    Ok(Json(AcceptedResponse { accepted: true }))
 }
 
 fn validate_issue_text(title: &str, description: &str) -> AppResult<()> {
@@ -73,15 +108,4 @@ fn validate_issue_text(title: &str, description: &str) -> AppResult<()> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::validate_issue_text;
-
-    #[test]
-    fn issue_text_limits_match_browser_utf16_length_rules() {
-        assert!(validate_issue_text("12345678", &"a".repeat(5_000)).is_ok());
-        assert!(validate_issue_text("12345678", &"😀".repeat(2_500)).is_ok());
-        assert!(validate_issue_text("12345678", &"😀".repeat(2_501)).is_err());
-        assert!(validate_issue_text(&"é".repeat(120), &"a".repeat(20)).is_ok());
-        assert!(validate_issue_text(&"é".repeat(121), &"a".repeat(20)).is_err());
-    }
-}
+mod tests;

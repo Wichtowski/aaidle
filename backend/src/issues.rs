@@ -28,13 +28,24 @@ pub async fn create_report(
     description: &str,
     game: &str,
 ) -> AppResult<String> {
+    create_report_at(http, config, title, description, game, GITHUB_ISSUES_URL).await
+}
+
+async fn create_report_at(
+    http: &Client,
+    config: &AppConfig,
+    title: &str,
+    description: &str,
+    game: &str,
+    endpoint: &str,
+) -> AppResult<String> {
     let token = config.github_issues_token.as_deref().ok_or_else(|| {
         AppError::Unavailable(
             "Issue reporting is not configured right now. Please try again later.".to_owned(),
         )
     })?;
     let response = http
-        .post(GITHUB_ISSUES_URL)
+        .post(endpoint)
         .bearer_auth(token)
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
@@ -64,3 +75,6 @@ pub async fn create_report(
             AppError::Unavailable("Could not send the report. Please try again later.".to_owned())
         })
 }
+
+#[cfg(test)]
+mod tests;

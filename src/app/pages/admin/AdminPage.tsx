@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type SubmitEvent } from "react";
+import { FaMinus, FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import "./admin.css";
 import { canManageAdministrators, canManageUsers } from "@lib/auth/permissions";
@@ -219,6 +220,9 @@ export function AdminPage() {
                           : "Player"}
                     </small>
                     <small>{item.completionCount} completions</small>
+                    {item.issueReportLimitRequestedAt && (
+                      <small className="admin-user-row__request">Report increase requested</small>
+                    )}
                   </span>
                 </button>
               ))}
@@ -367,7 +371,7 @@ function HardcoreSoundtrackSettings() {
   );
 }
 
-function UserDetail({
+export function UserDetail({
   user,
   currentUserId,
   canManageAccount,
@@ -394,11 +398,13 @@ function UserDetail({
     user.permission === "developer" ? "developer" : "user",
   );
   const [issueReportLimit, setIssueReportLimit] = useState(user.issueReportLimit);
+  const [activeAdminTool, setActiveAdminTool] = useState<"access" | "reports">("access");
   const [gameHistoryPage, setGameHistoryPage] = useState(1);
 
   useEffect(() => {
     setPermission(user.permission === "developer" ? "developer" : "user");
     setIssueReportLimit(user.issueReportLimit);
+    setActiveAdminTool("access");
     setDisabledReason("");
     setGameHistoryPage(1);
   }, [user.id, user.permission, user.disabledAt, user.issueReportLimit]);
@@ -424,83 +430,148 @@ function UserDetail({
       {canChangeUser && (
         <section
           className="admin-detail-section admin-account-controls"
-          aria-labelledby="admin-account-access-title"
+          aria-label="Superadmin tools"
         >
-          <div className="admin-panel-heading">
-            <div>
-              <p className="eyebrow">Superadmin tools</p>
-              <h3 id="admin-account-access-title">Account access</h3>
-            </div>
-          </div>
-          <label htmlFor="admin-user-permission">Role</label>
-          <div className="admin-control-row">
-            <select
-              id="admin-user-permission"
-              disabled={updating}
-              onChange={(event) => setPermission(event.target.value as "user" | "developer")}
-              value={permission}
-            >
-              <option value="user">Player</option>
-              <option value="developer">Administrator</option>
-            </select>
+          <p className="eyebrow">Superadmin tools</p>
+          <div className="admin-tool-tabs" role="tablist" aria-label="Account administration tools">
             <button
-              className="button"
-              disabled={updating || permission === user.permission}
-              onClick={() => onUpdate({ permission })}
+              aria-controls="admin-account-access-panel"
+              aria-selected={activeAdminTool === "access"}
+              id="admin-account-access-tab"
+              onClick={() => setActiveAdminTool("access")}
+              role="tab"
               type="button"
             >
-              Save role
+              Account access
             </button>
-          </div>
-          {user.disabledAt ? (
             <button
-              className="button"
-              disabled={updating}
-              onClick={() => onUpdate({ disabled: false })}
+              aria-controls="admin-issue-reports-panel"
+              aria-selected={activeAdminTool === "reports"}
+              id="admin-issue-reports-tab"
+              onClick={() => setActiveAdminTool("reports")}
+              role="tab"
               type="button"
             >
-              Re-enable account
+              Issue reports
+              {user.issueReportLimitRequestedAt && (
+                <span className="admin-tool-tabs__request">Requested</span>
+              )}
             </button>
-          ) : (
-            <div className="admin-disable-form">
-              <label htmlFor="admin-disable-reason">Reason for disabling</label>
-              <textarea
-                id="admin-disable-reason"
-                disabled={updating}
-                maxLength={500}
-                onChange={(event) => setDisabledReason(event.target.value)}
-                placeholder="Explain why this account is being disabled"
-                value={disabledReason}
-              />
-              <button
-                className="button button--danger-solid"
-                disabled={updating || !disabledReason.trim()}
-                onClick={() => onUpdate({ disabled: true, disabledReason: disabledReason.trim() })}
-                type="button"
-              >
-                Disable account
-              </button>
+          </div>
+          {activeAdminTool === "access" && (
+            <div
+              aria-labelledby="admin-account-access-tab"
+              className="admin-tool-panel"
+              id="admin-account-access-panel"
+              role="tabpanel"
+            >
+              <h3>Account access</h3>
+              <label htmlFor="admin-user-permission">Role</label>
+              <div className="admin-control-row">
+                <select
+                  id="admin-user-permission"
+                  disabled={updating}
+                  onChange={(event) => setPermission(event.target.value as "user" | "developer")}
+                  value={permission}
+                >
+                  <option value="user">Player</option>
+                  <option value="developer">Administrator</option>
+                </select>
+                <button
+                  className="button"
+                  disabled={updating || permission === user.permission}
+                  onClick={() => onUpdate({ permission })}
+                  type="button"
+                >
+                  Save role
+                </button>
+              </div>
+              {user.disabledAt ? (
+                <button
+                  className="button"
+                  disabled={updating}
+                  onClick={() => onUpdate({ disabled: false })}
+                  type="button"
+                >
+                  Re-enable account
+                </button>
+              ) : (
+                <div className="admin-disable-form">
+                  <label htmlFor="admin-disable-reason">Reason for disabling</label>
+                  <textarea
+                    id="admin-disable-reason"
+                    disabled={updating}
+                    maxLength={500}
+                    onChange={(event) => setDisabledReason(event.target.value)}
+                    placeholder="Explain why this account is being disabled"
+                    value={disabledReason}
+                  />
+                  <button
+                    className="button button--danger-solid"
+                    disabled={updating || !disabledReason.trim()}
+                    onClick={() =>
+                      onUpdate({ disabled: true, disabledReason: disabledReason.trim() })
+                    }
+                    type="button"
+                  >
+                    Disable account
+                  </button>
+                </div>
+              )}
             </div>
           )}
-          <label htmlFor="admin-issue-report-limit">Issue reports per day</label>
-          <div className="admin-control-row">
-            <input
-              id="admin-issue-report-limit"
-              max={1000}
-              min={3}
-              onChange={(event) => setIssueReportLimit(Number(event.target.value))}
-              type="number"
-              value={issueReportLimit}
-            />
-            <button
-              className="button"
-              disabled={updating || issueReportLimit === user.issueReportLimit}
-              onClick={() => onUpdate({ issueReportLimit })}
-              type="button"
+          {activeAdminTool === "reports" && (
+            <div
+              aria-labelledby="admin-issue-reports-tab"
+              className="admin-tool-panel"
+              id="admin-issue-reports-panel"
+              role="tabpanel"
             >
-              Save limit
-            </button>
-          </div>
+              <h3>Issue reports</h3>
+              <label htmlFor="admin-issue-report-limit">Issue reports per day</label>
+              {user.issueReportLimitRequestedAt && (
+                <p className="admin-limit-request">
+                  This user requested a higher limit {formatDate(user.issueReportLimitRequestedAt)}.
+                </p>
+              )}
+              <div className="admin-control-row admin-limit-control">
+                <div className="admin-limit-stepper">
+                  <button
+                    aria-label="Decrease issue reports per day"
+                    disabled={updating || issueReportLimit === 0}
+                    onClick={() => setIssueReportLimit((limit) => Math.max(0, limit - 1))}
+                    type="button"
+                  >
+                    <FaMinus aria-hidden focusable="false" />
+                  </button>
+                  <output aria-live="polite" id="admin-issue-report-limit">
+                    {issueReportLimit}
+                  </output>
+                  <button
+                    aria-label="Increase issue reports per day"
+                    disabled={updating || issueReportLimit === 1000}
+                    onClick={() => setIssueReportLimit((limit) => Math.min(1000, limit + 1))}
+                    type="button"
+                  >
+                    <FaPlus aria-hidden focusable="false" />
+                  </button>
+                </div>
+                <button
+                  className="button"
+                  disabled={updating || issueReportLimit === user.issueReportLimit}
+                  onClick={() => onUpdate({ issueReportLimit })}
+                  type="button"
+                >
+                  Save limit
+                </button>
+              </div>
+              {issueReportLimit === 0 && (
+                <p className="admin-limit-help">
+                  This user will not be able to submit issue reports.
+                </p>
+              )}
+            </div>
+          )}
         </section>
       )}
 

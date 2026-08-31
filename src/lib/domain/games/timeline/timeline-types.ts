@@ -32,6 +32,7 @@ export type TimelineGamePayload = {
     attemptLimit: number | null;
     attemptsRemaining: number | null;
     speedrunStartedAt?: number | null;
+    speedrunGivenUpAt?: number | null;
     latestAttempt: {
       modelOrder: string[];
       placements: Array<0 | 1 | 2>;

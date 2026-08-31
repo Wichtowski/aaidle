@@ -299,7 +299,55 @@ body.hell-mode .admin-progress__guess-list li {
   font-size: 13px;
   line-height: 1.5;
 }
-.admin-account-controls > label,
+.admin-account-controls > .eyebrow {
+  margin: 0 0 12px;
+}
+.admin-tool-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+.admin-tool-tabs button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  padding: 9px 11px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-tool-tabs button[aria-selected="true"] {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+.admin-tool-tabs__request {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f5dfbd;
+  color: #8b4818;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.admin-tool-panel {
+  padding-top: 18px;
+}
+.admin-tool-panel h3 {
+  margin: 0;
+  font-size: 23px;
+  letter-spacing: -0.05em;
+}
+.admin-tool-panel > label,
 .admin-disable-form > label {
   display: block;
   margin: 16px 0 7px;
@@ -324,6 +372,53 @@ body.hell-mode .admin-progress__guess-list li {
 .admin-control-row select {
   flex: 1;
 }
+.admin-limit-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-limit-stepper button {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.admin-limit-stepper button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.admin-limit-stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.admin-limit-stepper output {
+  min-width: 3ch;
+  color: var(--ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  text-align: center;
+}
+.admin-limit-request,
+.admin-limit-help {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.admin-limit-request {
+  color: #a3571d;
+  font-weight: 700;
+}
+.admin-user-row__request {
+  color: #a3571d;
+  font-weight: 700;
+}
 .admin-disable-form {
   margin-top: 20px;
 }
@@ -334,7 +429,7 @@ body.hell-mode .admin-progress__guess-list li {
   resize: vertical;
 }
 .admin-disable-form .button,
-.admin-account-controls > .button {
+.admin-tool-panel > .button {
   margin-top: 10px;
 }
 .admin-detail-section {

@@ -8,9 +8,9 @@ use sqlx::SqliteConnection;
 use time::OffsetDateTime;
 use time::{Date, format_description::FormatItem, macros::format_description};
 
-const MODELS: &str = include_str!("../../../data/classic.seed.json");
-const EMOJI: &str = include_str!("../../../data/emoji.seed.json");
-const TIMELINE_MODELS: &str = include_str!("../../../data/timeline.seed.json");
+const MODELS: &str = include_str!("../../../../data/classic.seed.json");
+const EMOJI: &str = include_str!("../../../../data/emoji.seed.json");
+const TIMELINE_MODELS: &str = include_str!("../../../../data/timeline.seed.json");
 const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 
 #[derive(Deserialize)]
@@ -62,13 +62,45 @@ fn valid_release_date(value: &str) -> bool {
     Date::parse(value, DATE_FORMAT).is_ok()
 }
 
+fn validate_timeline_item(item: &SeedTimelineItem) -> AppResult<()> {
+    if !valid_release_date(&item.release_date) {
+        return Err(aidle_api::error::AppError::config(format!(
+            "Timeline item {} has an invalid release date",
+            item.id
+        )));
+    }
+    if !matches!(item.kind.as_str(), "model" | "event") {
+        return Err(aidle_api::error::AppError::config(format!(
+            "Timeline item {} has an invalid kind",
+            item.id
+        )));
+    }
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> AppResult<()> {
     dotenvy::dotenv().ok();
-    let config = Arc::new(AppConfig::from_env()?);
+    run(Arc::new(AppConfig::from_env()?)).await
+}
+
+async fn run(config: Arc<AppConfig>) -> AppResult<()> {
     let pool = db::connect(&config).await?;
     db::migrate(&pool).await?;
-    let models: Vec<SeedModel> = serde_json::from_str(MODELS)?;
+    seed(pool).await
+}
+
+async fn seed(pool: sqlx::SqlitePool) -> AppResult<()> {
+    seed_data(pool, MODELS, TIMELINE_MODELS, EMOJI).await
+}
+
+async fn seed_data(
+    pool: sqlx::SqlitePool,
+    models_json: &str,
+    timeline_json: &str,
+    emoji_json: &str,
+) -> AppResult<()> {
+    let models: Vec<SeedModel> = serde_json::from_str(models_json)?;
     let now = OffsetDateTime::now_utc()
         .unix_timestamp_nanos()
         .div_euclid(1_000_000) as i64;
@@ -76,23 +108,12 @@ async fn main() -> AppResult<()> {
     for model in &models {
         seed_model(&mut transaction, model, now).await?;
     }
-    let timeline_items: Vec<SeedTimelineItem> = serde_json::from_str(TIMELINE_MODELS)?;
+    let timeline_items: Vec<SeedTimelineItem> = serde_json::from_str(timeline_json)?;
     sqlx::query("DELETE FROM timeline_items")
         .execute(&mut *transaction)
         .await?;
     for item in &timeline_items {
-        if !valid_release_date(&item.release_date) {
-            return Err(aidle_api::error::AppError::config(format!(
-                "Timeline item {} has an invalid release date",
-                item.id
-            )));
-        }
-        if !matches!(item.kind.as_str(), "model" | "event") {
-            return Err(aidle_api::error::AppError::config(format!(
-                "Timeline item {} has an invalid kind",
-                item.id
-            )));
-        }
+        validate_timeline_item(item)?;
         sqlx::query(
             "INSERT INTO timeline_items \
              (id, item_kind, model_id, name, provider_key, categories_json, min_pool_rank, \
@@ -114,7 +135,7 @@ async fn main() -> AppResult<()> {
         .execute(&mut *transaction)
         .await?;
     }
-    let emoji: Vec<aidle_api::domain::emoji::VisualClueEntity> = serde_json::from_str(EMOJI)?;
+    let emoji: Vec<aidle_api::domain::emoji::VisualClueEntity> = serde_json::from_str(emoji_json)?;
     aidle_api::domain::emoji::validate_seed(&emoji)?;
     for entity in emoji {
         sqlx::query(
@@ -283,6 +304,34 @@ async fn seed_model(
     .await
 }
 
+fn relationship_queries(
+    dictionary: &str,
+    relation: &str,
+    relation_column: &str,
+) -> AppResult<(&'static str, &'static str)> {
+    match (dictionary, relation, relation_column) {
+        ("categories", "model_categories", "category_id") => Ok((
+            "INSERT INTO categories (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+            "INSERT INTO model_categories (model_id, category_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        )),
+        ("modalities", "model_input_modalities", "modality_id") => Ok((
+            "INSERT INTO modalities (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+            "INSERT INTO model_input_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        )),
+        ("modalities", "model_output_modalities", "modality_id") => Ok((
+            "INSERT INTO modalities (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+            "INSERT INTO model_output_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        )),
+        ("use_cases", "model_use_cases", "use_case_id") => Ok((
+            "INSERT INTO use_cases (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
+            "INSERT INTO model_use_cases (model_id, use_case_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        )),
+        _ => Err(aidle_api::error::AppError::config(
+            "invalid seed relationship",
+        )),
+    }
+}
+
 async fn seed_relationships(
     connection: &mut SqliteConnection,
     dictionary: &str,
@@ -291,29 +340,8 @@ async fn seed_relationships(
     model_id: &str,
     values: &[String],
 ) -> AppResult<()> {
-    let (dictionary_query, relation_query) = match (dictionary, relation, relation_column) {
-        ("categories", "model_categories", "category_id") => (
-            "INSERT INTO categories (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
-            "INSERT INTO model_categories (model_id, category_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
-        ),
-        ("modalities", "model_input_modalities", "modality_id") => (
-            "INSERT INTO modalities (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
-            "INSERT INTO model_input_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
-        ),
-        ("modalities", "model_output_modalities", "modality_id") => (
-            "INSERT INTO modalities (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
-            "INSERT INTO model_output_modalities (model_id, modality_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
-        ),
-        ("use_cases", "model_use_cases", "use_case_id") => (
-            "INSERT INTO use_cases (id, name, slug) VALUES (?, ?, ?) ON CONFLICT(id) DO NOTHING",
-            "INSERT INTO model_use_cases (model_id, use_case_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
-        ),
-        _ => {
-            return Err(aidle_api::error::AppError::config(
-                "invalid seed relationship",
-            ));
-        }
-    };
+    let (dictionary_query, relation_query) =
+        relationship_queries(dictionary, relation, relation_column)?;
     for value in values {
         let id = slug(value);
         sqlx::query(dictionary_query)
@@ -356,3 +384,6 @@ fn country_code(country: Option<&str>) -> &'static str {
         _ => "UN",
     }
 }
+
+#[cfg(test)]
+mod tests;

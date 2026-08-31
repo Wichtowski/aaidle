@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 use reqwest::Client;
 use sqlx::SqlitePool;
@@ -17,15 +17,19 @@ pub struct AppState {
     pub emoji: Arc<VisualClueCatalog>,
 }
 
+fn build_http_client(timeout: Duration, user_agent: &str) -> AppResult<Client> {
+    Client::builder()
+        .timeout(timeout)
+        .user_agent(user_agent)
+        .build()
+        .map_err(|error| {
+            AppError::config(format!("failed to create outbound HTTP client: {error}"))
+        })
+}
+
 impl AppState {
     pub fn new(db: SqlitePool, config: Arc<AppConfig>) -> AppResult<Self> {
-        let http = Client::builder()
-            .timeout(config.request_timeout)
-            .user_agent("aAIdle/1.0")
-            .build()
-            .map_err(|error| {
-                AppError::config(format!("failed to create outbound HTTP client: {error}"))
-            })?;
+        let http = build_http_client(config.request_timeout, "aAIdle/1.0")?;
         Ok(Self {
             db,
             config,
@@ -34,3 +38,6 @@ impl AppState {
         })
     }
 }
+
+#[cfg(test)]
+mod tests;

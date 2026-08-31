@@ -35,7 +35,12 @@ function hydrateGame(game: TimelineGamePayload) {
     attemptsRemaining: game.progress.attemptsRemaining,
     solved: game.progress.solved || Boolean(useSaved && saved.solved),
     speedrunStartedAt: game.progress.speedrunStartedAt ?? undefined,
-    speedrunTimeMs: serverAttempt?.speedrunTimeMs,
+    speedrunGivenUpAt: game.progress.speedrunGivenUpAt ?? undefined,
+    speedrunTimeMs:
+      serverAttempt?.speedrunTimeMs ??
+      (game.progress.speedrunStartedAt && game.progress.speedrunGivenUpAt
+        ? Math.max(0, game.progress.speedrunGivenUpAt - game.progress.speedrunStartedAt)
+        : undefined),
   };
 }
 
@@ -58,6 +63,7 @@ export function useTimelineGame({
   const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
   const [solved, setSolved] = useState(false);
   const [speedrunStartedAt, setSpeedrunStartedAt] = useState<number | null>(null);
+  const [speedrunGivenUpAt, setSpeedrunGivenUpAt] = useState<number | null>(null);
   const [speedrunElapsed, setSpeedrunElapsed] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -90,6 +96,7 @@ export function useTimelineGame({
       setAttemptsRemaining(hydrated.attemptsRemaining);
       setSolved(hydrated.solved);
       setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
+      setSpeedrunGivenUpAt(hydrated.speedrunGivenUpAt ?? null);
       setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
       setSelectedModelId(null);
       setLoading(false);
@@ -112,6 +119,7 @@ export function useTimelineGame({
         setAttemptsRemaining(hydrated.attemptsRemaining);
         setSolved(hydrated.solved);
         setSpeedrunStartedAt(hydrated.speedrunStartedAt ?? null);
+        setSpeedrunGivenUpAt(hydrated.speedrunGivenUpAt ?? null);
         setSpeedrunElapsed(hydrated.speedrunTimeMs ?? 0);
         setSelectedModelId(null);
       })
@@ -141,22 +149,22 @@ export function useTimelineGame({
   }, [acceptedAttempts, attemptsRemaining, game, placements, positions, solved, speedrunStartedAt]);
 
   useEffect(() => {
-    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
+    if (difficulty !== "speedrun" || solved || speedrunGivenUpAt || !speedrunStartedAt) return;
     const update = () => setSpeedrunElapsed(Math.max(0, Date.now() - speedrunStartedAt));
     update();
     const timer = window.setInterval(update, 100);
     return () => window.clearInterval(timer);
-  }, [difficulty, solved, speedrunStartedAt]);
+  }, [difficulty, solved, speedrunGivenUpAt, speedrunStartedAt]);
 
   useEffect(() => {
-    if (difficulty !== "speedrun" || solved || !speedrunStartedAt) return;
+    if (difficulty !== "speedrun" || solved || speedrunGivenUpAt || !speedrunStartedAt) return;
     const preventSpeedrunExit = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "Your Speedrun timer will continue if you leave this page.";
     };
     window.addEventListener("beforeunload", preventSpeedrunExit);
     return () => window.removeEventListener("beforeunload", preventSpeedrunExit);
-  }, [difficulty, solved, speedrunStartedAt]);
+  }, [difficulty, solved, speedrunGivenUpAt, speedrunStartedAt]);
 
   return {
     acceptedAttempts,
@@ -180,9 +188,11 @@ export function useTimelineGame({
     setSelectedModelId,
     setSolved,
     setSpeedrunElapsed,
+    setSpeedrunGivenUpAt,
     setSpeedrunStartedAt,
     solved,
     speedrunElapsed,
+    speedrunGivenUpAt,
     speedrunStartedAt,
   };
 }

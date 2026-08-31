@@ -132,6 +132,7 @@ pub struct AdminUserSummary {
     pub disabled_at: Option<i64>,
     pub disabled_reason: Option<String>,
     pub issue_report_limit: i64,
+    pub issue_report_limit_requested_at: Option<i64>,
     pub sign_in_providers: Vec<String>,
     pub last_seen_at: Option<i64>,
     pub progress_updated_at: Option<i64>,
@@ -395,6 +396,7 @@ pub struct TimelineProgressResponse {
     pub attempt_limit: Option<u16>,
     pub attempts_remaining: Option<u16>,
     pub speedrun_started_at: Option<i64>,
+    pub speedrun_given_up_at: Option<i64>,
     pub latest_attempt: Option<TimelineLatestAttemptResponse>,
 }
 
@@ -426,6 +428,18 @@ pub struct TimelineSpeedrunStartRequest {
 pub struct TimelineSpeedrunStartResponse {
     pub started_at: i64,
     pub movable_models: Vec<TimelinePublicModel>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct TimelineSpeedrunGiveUpRequest {
+    pub player_id: Uuid,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimelineSpeedrunGiveUpResponse {
+    pub given_up_at: i64,
 }
 
 #[derive(Serialize)]
@@ -591,3 +605,6 @@ pub struct ChallengeStatsResponse {
     pub unique_players: i64,
     pub correct_guesses: i64,
 }
+
+#[cfg(test)]
+mod tests;

@@ -16,6 +16,7 @@ use crate::{
         TimelineChallengeResponse, TimelineGameResponse, TimelineGlobalLeaderboardResponse,
         TimelineGlobalRunPoint, TimelineLatestAttemptResponse, TimelineLeaderboardResponse,
         TimelineProgressResponse, TimelinePublicModel, TimelineSlotResponse,
+        TimelineSpeedrunGiveUpRequest, TimelineSpeedrunGiveUpResponse,
         TimelineSpeedrunStartRequest, TimelineSpeedrunStartResponse,
     },
     error::{AppError, AppResult},
@@ -154,6 +155,7 @@ pub(super) async fn game(
             attempt_limit: game.attempt_limit,
             attempts_remaining: game.attempts_remaining,
             speedrun_started_at: game.speedrun_started_at,
+            speedrun_given_up_at: game.speedrun_given_up_at,
             latest_attempt: game
                 .latest_attempt
                 .map(|attempt| TimelineLatestAttemptResponse {
@@ -165,6 +167,9 @@ pub(super) async fn game(
         },
     }))
 }
+
+#[cfg(test)]
+mod tests;
 
 pub(super) async fn start(
     State(state): State<AppState>,
@@ -189,6 +194,26 @@ pub(super) async fn start(
         started_at,
         movable_models,
     }))
+}
+
+pub(super) async fn give_up(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+    payload: Result<Json<TimelineSpeedrunGiveUpRequest>, JsonRejection>,
+) -> AppResult<Json<TimelineSpeedrunGiveUpResponse>> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    let payload = parse_json_payload(payload)?;
+    let user = optional_authenticated_user(&state, &headers)
+        .await?
+        .filter(|user| !user.disabled)
+        .ok_or_else(|| AppError::Unauthorized("Sign in to access this game mode.".to_owned()))?;
+    assert_same_origin_or_bearer(&state, &headers)?;
+    assert_csrf_or_bearer(&headers)?;
+    let player_id =
+        progress::canonical_player_id(&state.db, &user.id, payload.player_id, now_millis()).await?;
+    let given_up_at = timeline::give_up_speedrun(&state.db, challenge_id, player_id).await?;
+    Ok(Json(TimelineSpeedrunGiveUpResponse { given_up_at }))
 }
 
 pub(super) async fn leaderboard(

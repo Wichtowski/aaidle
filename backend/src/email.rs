@@ -7,6 +7,7 @@ use crate::{
 };
 
 const SENDER: &str = "aAIdle <accounts@aaidle.com>";
+const RESEND_EMAILS_URL: &str = "https://api.resend.com/emails";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AuthEmailPurpose {
@@ -67,6 +68,17 @@ pub async fn send_auth_email(
     purpose: AuthEmailPurpose,
     token: &str,
 ) -> AppResult<AuthEmailDelivery> {
+    send_auth_email_to(client, config, email, purpose, token, RESEND_EMAILS_URL).await
+}
+
+async fn send_auth_email_to(
+    client: &Client,
+    config: &AppConfig,
+    email: &str,
+    purpose: AuthEmailPurpose,
+    token: &str,
+    endpoint: &str,
+) -> AppResult<AuthEmailDelivery> {
     let link = format!("{}{}?token={token}", config.app_origin, purpose.path());
     let Some(api_key) = config.resend_api_key.as_deref() else {
         if config.secure_cookies {
@@ -96,7 +108,7 @@ pub async fn send_auth_email(
         ),
     };
     let response = client
-        .post("https://api.resend.com/emails")
+        .post(endpoint)
         .bearer_auth(api_key)
         .header("Idempotency-Key", uuid::Uuid::new_v4().to_string())
         .json(&body)
@@ -121,3 +133,6 @@ struct ResendEmail<'a> {
     text: String,
     html: String,
 }
+
+#[cfg(test)]
+mod tests;

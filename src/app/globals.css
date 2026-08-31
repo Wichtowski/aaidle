@@ -2266,6 +2266,13 @@ body.hell-mode .hell-mode-toggle__control::after {
 .issue-report__success a {
   color: inherit;
 }
+.issue-report__limit-request {
+  display: flex;
+  align-items: center;
+}
+.issue-report__limit-request .button {
+  padding: 9px 13px;
+}
 body.hell-mode .issue-report__form {
   border-color: #7f3028;
   background: #1a0d10;
@@ -5030,7 +5037,8 @@ body.hell-mode .completed--timeline {
   color: var(--ink);
   font-size: 17px;
 }
-.timeline-game__speedrun-start {
+.timeline-game__speedrun-start,
+.timeline-game__speedrun-give-up {
   margin-top: 0;
   padding: 8px 12px;
   font-size: 12px;
@@ -5503,6 +5511,15 @@ body.hell-mode .completed--timeline {
   box-shadow: inset 0 4px 0 #c58b24;
   animation: timeline-result-incorrect 480ms both;
 }
+.timeline-card__result {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+}
+.timeline-card__result .timeline-card__date {
+  margin-top: 0;
+}
 .timeline-card__feedback {
   display: flex;
   align-items: center;
@@ -5526,8 +5543,19 @@ body.hell-mode .completed--timeline {
   color: #e1ffe8;
   box-shadow: inset 0 4px 0 #63ad83;
 }
-:is(:root.hell-mode, body.hell-mode) .timeline-card--correct .timeline-card__feedback {
-  color: #e1ffe8;
+:is(:root.hell-mode, body.hell-mode)
+  .timeline-card--correct
+  :is(.timeline-card__date-help, .timeline-card__feedback, time) {
+  color: #fff;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year {
+  border-color: #9d6224;
+  background: #482c18;
+  color: #ffe1a4;
+  box-shadow: inset 0 4px 0 #9d6224;
+}
+:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year .timeline-card__feedback {
+  color: #ffe1a4;
 }
 :is(:root.hell-mode, body.hell-mode) .timeline-card--incorrect {
   border-color: #a94432;

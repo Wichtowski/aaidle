@@ -173,3 +173,6 @@ fn emoji_entity_response(
         entity_kind: entity.entity_kind.as_str().to_owned(),
     }
 }
+
+#[cfg(test)]
+mod tests;

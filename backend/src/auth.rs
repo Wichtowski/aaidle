@@ -453,7 +453,7 @@ pub async fn register_with_password_and_username(
         permission: Permission::User,
         disabled: false,
         disabled_reason: None,
-        issue_report_limit: 3,
+        issue_report_limit: 2,
     })
 }
 
@@ -837,6 +837,36 @@ pub async fn oauth_identity(
     provider: OAuthProvider,
     code: &str,
 ) -> AppResult<OAuthIdentity> {
+    oauth_identity_with_endpoints(client, config, provider, code, &OAuthEndpoints::default()).await
+}
+
+struct OAuthEndpoints<'a> {
+    github_token: &'a str,
+    github_profile: &'a str,
+    github_emails: &'a str,
+    google_token: &'a str,
+    google_profile: &'a str,
+}
+
+impl Default for OAuthEndpoints<'_> {
+    fn default() -> Self {
+        Self {
+            github_token: "https://github.com/login/oauth/access_token",
+            github_profile: "https://api.github.com/user",
+            github_emails: "https://api.github.com/user/emails",
+            google_token: "https://oauth2.googleapis.com/token",
+            google_profile: "https://openidconnect.googleapis.com/v1/userinfo",
+        }
+    }
+}
+
+async fn oauth_identity_with_endpoints(
+    client: &Client,
+    config: &AppConfig,
+    provider: OAuthProvider,
+    code: &str,
+    endpoints: &OAuthEndpoints<'_>,
+) -> AppResult<OAuthIdentity> {
     if code.is_empty() || code.len() > 2048 {
         return Err(AppError::validation(
             "The OAuth authorization code is invalid.",
@@ -844,8 +874,8 @@ pub async fn oauth_identity(
     }
     let credentials = provider.credentials(config)?;
     let endpoint = match provider {
-        OAuthProvider::Github => "https://github.com/login/oauth/access_token",
-        OAuthProvider::Google => "https://oauth2.googleapis.com/token",
+        OAuthProvider::Github => endpoints.github_token,
+        OAuthProvider::Google => endpoints.google_token,
     };
     let redirect_uri = provider.callback_url(config);
     let mut form = vec![
@@ -877,9 +907,29 @@ pub async fn oauth_identity(
     let access_token = token.access_token.ok_or_else(|| {
         AppError::Unavailable("OAuth sign-in is temporarily unavailable.".to_owned())
     })?;
+    let defaults = OAuthEndpoints::default();
     match provider {
-        OAuthProvider::Github => github_identity(client, &access_token).await,
-        OAuthProvider::Google => google_identity(client, &access_token).await,
+        OAuthProvider::Github
+            if endpoints.github_profile == defaults.github_profile
+                && endpoints.github_emails == defaults.github_emails =>
+        {
+            github_identity(client, &access_token).await
+        }
+        OAuthProvider::Github => {
+            github_identity_with_endpoints(
+                client,
+                &access_token,
+                endpoints.github_profile,
+                endpoints.github_emails,
+            )
+            .await
+        }
+        OAuthProvider::Google if endpoints.google_profile == defaults.google_profile => {
+            google_identity(client, &access_token).await
+        }
+        OAuthProvider::Google => {
+            google_identity_with_endpoint(client, &access_token, endpoints.google_profile).await
+        }
     }
 }
 
@@ -910,8 +960,24 @@ struct GoogleProfile {
 }
 
 async fn github_identity(client: &Client, access_token: &str) -> AppResult<OAuthIdentity> {
+    let endpoints = OAuthEndpoints::default();
+    github_identity_with_endpoints(
+        client,
+        access_token,
+        endpoints.github_profile,
+        endpoints.github_emails,
+    )
+    .await
+}
+
+async fn github_identity_with_endpoints(
+    client: &Client,
+    access_token: &str,
+    profile_endpoint: &str,
+    emails_endpoint: &str,
+) -> AppResult<OAuthIdentity> {
     let profile = client
-        .get("https://api.github.com/user")
+        .get(profile_endpoint)
         .bearer_auth(access_token)
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
@@ -933,7 +999,7 @@ async fn github_identity(client: &Client, access_token: &str) -> AppResult<OAuth
         AppError::Unavailable("OAuth sign-in is temporarily unavailable.".to_owned())
     })?;
     let emails = client
-        .get("https://api.github.com/user/emails")
+        .get(emails_endpoint)
         .bearer_auth(access_token)
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
@@ -966,8 +1032,21 @@ async fn github_identity(client: &Client, access_token: &str) -> AppResult<OAuth
 }
 
 async fn google_identity(client: &Client, access_token: &str) -> AppResult<OAuthIdentity> {
+    google_identity_with_endpoint(
+        client,
+        access_token,
+        OAuthEndpoints::default().google_profile,
+    )
+    .await
+}
+
+async fn google_identity_with_endpoint(
+    client: &Client,
+    access_token: &str,
+    profile_endpoint: &str,
+) -> AppResult<OAuthIdentity> {
     let response = client
-        .get("https://openidconnect.googleapis.com/v1/userinfo")
+        .get(profile_endpoint)
         .bearer_auth(access_token)
         .send()
         .await
@@ -1112,56 +1191,4 @@ fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn production_reserves_the_fixture_admin_email() {
-        assert!(is_production_reserved_email(
-            AppEnvironment::Production,
-            " Admin@AAIdle.com "
-        ));
-        assert!(!is_production_reserved_email(
-            AppEnvironment::Local,
-            PRODUCTION_RESERVED_EMAIL
-        ));
-        assert!(!is_production_reserved_email(
-            AppEnvironment::Production,
-            "user@aaidle.com"
-        ));
-    }
-
-    #[test]
-    fn verifies_the_node_scrypt_wire_format() {
-        let encoded = "scrypt$MDEyMzQ1Njc4OWFiY2RlZg$jIxrBpYgB3uwp7ZZJbAJ19YSarZPKgAllt1cuxPd2HTJJ5AC2msS8rmQa4_Rm2n9o7uFNx3zKKNbcAysD1fpHg";
-        assert!(verify_password("correct horse battery staple", encoded).expect("verify password"));
-        assert!(!verify_password("incorrect", encoded).expect("verify password"));
-    }
-
-    #[test]
-    fn hashes_passwords_with_a_verifiable_legacy_format() {
-        let encoded = hash_password("correct horse battery staple").expect("hash password");
-        assert!(encoded.starts_with("scrypt$"));
-        assert!(
-            verify_password("correct horse battery staple", &encoded).expect("verify password")
-        );
-    }
-
-    #[test]
-    fn oauth_state_is_bound_to_the_provider_and_is_tamper_evident() {
-        let secret = "test secret that is longer than thirty two bytes";
-        let (state, cookie) = create_oauth_state(secret, OAuthProvider::Github).expect("state");
-        assert!(
-            is_valid_oauth_state(secret, OAuthProvider::Github, &state, Some(&cookie))
-                .expect("valid state")
-        );
-        assert!(
-            !is_valid_oauth_state(secret, OAuthProvider::Google, &state, Some(&cookie))
-                .expect("wrong provider")
-        );
-        assert!(
-            !is_valid_oauth_state(secret, OAuthProvider::Github, "different", Some(&cookie))
-                .expect("wrong state")
-        );
-    }
-}
+mod tests;

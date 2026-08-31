@@ -1058,3 +1058,6 @@ fn format_millis(value: i64) -> AppResult<String> {
         .format(&Rfc3339)
         .map_err(|_| AppError::Unavailable("Stored progress timestamp is invalid.".to_owned()))
 }
+
+#[cfg(test)]
+mod tests;

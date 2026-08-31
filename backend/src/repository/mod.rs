@@ -1462,3 +1462,6 @@ fn format_date(date: Date) -> AppResult<String> {
     date.format(&DATE_FORMAT)
         .map_err(|_| AppError::Unavailable("Could not format challenge date.".to_owned()))
 }
+
+#[cfg(test)]
+mod tests;

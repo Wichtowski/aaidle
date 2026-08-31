@@ -373,3 +373,6 @@ async fn increment_visual_completion_count(
 ) -> AppResult<i64> {
     Ok(sqlx::query_scalar("INSERT INTO visual_clue_completion_counts (challenge_id, completion_count) VALUES (?, 1) ON CONFLICT(challenge_id) DO UPDATE SET completion_count = completion_count + 1 RETURNING completion_count").bind(id).fetch_one(connection).await?)
 }
+
+#[cfg(test)]
+mod tests;

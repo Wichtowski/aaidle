@@ -27,6 +27,13 @@ pub async fn connect(config: &AppConfig) -> AppResult<SqlitePool> {
         .await?)
 }
 
+fn latest_migration_version(migrations: &[sqlx::migrate::Migration]) -> i64 {
+    migrations
+        .last()
+        .map(|migration| migration.version)
+        .unwrap_or(0)
+}
+
 pub async fn migrate(pool: &SqlitePool) -> AppResult<i64> {
     let mut connection = pool.acquire().await?;
     sqlx::query("PRAGMA foreign_keys = OFF")
@@ -43,9 +50,10 @@ pub async fn migrate(pool: &SqlitePool) -> AppResult<i64> {
     })?;
     foreign_key_result?;
 
-    Ok(sqlx::migrate!("./migrations")
-        .migrations
-        .last()
-        .map(|migration| migration.version)
-        .unwrap_or(0))
+    Ok(latest_migration_version(
+        &sqlx::migrate!("./migrations").migrations,
+    ))
 }
+
+#[cfg(test)]
+mod tests;

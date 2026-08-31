@@ -151,3 +151,6 @@ pub(super) async fn history(
         ),
     ))
 }
+
+#[cfg(test)]
+mod tests;

@@ -10,6 +10,9 @@ export function IssueReportForm() {
   const [error, setError] = useState<string | null>(null);
   const [issueUrl, setIssueUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
+  const [requestingIncrease, setRequestingIncrease] = useState(false);
+  const [increaseRequested, setIncreaseRequested] = useState(false);
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,10 +22,12 @@ export function IssueReportForm() {
     try {
       const issue = await apiClient.reportIssue(title, description, game as IssueGame);
       setIssueUrl(issue.url);
+      setLimitReached(false);
       setGame("");
       setTitle("");
       setDescription("");
     } catch (requestError) {
+      setLimitReached(requestError instanceof ApiError && requestError.status === 429);
       setError(
         requestError instanceof ApiError
           ? requestError.message
@@ -30,6 +35,23 @@ export function IssueReportForm() {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const requestIncrease = async () => {
+    setRequestingIncrease(true);
+    setError(null);
+    try {
+      await apiClient.requestIssueReportLimitIncrease();
+      setIncreaseRequested(true);
+    } catch (requestError) {
+      setError(
+        requestError instanceof ApiError
+          ? requestError.message
+          : "Could not send the request. Please try again.",
+      );
+    } finally {
+      setRequestingIncrease(false);
     }
   };
 
@@ -104,6 +126,25 @@ export function IssueReportForm() {
             View the issue on GitHub.
           </a>
         </p>
+      )}
+      {limitReached && (
+        <div className="issue-report__limit-request">
+          {increaseRequested ? (
+            <p className="issue-report__success" role="status">
+              Your request for more daily reports was sent to the administrators.
+            </p>
+          ) : (
+            <button
+              className="button"
+              data-testid="issue-report-request-limit"
+              disabled={requestingIncrease}
+              onClick={requestIncrease}
+              type="button"
+            >
+              {requestingIncrease ? "Sending request…" : "Request more reports"}
+            </button>
+          )}
+        </div>
       )}
       <button
         className="button button--primary"

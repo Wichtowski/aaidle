@@ -28,3 +28,6 @@ impl Difficulty {
         }
     }
 }
+
+#[cfg(test)]
+mod tests;

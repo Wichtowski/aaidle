@@ -84,6 +84,7 @@ export type AdminUserSummary = {
   progressUpdatedAt: number | null;
   completionCount: number;
   issueReportLimit: number;
+  issueReportLimitRequestedAt: number | null;
 };
 
 export type AdminUserDetail = AdminUserSummary & {
@@ -454,6 +455,10 @@ class ApiClient {
     });
   }
 
+  requestIssueReportLimitIncrease() {
+    return this.request<{ accepted: true }>("/issues/limit-request", { method: "POST" });
+  }
+
   adminUsers(page: number, query: string) {
     const search = new URLSearchParams({ page: String(page) });
     if (query) search.set("query", query);
@@ -602,6 +607,17 @@ class ApiClient {
   startTimelineSpeedrun(challengeId: string, playerId: string) {
     return this.request<TimelineSpeedrunStartPayload>(
       `/games/timeline/challenges/${challengeId}/start`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId }),
+      },
+    );
+  }
+
+  giveUpTimelineSpeedrun(challengeId: string, playerId: string) {
+    return this.request<{ givenUpAt: number }>(
+      `/games/timeline/challenges/${challengeId}/give-up`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

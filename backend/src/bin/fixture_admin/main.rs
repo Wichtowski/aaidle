@@ -20,15 +20,26 @@ const HARDCORE_SOUNDTRACK_URL: &str =
 #[tokio::main]
 async fn main() -> AppResult<()> {
     dotenvy::dotenv().ok();
-    let config = Arc::new(AppConfig::from_env()?);
-    if auth::is_production_reserved_email(config.environment, EMAIL) {
+    run(Arc::new(AppConfig::from_env()?)).await
+}
+
+async fn run(config: Arc<AppConfig>) -> AppResult<()> {
+    validate_environment(config.environment)?;
+    let pool = db::connect(&config).await?;
+    db::migrate(&pool).await?;
+    provision(pool).await
+}
+
+fn validate_environment(environment: aidle_api::config::AppEnvironment) -> AppResult<()> {
+    if auth::is_production_reserved_email(environment, EMAIL) {
         return Err(AppError::config(
             "the development fixture admin cannot be provisioned in production",
         ));
     }
-    let pool = db::connect(&config).await?;
-    db::migrate(&pool).await?;
+    Ok(())
+}
 
+async fn provision(pool: sqlx::SqlitePool) -> AppResult<()> {
     let email = auth::normalize_email(EMAIL)?;
     let password_hash = auth::hash_password(PASSWORD)?;
     let now = OffsetDateTime::now_utc()
@@ -141,17 +152,7 @@ async fn main() -> AppResult<()> {
 
             if guess_count == 0 {
                 let wrong_model_id = if mode.ends_with(":normal") {
-                    let category = mode
-                        .strip_prefix("classic:")
-                        .and_then(|value| value.strip_suffix(":normal"))
-                        .map(|value| {
-                            if value == "od" {
-                                "object-detection"
-                            } else {
-                                value
-                            }
-                        });
-                    if let Some(category) = category {
+                    if let Some(category) = classic_category(&mode) {
                         sqlx::query_scalar::<_, String>(
                             "SELECT m.id FROM models m \
                              JOIN model_categories mc ON mc.model_id = m.id \
@@ -169,10 +170,7 @@ async fn main() -> AppResult<()> {
                         None
                     }
                 } else {
-                    model_ids
-                        .iter()
-                        .find(|model_id| *model_id != &answer_model_id)
-                        .cloned()
+                    alternate_model_id(&model_ids, &answer_model_id)
                 };
                 if let Some(wrong_model_id) = wrong_model_id {
                     let _ = aidle_api::repository::process_guess(
@@ -227,3 +225,25 @@ async fn main() -> AppResult<()> {
     );
     Ok(())
 }
+
+fn classic_category(mode: &str) -> Option<&str> {
+    mode.strip_prefix("classic:")
+        .and_then(|value| value.strip_suffix(":normal"))
+        .map(|value| {
+            if value == "od" {
+                "object-detection"
+            } else {
+                value
+            }
+        })
+}
+
+fn alternate_model_id(model_ids: &[String], answer_model_id: &str) -> Option<String> {
+    model_ids
+        .iter()
+        .find(|model_id| model_id.as_str() != answer_model_id)
+        .cloned()
+}
+
+#[cfg(test)]
+mod tests;

@@ -736,3 +736,6 @@ pub(super) async fn logout(
     response_headers.append(header::SET_COOKIE, csrf_cookie_header(&state, "", 0)?);
     Ok((response_headers, StatusCode::NO_CONTENT))
 }
+
+#[cfg(test)]
+mod tests;

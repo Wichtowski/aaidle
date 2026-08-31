@@ -44,6 +44,7 @@ import { GameEyebrow } from "../common/layout/GameEyebrow";
 import { GameIntro } from "../common/layout/GameLayout";
 import { DifficultySwitch } from "../common/layout/DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
+import { SpeedrunGiveUpDialog } from "./SpeedrunGiveUpDialog";
 import { SpeedrunUsernameDialog } from "./SpeedrunUsernameDialog";
 import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
 import { useTimelineGame } from "./use-timeline-game";
@@ -142,9 +143,11 @@ export function TimelineGame() {
     setSelectedModelId,
     setSolved,
     setSpeedrunElapsed,
+    setSpeedrunGivenUpAt,
     setSpeedrunStartedAt,
     solved,
     speedrunElapsed,
+    speedrunGivenUpAt,
     speedrunStartedAt,
   } = useTimelineGame({
     canSpeedrun: Boolean(user),
@@ -157,6 +160,7 @@ export function TimelineGame() {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [showSpeedrunGiveUp, setShowSpeedrunGiveUp] = useState(false);
   const [showSpeedrunUsername, setShowSpeedrunUsername] = useState(false);
   const speedrunUsernameHandled = useRef(false);
   const [yearAnnotation, setYearAnnotation] = useState<{
@@ -165,7 +169,6 @@ export function TimelineGame() {
     annotation: string;
   } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const [validationSequence, setValidationSequence] = useState(0);
   const [landingModelId, setLandingModelId] = useState<string | null>(null);
   const [landedModelIds, setLandedModelIds] = useState<Set<string>>(() => new Set());
   const [submissionCooldownRemaining, setSubmissionCooldownRemaining] = useState(0);
@@ -182,6 +185,7 @@ export function TimelineGame() {
   useEffect(() => {
     if (difficulty !== "speedrun") {
       setFocusMode(false);
+      setShowSpeedrunGiveUp(false);
       setShowSpeedrunUsername(false);
       speedrunUsernameHandled.current = false;
     }
@@ -228,6 +232,7 @@ export function TimelineGame() {
   );
   const expectedModelIds = useMemo(() => new Set(itemById.keys()), [itemById]);
   const speedrunCovered = difficulty === "speedrun" && speedrunStartedAt === null;
+  const speedrunUnfinished = difficulty === "speedrun" && speedrunGivenUpAt !== null;
   const arrangedModelIds = useMemo(
     () => new Set(positions.filter((modelId): modelId is string => modelId !== null)),
     [positions],
@@ -237,7 +242,12 @@ export function TimelineGame() {
 
   const submissionCoolingDown = difficulty === "speedrun" && submissionCooldownRemaining > 0;
   const startSpeedrun = useCallback(() => {
-    if (difficulty !== "speedrun" || !game || speedrunStartedAt !== null) {
+    if (
+      difficulty !== "speedrun" ||
+      !game ||
+      speedrunStartedAt !== null ||
+      speedrunGivenUpAt !== null
+    ) {
       return Promise.resolve(speedrunStartedAt);
     }
     if (speedrunStartPromise.current) return speedrunStartPromise.current;
@@ -270,7 +280,36 @@ export function TimelineGame() {
       });
     speedrunStartPromise.current = promise;
     return promise;
-  }, [difficulty, game, progress.playerId, speedrunStartedAt]);
+  }, [difficulty, game, progress.playerId, speedrunGivenUpAt, speedrunStartedAt]);
+
+  const giveUpSpeedrun = async () => {
+    if (!game || !speedrunStartedAt || speedrunGivenUpAt || busy) return;
+    setBusy(true);
+    try {
+      const { givenUpAt } = await apiClient.giveUpTimelineSpeedrun(
+        game.challenge.id,
+        progress.playerId,
+      );
+      setSpeedrunGivenUpAt(givenUpAt);
+      setSpeedrunElapsed(Math.max(0, givenUpAt - speedrunStartedAt));
+      setSelectedModelId(null);
+      const unfinishedGame = {
+        ...game,
+        progress: { ...game.progress, speedrunGivenUpAt: givenUpAt },
+      };
+      gameCache.current[difficulty] = unfinishedGame;
+      setGame(unfinishedGame);
+      setShowSpeedrunGiveUp(false);
+    } catch (giveUpError) {
+      setToast(
+        giveUpError instanceof Error
+          ? giveUpError.message
+          : "We could not mark this Speedrun unfinished.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const triggerLanding = useCallback((modelId: string) => {
     if (landingTimer.current !== null) window.clearTimeout(landingTimer.current);
@@ -299,7 +338,7 @@ export function TimelineGame() {
 
   const moveModel = useCallback(
     (modelId: string, targetPosition: number | null) => {
-      if (solved) return;
+      if (solved || speedrunUnfinished) return;
       setPositions((current) => {
         const sourcePosition = current.indexOf(modelId);
         if (
@@ -321,7 +360,7 @@ export function TimelineGame() {
         return next;
       });
     },
-    [anchorPositions, placements, solved],
+    [anchorPositions, placements, solved, speedrunUnfinished],
   );
 
   useEffect(() => {
@@ -464,7 +503,17 @@ export function TimelineGame() {
   };
 
   const submit = async () => {
-    if (!game || !complete || busy || solved || exhausted || submissionCoolingDown) return;
+    if (
+      !game ||
+      !complete ||
+      busy ||
+      solved ||
+      speedrunUnfinished ||
+      exhausted ||
+      submissionCoolingDown
+    ) {
+      return;
+    }
     if (difficulty === "speedrun") await startSpeedrun();
     const requestId = pendingRequestId.current ?? crypto.randomUUID();
     pendingRequestId.current = requestId;
@@ -510,7 +559,6 @@ export function TimelineGame() {
       };
       setGame(revealedGame);
       if (!didSolve) {
-        setValidationSequence((sequence) => sequence + 1);
         if (difficulty === "speedrun") {
           setSubmissionCooldownRemaining(speedrunSubmissionCooldownSeconds);
         }
@@ -649,6 +697,8 @@ export function TimelineGame() {
                       <>
                         Your today’s time: <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong>
                       </>
+                    ) : speedrunUnfinished ? (
+                      <strong>Unfinished</strong>
                     ) : (
                       <>
                         <strong>{(speedrunElapsed / 1000).toFixed(1)}s</strong> elapsed
@@ -673,6 +723,19 @@ export function TimelineGame() {
                     Show cards and start
                   </button>
                 )}
+                {difficulty === "speedrun" &&
+                  !solved &&
+                  !speedrunUnfinished &&
+                  speedrunStartedAt !== null && (
+                    <button
+                      className="button button--danger timeline-game__speedrun-give-up"
+                      disabled={busy}
+                      onClick={() => setShowSpeedrunGiveUp(true)}
+                      type="button"
+                    >
+                      Give up
+                    </button>
+                  )}
                 {attemptsRemaining !== null && (
                   <p>
                     <strong>{attemptsRemaining}</strong> of {game.progress.attemptLimit} submissions
@@ -689,7 +752,6 @@ export function TimelineGame() {
               "timeline-board",
               difficulty !== "normal" ? "timeline-board--multirow" : "",
             ].join(" ")}
-            key={validationSequence}
             onDragOver={(event) => event.preventDefault()}
           >
             {game.slots.map((slot, position) => {
@@ -766,14 +828,23 @@ export function TimelineGame() {
                       aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
                       className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
-                      disabled={difficulty === "speedrun" && speedrunStartedAt === null}
+                      disabled={
+                        difficulty === "speedrun" &&
+                        (speedrunStartedAt === null || speedrunUnfinished)
+                      }
                       draggable={
                         !solved &&
+                        !speedrunUnfinished &&
                         feedback !== "correct" &&
                         (difficulty !== "speedrun" || speedrunStartedAt !== null)
                       }
                       onClick={() => {
-                        if (difficulty === "speedrun" && speedrunStartedAt === null) return;
+                        if (
+                          difficulty === "speedrun" &&
+                          (speedrunStartedAt === null || speedrunUnfinished)
+                        ) {
+                          return;
+                        }
                         if (selectedModelId && selectedModelId !== item.id) {
                           moveModel(selectedModelId, position);
                         } else if (feedback !== "correct") {
@@ -797,36 +868,40 @@ export function TimelineGame() {
                             {timelineCategoryLabel(item.categories, item.itemKind)}
                           </span>
                           <strong>{item.name}</strong>
-                          {showDate && item.releaseDate && (
-                            <YearAnnotationTrigger
-                              item={item}
-                              onOpen={() =>
-                                item.yearAnnotation &&
-                                setYearAnnotation({
-                                  name: item.name,
-                                  releaseDate: item.releaseDate!,
-                                  annotation: item.yearAnnotation,
-                                })
-                              }
-                            />
-                          )}
-                          {feedback && (
-                            <span className="timeline-card__feedback">
-                              {feedback === "correct" ? (
-                                <>
-                                  <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                                  Correct position
-                                </>
-                              ) : feedback === "same-year" ? (
-                                <>
-                                  <FaEquals aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                                  Same year
-                                </>
-                              ) : (
-                                <>
-                                  <FaXmark aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                                  Incorrect position
-                                </>
+                          {(feedback || (showDate && item.releaseDate)) && (
+                            <span className="timeline-card__result">
+                              {feedback && (
+                                <span className="timeline-card__feedback">
+                                  {feedback === "correct" ? (
+                                    <>
+                                      <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                      Correct position
+                                    </>
+                                  ) : feedback === "same-year" ? (
+                                    <>
+                                      <FaEquals aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                      Same year
+                                    </>
+                                  ) : (
+                                    <>
+                                      <FaXmark aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                      Incorrect position
+                                    </>
+                                  )}
+                                </span>
+                              )}
+                              {showDate && item.releaseDate && (
+                                <YearAnnotationTrigger
+                                  item={item}
+                                  onOpen={() =>
+                                    item.yearAnnotation &&
+                                    setYearAnnotation({
+                                      name: item.name,
+                                      releaseDate: item.releaseDate!,
+                                      annotation: item.yearAnnotation,
+                                    })
+                                  }
+                                />
                               )}
                             </span>
                           )}
@@ -881,11 +956,14 @@ export function TimelineGame() {
                       <button
                         aria-pressed={selectedModelId === item.id}
                         className={`timeline-card timeline-card--movable${draggingModelId === item.id ? " timeline-card--dragging" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}`}
-                        draggable
+                        disabled={speedrunUnfinished}
+                        draggable={!speedrunUnfinished}
                         key={item.id}
-                        onClick={() =>
-                          setSelectedModelId(selectedModelId === item.id ? null : item.id)
-                        }
+                        onClick={() => {
+                          if (!speedrunUnfinished) {
+                            setSelectedModelId(selectedModelId === item.id ? null : item.id);
+                          }
+                        }}
                         onDragStart={(event) => dragStart(event, item.id)}
                         onDragEnd={dragEnd}
                         onPointerDown={(event) => startPointerDrag(event, item.id)}
@@ -906,7 +984,7 @@ export function TimelineGame() {
             )}
 
           <div className="timeline-submit">
-            {!solved && (
+            {!solved && !speedrunUnfinished && (
               <button
                 className="button button--primary"
                 disabled={!complete || busy || solved || exhausted || submissionCoolingDown}
@@ -924,7 +1002,9 @@ export function TimelineGame() {
                         : "Submit complete timeline"}
               </button>
             )}
-            {!complete && <p>Fill every position exactly once to submit.</p>}
+            {!complete && !speedrunUnfinished && (
+              <p>Fill every position exactly once to submit.</p>
+            )}
             {exhausted && (
               <p>Your final arrangement remains private. The answer is not revealed.</p>
             )}
@@ -978,6 +1058,12 @@ export function TimelineGame() {
             totalPositions={game.slots.length}
           />
         </Suspense>
+      )}
+      {difficulty === "speedrun" && showSpeedrunGiveUp && (
+        <SpeedrunGiveUpDialog
+          onClose={() => setShowSpeedrunGiveUp(false)}
+          onConfirm={giveUpSpeedrun}
+        />
       )}
       {difficulty === "speedrun" && solved && showSpeedrunUsername && user && (
         <SpeedrunUsernameDialog

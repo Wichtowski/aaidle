@@ -293,3 +293,6 @@ pub(super) async fn player_stats(
         stats: repository::player_stats(&state.db, player_id).await?,
     }))
 }
+
+#[cfg(test)]
+mod tests;

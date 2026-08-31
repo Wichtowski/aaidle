@@ -65,43 +65,4 @@ fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn tokens_are_bound_to_the_challenge_and_answer() {
-        let token = create_access_token(
-            "test secret that is longer than thirty two bytes",
-            "one",
-            "model-a",
-        )
-        .expect("token");
-        assert!(
-            has_access(
-                "test secret that is longer than thirty two bytes",
-                Some(&token),
-                "one",
-                "model-a"
-            )
-            .expect("access")
-        );
-        assert!(
-            !has_access(
-                "test secret that is longer than thirty two bytes",
-                Some(&token),
-                "two",
-                "model-a"
-            )
-            .expect("wrong challenge")
-        );
-        assert!(
-            !has_access(
-                "test secret that is longer than thirty two bytes",
-                Some(&token),
-                "one",
-                "model-b"
-            )
-            .expect("wrong answer")
-        );
-    }
-}
+mod tests;

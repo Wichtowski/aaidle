@@ -113,6 +113,7 @@ pub struct TimelineGameData {
     pub attempts_remaining: Option<u16>,
     pub solved: bool,
     pub speedrun_started_at: Option<i64>,
+    pub speedrun_given_up_at: Option<i64>,
     pub latest_attempt: Option<TimelineLatestAttempt>,
 }
 
@@ -135,16 +136,20 @@ pub async fn timeline_game(
     let challenge = ensure_timeline_challenge(pool, date, difficulty, secret).await?;
     let config = difficulty.config();
     let attempt_count = timeline_attempt_count(pool, challenge.id, player_id).await?;
-    let speedrun_started_at = if difficulty == TimelineDifficulty::Speedrun {
-        sqlx::query_scalar::<_, i64>(
-            "SELECT started_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+    let (speedrun_started_at, speedrun_given_up_at) = if difficulty == TimelineDifficulty::Speedrun
+    {
+        sqlx::query_as::<_, (i64, Option<i64>)>(
+            "SELECT started_at, given_up_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
         )
         .bind(challenge.id.to_string())
         .bind(player_id.to_string())
         .fetch_optional(pool)
         .await?
+        .map_or((None, None), |(started_at, given_up_at)| {
+            (Some(started_at), given_up_at)
+        })
     } else {
-        None
+        (None, None)
     };
     let latest = sqlx::query_as::<_, TimelineAttemptRow>(
         "SELECT challenge_id, player_id, model_order_json, placements_json, attempt_number, \
@@ -179,6 +184,7 @@ pub async fn timeline_game(
             .map(|limit| limit.saturating_sub(attempt_count)),
         solved,
         speedrun_started_at,
+        speedrun_given_up_at,
         latest_attempt,
     })
 }
@@ -217,6 +223,54 @@ pub async fn start_speedrun(
     .await?;
     transaction.commit().await?;
     Ok((started_at, parse_challenge(challenge)?))
+}
+
+pub async fn give_up_speedrun(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+) -> AppResult<i64> {
+    let mut transaction = pool.begin().await?;
+    let challenge = find_timeline_challenge(&mut transaction, challenge_id)
+        .await?
+        .ok_or_else(|| AppError::NotFound("Timeline challenge not found.".to_owned()))?;
+    if challenge.difficulty != TimelineDifficulty::Speedrun.as_str() {
+        return Err(AppError::validation(
+            "Speedrun give up is only valid for Speedrun challenges.",
+        ));
+    }
+    if sqlx::query_scalar::<_, i64>(
+        "SELECT EXISTS(SELECT 1 FROM timeline_attempts WHERE challenge_id = ? AND player_id = ? AND is_correct = 1)",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .fetch_one(&mut *transaction)
+    .await?
+        != 0
+    {
+        return Err(AppError::Conflict(
+            "TIMELINE_CHALLENGE_COMPLETED".to_owned(),
+        ));
+    }
+    let now = super::now_unix_millis();
+    sqlx::query(
+        "UPDATE timeline_speedrun_starts SET given_up_at = COALESCE(given_up_at, ?) WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(now)
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .execute(&mut *transaction)
+    .await?;
+    let given_up_at = sqlx::query_scalar::<_, i64>(
+        "SELECT given_up_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(challenge_id.to_string())
+    .bind(player_id.to_string())
+    .fetch_optional(&mut *transaction)
+    .await?
+    .ok_or_else(|| AppError::Conflict("TIMELINE_SPEEDRUN_NOT_STARTED".to_owned()))?;
+    transaction.commit().await?;
+    Ok(given_up_at)
 }
 
 pub async fn timeline_leaderboard(
@@ -526,15 +580,18 @@ async fn process_timeline_attempt_once(
     let now = super::now_unix_millis();
     super::ensure_anonymous_player(connection, input.player_id, now).await?;
     let speedrun_started_at = if challenge.difficulty == TimelineDifficulty::Speedrun {
-        sqlx::query_scalar::<_, i64>(
-            "SELECT started_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
+        let (started_at, given_up_at) = sqlx::query_as::<_, (i64, Option<i64>)>(
+            "SELECT started_at, given_up_at FROM timeline_speedrun_starts WHERE challenge_id = ? AND player_id = ?",
         )
         .bind(input.challenge_id.to_string())
         .bind(input.player_id.to_string())
         .fetch_optional(&mut *connection)
         .await?
-        .ok_or_else(|| AppError::Conflict("TIMELINE_SPEEDRUN_NOT_STARTED".to_owned()))?
-        .into()
+        .ok_or_else(|| AppError::Conflict("TIMELINE_SPEEDRUN_NOT_STARTED".to_owned()))?;
+        if given_up_at.is_some() {
+            return Err(AppError::Conflict("TIMELINE_SPEEDRUN_GIVEN_UP".to_owned()));
+        }
+        Some(started_at)
     } else {
         None
     };
@@ -815,58 +872,4 @@ fn timeline_placements(challenge: &TimelineChallenge, submitted: &[String]) -> V
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn placement_challenge(difficulty: TimelineDifficulty) -> TimelineChallenge {
-        TimelineChallenge {
-            id: Uuid::new_v4(),
-            challenge_date: "2026-08-25".to_owned(),
-            difficulty,
-            model_order: vec![
-                TimelineModelSnapshot {
-                    id: "first".to_owned(),
-                    name: "First".to_owned(),
-                    item_kind: "model".to_owned(),
-                    release_date: "2020-01-01".to_owned(),
-                    year_annotation: None,
-                    categories: vec!["language-model".to_owned()],
-                },
-                TimelineModelSnapshot {
-                    id: "second".to_owned(),
-                    name: "Second".to_owned(),
-                    item_kind: "model".to_owned(),
-                    release_date: "2020-06-01".to_owned(),
-                    year_annotation: None,
-                    categories: vec!["language-model".to_owned()],
-                },
-                TimelineModelSnapshot {
-                    id: "third".to_owned(),
-                    name: "Third".to_owned(),
-                    item_kind: "model".to_owned(),
-                    release_date: "2021-01-01".to_owned(),
-                    year_annotation: None,
-                    categories: vec!["language-model".to_owned()],
-                },
-            ],
-            anchor_positions: vec![],
-            tray_order: vec!["first".to_owned(), "second".to_owned(), "third".to_owned()],
-        }
-    }
-
-    #[test]
-    fn hardcore_marks_same_year_positions_without_marking_normal() {
-        let submitted = ["second".to_owned(), "first".to_owned(), "third".to_owned()];
-        assert_eq!(
-            timeline_placements(
-                &placement_challenge(TimelineDifficulty::Hardcore),
-                &submitted
-            ),
-            [2, 2, 1]
-        );
-        assert_eq!(
-            timeline_placements(&placement_challenge(TimelineDifficulty::Normal), &submitted),
-            [0, 0, 1]
-        );
-    }
-}
+mod tests;

@@ -98,6 +98,7 @@ Before the timer starts, the Speedrun response returns an empty `movableModels` 
 `POST /api/v1/games/timeline/challenges/{challengeId}/start` records the first card-drop timestamp for the signed-in player and challenge idempotently.
 It returns the server timestamp as `startedAt` together with the revealed `movableModels`, without release-date metadata.
 The timestamp is included in subsequent Speedrun progress and is used by the server to calculate the completion time.
+`POST /api/v1/games/timeline/challenges/{challengeId}/give-up` idempotently marks a started, unsolved Speedrun as unfinished. The server returns `givenUpAt`, includes it as `speedrunGivenUpAt` in subsequent progress, and rejects later submissions for that run.
 `GET /api/v1/games/timeline/challenges/{challengeId}/leaderboard` returns the top ten completed Speedruns for that challenge with display name, submission count, and server-measured duration.
 Entries rank by fewer submissions, then by duration when submission counts tie.
 When the request has an authenticated session, `isCurrentUser` identifies that account's entry without exposing its user ID.
@@ -166,15 +167,17 @@ The request body limit for this route is 16 KB.
 ## Admin and public configuration
 
 `GET /api/v1/admin/users` is permission-protected, paginated at 50 rows, deterministically ordered, and supports escaped case-insensitive email and display-name search.
-`GET /api/v1/admin/users/{userId}` returns the allowlisted account, completion, progress, and Hardcore-access information required by the existing admin interface.
-`PATCH /api/v1/admin/users/{userId}` and `DELETE /api/v1/admin/users/{userId}` require a non-disabled superadmin and same-origin requests.
+`GET /api/v1/admin/users/{userId}` returns the allowlisted account, completion, progress, Hardcore-access information, issue-report limit, and any pending limit-request timestamp required by the existing admin interface.
+`PATCH /api/v1/admin/users/{userId}` and `DELETE /api/v1/admin/users/{userId}` require a non-disabled superadmin and same-origin requests. Issue-report limits may be set from 0 (reporting disabled) to 1,000; changing the limit clears its pending increase request.
 The `DELETE` route preserves legacy behavior by deleting one saved cloud-progress guess, not by deleting the account or anonymous aggregate game events.
 `GET` and `PUT /api/v1/admin/settings/hardcore-soundtrack` are superadmin-only.
 The update accepts only public HTTPS SoundCloud URLs and `GET /api/v1/public-config` exposes only the normalized soundtrack URL.
 
 ## Issue reporting
 
-`POST /api/v1/issues` requires a signed-in, non-disabled account and a same-origin request. It accepts a `game` of `classic`, `emoji`, `timeline`, or `logo`, a `title` from 8 to 120 characters, and a `description` from 20 to 5,000 characters, then creates an issue in the project tracker with the selected game as its GitHub label using the server-side `GITHUB_ISSUES_TOKEN`. Each account may submit three reports per rolling 24-hour period by default; a superadmin may increase an account's limit up to 1,000 reports per rolling 24-hour period. The endpoint returns the created issue URL. The GitHub token is never sent to the browser or logged.
+`POST /api/v1/issues` requires a signed-in, non-disabled account and a same-origin request. It accepts a `game` of `classic`, `emoji`, `timeline`, or `logo`, a `title` from 8 to 120 characters, and a `description` from 20 to 5,000 characters, then creates an issue in the project tracker with the selected game as its GitHub label using the server-side `GITHUB_ISSUES_TOKEN`. Each account may submit two reports per rolling 24-hour period by default; a superadmin may set an account's limit from 0 (reporting disabled) to 1,000. The endpoint returns the created issue URL. The GitHub token is never sent to the browser or logged.
+
+`POST /api/v1/issues/limit-request` lets an authenticated account request a higher limit after its current rolling limit has been reached. Requests are idempotently stored on the account and exposed only in the protected admin user responses; changing the account's limit clears the pending request.
 
 ## Migration mapping
 

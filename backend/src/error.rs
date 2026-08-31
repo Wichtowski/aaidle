@@ -172,3 +172,6 @@ impl IntoResponse for AppError {
         response
     }
 }
+
+#[cfg(test)]
+mod tests;

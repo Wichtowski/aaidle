@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EmojiGame } from "../../../src/app/components/game/emoji/EmojiGame";
@@ -74,6 +74,7 @@ describe("game submit regressions", () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
     window.localStorage.clear();
   });
@@ -106,7 +107,7 @@ describe("game submit regressions", () => {
     );
 
     const submitButton = screen.getByRole("button", { name: "Submit complete timeline" });
-    expect(submitButton).not.toBeDisabled();
+    expect(submitButton).not.toHaveProperty("disabled", true);
     fireEvent.click(submitButton);
 
     await waitFor(() =>
@@ -117,6 +118,43 @@ describe("game submit regressions", () => {
         "anchor-new",
       ]),
     );
+  });
+
+  it("does not remount Timeline cards when resubmitting an unchanged arrangement", async () => {
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue(timelineGame);
+    const submit = vi.spyOn(apiClient, "submitTimelineAttempt").mockResolvedValue({
+      placements: [1, 0, 0, 1],
+      attemptsRemaining: null,
+      revealedModels: [],
+    });
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: /Model A/ }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Empty timeline position 2, place selected card",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Model B/ }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Empty timeline position 3, place selected card",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Submit complete timeline" }));
+
+    await waitFor(() => expect(submit).toHaveBeenCalledTimes(1));
+    const firstGuessCard = screen.getByRole("button", { name: /Position 2: Model A/ });
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit complete timeline" }));
+
+    await waitFor(() => expect(submit).toHaveBeenCalledTimes(2));
+    expect(screen.getByRole("button", { name: /Position 2: Model A/ })).toBe(firstGuessCard);
   });
 
   it("adds a five-second cooldown after an incorrect Speedrun submission", async () => {
@@ -159,9 +197,83 @@ describe("game submit regressions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Submit complete timeline" }));
 
     const cooldownButton = await screen.findByRole("button", { name: "Submit again in 5s" });
-    expect(cooldownButton).toBeDisabled();
+    expect(cooldownButton).toHaveProperty("disabled", true);
     fireEvent.click(cooldownButton);
     expect(submit).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Timeline feedback at the card bottom and places the correct year after its check", async () => {
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue({
+      ...timelineGame,
+      movableModels: [
+        { ...timelineGame.movableModels[0]!, releaseDate: "2020-01-01" },
+        { ...timelineGame.movableModels[1]!, releaseDate: "2021-01-01" },
+      ],
+      progress: {
+        ...timelineGame.progress,
+        latestAttempt: {
+          modelOrder: ["anchor-old", "model-a", "model-b", "anchor-new"],
+          placements: [1, 1, 0, 1],
+          attemptNumber: 1,
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    const correctCard = await screen.findByRole("button", {
+      name: /Position 2: Model A, correct/,
+    });
+    const incorrectCard = screen.getByRole("button", {
+      name: /Position 3: Model B, incorrect/,
+    });
+    const correctResult = correctCard.querySelector(".timeline-card__result");
+    const incorrectResult = incorrectCard.querySelector(".timeline-card__result");
+
+    expect(correctResult).not.toBeNull();
+    const correctText = correctResult?.textContent ?? "";
+    expect(correctText.indexOf("Correct position")).toBeLessThan(correctText.indexOf("2020"));
+    expect(incorrectResult?.textContent).toContain("Incorrect position");
+  });
+
+  it("confirms giving up an active Speedrun and marks it unfinished", async () => {
+    window.localStorage.setItem(
+      "aaidle:game-preferences:v1",
+      JSON.stringify({ timeline: "speedrun" }),
+    );
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue({
+      ...timelineGame,
+      challenge: { ...timelineGame.challenge, difficulty: "speedrun" },
+      progress: {
+        ...timelineGame.progress,
+        speedrunStartedAt: Date.now() - 1_000,
+      },
+    });
+    const giveUp = vi
+      .spyOn(apiClient, "giveUpTimelineSpeedrun")
+      .mockResolvedValue({ givenUpAt: Date.now() });
+
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: "Give up" }));
+    expect(screen.getByRole("dialog", { name: "Give up this Speedrun?" })).not.toBeNull();
+    expect(giveUp).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Give up Speedrun" }));
+
+    await waitFor(() =>
+      expect(giveUp).toHaveBeenCalledWith(timelineGame.challenge.id, playerId),
+    );
+    expect(await screen.findByText("Unfinished")).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "Submit complete timeline" })).toBeNull();
   });
 
   it("submits the selected Emoji answer", async () => {
