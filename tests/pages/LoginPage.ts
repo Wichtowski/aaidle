@@ -16,6 +16,6 @@ export class LoginPage extends BasePage {
     await this.passwordInput.fill(password);
     await this.signInButton.click();
     await this.page.waitForLoadState("networkidle");
-    await this.page.waitForURL("/classic");
+    await this.page.waitForURL(/\/(?:profile|account-disabled)$/);
   }
 }

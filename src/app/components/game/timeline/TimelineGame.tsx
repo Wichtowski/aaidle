@@ -156,6 +156,11 @@ export function TimelineGame() {
   });
   const [busy, setBusy] = useState(false);
   const [draggingModelId, setDraggingModelId] = useState<string | null>(null);
+  const [pointerDragPosition, setPointerDragPosition] = useState<{ x: number; y: number } | null>(
+    null,
+  );
+  const [pointerDragReturning, setPointerDragReturning] = useState(false);
+  const [pointerDragSnapping, setPointerDragSnapping] = useState(false);
   const [dragOverTarget, setDragOverTarget] = useState<number | "tray" | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
@@ -171,13 +176,29 @@ export function TimelineGame() {
   const [toast, setToast] = useState<string | null>(null);
   const [landingModelId, setLandingModelId] = useState<string | null>(null);
   const [landedModelIds, setLandedModelIds] = useState<Set<string>>(() => new Set());
+  const [swapAnimation, setSwapAnimation] = useState<{
+    modelId: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const [submissionCooldownRemaining, setSubmissionCooldownRemaining] = useState(0);
   const pendingRequestId = useRef<string | null>(null);
   const completionTimer = useRef<number | null>(null);
   const landingTimer = useRef<number | null>(null);
+  const swapTimer = useRef<number | null>(null);
   const draggingModelIdRef = useRef<string | null>(null);
   const lastPointerTarget = useRef<string | null>(null);
   const pointerY = useRef<number | null>(null);
+  const pointerTarget = useRef<{ x: number; y: number } | null>(null);
+  const pointerPreview = useRef<{ x: number; y: number } | null>(null);
+  const pointerDragOffset = useRef({ x: 20, y: 20 });
+  const pointerDragOrigin = useRef<{ x: number; y: number } | null>(null);
+  const pointerDragReturningRef = useRef(false);
+  const pointerDragSource = useRef<HTMLElement | null>(null);
+  const pointerDragSize = useRef<{ width: number; height: number } | null>(null);
+  const pointerDragTargetSize = useRef<{ width: number; height: number } | null>(null);
+  const pendingPointerDrop = useRef<{ modelId: string; position: number } | null>(null);
+  const suppressPointerClickUntil = useRef(0);
   const pointerDragActive = useRef(false);
   const autoScrollFrame = useRef<number | null>(null);
   const speedrunStartPromise = useRef<Promise<number | null> | null>(null);
@@ -201,6 +222,7 @@ export function TimelineGame() {
     () => () => {
       if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
       if (landingTimer.current !== null) window.clearTimeout(landingTimer.current);
+      if (swapTimer.current !== null) window.clearTimeout(swapTimer.current);
     },
     [],
   );
@@ -364,9 +386,54 @@ export function TimelineGame() {
   );
 
   useEffect(() => {
-    if (!draggingModelId || !pointerDragActive.current) return;
     const maxScrollStep = 150;
     const autoScroll = () => {
+      if (!pointerDragActive.current) {
+        autoScrollFrame.current = null;
+        return;
+      }
+      const target = pointerTarget.current;
+      const current = pointerPreview.current;
+      if (target && current) {
+        const followRate = pointerDragReturningRef.current ? 0.2 : 0.14;
+        const next = {
+          x: current.x + (target.x - current.x) * followRate,
+          y: current.y + (target.y - current.y) * followRate,
+        };
+        pointerPreview.current = next;
+        const currentSize = pointerDragSize.current;
+        const targetSize = pointerDragTargetSize.current;
+        if (currentSize && targetSize) {
+          pointerDragSize.current = {
+            height: currentSize.height + (targetSize.height - currentSize.height) * followRate,
+            width: currentSize.width + (targetSize.width - currentSize.width) * followRate,
+          };
+        }
+        setPointerDragPosition(next);
+        if (
+          pointerDragReturningRef.current &&
+          Math.hypot(target.x - next.x, target.y - next.y) < 0.75
+        ) {
+          const pendingDrop = pendingPointerDrop.current;
+          if (pendingDrop) {
+            setLandedModelIds((current) => new Set(current).add(pendingDrop.modelId));
+          }
+          pointerDragActive.current = false;
+          pointerDragReturningRef.current = false;
+          draggingModelIdRef.current = null;
+          pointerTarget.current = null;
+          pointerPreview.current = null;
+          pointerDragSource.current = null;
+          pointerDragTargetSize.current = null;
+          pendingPointerDrop.current = null;
+          setDraggingModelId(null);
+          setPointerDragPosition(null);
+          setPointerDragReturning(false);
+          setPointerDragSnapping(false);
+          autoScrollFrame.current = null;
+          return;
+        }
+      }
       const y = pointerY.current;
       const scrollEdge = window.innerHeight * 0.2;
       if (y !== null) {
@@ -380,7 +447,9 @@ export function TimelineGame() {
       }
       autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
     };
-    autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
+    if (pointerDragActive.current && autoScrollFrame.current === null) {
+      autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
+    }
 
     const resolveTarget = (clientX: number, clientY: number) => {
       const target = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
@@ -389,8 +458,17 @@ export function TimelineGame() {
       return slot?.dataset.timelinePosition ?? (tray ? "tray" : null);
     };
     const pointerMove = (event: globalThis.PointerEvent) => {
+      if (!pointerDragActive.current || pointerDragReturningRef.current) return;
       event.preventDefault();
+      const origin = pointerDragOrigin.current;
+      if (origin && Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > 4) {
+        suppressPointerClickUntil.current = Date.now() + 500;
+      }
       pointerY.current = event.clientY;
+      pointerTarget.current = { x: event.clientX, y: event.clientY };
+      if (autoScrollFrame.current === null) {
+        autoScrollFrame.current = window.requestAnimationFrame(autoScroll);
+      }
       const targetKey = resolveTarget(event.clientX, event.clientY);
       setDragOverTarget(
         targetKey === "tray" ? "tray" : targetKey === null ? null : Number(targetKey),
@@ -398,30 +476,119 @@ export function TimelineGame() {
       lastPointerTarget.current = targetKey;
     };
     const pointerUp = (event: globalThis.PointerEvent) => {
-      const modelId = draggingModelIdRef.current ?? draggingModelId;
+      if (!pointerDragActive.current || pointerDragReturningRef.current) return;
       const targetKey = resolveTarget(event.clientX, event.clientY);
-      if (modelId && targetKey !== null) {
-        moveModel(modelId, targetKey === "tray" ? null : Number(targetKey));
+      if (targetKey === null && pointerDragOrigin.current) {
+        const sourceRect = pointerDragSource.current?.getBoundingClientRect();
+        pointerDragReturningRef.current = true;
+        pointerTarget.current = sourceRect
+          ? {
+              x: sourceRect.left + pointerDragOffset.current.x,
+              y: sourceRect.top + pointerDragOffset.current.y,
+            }
+          : pointerDragOrigin.current;
+        pointerDragTargetSize.current = sourceRect
+          ? { height: sourceRect.height, width: sourceRect.width }
+          : pointerDragSize.current;
+        pointerY.current = null;
+        setPointerDragReturning(true);
+        setPointerDragSnapping(false);
+        setDragOverTarget(null);
+        return;
+      }
+      const modelId = draggingModelIdRef.current ?? draggingModelId;
+      if (modelId && targetKey !== null && targetKey !== "tray") {
+        const target = document
+          .elementFromPoint(event.clientX, event.clientY)
+          ?.closest<HTMLElement>("[data-timeline-position]");
+        const targetCard = target?.querySelector<HTMLElement>(
+          ".timeline-card, .timeline-slot__empty",
+        );
+        const targetRect = targetCard?.getBoundingClientRect();
+        if (targetRect) {
+          const targetPosition = Number(targetKey);
+          const sourcePosition = positions.indexOf(modelId);
+          const displacedModelId = positions[targetPosition];
+          const sourceRect = pointerDragSource.current?.getBoundingClientRect();
+          pointerDragReturningRef.current = true;
+          pendingPointerDrop.current = { modelId, position: targetPosition };
+          pointerTarget.current = {
+            x: targetRect.left + pointerDragOffset.current.x,
+            y: targetRect.top + pointerDragOffset.current.y,
+          };
+          pointerDragTargetSize.current = {
+            height: targetRect.height,
+            width: targetRect.width,
+          };
+          pointerY.current = null;
+          setLandedModelIds((current) => {
+            const next = new Set(current).add(modelId);
+            if (displacedModelId) next.add(displacedModelId);
+            return next;
+          });
+          if (
+            displacedModelId &&
+            displacedModelId !== modelId &&
+            sourcePosition >= 0 &&
+            sourceRect
+          ) {
+            if (swapTimer.current !== null) window.clearTimeout(swapTimer.current);
+            setSwapAnimation({
+              modelId: displacedModelId,
+              x: targetRect.left - sourceRect.left,
+              y: targetRect.top - sourceRect.top,
+            });
+            swapTimer.current = window.setTimeout(() => {
+              setSwapAnimation(null);
+              swapTimer.current = null;
+            }, 480);
+          }
+          moveModel(modelId, targetPosition);
+          setPointerDragSnapping(true);
+          setDragOverTarget(null);
+          return;
+        }
+      }
+      if (modelId && targetKey === "tray") {
+        moveModel(modelId, null);
         triggerLanding(modelId);
       }
       pointerDragActive.current = false;
       draggingModelIdRef.current = null;
       setDraggingModelId(null);
+      setPointerDragPosition(null);
       setDragOverTarget(null);
       lastPointerTarget.current = null;
       pointerY.current = null;
+      pointerTarget.current = null;
+      pointerPreview.current = null;
+      pointerDragSource.current = null;
+      pointerDragTargetSize.current = null;
+      pendingPointerDrop.current = null;
+      pointerDragReturningRef.current = false;
+      setPointerDragReturning(false);
+      setPointerDragSnapping(false);
     };
     const pointerCancel = () => {
       pointerDragActive.current = false;
+      pointerDragReturningRef.current = false;
       draggingModelIdRef.current = null;
       setDraggingModelId(null);
+      setPointerDragPosition(null);
+      pointerTarget.current = null;
+      pointerPreview.current = null;
+      pointerDragSource.current = null;
+      pointerDragTargetSize.current = null;
+      pendingPointerDrop.current = null;
+      setPointerDragReturning(false);
+      setPointerDragSnapping(false);
       setDragOverTarget(null);
       lastPointerTarget.current = null;
       pointerY.current = null;
     };
     window.addEventListener("pointermove", pointerMove, { passive: false });
-    window.addEventListener("pointerup", pointerUp, { once: true });
-    window.addEventListener("pointercancel", pointerCancel, { once: true });
+    window.addEventListener("pointerup", pointerUp);
+    window.addEventListener("pointercancel", pointerCancel);
     return () => {
       window.removeEventListener("pointermove", pointerMove);
       window.removeEventListener("pointerup", pointerUp);
@@ -432,29 +599,28 @@ export function TimelineGame() {
         autoScrollFrame.current = null;
       }
     };
-  }, [draggingModelId, moveModel, triggerLanding]);
+  }, [draggingModelId, moveModel, positions, triggerLanding]);
 
   const dragStart = (event: DragEvent, modelId: string) => {
-    if (pointerDragActive.current) {
-      event.preventDefault();
-      return;
-    }
     const position = positions.indexOf(modelId);
     if (position >= 0 && placements?.[position] === 1) return;
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/plain", modelId);
     const source = event.currentTarget;
-    const preview = source.cloneNode(true) as HTMLElement;
     const sourceRect = source.getBoundingClientRect();
-    preview.classList.remove("timeline-card--dragging");
+    const preview = source.cloneNode(true) as HTMLElement;
+    preview.classList.remove("timeline-card--dragging", "timeline-card--drag-origin");
     preview.style.width = `${sourceRect.width}px`;
     preview.style.height = `${sourceRect.height}px`;
     preview.style.animation = "none";
     preview.style.position = "fixed";
     preview.style.top = "-10000px";
     preview.style.left = "-10000px";
+    preview.style.pointerEvents = "none";
+    preview.style.transform = "none";
     preview.style.opacity = "1";
     document.body.appendChild(preview);
+    preview.getBoundingClientRect();
     event.dataTransfer.setDragImage(preview, 20, 20);
     window.setTimeout(() => preview.remove(), 0);
     pointerDragActive.current = false;
@@ -462,8 +628,12 @@ export function TimelineGame() {
     setDraggingModelId(modelId);
   };
   const dragEnd = () => {
+    pointerDragActive.current = false;
     draggingModelIdRef.current = null;
     setDraggingModelId(null);
+    setPointerDragPosition(null);
+    pointerTarget.current = null;
+    pointerPreview.current = null;
     setDragOverTarget(null);
   };
   const dropAt = (event: DragEvent, position: number | null) => {
@@ -474,17 +644,38 @@ export function TimelineGame() {
       moveModel(modelId, position);
       triggerLanding(modelId);
     }
+    pointerDragActive.current = false;
     draggingModelIdRef.current = null;
     setDraggingModelId(null);
+    setPointerDragPosition(null);
     setDragOverTarget(null);
   };
   const startPointerDrag = (event: PointerEvent, modelId: string) => {
-    if (event.pointerType !== "touch") return;
-    const position = positions.indexOf(modelId);
-    if (position >= 0 && placements?.[position] === 1) return;
-    if (event.pointerType === "touch") event.preventDefault();
+    if (speedrunUnfinished) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const slotPosition = positions.indexOf(modelId);
+    if (slotPosition >= 0 && placements?.[slotPosition] === 1) return;
+    event.preventDefault();
     pointerDragActive.current = true;
     draggingModelIdRef.current = modelId;
+    const sourceRect = event.currentTarget.getBoundingClientRect();
+    const pointerPosition = { x: event.clientX, y: event.clientY };
+    pointerDragOffset.current = {
+      x: event.clientX - sourceRect.left,
+      y: event.clientY - sourceRect.top,
+    };
+    pointerDragSize.current = { width: sourceRect.width, height: sourceRect.height };
+    pointerDragOrigin.current = pointerPosition;
+    pointerDragSource.current = event.currentTarget as HTMLElement;
+    pointerDragReturningRef.current = false;
+    pointerDragTargetSize.current = null;
+    pendingPointerDrop.current = null;
+    setLandingModelId(null);
+    setPointerDragReturning(false);
+    setPointerDragSnapping(false);
+    pointerTarget.current = pointerPosition;
+    pointerPreview.current = pointerPosition;
+    setPointerDragPosition(pointerPosition);
     setDraggingModelId(modelId);
     lastPointerTarget.current = null;
   };
@@ -648,6 +839,7 @@ export function TimelineGame() {
     ) : (
       difficultySwitch
     );
+  const pointerDraggedItem = draggingModelId ? itemById.get(draggingModelId) : null;
 
   return (
     <main
@@ -827,18 +1019,17 @@ export function TimelineGame() {
                     <button
                       aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
+                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${swapAnimation?.modelId === item.id ? " timeline-card--swapping" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
                       disabled={
                         difficulty === "speedrun" &&
                         (speedrunStartedAt === null || speedrunUnfinished)
                       }
-                      draggable={
-                        !solved &&
-                        !speedrunUnfinished &&
-                        feedback !== "correct" &&
-                        (difficulty !== "speedrun" || speedrunStartedAt !== null)
-                      }
-                      onClick={() => {
+                      draggable={false}
+                      onClick={(event) => {
+                        if (Date.now() < suppressPointerClickUntil.current) {
+                          event.preventDefault();
+                          return;
+                        }
                         if (
                           difficulty === "speedrun" &&
                           (speedrunStartedAt === null || speedrunUnfinished)
@@ -855,6 +1046,14 @@ export function TimelineGame() {
                       onDragEnd={dragEnd}
                       onKeyDown={(event) => cardKeyDown(event, item.id, position)}
                       onPointerDown={(event) => startPointerDrag(event, item.id)}
+                      style={
+                        swapAnimation?.modelId === item.id
+                          ? ({
+                              "--timeline-swap-x": `${swapAnimation.x}px`,
+                              "--timeline-swap-y": `${swapAnimation.y}px`,
+                            } as CSSProperties)
+                          : undefined
+                      }
                       type="button"
                     >
                       {speedrunCovered ? (
@@ -955,25 +1154,34 @@ export function TimelineGame() {
                     .map((item) => (
                       <button
                         aria-pressed={selectedModelId === item.id}
-                        className={`timeline-card timeline-card--movable${draggingModelId === item.id ? " timeline-card--dragging" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}`}
+                        className={`timeline-card timeline-card--movable${draggingModelId === item.id ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}`}
                         disabled={speedrunUnfinished}
-                        draggable={!speedrunUnfinished}
+                        draggable={false}
                         key={item.id}
-                        onClick={() => {
-                          if (!speedrunUnfinished) {
-                            setSelectedModelId(selectedModelId === item.id ? null : item.id);
+                        onClick={(event) => {
+                          if (Date.now() < suppressPointerClickUntil.current) {
+                            event.preventDefault();
+                            return;
                           }
+                          if (speedrunUnfinished) return;
+                          setSelectedModelId(selectedModelId === item.id ? null : item.id);
                         }}
                         onDragStart={(event) => dragStart(event, item.id)}
                         onDragEnd={dragEnd}
                         onPointerDown={(event) => startPointerDrag(event, item.id)}
                         type="button"
                       >
-                        <span className="timeline-card__meta">
-                          <FaGripVertical aria-hidden />{" "}
-                          {timelineCategoryLabel(item.categories, item.itemKind)}
-                        </span>
-                        <strong>{item.name}</strong>
+                        {draggingModelId === item.id ? (
+                          <span>Drop here</span>
+                        ) : (
+                          <>
+                            <span className="timeline-card__meta">
+                              <FaGripVertical aria-hidden />{" "}
+                              {timelineCategoryLabel(item.categories, item.itemKind)}
+                            </span>
+                            <strong>{item.name}</strong>
+                          </>
+                        )}
                       </button>
                     ))}
                   {game.movableModels.every((item) => arrangedModelIds.has(item.id)) && (
@@ -982,6 +1190,28 @@ export function TimelineGame() {
                 </div>
               </section>
             )}
+
+          {pointerDragPosition && pointerDraggedItem && (
+            <div
+              aria-hidden="true"
+              className={`timeline-card timeline-card--movable timeline-card--pointer-dragging${pointerDragReturning ? " timeline-card--pointer-returning" : ""}${pointerDragSnapping ? " timeline-card--pointer-snapping" : ""}`}
+              style={
+                {
+                  height: pointerDragSize.current?.height,
+                  left: pointerDragPosition.x,
+                  top: pointerDragPosition.y,
+                  transform: `translate(${-pointerDragOffset.current.x}px, ${-pointerDragOffset.current.y}px) rotate(${pointerDragSnapping ? 0 : 1}deg)`,
+                  width: pointerDragSize.current?.width,
+                } as CSSProperties
+              }
+            >
+              <span className="timeline-card__meta">
+                <FaGripVertical aria-hidden />{" "}
+                {timelineCategoryLabel(pointerDraggedItem.categories, pointerDraggedItem.itemKind)}
+              </span>
+              <strong>{pointerDraggedItem.name}</strong>
+            </div>
+          )}
 
           <div className="timeline-submit">
             {!solved && !speedrunUnfinished && (
