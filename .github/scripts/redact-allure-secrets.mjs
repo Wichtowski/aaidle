@@ -1,7 +1,7 @@
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const targetDirectory = "tests";
+const targetDirectory = process.env.REDACTION_TARGET ?? "tests";
 const redactions = {
   CloudflareE2EToken: { suffix: "14cb2fa26b" },
   HealthKey: { suffix: "9d5cfe746a" },

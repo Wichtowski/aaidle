@@ -29,8 +29,8 @@ use crate::{
 const DATE_FORMAT: &[FormatItem<'static>] = format_description!("[year]-[month]-[day]");
 const MAX_BODY_BYTES: usize = 16 * 1024;
 const HEALTH_KEY_HEADER: &str = "x-aaidle-health-key";
-const GUESS_PLAYER_CHALLENGE_PER_MINUTE: i64 = 360;
-const GUESS_PLAYER_PER_HOUR: i64 = 1_500;
+const GUESS_PLAYER_CHALLENGE_PER_MINUTE: i64 = 400;
+const GUESS_PLAYER_PER_HOUR: i64 = 1_700;
 const GUESS_IP_PER_MINUTE: i64 = 600;
 const GUESS_IP_PER_HOUR: i64 = 5_000;
 pub(super) const CLASSIC_CHALLENGE_COMPLETION_CATEGORIES: [&str; 6] =

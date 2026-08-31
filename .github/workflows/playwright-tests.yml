@@ -105,9 +105,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: allure-results
-          path: tests/reports/allure-results
-          if-no-files-found: ignore
+          name: blob-report-chromium
+          path: tests/reports/blob
+          if-no-files-found: error
 
   e2e-firefox:
     needs: readiness
@@ -155,9 +155,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: allure-results
-          path: tests/reports/allure-results
-          if-no-files-found: ignore
+          name: blob-report-firefox
+          path: tests/reports/blob
+          if-no-files-found: error
 
   e2e-mobile:
     needs: readiness
@@ -205,9 +205,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: allure-results
-          path: tests/reports/allure-results
-          if-no-files-found: ignore
+          name: blob-report-mobile
+          path: tests/reports/blob
+          if-no-files-found: error
 
   api:
     needs: readiness
@@ -444,8 +444,9 @@ jobs:
       - name: ${{ env.DOWNLOAD_ARTIFACTS }} E2E
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
-          name: allure-results
-          path: reports/allure-results
+          pattern: blob-report-*
+          path: reports/blob
+          merge-multiple: true
       - name: ${{ env.DOWNLOAD_ARTIFACTS }} API
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
@@ -466,6 +467,13 @@ jobs:
         with:
           name: visual-report
           path: reports/visual
+      - name: Merge E2E blob reports
+        run: pnpm exec playwright merge-reports --config=tests/configs/playwright.merge.config.ts reports/blob
+      - name: Redact E2E secrets from merged test artifacts
+        env:
+          REDACTION_TARGET: reports/allure-results
+          AAIDLE_PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.AAIDLE_PLAYWRIGHT_TEST_PASSWORD }}
+        run: node .github/scripts/redact-allure-secrets.mjs CloudflareE2EToken PlaywrightTestPassword PlaywrightTestEmail
       - name: Publish E2E report history
         run: pnpm run allure:e2e
       - name: Publish API report history

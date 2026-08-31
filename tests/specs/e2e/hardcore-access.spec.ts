@@ -8,6 +8,7 @@ test("Hardcore account can open the Hardcore game", async ({ loginPage, page }) 
 
   await loginPage.goto();
   await loginPage.signIn(email, password);
+
   await page.goto("/classic/hardcore");
 
   await expect(page.getByTestId("game-heading")).toBeVisible();

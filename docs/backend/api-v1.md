@@ -110,7 +110,7 @@ Global responses expose display names and aggregate run data without exposing ac
 Leaderboard display names use the saved username, or the part before `@` in the account email when no username is set.
 Before the Speedrun start endpoint is called, movable card names and metadata are returned as covered placeholders.
 
-Classic and Emoji guess requests share persisted abuse limits: 360 requests per minute for a player and challenge, 1,500 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
+Classic and Emoji guess requests share persisted abuse limits: 450 requests per minute for a player and challenge, 2,000 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
 ## Session routes
 

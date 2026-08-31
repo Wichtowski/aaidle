@@ -30,9 +30,7 @@ async fn test_app() -> (axum::Router, SqlitePool) {
     test_app_with_environment(AppEnvironment::Local).await
 }
 
-async fn test_app_with_environment(
-    environment: AppEnvironment,
-) -> (axum::Router, SqlitePool) {
+async fn test_app_with_environment(environment: AppEnvironment) -> (axum::Router, SqlitePool) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
         .connect("sqlite::memory:")
