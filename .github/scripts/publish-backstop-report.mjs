@@ -31,5 +31,10 @@ export async function publishBackstopReport(sourceDirectory, destinationDirector
     ([, path]) => path,
   );
   if (bitmapPaths.length === 0) throw new Error("Backstop report did not reference any bitmaps.");
-  await Promise.all(bitmapPaths.map((path) => access(resolve(destination, path))));
+
+  const testBitmapPaths = bitmapPaths.filter((path) => path.startsWith("./bitmaps_test/"));
+  if (testBitmapPaths.length === 0) {
+    throw new Error("Backstop report did not reference any test bitmaps.");
+  }
+  await Promise.all(testBitmapPaths.map((path) => access(resolve(destination, path))));
 }

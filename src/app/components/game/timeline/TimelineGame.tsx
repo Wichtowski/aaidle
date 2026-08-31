@@ -749,7 +749,7 @@ export function TimelineGame() {
                 )}
                 {difficulty === "speedrun" && !solved && speedrunStartedAt === null && (
                   <button
-                    className="button button--primary"
+                    className="button button--primary timeline-game__speedrun-start"
                     onClick={() => {
                       void startSpeedrun().catch((startError: unknown) => {
                         setToast(

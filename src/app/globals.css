@@ -5030,6 +5030,11 @@ body.hell-mode .completed--timeline {
   color: var(--ink);
   font-size: 17px;
 }
+.timeline-game__speedrun-start {
+  margin-top: 0;
+  padding: 8px 12px;
+  font-size: 12px;
+}
 .timeline-board {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
