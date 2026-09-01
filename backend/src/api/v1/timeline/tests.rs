@@ -894,3 +894,466 @@ async fn malformed_timeline_json_reaches_start_and_attempt_rejections() {
         assert_eq!(response.status(), axum::http::StatusCode::BAD_REQUEST);
     }
 }
+
+#[tokio::test]
+async fn timeline_game_propagates_auth_access_player_and_projection_errors() {
+    let player_id = Uuid::new_v4();
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(
+            State(state),
+            headers,
+            Path("normal".to_owned()),
+            Query(TimelineGameQuery { player_id }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_unlocks")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(
+            State(state),
+            headers,
+            Path("hardcore".to_owned()),
+            Query(TimelineGameQuery { player_id }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_progress_profiles")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(
+            State(state),
+            headers,
+            Path("normal".to_owned()),
+            Query(TimelineGameQuery { player_id }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let today = current_utc_date().unwrap();
+    insert_challenge(&state, &today, TimelineDifficulty::Normal).await;
+    sqlx::query("UPDATE timeline_challenges SET tray_order_json = '[\"missing\"]'")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(
+            State(state),
+            HeaderMap::new(),
+            Path("normal".to_owned()),
+            Query(TimelineGameQuery { player_id }),
+        )
+        .await,
+        Err(AppError::Unavailable(_))
+    ));
+}
+
+#[tokio::test]
+async fn timeline_start_propagates_auth_player_repository_and_projection_errors() {
+    let player_id = Uuid::new_v4();
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        start(
+            State(state),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineSpeedrunStartRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_progress_profiles")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        start(
+            State(state),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineSpeedrunStartRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let challenge = insert_challenge(
+        &state,
+        &current_utc_date().unwrap(),
+        TimelineDifficulty::Speedrun,
+    )
+    .await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE timeline_speedrun_starts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        start(
+            State(state),
+            headers,
+            Path(challenge.id.to_string()),
+            Ok(Json(TimelineSpeedrunStartRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let challenge = insert_challenge(
+        &state,
+        &current_utc_date().unwrap(),
+        TimelineDifficulty::Speedrun,
+    )
+    .await;
+    sqlx::query("UPDATE timeline_challenges SET tray_order_json = '[\"missing\"]' WHERE id = ?")
+        .bind(challenge.id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    let (_, headers) = authenticated_headers(&state, false).await;
+    assert!(matches!(
+        start(
+            State(state),
+            headers,
+            Path(challenge.id.to_string()),
+            Ok(Json(TimelineSpeedrunStartRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Unavailable(_))
+    ));
+}
+
+#[tokio::test]
+async fn timeline_give_up_propagates_auth_csrf_player_and_repository_errors() {
+    let player_id = Uuid::new_v4();
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        give_up(
+            State(state),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineSpeedrunGiveUpRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, mut headers) = authenticated_headers(&state, false).await;
+    headers.remove("x-aaidle-csrf-token");
+    assert!(matches!(
+        give_up(
+            State(state),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineSpeedrunGiveUpRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_progress_profiles")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        give_up(
+            State(state),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineSpeedrunGiveUpRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let challenge = insert_challenge(
+        &state,
+        &current_utc_date().unwrap(),
+        TimelineDifficulty::Speedrun,
+    )
+    .await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE timeline_speedrun_starts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        give_up(
+            State(state),
+            headers,
+            Path(challenge.id.to_string()),
+            Ok(Json(TimelineSpeedrunGiveUpRequest { player_id })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn timeline_leaderboards_propagate_authentication_and_repository_errors() {
+    let state = super::super::test_support::state().await;
+    let challenge = insert_challenge(&state, "2020-03-04", TimelineDifficulty::Speedrun).await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        leaderboard(State(state), headers, Path(challenge.id.to_string())).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let challenge = insert_challenge(&state, "2020-03-04", TimelineDifficulty::Speedrun).await;
+    sqlx::query("DROP TABLE timeline_attempts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        leaderboard(
+            State(state),
+            HeaderMap::new(),
+            Path(challenge.id.to_string()),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    insert_challenge(&state, "2020-03-04", TimelineDifficulty::Speedrun).await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        dated_leaderboard(State(state), headers, Path("20200304".to_owned())).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    insert_challenge(&state, "2020-03-04", TimelineDifficulty::Speedrun).await;
+    sqlx::query("DROP TABLE timeline_attempts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        dated_leaderboard(State(state), HeaderMap::new(), Path("20200304".to_owned()),).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        global_leaderboard(State(state), headers).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    sqlx::query("DROP TABLE timeline_attempts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        global_leaderboard(State(state), HeaderMap::new()).await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn current_and_dated_leaderboards_propagate_stage_specific_failures() {
+    let state = super::super::test_support::state().await;
+    let today = current_utc_date().unwrap();
+    insert_challenge(&state, &today, TimelineDifficulty::Speedrun).await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        current_leaderboard(State(state), headers).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let today = current_utc_date().unwrap();
+    insert_challenge(&state, &today, TimelineDifficulty::Speedrun).await;
+    sqlx::query("DROP TABLE timeline_attempts")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        current_leaderboard(State(state), HeaderMap::new()).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    sqlx::query("DROP TABLE timeline_challenges")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        dated_leaderboard(
+            State(state),
+            HeaderMap::new(),
+            Path(current_utc_date().unwrap().replace('-', "")),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn timeline_attempt_validates_path_and_propagates_auth_security_and_access_errors() {
+    let request = || TimelineAttemptRequest {
+        player_id: Uuid::new_v4(),
+        request_id: Uuid::new_v4(),
+        model_order: vec!["model-one".to_owned()],
+    };
+    let state = super::super::test_support::state().await;
+    assert!(matches!(
+        attempt(
+            State(state),
+            ConnectInfo("127.0.0.20:1234".parse().unwrap()),
+            HeaderMap::new(),
+            Path("bad-id".to_owned()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        attempt(
+            State(state),
+            ConnectInfo("127.0.0.21:1234".parse().unwrap()),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    let mut missing_origin = headers.clone();
+    missing_origin.remove(header::ORIGIN);
+    assert!(matches!(
+        attempt(
+            State(state.clone()),
+            ConnectInfo("127.0.0.22:1234".parse().unwrap()),
+            missing_origin,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+    let mut missing_csrf = headers;
+    missing_csrf.remove("x-aaidle-csrf-token");
+    assert!(matches!(
+        attempt(
+            State(state),
+            ConnectInfo("127.0.0.23:1234".parse().unwrap()),
+            missing_csrf,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_progress_profiles")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        attempt(
+            State(state),
+            ConnectInfo("127.0.0.24:1234".parse().unwrap()),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (user_id, headers) = authenticated_headers(&state, false).await;
+    let player_id = Uuid::new_v4();
+    progress::canonical_player_id(&state.db, &user_id, player_id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query("DROP TABLE user_unlocks")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        attempt(
+            State(state),
+            ConnectInfo("127.0.0.25:1234".parse().unwrap()),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(TimelineAttemptRequest {
+                player_id,
+                request_id: Uuid::new_v4(),
+                model_order: vec!["model-one".to_owned()],
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}

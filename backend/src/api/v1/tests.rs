@@ -416,6 +416,24 @@ fn client_ip_selection_only_trusts_the_production_proxy_header() {
 }
 
 #[tokio::test]
+async fn models_propagate_database_failures() {
+    let state = test_support::state().await;
+    state.db.close().await;
+
+    assert!(matches!(
+        models(
+            State(state),
+            Query(ModelsQuery {
+                cursor: None,
+                limit: None,
+            }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
 async fn guess_rate_limiting_stops_at_the_first_exhausted_scope() {
     let state = test_support::state().await;
     let player_id = Uuid::new_v4();
@@ -443,4 +461,62 @@ async fn guess_rate_limiting_stops_at_the_first_exhausted_scope() {
             ..
         }
     ));
+}
+
+#[tokio::test]
+async fn guess_rate_limiting_reports_the_exhausted_later_scope() {
+    for (scope, subject_kind, limit, expected_retry) in [
+        ("guess-ip-hour", "ip", GUESS_IP_PER_HOUR, 3_600),
+        (
+            "guess-player-challenge-minute",
+            "player-challenge",
+            GUESS_PLAYER_CHALLENGE_PER_MINUTE,
+            60,
+        ),
+        ("guess-player-hour", "player", GUESS_PLAYER_PER_HOUR, 3_600),
+    ] {
+        let state = test_support::state().await;
+        let player_id = Uuid::new_v4();
+        let challenge_id = Uuid::new_v4();
+        let subject = match subject_kind {
+            "ip" => {
+                crate::auth::rate_limit_subject(&state.config.auth_secret, "guess-ip", "unknown")
+            }
+            "player-challenge" => crate::auth::rate_limit_subject(
+                &state.config.auth_secret,
+                &player_id.to_string(),
+                &challenge_id.to_string(),
+            ),
+            "player" => crate::auth::rate_limit_subject(
+                &state.config.auth_secret,
+                "guess-player",
+                &player_id.to_string(),
+            ),
+            _ => unreachable!(),
+        }
+        .unwrap();
+        sqlx::query(
+            "INSERT INTO request_rate_limits (scope, subject_hash, window_started_at, count) \
+             VALUES (?, ?, ?, ?)",
+        )
+        .bind(scope)
+        .bind(subject)
+        .bind(now_millis())
+        .bind(limit)
+        .execute(&state.db)
+        .await
+        .unwrap();
+
+        let error =
+            consume_guess_rate_limits(&state, &HeaderMap::new(), None, player_id, challenge_id)
+                .await
+                .expect_err("the exhausted bucket rejects the guess");
+        assert!(matches!(
+            error,
+            AppError::TooManyRequests {
+                retry_after_seconds,
+                ..
+            } if retry_after_seconds == expected_retry
+        ));
+    }
 }

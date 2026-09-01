@@ -1,5 +1,9 @@
 use super::*;
-use axum::http::{HeaderValue, header};
+use axum::{
+    body::Body,
+    http::{HeaderValue, Request, header},
+};
+use tower::ServiceExt;
 
 async fn seed_entities(state: &AppState) {
     for entity in state.emoji.eligible(2) {
@@ -282,5 +286,219 @@ async fn emoji_authenticated_and_hardcore_authorization_branches_are_enforced() 
         )
         .await,
         Err(AppError::Forbidden(_))
+    ));
+}
+
+#[tokio::test]
+async fn emoji_game_propagates_hardcore_repository_and_stored_id_errors() {
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_unlocks")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(State(state), headers, Path("hardcore".to_owned())).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    state.db.close().await;
+    assert!(matches!(
+        game(State(state), HeaderMap::new(), Path("normal".to_owned()),).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    seed_entities(&state).await;
+    let entity = state.emoji.eligible(2).next().unwrap();
+    sqlx::query("INSERT INTO visual_clue_challenges (id,challenge_date,mode,answer_entity_id,variant_id,selection_version,generated_at) VALUES ('invalid',?,'emoji:normal',?,?,1,0)")
+        .bind(current_utc_date().unwrap())
+        .bind(&entity.id)
+        .bind(&entity.variants[0].id)
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        game(State(state), HeaderMap::new(), Path("normal".to_owned()),).await,
+        Err(AppError::Validation(_))
+    ));
+}
+
+#[tokio::test]
+async fn emoji_lookup_handlers_propagate_repository_failures() {
+    let state = super::super::test_support::state().await;
+    state.db.close().await;
+    assert!(matches!(
+        hints(
+            State(state),
+            Path(Uuid::new_v4().to_string()),
+            Query(EmojiHintsQuery {
+                player_id: Uuid::new_v4(),
+            }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    state.db.close().await;
+    assert!(matches!(
+        guess_history(
+            State(state),
+            Path(Uuid::new_v4().to_string()),
+            Query(EmojiHintsQuery {
+                player_id: Uuid::new_v4(),
+            }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let challenge_id = Uuid::new_v4();
+    sqlx::query("INSERT INTO visual_clue_entities (id,name,aliases_json,entity_kind,categories_json,min_pool,entity_json,updated_at) VALUES ('missing','Missing','[]','emoji','[]',0,'{}',0)")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO visual_clue_challenges (id,challenge_date,mode,answer_entity_id,variant_id,selection_version,generated_at) VALUES (?,?,'emoji:normal','missing','missing',1,0)")
+        .bind(challenge_id.to_string())
+        .bind(current_utc_date().unwrap())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        guess_history(
+            State(state),
+            Path(challenge_id.to_string()),
+            Query(EmojiHintsQuery {
+                player_id: Uuid::new_v4(),
+            }),
+        )
+        .await,
+        Err(AppError::Unavailable(_))
+    ));
+}
+
+#[tokio::test]
+async fn emoji_guess_validates_path_and_json_and_enforces_authenticated_headers() {
+    let state = super::super::test_support::state().await;
+    let request = EmojiDifficultyGuessRequest {
+        player_id: Uuid::new_v4(),
+        request_id: Uuid::new_v4(),
+        guessed_entity_id: "model-one".to_owned(),
+        attempt_number: 1,
+    };
+    assert!(matches!(
+        guess(
+            State(state.clone()),
+            ConnectInfo("127.0.0.11:1234".parse().unwrap()),
+            HeaderMap::new(),
+            Path("bad-id".to_owned()),
+            Ok(Json(request)),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+
+    let mut malformed_request = Request::builder()
+        .method("POST")
+        .uri(format!(
+            "/games/emoji/challenges/{}/guesses",
+            Uuid::new_v4()
+        ))
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(Body::from("{"))
+        .unwrap();
+    malformed_request.extensions_mut().insert(ConnectInfo(
+        "127.0.0.11:1234".parse::<SocketAddr>().unwrap(),
+    ));
+    let response = super::super::router(state.clone())
+        .oneshot(malformed_request)
+        .await
+        .unwrap();
+    assert_eq!(response.status(), axum::http::StatusCode::BAD_REQUEST);
+
+    let (_, headers) = authenticated_headers(&state, false).await;
+    let request = || EmojiDifficultyGuessRequest {
+        player_id: Uuid::new_v4(),
+        request_id: Uuid::new_v4(),
+        guessed_entity_id: "model-one".to_owned(),
+        attempt_number: 1,
+    };
+    let mut missing_origin = headers.clone();
+    missing_origin.remove(header::ORIGIN);
+    assert!(matches!(
+        guess(
+            State(state.clone()),
+            ConnectInfo("127.0.0.12:1234".parse().unwrap()),
+            missing_origin,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+    let mut missing_csrf = headers;
+    missing_csrf.remove("x-aaidle-csrf-token");
+    assert!(matches!(
+        guess(
+            State(state),
+            ConnectInfo("127.0.0.13:1234".parse().unwrap()),
+            missing_csrf,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(request())),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+}
+
+#[tokio::test]
+async fn emoji_guess_propagates_authentication_and_player_repository_errors() {
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_sessions")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        guess(
+            State(state),
+            ConnectInfo("127.0.0.14:1234".parse().unwrap()),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(EmojiDifficultyGuessRequest {
+                player_id: Uuid::new_v4(),
+                request_id: Uuid::new_v4(),
+                guessed_entity_id: "model-one".to_owned(),
+                attempt_number: 1,
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, false).await;
+    sqlx::query("DROP TABLE user_progress_profiles")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        guess(
+            State(state),
+            ConnectInfo("127.0.0.15:1234".parse().unwrap()),
+            headers,
+            Path(Uuid::new_v4().to_string()),
+            Ok(Json(EmojiDifficultyGuessRequest {
+                player_id: Uuid::new_v4(),
+                request_id: Uuid::new_v4(),
+                guessed_entity_id: "model-one".to_owned(),
+                attempt_number: 1,
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
     ));
 }

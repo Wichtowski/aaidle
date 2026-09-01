@@ -141,6 +141,37 @@ async fn seed_classic_history(state: &AppState, user_id: &str) -> (String, Strin
     (correct_request, wrong_request, player_id)
 }
 
+async fn assert_delete_guess_trigger_error(trigger: &str, delete_correct_guess: bool) {
+    let (state, headers, _, target_id) = admin_state("superadmin").await;
+    let (correct_request, wrong_request, _) = seed_classic_history(&state, &target_id).await;
+    sqlx::query(
+        "INSERT OR IGNORE INTO user_game_progress (user_id, game_type, difficulty, category, completed_at) VALUES (?, 'classic', 'challenge', 'llm', 1)",
+    )
+    .bind(&target_id)
+    .execute(&state.db)
+    .await
+    .unwrap();
+    sqlx::query(trigger).execute(&state.db).await.unwrap();
+    let request_id = if delete_correct_guess {
+        correct_request
+    } else {
+        wrong_request
+    };
+    assert!(matches!(
+        delete_guess(
+            State(state),
+            headers,
+            Path(target_id),
+            Ok(Json(AdminDeleteGuessRequest {
+                game_key: "classic:llm:challenge".to_owned(),
+                request_id: uuid::Uuid::parse_str(&request_id).unwrap(),
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
 #[test]
 fn soundtrack_url_requires_a_bounded_public_https_soundcloud_url() {
     assert!(normalize_soundcloud_url("").is_ok_and(|value| value.is_none()));
@@ -830,7 +861,179 @@ async fn permission_only_update_and_closed_pool_errors_propagate() {
         Err(AppError::Database(_))
     ));
     assert!(matches!(
+        user_detail(State(state.clone()), headers, Path("user".to_owned())).await,
+        Err(AppError::Database(_))
+    ));
+    assert!(matches!(
         public_config(State(state)).await,
         Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn admin_reads_propagate_post_auth_row_decode_errors() {
+    let (state, headers, _, target_id) = admin_state("developer").await;
+    sqlx::query(
+        "CREATE TRIGGER corrupt_admin_rows AFTER UPDATE ON user_sessions BEGIN UPDATE users SET created_at = 'invalid' WHERE email = 'target@example.com'; END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        users(
+            State(state.clone()),
+            headers.clone(),
+            Query(AdminUsersQuery {
+                page: None,
+                query: None,
+            }),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+    assert!(matches!(
+        user_detail(State(state), headers, Path(target_id)).await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn account_updates_require_same_origin_and_csrf_before_parsing() {
+    let (state, headers, _, target_id) = admin_state("superadmin").await;
+    let mut missing_origin = headers.clone();
+    missing_origin.remove(header::ORIGIN);
+    assert!(matches!(
+        user_update(
+            State(state.clone()),
+            missing_origin,
+            Path(target_id.clone()),
+            Ok(Json(AdminUserUpdateRequest {
+                permission: None,
+                disabled: Some(false),
+                disabled_reason: None,
+                issue_report_limit: None,
+            })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+    let mut missing_csrf = headers;
+    missing_csrf.remove("x-aaidle-csrf-token");
+    assert!(matches!(
+        user_update(
+            State(state),
+            missing_csrf,
+            Path(target_id),
+            Ok(Json(AdminUserUpdateRequest {
+                permission: None,
+                disabled: Some(false),
+                disabled_reason: None,
+                issue_report_limit: None,
+            })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+}
+
+#[tokio::test]
+async fn each_admin_account_update_statement_propagates_trigger_failures() {
+    let cases = [
+        (
+            "CREATE TRIGGER reject_disable BEFORE UPDATE OF disabled_at ON users BEGIN SELECT RAISE(ABORT, 'forced disable failure'); END",
+            AdminUserUpdateRequest {
+                permission: None,
+                disabled: Some(true),
+                disabled_reason: Some("policy violation".to_owned()),
+                issue_report_limit: None,
+            },
+        ),
+        (
+            "CREATE TRIGGER reject_limit_update BEFORE UPDATE OF issue_report_limit ON users BEGIN SELECT RAISE(ABORT, 'forced limit failure'); END",
+            AdminUserUpdateRequest {
+                permission: None,
+                disabled: None,
+                disabled_reason: None,
+                issue_report_limit: Some(4),
+            },
+        ),
+        (
+            "CREATE TRIGGER reject_session_delete BEFORE DELETE ON user_sessions BEGIN SELECT RAISE(ABORT, 'forced session delete failure'); END",
+            AdminUserUpdateRequest {
+                permission: None,
+                disabled: Some(false),
+                disabled_reason: None,
+                issue_report_limit: None,
+            },
+        ),
+    ];
+    for (trigger, payload) in cases {
+        let (state, headers, _, target_id) = admin_state("superadmin").await;
+        crate::auth::create_session(&state.db, &target_id, now_millis())
+            .await
+            .unwrap();
+        sqlx::query(trigger).execute(&state.db).await.unwrap();
+        assert!(matches!(
+            user_update(State(state), headers, Path(target_id), Ok(Json(payload))).await,
+            Err(AppError::Database(_))
+        ));
+    }
+}
+
+#[tokio::test]
+async fn delete_guess_propagates_each_history_rebuild_statement_failure() {
+    for (trigger, delete_correct_guess) in [
+        (
+            "CREATE TRIGGER reject_stats_delete BEFORE DELETE ON challenge_guess_stats BEGIN SELECT RAISE(ABORT, 'forced stats delete failure'); END",
+            false,
+        ),
+        (
+            "CREATE TRIGGER reject_stats_insert BEFORE INSERT ON challenge_guess_stats BEGIN SELECT RAISE(ABORT, 'forced stats insert failure'); END",
+            false,
+        ),
+        (
+            "CREATE TRIGGER reject_completion_delete BEFORE DELETE ON user_challenge_completions BEGIN SELECT RAISE(ABORT, 'forced completion delete failure'); END",
+            true,
+        ),
+        (
+            "CREATE TRIGGER reject_progress_delete BEFORE DELETE ON user_game_progress BEGIN SELECT RAISE(ABORT, 'forced progress delete failure'); END",
+            false,
+        ),
+        (
+            "CREATE TRIGGER reject_progress_insert BEFORE INSERT ON user_game_progress BEGIN SELECT RAISE(ABORT, 'forced progress insert failure'); END",
+            false,
+        ),
+        (
+            "CREATE TRIGGER reject_hardcore_delete BEFORE DELETE ON user_hardcore_access BEGIN SELECT RAISE(ABORT, 'forced hardcore delete failure'); END",
+            true,
+        ),
+    ] {
+        assert_delete_guess_trigger_error(trigger, delete_correct_guess).await;
+    }
+}
+
+#[tokio::test]
+async fn successful_update_surfaces_a_target_removed_before_detail_reload() {
+    let (state, headers, _, target_id) = admin_state("superadmin").await;
+    sqlx::query(
+        "CREATE TRIGGER remove_updated_target AFTER UPDATE OF permission ON users WHEN NEW.email = 'target@example.com' BEGIN DELETE FROM users WHERE id = NEW.id; END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        user_update(
+            State(state),
+            headers,
+            Path(target_id),
+            Ok(Json(AdminUserUpdateRequest {
+                permission: Some(AdminAssignablePermission::Developer),
+                disabled: None,
+                disabled_reason: None,
+                issue_report_limit: None,
+            })),
+        )
+        .await,
+        Err(AppError::NotFound(_))
     ));
 }

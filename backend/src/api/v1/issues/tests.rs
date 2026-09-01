@@ -1,5 +1,9 @@
 use super::*;
-use axum::http::{HeaderValue, header};
+use axum::{
+    body::Body,
+    http::{HeaderValue, Request, header},
+};
+use tower::ServiceExt;
 
 async fn authenticated_headers(state: &AppState, issue_limit: i64) -> (String, HeaderMap) {
     let user_id = uuid::Uuid::new_v4().to_string();
@@ -132,6 +136,73 @@ async fn issue_creation_validates_auth_game_and_trimmed_text() {
 }
 
 #[tokio::test]
+async fn issue_handlers_reject_anonymous_and_malformed_requests() {
+    let state = super::super::test_support::state().await;
+    let headers = HeaderMap::from_iter([
+        (
+            header::ORIGIN,
+            HeaderValue::from_static("http://localhost:3000"),
+        ),
+        (header::COOKIE, HeaderValue::from_static("aaidle_csrf=csrf")),
+        (
+            "x-aaidle-csrf-token".parse().unwrap(),
+            HeaderValue::from_static("csrf"),
+        ),
+    ]);
+    assert!(matches!(
+        create(
+            State(state.clone()),
+            headers.clone(),
+            Ok(Json(request(
+                "classic",
+                "A valid title",
+                "A sufficiently long description",
+            ))),
+        )
+        .await,
+        Err(AppError::Unauthorized(_))
+    ));
+    assert!(matches!(
+        request_limit_increase(State(state.clone()), headers).await,
+        Err(AppError::Unauthorized(_))
+    ));
+
+    let (_, headers) = authenticated_headers(&state, 1).await;
+    let malformed_request = Request::post("/issues")
+        .header(header::CONTENT_TYPE, "application/json")
+        .header(header::ORIGIN, headers[header::ORIGIN].clone())
+        .header(header::COOKIE, headers[header::COOKIE].clone())
+        .header(
+            "x-aaidle-csrf-token",
+            headers["x-aaidle-csrf-token"].clone(),
+        )
+        .body(Body::from("{"))
+        .unwrap();
+    let response = super::super::router(state)
+        .oneshot(malformed_request)
+        .await
+        .unwrap();
+    assert_eq!(response.status(), axum::http::StatusCode::BAD_REQUEST);
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, 1).await;
+    state.db.close().await;
+    assert!(matches!(
+        create(
+            State(state),
+            headers,
+            Ok(Json(request(
+                "classic",
+                "A valid title",
+                "A sufficiently long description",
+            ))),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
 async fn issue_creation_enforces_per_user_rate_limit() {
     let state = super::super::test_support::state().await;
     let (user_id, headers) = authenticated_headers(&state, 3).await;
@@ -226,4 +297,82 @@ async fn increase_request_requires_the_current_limit_to_be_reached() {
         );
     }
     assert!(request_limit_increase(State(state), headers).await.is_ok());
+}
+
+#[tokio::test]
+async fn issue_database_errors_propagate_from_rate_limit_and_request_updates() {
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, 1).await;
+    sqlx::query(
+        "CREATE TRIGGER reject_issue_rate_limit BEFORE INSERT ON request_rate_limits BEGIN SELECT RAISE(ABORT, 'forced issue rate limit failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        create(
+            State(state),
+            headers,
+            Ok(Json(request(
+                "classic",
+                "A valid title",
+                "A sufficiently long description",
+            ))),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (user_id, headers) = authenticated_headers(&state, 1).await;
+    let subject =
+        crate::auth::rate_limit_subject(&state.config.auth_secret, "issue-report-user", &user_id)
+            .unwrap();
+    sqlx::query(
+        "INSERT INTO request_rate_limits (scope, subject_hash, window_started_at, count) VALUES ('issue-report', ?, ?, 1)",
+    )
+    .bind(subject)
+    .bind(now_millis())
+    .execute(&state.db)
+    .await
+    .unwrap();
+    sqlx::query(
+        "CREATE TRIGGER corrupt_issue_count AFTER UPDATE ON user_sessions BEGIN UPDATE request_rate_limits SET count = 'invalid'; END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        request_limit_increase(State(state), headers).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, 0).await;
+    sqlx::query(
+        "CREATE TRIGGER reject_limit_request BEFORE UPDATE OF issue_report_limit_requested_at ON users BEGIN SELECT RAISE(ABORT, 'forced limit request failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        request_limit_increase(State(state), headers).await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn limit_increase_enforces_origin_and_csrf_before_database_work() {
+    let state = super::super::test_support::state().await;
+    let (_, headers) = authenticated_headers(&state, 0).await;
+    assert!(matches!(
+        request_limit_increase(State(state.clone()), HeaderMap::new()).await,
+        Err(AppError::Forbidden(_))
+    ));
+    let mut missing_csrf = headers;
+    missing_csrf.remove("x-aaidle-csrf-token");
+    assert!(matches!(
+        request_limit_increase(State(state), missing_csrf).await,
+        Err(AppError::Forbidden(_))
+    ));
 }

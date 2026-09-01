@@ -365,6 +365,19 @@ async fn classic_guess_and_trajectory_cover_auth_security_and_disabled_accounts(
     let player_id = Uuid::new_v4();
     let (_, headers) = authenticated_headers(&state).await;
 
+    assert!(matches!(
+        trajectory(
+            State(state.clone()),
+            headers.clone(),
+            Path(challenge_id.to_string()),
+            Ok(Json(TrajectoryRequest {
+                trajectory_access_token: None,
+            })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+
     let mut missing_origin = headers.clone();
     missing_origin.remove(header::ORIGIN);
     assert!(matches!(
@@ -600,6 +613,31 @@ async fn classic_database_errors_propagate_from_each_public_read_path() {
     ));
     assert!(matches!(
         player_stats(State(state), Path(Uuid::new_v4().to_string())).await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn hardcore_handlers_propagate_access_lookup_failures() {
+    let access_state = super::super::test_support::state().await;
+    let (_, access_headers) = authenticated_headers(&access_state).await;
+    sqlx::query("DROP TABLE user_game_progress")
+        .execute(&access_state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        hardcore_access(State(access_state), access_headers).await,
+        Err(AppError::Database(_))
+    ));
+
+    let game_state = super::super::test_support::state().await;
+    let (_, game_headers) = authenticated_headers(&game_state).await;
+    sqlx::query("DROP TABLE user_unlocks")
+        .execute(&game_state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        hardcore_game(State(game_state), game_headers).await,
         Err(AppError::Database(_))
     ));
 }

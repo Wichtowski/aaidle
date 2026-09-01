@@ -34,6 +34,23 @@ async fn authenticated_headers(state: &AppState) -> HeaderMap {
     headers
 }
 
+async fn authenticated_bearer_headers(state: &AppState) -> HeaderMap {
+    let session_headers = authenticated_headers(state).await;
+    let user = crate::auth::user_for_session(
+        &state.db,
+        super::super::session_cookie(&session_headers),
+        now_millis(),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    let token = crate::auth::create_access_token(&user, &state.config, now_millis()).unwrap();
+    HeaderMap::from_iter([(
+        header::AUTHORIZATION,
+        HeaderValue::from_str(&format!("Bearer {token}")).unwrap(),
+    )])
+}
+
 fn sync_request() -> ProgressSyncRequest {
     serde_json::from_value(serde_json::json!({
         "version": 1,
@@ -154,6 +171,30 @@ async fn progress_sync_read_preferences_and_history_succeed() {
     assert_eq!(cache, [("cache-control", "no-store")]);
     assert_eq!(history_response.page, 2);
     assert!(history_response.games.is_empty());
+}
+
+#[tokio::test]
+async fn progress_mutations_accept_bearer_auth_without_browser_security_headers() {
+    let state = super::super::test_support::state().await;
+    let headers = authenticated_bearer_headers(&state).await;
+
+    assert_eq!(
+        put(
+            State(state.clone()),
+            headers.clone(),
+            Ok(Json(sync_request())),
+        )
+        .await
+        .unwrap()
+        .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        preferences(State(state), headers, Ok(Json(preferences_update())),)
+            .await
+            .unwrap(),
+        StatusCode::NO_CONTENT
+    );
 }
 
 #[tokio::test]
@@ -467,9 +508,31 @@ async fn progress_update_and_post_sync_load_errors_are_exposed() {
 async fn malformed_progress_payloads_reach_both_json_rejection_branches() {
     let state = super::super::test_support::state().await;
     let headers = authenticated_headers(&state).await;
-    for (method, uri) in [
-        ("PUT", "/auth/progress"),
-        ("PATCH", "/auth/progress/preferences"),
+    for (method, uri, body, expected) in [
+        (
+            "PUT",
+            "/auth/progress",
+            "{".to_owned(),
+            StatusCode::BAD_REQUEST,
+        ),
+        (
+            "PATCH",
+            "/auth/progress/preferences",
+            "{".to_owned(),
+            StatusCode::BAD_REQUEST,
+        ),
+        (
+            "PUT",
+            "/auth/progress",
+            "x".repeat(17 * 1024),
+            StatusCode::PAYLOAD_TOO_LARGE,
+        ),
+        (
+            "PATCH",
+            "/auth/progress/preferences",
+            "x".repeat(17 * 1024),
+            StatusCode::PAYLOAD_TOO_LARGE,
+        ),
     ] {
         let request = Request::builder()
             .method(method)
@@ -478,12 +541,12 @@ async fn malformed_progress_payloads_reach_both_json_rejection_branches() {
             .header(header::ORIGIN, "http://localhost:3000")
             .header(header::COOKIE, headers[header::COOKIE].clone())
             .header("x-aaidle-csrf-token", "csrf")
-            .body(Body::from("{"))
+            .body(Body::from(body))
             .unwrap();
         let response = super::super::router(state.clone())
             .oneshot(request)
             .await
             .unwrap();
-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        assert_eq!(response.status(), expected);
     }
 }

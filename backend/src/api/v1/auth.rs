@@ -591,38 +591,51 @@ pub(super) async fn oauth_callback(
             StatusCode::SEE_OTHER,
         );
     }
-    let result = async {
-        let identity =
-            crate::auth::oauth_identity(&state.http, &state.config, provider, &query.code).await?;
-        let user = crate::auth::find_or_create_oauth_user(
-            &state.db,
-            state.config.environment,
-            provider,
-            identity,
-            now_millis(),
-        )
-        .await?;
-        let disabled = user.disabled;
-        let session = crate::auth::rotate_session(
-            &state.db,
-            &user.id,
-            session_cookie(&headers),
-            now_millis(),
-        )
-        .await?;
-        Ok::<_, AppError>((session, disabled))
-    }
-    .await;
+    let identity =
+        crate::auth::oauth_identity(&state.http, &state.config, provider, &query.code).await;
+    finish_oauth_callback(&state, provider, &headers, identity).await
+}
+
+async fn finish_oauth_callback(
+    state: &AppState,
+    provider: crate::auth::OAuthProvider,
+    headers: &HeaderMap,
+    identity: AppResult<crate::auth::OAuthIdentity>,
+) -> AppResult<Response> {
+    let result = match identity {
+        Ok(identity) => establish_oauth_session(state, provider, identity, headers).await,
+        Err(error) => Err(error),
+    };
     match result {
-        Ok((session, true)) => oauth_success_redirect(&state, session, "/account-disabled"),
-        Ok((session, false)) => oauth_success_redirect(&state, session, "/classic"),
+        Ok((session, true)) => oauth_success_redirect(state, session, "/account-disabled"),
+        Ok((session, false)) => oauth_success_redirect(state, session, "/classic"),
         Err(_) => redirect(
-            &state,
+            state,
             "/login?error=oauth",
             Some(("aaidle_oauth_state", "".to_owned(), 0)),
             StatusCode::SEE_OTHER,
         ),
     }
+}
+
+async fn establish_oauth_session(
+    state: &AppState,
+    provider: crate::auth::OAuthProvider,
+    identity: crate::auth::OAuthIdentity,
+    headers: &HeaderMap,
+) -> AppResult<(String, bool)> {
+    let user = crate::auth::find_or_create_oauth_user(
+        &state.db,
+        state.config.environment,
+        provider,
+        identity,
+        now_millis(),
+    )
+    .await?;
+    let session =
+        crate::auth::rotate_session(&state.db, &user.id, session_cookie(headers), now_millis())
+            .await?;
+    Ok((session, user.disabled))
 }
 
 fn mask_email(email: &str) -> String {

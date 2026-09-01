@@ -1310,3 +1310,495 @@ async fn invalid_deletion_link_and_closed_pool_errors_reach_auth_responses() {
         Err(AppError::Database(_))
     ));
 }
+
+#[tokio::test]
+async fn csrf_and_email_validation_fail_before_authentication_or_database_work() {
+    let state = super::super::test_support::state().await;
+    let origin_only = origin_headers();
+
+    assert!(matches!(
+        update_username(
+            State(state.clone()),
+            origin_only.clone(),
+            Ok(Json(UsernameUpdateRequest {
+                username: Some("valid-name".to_owned()),
+            })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+    assert!(matches!(
+        account_deletion(State(state.clone()), origin_only.clone(), peer()).await,
+        Err(AppError::Forbidden(_))
+    ));
+    assert!(matches!(
+        account_deletion_complete(
+            State(state.clone()),
+            origin_only.clone(),
+            Ok(Json(AccountDeletionCompletionRequest {
+                confirmation: "DELETE a***@example.com".to_owned(),
+            })),
+        )
+        .await,
+        Err(AppError::Forbidden(_))
+    ));
+    assert!(matches!(
+        logout(State(state.clone()), origin_only.clone()).await,
+        Err(AppError::Forbidden(_))
+    ));
+
+    let invalid_credentials = || PasswordCredentialsRequest {
+        email: "not-an-email".to_owned(),
+        password: "correct horse battery staple".to_owned(),
+    };
+    assert!(matches!(
+        password_login(
+            State(state.clone()),
+            origin_only.clone(),
+            peer(),
+            Ok(Json(invalid_credentials())),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        api_token(
+            State(state.clone()),
+            HeaderMap::new(),
+            peer(),
+            Ok(Json(invalid_credentials())),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        email_verification(
+            State(state.clone()),
+            origin_only.clone(),
+            peer(),
+            Ok(Json(EmailRequest {
+                email: "not-an-email".to_owned(),
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        password_reset(
+            State(state),
+            origin_only,
+            peer(),
+            Ok(Json(EmailRequest {
+                email: "not-an-email".to_owned(),
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+}
+
+#[tokio::test]
+async fn auth_rate_limit_database_errors_propagate_from_each_password_and_email_entrypoint() {
+    let state = super::super::test_support::state().await;
+    state.db.close().await;
+
+    assert!(matches!(
+        register(
+            State(state.clone()),
+            origin_headers(),
+            peer(),
+            Ok(Json(RegistrationRequest {
+                email: "register-closed@example.com".to_owned(),
+                password: "correct horse battery staple".to_owned(),
+                username: None,
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+    for result in [
+        password_login(
+            State(state.clone()),
+            origin_headers(),
+            peer(),
+            Ok(Json(PasswordCredentialsRequest {
+                email: "login-closed@example.com".to_owned(),
+                password: "correct horse battery staple".to_owned(),
+            })),
+        )
+        .await
+        .map(|_| ()),
+        api_token(
+            State(state.clone()),
+            HeaderMap::new(),
+            peer(),
+            Ok(Json(PasswordCredentialsRequest {
+                email: "token-closed@example.com".to_owned(),
+                password: "correct horse battery staple".to_owned(),
+            })),
+        )
+        .await
+        .map(|_| ()),
+        email_verification(
+            State(state.clone()),
+            origin_headers(),
+            peer(),
+            Ok(Json(EmailRequest {
+                email: "verification-closed@example.com".to_owned(),
+            })),
+        )
+        .await
+        .map(|_| ()),
+        password_reset(
+            State(state),
+            origin_headers(),
+            peer(),
+            Ok(Json(EmailRequest {
+                email: "reset-closed@example.com".to_owned(),
+            })),
+        )
+        .await
+        .map(|_| ()),
+    ] {
+        assert!(matches!(result, Err(AppError::Database(_))));
+    }
+}
+
+#[tokio::test]
+async fn token_creation_failures_propagate_from_verification_reset_and_deletion_requests() {
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "token-failures@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query(
+        "CREATE TRIGGER reject_requested_auth_tokens BEFORE INSERT ON auth_email_tokens BEGIN SELECT RAISE(ABORT, 'forced requested token failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+
+    assert!(matches!(
+        email_verification(
+            State(state.clone()),
+            origin_headers(),
+            peer(),
+            Ok(Json(EmailRequest {
+                email: user.email.clone(),
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+    assert!(matches!(
+        password_reset(
+            State(state.clone()),
+            origin_headers(),
+            ConnectInfo("127.0.0.2:43210".parse().unwrap()),
+            Ok(Json(EmailRequest {
+                email: user.email.clone(),
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+    assert!(matches!(
+        account_deletion(
+            State(state),
+            authenticated_headers(&session, None),
+            ConnectInfo("127.0.0.3:43210".parse().unwrap()),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn deletion_status_completion_logout_and_hardcore_queries_propagate_deep_database_errors() {
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "status-db-error@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    let token = crate::auth::create_account_deletion_token(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query("DROP TABLE auth_email_tokens")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        account_deletion_status(
+            State(state),
+            authenticated_headers(&session, Some(("aaidle_account_deletion", &token))),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "delete-db-error@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    let token = crate::auth::create_account_deletion_token(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query(
+        "CREATE TRIGGER reject_account_delete BEFORE DELETE ON users BEGIN SELECT RAISE(ABORT, 'forced account deletion failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        account_deletion_complete(
+            State(state),
+            authenticated_headers(&session, Some(("aaidle_account_deletion", &token))),
+            Ok(Json(AccountDeletionCompletionRequest {
+                confirmation: "DELETE d***@example.com".to_owned(),
+            })),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "logout-db-error@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query(
+        "CREATE TRIGGER reject_session_delete BEFORE DELETE ON user_sessions BEGIN SELECT RAISE(ABORT, 'forced session deletion failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        logout(State(state), authenticated_headers(&session, None)).await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "progress-db-error@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query("DROP TABLE user_game_progress")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        hardcore_status(
+            State(state),
+            HeaderMap::from_iter([(
+                header::COOKIE,
+                HeaderValue::from_str(&format!("aaidle_session={session}")).unwrap(),
+            )]),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    let user = crate::auth::register_with_password(
+        &state.db,
+        "unlock-db-error@example.com",
+        "correct horse battery staple",
+        now_millis(),
+    )
+    .await
+    .unwrap();
+    let session = crate::auth::create_session(&state.db, &user.id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query("DROP TABLE user_hardcore_access")
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        hardcore_status(
+            State(state),
+            HeaderMap::from_iter([(
+                header::COOKIE,
+                HeaderValue::from_str(&format!("aaidle_session={session}")).unwrap(),
+            )]),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn auth_cookie_and_redirect_header_encoding_failures_are_reported() {
+    let mut state = super::super::test_support::state().await;
+    std::sync::Arc::get_mut(&mut state.config)
+        .unwrap()
+        .app_origin = "http://localhost:3000\ninvalid".to_owned();
+    assert!(matches!(
+        oauth_success_redirect(&state, "session".to_owned(), "/classic"),
+        Err(AppError::Validation(_))
+    ));
+
+    let state = super::super::test_support::state().await;
+    assert!(matches!(
+        oauth_success_redirect(&state, "invalid\nsession".to_owned(), "/classic"),
+        Err(AppError::Config(_))
+    ));
+}
+
+#[tokio::test]
+async fn oauth_session_establishment_creates_rotates_and_reports_database_failures() {
+    let state = super::super::test_support::state().await;
+    let identity = || crate::auth::OAuthIdentity {
+        provider_user_id: "oauth-provider-user".to_owned(),
+        email: "oauth-session@example.com".to_owned(),
+        display_name: Some("OAuth User".to_owned()),
+    };
+    let (session, disabled) = establish_oauth_session(
+        &state,
+        crate::auth::OAuthProvider::Github,
+        identity(),
+        &HeaderMap::new(),
+    )
+    .await
+    .unwrap();
+    assert!(!session.is_empty());
+    assert!(!disabled);
+
+    let user_id = sqlx::query_scalar::<_, String>(
+        "SELECT id FROM users WHERE email_normalized = 'oauth-session@example.com'",
+    )
+    .fetch_one(&state.db)
+    .await
+    .unwrap();
+    let previous = crate::auth::create_session(&state.db, &user_id, now_millis())
+        .await
+        .unwrap();
+    sqlx::query("UPDATE users SET disabled_at = 1 WHERE id = ?")
+        .bind(&user_id)
+        .execute(&state.db)
+        .await
+        .unwrap();
+    let headers = HeaderMap::from_iter([(
+        header::COOKIE,
+        HeaderValue::from_str(&format!("aaidle_session={previous}")).unwrap(),
+    )]);
+    let (_, disabled) = establish_oauth_session(
+        &state,
+        crate::auth::OAuthProvider::Github,
+        identity(),
+        &headers,
+    )
+    .await
+    .unwrap();
+    assert!(disabled);
+    assert!(
+        crate::auth::user_for_session(&state.db, Some(&previous), now_millis())
+            .await
+            .unwrap()
+            .is_none()
+    );
+
+    let normal = finish_oauth_callback(
+        &state,
+        crate::auth::OAuthProvider::Google,
+        &HeaderMap::new(),
+        Ok(crate::auth::OAuthIdentity {
+            provider_user_id: "finish-google-user".to_owned(),
+            email: "finish-google@example.com".to_owned(),
+            display_name: None,
+        }),
+    )
+    .await
+    .unwrap();
+    assert!(
+        normal.headers()[header::LOCATION]
+            .to_str()
+            .unwrap()
+            .ends_with("/classic")
+    );
+    let disabled = finish_oauth_callback(
+        &state,
+        crate::auth::OAuthProvider::Github,
+        &HeaderMap::new(),
+        Ok(identity()),
+    )
+    .await
+    .unwrap();
+    assert!(
+        disabled.headers()[header::LOCATION]
+            .to_str()
+            .unwrap()
+            .ends_with("/account-disabled")
+    );
+    let failure = finish_oauth_callback(
+        &state,
+        crate::auth::OAuthProvider::Github,
+        &HeaderMap::new(),
+        Err(AppError::validation("OAuth failure")),
+    )
+    .await
+    .unwrap();
+    assert!(
+        failure.headers()[header::LOCATION]
+            .to_str()
+            .unwrap()
+            .ends_with("/login?error=oauth")
+    );
+
+    sqlx::query(
+        "CREATE TRIGGER reject_oauth_session BEFORE INSERT ON user_sessions BEGIN SELECT RAISE(ABORT, 'forced session failure'); END",
+    )
+    .execute(&state.db)
+    .await
+    .unwrap();
+    assert!(matches!(
+        establish_oauth_session(
+            &state,
+            crate::auth::OAuthProvider::Google,
+            crate::auth::OAuthIdentity {
+                provider_user_id: "google-provider-user".to_owned(),
+                email: "google-session@example.com".to_owned(),
+                display_name: None,
+            },
+            &HeaderMap::new(),
+        )
+        .await,
+        Err(AppError::Database(_))
+    ));
+}
