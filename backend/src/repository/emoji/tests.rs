@@ -204,6 +204,45 @@ async fn visual_game_guess_hints_history_and_conflicts() {
 }
 
 #[tokio::test]
+async fn challenge_generation_reuses_dates_and_rotates_repeated_variants() {
+    let (pool, catalog) = pool_and_catalog().await;
+    let secret = "variant rotation test secret";
+    let mode = "emoji:normal";
+    let first = ensure_challenge(&pool, &catalog, "reuse-date", "normal", secret)
+        .await
+        .unwrap();
+    assert_eq!(
+        ensure_challenge(&pool, &catalog, "reuse-date", "normal", "other secret")
+            .await
+            .unwrap()
+            .id,
+        first.id
+    );
+
+    let mut observed_rotation = false;
+    for index in 0..=400 {
+        let date = format!("rotation-{index:03}");
+        let challenge = ensure_challenge(&pool, &catalog, &date, "normal", secret)
+            .await
+            .unwrap();
+        let entity = catalog
+            .entity(&challenge.answer_entity_id)
+            .expect("selected entity is in the catalog");
+        let default_variant =
+            weighted_variant_id(entity, 0, &format!("{secret}:{date}:{mode}:{}", entity.id))
+                .unwrap();
+        if challenge.variant_id != default_variant {
+            observed_rotation = true;
+            break;
+        }
+    }
+    assert!(
+        observed_rotation,
+        "variant anti-repeat selection should rotate"
+    );
+}
+
+#[tokio::test]
 async fn rejects_missing_and_out_of_pool_entities() {
     let (pool, catalog) = pool_and_catalog().await;
     let data = game(&pool, &catalog, "2026-03-02", "normal", "secret")

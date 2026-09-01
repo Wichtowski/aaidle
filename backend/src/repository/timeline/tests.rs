@@ -97,6 +97,14 @@ async fn insert_challenge(pool: &SqlitePool, difficulty: TimelineDifficulty) -> 
 fn validates_orders_and_parses_stored_challenges() {
     let challenge = placement_challenge(TimelineDifficulty::Normal);
     assert!(validate_model_order(&challenge, &challenge.tray_order).is_ok());
+    assert!(validate_model_order(&challenge, &["first".into(), "second".into()]).is_err());
+    assert!(
+        validate_model_order(
+            &challenge,
+            &["first".into(), "second".into(), "other".into()]
+        )
+        .is_err()
+    );
     assert!(
         validate_model_order(
             &challenge,
@@ -552,33 +560,27 @@ fn replay_and_parse_reject_malformed_stored_values() {
         attempts_remaining_after: remaining,
         speedrun_time_ms: None,
     };
+    let valid_order = serde_json::to_string(&input.model_order).unwrap();
     assert!(replay_attempt(row("not-json", "[]", None), &input, &challenge).is_err());
     assert!(matches!(
         replay_attempt(row("[]", "[]", None), &input, &challenge),
         Err(AppError::Conflict(_))
     ));
-    assert!(
-        replay_attempt(
-            row(
-                &serde_json::to_string(&input.model_order).unwrap(),
-                "not-json",
-                None
-            ),
-            &input,
-            &challenge
-        )
-        .is_err()
-    );
+    let mut wrong_challenge = row(&valid_order, "[]", None);
+    wrong_challenge.challenge_id = Uuid::new_v4().to_string();
     assert!(matches!(
-        replay_attempt(
-            row(
-                &serde_json::to_string(&input.model_order).unwrap(),
-                "[]",
-                Some(-1)
-            ),
-            &input,
-            &challenge
-        ),
+        replay_attempt(wrong_challenge, &input, &challenge),
+        Err(AppError::Conflict(_))
+    ));
+    let mut wrong_player = row(&valid_order, "[]", None);
+    wrong_player.player_id = Uuid::new_v4().to_string();
+    assert!(matches!(
+        replay_attempt(wrong_player, &input, &challenge),
+        Err(AppError::Conflict(_))
+    ));
+    assert!(replay_attempt(row(&valid_order, "not-json", None), &input, &challenge).is_err());
+    assert!(matches!(
+        replay_attempt(row(&valid_order, "[]", Some(-1)), &input, &challenge),
         Err(AppError::Unavailable(_))
     ));
     let invalid_difficulty = TimelineChallengeRow {

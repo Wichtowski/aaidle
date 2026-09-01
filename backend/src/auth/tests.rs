@@ -561,6 +561,12 @@ async fn github_identity_rejects_invalid_provider_responses() {
             };
         assert_eq!(matches!(error, AppError::Validation(_)), validation_error);
     }
+
+    let (profile_url, _) = http_response("200 OK", r#"{"id":7}"#);
+    assert!(matches!(
+        github_identity_with_endpoints(&client, "token", &profile_url, "http://127.0.0.1:9").await,
+        Err(AppError::Unavailable(_))
+    ));
 }
 
 #[tokio::test]

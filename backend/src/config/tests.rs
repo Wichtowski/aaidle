@@ -101,6 +101,7 @@ fn helper_values_cover_defaults_valid_values_and_errors() {
 fn local_configuration_uses_defaults_and_filters_blank_optional_values() {
     with_env(
         &[
+            ("APP_ORIGIN", Some("   ")),
             ("GITHUB_ISSUES_TOKEN", Some(" ")),
             ("RESEND_API_KEY", Some("")),
         ],

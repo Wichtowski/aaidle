@@ -48,6 +48,8 @@ fn category_modes_columns_and_helpers_cover_variants() {
         assert!(!classic_columns(category, ClassicDifficulty::Normal).is_empty());
         assert!(!classic_columns(category, ClassicDifficulty::Challenge).contains(&"country"));
     }
+    assert_eq!(ClassicCategory::Cv.catalog_slug(), Some("computer-vision"));
+    assert_eq!(ClassicCategory::Filters.catalog_slug(), Some("filters"));
     assert_eq!(ClassicCategory::parse("missing"), None);
     assert!(parse_classic_mode("classic:llm:normal").is_some());
     assert!(parse_classic_mode("classic:llm:normal:extra").is_none());
