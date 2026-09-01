@@ -88,6 +88,10 @@ Generic `/challenges/*` routes are not part of the public v2 contract.
 Attempts must be sequential, and their hard limit is the eligible entity-pool size for the challenge difficulty.
 Emoji supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
 
+`GET /api/v1/games/logo/normal?playerId={uuid}` returns the daily Logo challenge, its curated model pool, and server-authoritative reveal progress. The safe progress object contains an opaque `/logo-assets/asset-NNN.webp` URL, a 512-based focal point, the current and maximum image revisions, unlocked text clues, and solved state. The static image is served by the frontend/CDN; the browser changes only its presentation zoom from the persisted revision.
+`GET /api/v1/games/logo/challenges/{challengeId}/guesses?playerId={uuid}` restores accepted guesses and reveal progress. `POST` to the same route accepts `playerId`, `requestId`, `guessedModelId`, and sequential `attemptNumber` fields. Every incorrect accepted guess advances the bounded zoom-out revision. Text clues remain absent until their server-configured thresholds; every catalog entry has a general clue at five incorrect guesses. A correct guess exposes attribution but never serializes the hidden answer field.
+When a session is authenticated, both Logo read routes and guess writes resolve the account's canonical player ID before accessing progress. A stale client attempt returns the stable `STALE_GUESS_STATE` conflict without exposing the server's expected attempt number; the browser reloads authoritative history instead of displaying duplicate or sequence errors.
+
 `GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress.
 Normal and Challenge puzzles use distinct release years.
 Hardcore may contain multiple items from one year only when every item in that same-year group has a full `YYYY-MM-DD` date, so the chronological order remains unambiguous.
@@ -111,7 +115,7 @@ Global responses expose display names and aggregate run data without exposing ac
 Leaderboard display names use the saved username, or the part before `@` in the account email when no username is set.
 Before the Speedrun start endpoint is called, movable card names and metadata are returned as covered placeholders.
 
-Classic and Emoji guess requests share persisted abuse limits: 450 requests per minute for a player and challenge, 2,000 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
+Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 requests per minute for a player and challenge, 1,700 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
 ## Session routes
 

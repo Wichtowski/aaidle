@@ -109,9 +109,9 @@ container. The frontend does not run in a production container.
 Signed-in users can submit issue reports through the Rust API. Configure `AAIDLE_GITHUB_ISSUES_TOKEN` with GitHub Issues write access for `Wichtowski/aaidle` to enable delivery.
 Verify `aaidle.com` in Resend and create `AAIDLE_RESEND_API_KEY` before enabling email/password accounts.
 
-## Model catalog
+## Model and game catalogs
 
-The canonical model and Emoji-game seed data live in [data](data). After updating either file, run:
+The canonical model and game seed data live in [data](data). After updating them, run:
 
 ```bash
 pnpm db:validate-seed
@@ -127,3 +127,5 @@ pnpm classic-merge-to-one
 The category files are the source of truth for Classic models; the merge command writes the canonical `data/classic.seed.json` file.
 
 Timeline events are maintained separately in `data/timeline/events.seed.json`. Run `pnpm timeline-merge-to-one` after `pnpm classic-merge-to-one` to combine those events with the merged Classic catalog and regenerate `data/timeline.seed.json`.
+
+Logo metadata lives in `data/logo.seed.json`. Put maintainer-supplied WebP files in `public/logo-assets/` using the opaque `asset-NNN.webp` paths declared by that catalog; do not put answer names in public filenames. The API does not package or decode these images. The frontend/CDN serves them directly and applies the server-returned reveal revision and focal point.

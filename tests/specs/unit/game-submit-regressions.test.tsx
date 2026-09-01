@@ -4,8 +4,9 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EmojiGame } from "../../../src/app/components/game/emoji/EmojiGame";
+import { LogoGame } from "../../../src/app/components/game/logo/LogoGame";
 import { TimelineGame } from "../../../src/app/components/game/timeline/TimelineGame";
-import { apiClient } from "../../../src/lib/api/client";
+import { ApiError, apiClient, type LogoGamePayload } from "../../../src/lib/api/client";
 import type { TimelineGamePayload } from "../../../src/lib/domain/games/timeline/timeline-types";
 
 const playerId = "75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9";
@@ -67,6 +68,34 @@ const timelineGame: TimelineGamePayload = {
   },
 };
 
+const logoGame: LogoGamePayload = {
+  challenge: {
+    id: "1d10665e-31dc-460b-8964-a9a293671bee",
+    date: "2026-09-01",
+    mode: "logo:normal",
+    difficulty: "normal",
+    expiresAt: "2099-09-02T00:00:00Z",
+  },
+  models: [
+    {
+      id: "model-a",
+      name: "Model A",
+      providerName: "Provider",
+      familyName: null,
+      aliases: [],
+    },
+  ],
+  progress: {
+    imageUrl: "/logo-assets/asset-001.webp",
+    focalPoint: { x: 256, y: 256 },
+    imageRevision: 0,
+    maximumImageRevision: 7,
+    clues: [],
+    solved: false,
+  },
+  globalCompletionCount: 0,
+};
+
 describe("game submit regressions", () => {
   beforeEach(() => {
     authState.user = { id: "user-1", username: "tester" };
@@ -126,6 +155,45 @@ describe("game submit regressions", () => {
         "anchor-new",
       ]),
     );
+  });
+
+  it("silently restores Logo history when a submission uses stale client state", async () => {
+    vi.spyOn(apiClient, "logoGame").mockResolvedValue(logoGame);
+    const history = vi
+      .spyOn(apiClient, "logoGuessHistory")
+      .mockResolvedValueOnce({ guesses: [], progress: logoGame.progress })
+      .mockResolvedValueOnce({
+        guesses: [
+          {
+            model: logoGame.models[0],
+            isCorrect: false,
+            attemptNumber: 1,
+          },
+        ],
+        progress: { ...logoGame.progress, imageRevision: 1 },
+      });
+    vi.spyOn(apiClient, "submitLogoGuess").mockRejectedValue(
+      new ApiError(
+        "Your saved guesses changed. Reload the challenge and try again.",
+        409,
+        "STALE_GUESS_STATE",
+      ),
+    );
+
+    render(
+      <MemoryRouter>
+        <LogoGame />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(await screen.findByRole("combobox", { name: "Name the answer" }), {
+      target: { value: "Model A" },
+    });
+    fireEvent.click(await screen.findByRole("button", { name: /Model A/ }));
+
+    await waitFor(() => expect(history).toHaveBeenCalledTimes(2));
+    expect(await screen.findByText("Incorrect")).toBeTruthy();
+    expect(screen.getByText("Your saved guesses were restored.")).toBeTruthy();
   });
 
   it("opens and closes Timeline rules and year annotations", async () => {
@@ -348,9 +416,7 @@ describe("game submit regressions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Give up Speedrun" }));
 
-    await waitFor(() =>
-      expect(giveUp).toHaveBeenCalledWith(timelineGame.challenge.id, playerId),
-    );
+    await waitFor(() => expect(giveUp).toHaveBeenCalledWith(timelineGame.challenge.id, playerId));
     expect(await screen.findByText("Unfinished")).not.toBeNull();
     expect(screen.queryByRole("button", { name: "Submit complete timeline" })).toBeNull();
   });

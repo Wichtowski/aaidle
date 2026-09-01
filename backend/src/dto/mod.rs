@@ -568,6 +568,73 @@ pub struct EmojiDifficultyHintsResponse {
     pub clues: Vec<crate::domain::emoji::VisualClue>,
 }
 
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoProgressResponse {
+    pub image_url: String,
+    pub focal_point: crate::domain::logo::FocalPoint,
+    pub image_revision: usize,
+    pub maximum_image_revision: usize,
+    pub clues: Vec<crate::domain::logo::LogoTextClue>,
+    pub solved: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attribution: Option<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoChallengeResponse {
+    pub id: Uuid,
+    pub date: String,
+    pub mode: String,
+    pub difficulty: String,
+    pub expires_at: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoGameResponse {
+    pub challenge: LogoChallengeResponse,
+    pub models: Vec<PublicModel>,
+    pub progress: LogoProgressResponse,
+    pub global_completion_count: i64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct LogoGuessRequest {
+    pub player_id: Uuid,
+    pub request_id: Uuid,
+    pub guessed_model_id: String,
+    pub attempt_number: u16,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoGuessResponse {
+    pub guessed_model: PublicModel,
+    pub is_correct: bool,
+    pub attempt_number: u16,
+    pub progress: LogoProgressResponse,
+    pub global_completion_count: i64,
+    pub player_stats: PlayerModeStats,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoGuessHistoryEntryResponse {
+    pub model: PublicModel,
+    pub is_correct: bool,
+    pub attempt_number: u16,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogoGuessHistoryResponse {
+    pub guesses: Vec<LogoGuessHistoryEntryResponse>,
+    pub progress: LogoProgressResponse,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HardcoreStatusResponse {

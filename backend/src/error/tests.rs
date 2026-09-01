@@ -116,6 +116,11 @@ async fn conflict_codes_map_known_and_unknown_domain_cases() {
             "Every available answer for this challenge has already been guessed.",
         ),
         (
+            "STALE_GUESS_STATE",
+            "STALE_GUESS_STATE",
+            "Your saved guesses changed. Reload the challenge and try again.",
+        ),
+        (
             "TIMELINE_ATTEMPT_LIMIT_REACHED",
             "ATTEMPT_LIMIT_REACHED",
             "No Timeline submissions remain for this challenge.",

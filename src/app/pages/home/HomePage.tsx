@@ -65,14 +65,19 @@ export function HomePage() {
               Play Timeline <FaArrowRight aria-hidden="true" />
             </strong>
           </Link>
-          <article className="game-mode-card game-mode-card--in-progress">
-            <span>
-              <span aria-hidden>▧</span> In progress
-            </span>
+          <Link
+            className="game-mode-card"
+            data-testid="home-play-logo"
+            to="/logo"
+            prefetch="intent"
+          >
+            <span>Available now</span>
             <h3>Logo</h3>
-            <p>Identify a model from a distorted logo.</p>
-            <strong>Coming soon</strong>
-          </article>
+            <p>Identify an AI model or technology as its image progressively zooms out.</p>
+            <strong>
+              Play Logo <FaArrowRight aria-hidden="true" />
+            </strong>
+          </Link>
         </div>
       </section>
     </AppPageLayout>

@@ -19,6 +19,11 @@ import type {
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
 import type { LocalProgress } from "../storage/local-progress-schema";
+import {
+  logoGameSchema,
+  logoGuessResponseSchema,
+  logoHistorySchema,
+} from "../validation/api";
 
 const apiPath = (path: string) => `/api/v1${path}`;
 
@@ -141,6 +146,39 @@ export type EmojiGamePayload = {
     maximumClues: number;
   };
   entities: Array<{ id: string; name: string; aliases: string[]; entityKind: string }>;
+  globalCompletionCount: number;
+};
+export type LogoTextClue = {
+  afterIncorrectGuesses: number;
+  kind: string;
+  text: string;
+};
+export type LogoProgress = {
+  imageUrl: string;
+  focalPoint: { x: number; y: number };
+  imageRevision: number;
+  maximumImageRevision: number;
+  clues: LogoTextClue[];
+  solved: boolean;
+  attribution?: string;
+};
+export type LogoModel = {
+  id: string;
+  name: string;
+  providerName: string;
+  familyName: string | null;
+  aliases: string[];
+};
+export type LogoGamePayload = {
+  challenge: {
+    id: string;
+    date: string;
+    mode: "logo:normal";
+    difficulty: "normal";
+    expiresAt: string;
+  };
+  models: LogoModel[];
+  progress: LogoProgress;
   globalCompletionCount: number;
 };
 export type HardcoreStatus = {
@@ -432,7 +470,7 @@ class ApiClient {
     }));
   }
 
-  progressHistory(game: "classic" | "emoji" | "timeline", category: string, page: number) {
+  progressHistory(game: "classic" | "emoji" | "logo" | "timeline", category: string, page: number) {
     const query = new URLSearchParams({ game, category, page: String(page) });
     return this.request<ProgressHistory>(`/auth/progress/history?${query}`, {
       cache: "no-store",
@@ -705,6 +743,43 @@ class ApiClient {
       guesses: Array<{ id: string; name: string; isCorrect: boolean; attemptNumber: number }>;
       clues: VisualClue[];
     }>(`/games/emoji/challenges/${challengeId}/guesses?${query}`, { cache: "no-store" });
+  }
+
+  logoGame(playerId: string, signal?: AbortSignal) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<LogoGamePayload>(`/games/logo/normal?${query}`, { signal }).then(
+      (payload) => logoGameSchema.parse(payload) as LogoGamePayload,
+    );
+  }
+
+  submitLogoGuess(
+    challengeId: string,
+    playerId: string,
+    requestId: string,
+    guessedModelId: string,
+    attemptNumber: number,
+  ) {
+    return this.request<{
+      guessedModel: LogoModel;
+      isCorrect: boolean;
+      attemptNumber: number;
+      progress: LogoProgress;
+      globalCompletionCount: number;
+    }>(`/games/logo/challenges/${challengeId}/guesses`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ playerId, requestId, guessedModelId, attemptNumber }),
+    }).then((payload) => logoGuessResponseSchema.parse(payload));
+  }
+
+  logoGuessHistory(challengeId: string, playerId: string) {
+    const query = new URLSearchParams({ playerId });
+    return this.request<{
+      guesses: Array<{ model: LogoModel; isCorrect: boolean; attemptNumber: number }>;
+      progress: LogoProgress;
+    }>(`/games/logo/challenges/${challengeId}/guesses?${query}`, {
+      cache: "no-store",
+    }).then((payload) => logoHistorySchema.parse(payload));
   }
 
   classicTrajectory(challengeId: string, trajectoryAccessToken?: string, signal?: AbortSignal) {

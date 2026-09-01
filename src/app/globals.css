@@ -5855,6 +5855,201 @@ body.hell-mode .completed--timeline {
 .timeline-card--neighbour .timeline-card__feedback {
   color: #1d5f9f;
 }
+
+.logo-stage {
+  display: grid;
+  width: min(760px, 100%);
+  margin: 24px auto 0;
+  gap: 24px;
+}
+.logo-loading-stage {
+  width: min(760px, 100%);
+  margin: 24px auto 0;
+}
+.logo-clue {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+.logo-clue__image-wrap {
+  position: relative;
+  width: min(512px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  aspect-ratio: 1;
+}
+.logo-clue__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  transition: transform 420ms ease;
+}
+.logo-clue__image-error {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 92%);
+  color: #8a2d24;
+  font-size: 13px;
+}
+.logo-clue__progress {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.logo-unlocked-clues {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.logo-unlocked-clues h2,
+.logo-unlocked-clues p {
+  margin-top: 0;
+}
+.logo-unlocked-clues > p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+.logo-unlocked-clues ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 12px;
+  list-style: none;
+}
+.logo-unlocked-clues li {
+  padding-left: 14px;
+  border-left: 4px solid var(--accent);
+}
+.logo-unlocked-clues li span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.logo-unlocked-clues li p {
+  margin: 4px 0 0;
+}
+.logo-search {
+  position: relative;
+}
+.logo-search > label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+.logo-search__controls {
+  display: flex;
+  gap: 10px;
+}
+.logo-search__input {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
+.logo-search__input input {
+  min-width: 0;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+}
+.logo-search__input ul {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: 280px;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  list-style: none;
+}
+.logo-search__input li button {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  justify-content: space-between;
+}
+.logo-search__input li[aria-selected="true"] button,
+.logo-search__input li button:hover {
+  background: var(--surface-muted);
+}
+.logo-history {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+.logo-history li {
+  display: grid;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  grid-template-columns: 32px 1fr auto;
+}
+.logo-history li.is-correct {
+  border-color: color-mix(in srgb, var(--lime) 46%, var(--line));
+  background: color-mix(in srgb, var(--lime) 16%, var(--panel));
+  color: color-mix(in srgb, var(--lime) 78%, var(--ink));
+}
+.logo-history li.is-incorrect {
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel));
+}
+.logo-history li.is-correct strong {
+  color: color-mix(in srgb, var(--lime) 78%, var(--ink));
+}
+.logo-history li.is-incorrect strong {
+  color: color-mix(in srgb, var(--accent) 84%, var(--ink));
+}
+.logo-complete {
+  padding: 22px;
+  border: 2px solid var(--success);
+  border-radius: 16px;
+  text-align: center;
+}
+.logo-complete h2,
+.logo-complete p {
+  margin: 4px 0;
+}
+@media (max-width: 560px) {
+  .logo-search__controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .logo-search__controls > .autocomplete__confirm {
+    width: 100%;
+    min-height: 46px;
+  }
+}
 :is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour {
   border-color: #a94432;
   background: #68221d;

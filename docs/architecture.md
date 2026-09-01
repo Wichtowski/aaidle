@@ -20,6 +20,7 @@ Browser (Vite + React)
 ```
 
 Production serves the static `dist/` assets through the platform Caddy instance. Caddy serves the SPA fallback and proxies `/api/*` to the private Rust container. The API never serves frontend assets.
+Logo game images live under `public/logo-assets/`, are emitted into the frontend build, and use opaque filenames so CDN URLs do not reveal answer names. The API persists the selected opaque path and reveal revision; the browser applies the corresponding zoom around the curated focal point.
 
 ## Repository map
 
@@ -81,6 +82,7 @@ The public contract is documented in [API v1](backend/api-v1.md). Major route gr
 
 - `/api/v1/games/classic/*` — Classic categories, guesses, stats, trajectory, and Hardcore access.
 - `/api/v1/games/emoji/*` — Emoji challenges, hints, and guesses.
+- `/api/v1/games/logo/*` — Logo challenge, progressive reveal state, and guesses.
 - `/api/v1/games/timeline/*` — Timeline challenges and progress.
 - `/api/v1/models` — Paginated public model discovery.
 - `/api/v1/auth/*` — Password, OAuth, verification, reset, sessions, and progress sync.

@@ -8,6 +8,7 @@ import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
 import { GameIntro } from "../common/layout/GameLayout";
+import { GameGuessAutocomplete } from "../common";
 import { ApiUnavailableState } from "../../ui/ApiUnavailableState";
 import { GameLoadingState } from "../../ui/GameLoadingState";
 import { Toast } from "../../ui/Toast";
@@ -48,8 +49,6 @@ export function EmojiGame({
 }) {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const {
-    activeOption,
-    activeOptionIndex,
     available,
     busy,
     choose,
@@ -59,7 +58,6 @@ export function EmojiGame({
     hardcore,
     isLoadingGame,
     query,
-    setActiveOptionIndex,
     setLoadAttempt,
     setQuery,
     setShowCompletion,
@@ -170,75 +168,30 @@ export function EmojiGame({
             })}
           </ol>
           {!solved && (
-            <form
+            <GameGuessAutocomplete
               className="emoji__search"
-              onSubmit={(event) => {
-                event.preventDefault();
-                if (activeOption) void choose(activeOption);
-              }}
-              toolname="guessEmojiEntity"
-              tooldescription="Choose the AI entity you think is the answer in the emoji game."
-            >
-              <label htmlFor="emoji-search">Name the answer</label>
-              <div>
-                <div className="emoji__input">
-                  <input
-                    id="emoji-search"
-                    name="entity"
-                    value={query}
-                    disabled={busy}
-                    aria-activedescendant={
-                      available.length > 0 ? `emoji-option-${activeOptionIndex}` : undefined
-                    }
-                    aria-autocomplete="list"
-                    aria-controls="emoji-options"
-                    aria-expanded={available.length > 0}
-                    role="combobox"
-                    toolparamdescription="The name of the AI entity to guess."
-                    onChange={(event) => {
-                      setQuery(event.target.value);
-                      setActiveOptionIndex(0);
-                    }}
-                    onKeyDown={(event) => {
-                      if (available.length === 0) return;
-                      if (event.key === "ArrowDown") {
-                        event.preventDefault();
-                        setActiveOptionIndex((current) => (current + 1) % available.length);
-                      } else if (event.key === "ArrowUp") {
-                        event.preventDefault();
-                        setActiveOptionIndex(
-                          (current) => (current - 1 + available.length) % available.length,
-                        );
-                      } else if (event.key === "Enter" && activeOption) {
-                        event.preventDefault();
-                        void choose(activeOption);
-                      }
-                    }}
-                    placeholder="GPT, BERT, K-Means…"
-                  />
-                  {available.length > 0 && (
-                    <ul id="emoji-options" role="listbox">
-                      {available.map((entity, index) => (
-                        <li
-                          aria-selected={index === activeOptionIndex}
-                          id={`emoji-option-${index}`}
-                          key={entity.id}
-                          role="option"
-                        >
-                          <button type="button" onClick={() => void choose(entity)}>
-                            <strong>{entity.name}</strong>
-                            <small>{entity.entityKind.replaceAll("-", " ")}</small>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <button className="autocomplete__confirm" disabled={!activeOption || busy}>
-                  Guess
-                </button>
-              </div>
-            </form>
+              disabled={busy}
+              getOptionKey={(entity) => entity.id}
+              idPrefix="emoji"
+              inputContainerClassName="emoji__input"
+              inputId="emoji-search"
+              inputName="entity"
+              label="Name the answer"
+              onQueryChange={setQuery}
+              onSelect={(entity) => void choose(entity)}
+              options={available}
+              placeholder="GPT, BERT, K-Means…"
+              query={query}
+              renderOption={(entity) => (
+                <>
+                  <strong>{entity.name}</strong>
+                  <small>{entity.entityKind.replaceAll("-", " ")}</small>
+                </>
+              )}
+              toolDescription="Choose the AI entity you think is the answer in the emoji game."
+              toolName="guessEmojiEntity"
+              toolParamDescription="The name of the AI entity to guess."
+            />
           )}
           {guesses.length > 0 && (
             <ol className="emoji__history">

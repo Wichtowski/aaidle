@@ -249,6 +249,11 @@ pub async fn synchronize(
     .bind(&player_id)
     .execute(&mut *transaction)
     .await?;
+    sqlx::query("UPDATE logo_guess_events SET user_id = ? WHERE player_id = ? AND user_id IS NULL")
+        .bind(user_id)
+        .bind(&player_id)
+        .execute(&mut *transaction)
+        .await?;
     sqlx::query("UPDATE timeline_attempts SET user_id = ? WHERE player_id = ? AND user_id IS NULL")
         .bind(user_id)
         .bind(&player_id)
@@ -284,6 +289,18 @@ pub async fn synchronize(
         .execute(&mut *transaction)
         .await?;
         sqlx::query("UPDATE visual_clue_guess_events SET player_id = ? WHERE player_id = ?")
+            .bind(&primary_player_id)
+            .bind(&player_id)
+            .execute(&mut *transaction)
+            .await?;
+        sqlx::query(
+            "DELETE FROM logo_guess_events WHERE player_id = ? AND EXISTS (SELECT 1 FROM logo_guess_events canonical WHERE canonical.player_id = ? AND canonical.challenge_id = logo_guess_events.challenge_id AND canonical.guessed_model_id = logo_guess_events.guessed_model_id)",
+        )
+        .bind(&player_id)
+        .bind(&primary_player_id)
+        .execute(&mut *transaction)
+        .await?;
+        sqlx::query("UPDATE logo_guess_events SET player_id = ? WHERE player_id = ?")
             .bind(&primary_player_id)
             .bind(&player_id)
             .execute(&mut *transaction)
@@ -359,6 +376,12 @@ pub async fn synchronize(
                SELECT COUNT(DISTINCT player_id) FROM visual_clue_guess_events g \
                WHERE g.challenge_id = visual_clue_completion_counts.challenge_id AND g.is_correct = 1\
              ) WHERE challenge_id IN (SELECT challenge_id FROM visual_clue_guess_events WHERE user_id = ?)",
+        )
+        .bind(user_id)
+        .execute(&mut *transaction)
+        .await?;
+        sqlx::query(
+            "UPDATE logo_completion_counts SET completion_count = (SELECT COUNT(DISTINCT player_id) FROM logo_guess_events g WHERE g.challenge_id = logo_completion_counts.challenge_id AND g.is_correct = 1) WHERE challenge_id IN (SELECT challenge_id FROM logo_guess_events WHERE user_id = ?)",
         )
         .bind(user_id)
         .execute(&mut *transaction)
@@ -469,6 +492,15 @@ async fn rebuild_primary_player_stats(
     for mode in visual_modes {
         crate::repository::rebuild_visual_player_stats(pool, player_id, &mode, now).await?;
     }
+    let logo_modes = sqlx::query_scalar::<_, String>(
+        "SELECT DISTINCT d.mode FROM logo_guess_events g JOIN logo_challenges d ON d.id = g.challenge_id WHERE g.player_id = ?",
+    )
+    .bind(player_id.to_string())
+    .fetch_all(pool)
+    .await?;
+    for mode in logo_modes {
+        crate::repository::logo::rebuild_player_stats(pool, player_id, &mode, now).await?;
+    }
     Ok(())
 }
 
@@ -559,6 +591,7 @@ pub async fn history(
     match game {
         "classic" => classic_history(pool, user_id, category, page).await,
         "emoji" => emoji_history(pool, user_id, category, page).await,
+        "logo" => logo_history(pool, user_id, category, page).await,
         "timeline" => timeline_history(pool, user_id, category, page).await,
         _ => Err(AppError::validation("Unknown progress game.")),
     }
@@ -744,6 +777,58 @@ async fn timeline_history(
     })
 }
 
+async fn logo_history(
+    pool: &SqlitePool,
+    user_id: &str,
+    difficulty: &str,
+    page: i64,
+) -> AppResult<ProgressHistoryResponse> {
+    if difficulty != "normal" {
+        return Err(AppError::validation("Unknown Logo difficulty."));
+    }
+    let mode = "logo:normal";
+    let all_rows = sqlx::query_as::<_, HistoryRow>(
+        "SELECT c.id AS challenge_id, c.challenge_date, c.mode, COUNT(*) AS guess_count, MAX(a.is_correct) AS solved FROM logo_guess_events a JOIN logo_challenges c ON c.id = a.challenge_id WHERE a.user_id = ? AND c.mode = ? GROUP BY c.id, c.challenge_date, c.mode ORDER BY c.challenge_date DESC",
+    )
+    .bind(user_id)
+    .bind(mode)
+    .fetch_all(pool)
+    .await?;
+    let total = i64::try_from(all_rows.len())
+        .map_err(|_| AppError::Unavailable("Logo history is too large.".to_owned()))?;
+    let start = usize::try_from((page - 1) * HISTORY_PAGE_SIZE)
+        .map_err(|_| AppError::validation("page is invalid"))?;
+    let end = (start + HISTORY_PAGE_SIZE as usize).min(all_rows.len());
+    let rows = all_rows.get(start..end).unwrap_or_default();
+    let mut games = Vec::with_capacity(rows.len());
+    for row in rows {
+        let guessed_model_names = sqlx::query_scalar::<_, String>(
+            "SELECT m.name FROM logo_guess_events a JOIN models m ON m.id = a.guessed_model_id WHERE a.user_id = ? AND a.challenge_id = ? ORDER BY a.attempt_number, a.created_at",
+        )
+        .bind(user_id)
+        .bind(&row.challenge_id)
+        .fetch_all(pool)
+        .await?;
+        games.push(history_game(
+            HistoryRow {
+                challenge_id: row.challenge_id.clone(),
+                challenge_date: row.challenge_date.clone(),
+                mode: row.mode.clone(),
+                guess_count: row.guess_count,
+                solved: row.solved,
+            },
+            guessed_model_names,
+        ));
+    }
+    Ok(ProgressHistoryResponse {
+        games,
+        total,
+        page,
+        page_size: HISTORY_PAGE_SIZE,
+        stats: history_stats_from_rows(&all_rows, false)?,
+    })
+}
+
 fn history_game(row: HistoryRow, guessed_model_names: Vec<String>) -> ProgressHistoryGame {
     ProgressHistoryGame {
         challenge_id: row.challenge_id,
@@ -923,6 +1008,13 @@ async fn synchronize_completion_records(
          SELECT ?, 'timeline', c.difficulty, 'timeline', MIN(a.created_at) \
          FROM timeline_attempts a JOIN timeline_challenges c ON c.id = a.challenge_id \
          WHERE a.user_id = ? AND a.is_correct = 1 GROUP BY c.difficulty",
+    )
+    .bind(user_id)
+    .bind(user_id)
+    .execute(&mut **transaction)
+    .await?;
+    sqlx::query(
+        "INSERT OR IGNORE INTO user_game_progress (user_id, game_type, difficulty, category, completed_at) SELECT ?, 'logo', 'normal', 'logo', MIN(created_at) FROM logo_guess_events WHERE user_id = ? AND is_correct = 1",
     )
     .bind(user_id)
     .bind(user_id)

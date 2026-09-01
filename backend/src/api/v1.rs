@@ -41,6 +41,7 @@ mod auth;
 mod classic;
 mod emoji;
 mod issues;
+mod logo;
 mod progress;
 mod timeline;
 
@@ -125,6 +126,7 @@ pub fn router(state: AppState) -> Router {
             post(classic::trajectory),
         )
         .route("/games/emoji/{difficulty}", get(emoji::game))
+        .route("/games/logo/{difficulty}", get(logo::game))
         .route("/games/timeline/{difficulty}", get(timeline::game))
         .route(
             "/games/timeline/challenges/{challenge_id}/attempts",
@@ -161,6 +163,10 @@ pub fn router(state: AppState) -> Router {
         .route(
             "/games/emoji/challenges/{challenge_id}/hints",
             get(emoji::hints),
+        )
+        .route(
+            "/games/logo/challenges/{challenge_id}/guesses",
+            get(logo::guess_history).post(logo::guess),
         )
         .route("/players/{player_id}/stats", get(classic::player_stats))
         .with_state(state.clone())
