@@ -9,6 +9,8 @@ axum = "0.8"
 base64 = "0.22"
 dotenvy = "0.15"
 hmac = "0.12"
+image = { version = "0.25", default-features = false, features = ["png", "webp"] }
+include_dir = "0.7"
 jsonwebtoken = { version = "11", features = ["rust_crypto"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 scrypt = "0.11"

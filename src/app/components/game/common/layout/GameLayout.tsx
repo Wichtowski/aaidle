@@ -35,7 +35,7 @@ export function GameIntro({
         <div className="game-intro__timing">
           {expiresAt && <DailyCountdown expiresAt={expiresAt} onExpiry={onExpiry} />}
           {completionCount !== null && completionCount !== undefined && (
-            <p className="game-intro__completed">{completionCount} completed</p>
+            <p className="game-intro__completed">{completionCount} completed globally</p>
           )}
         </div>
       </div>

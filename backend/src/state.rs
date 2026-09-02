@@ -5,7 +5,10 @@ use sqlx::SqlitePool;
 
 use crate::{
     config::AppConfig,
-    domain::{emoji::VisualClueCatalog, logo::LogoCatalog},
+    domain::{
+        emoji::VisualClueCatalog,
+        logo::{LogoCatalog, LogoImageCache},
+    },
     error::{AppError, AppResult},
 };
 
@@ -16,6 +19,7 @@ pub struct AppState {
     pub http: Client,
     pub emoji: Arc<VisualClueCatalog>,
     pub logo: Arc<LogoCatalog>,
+    pub logo_images: Arc<LogoImageCache>,
 }
 
 fn build_http_client(timeout: Duration, user_agent: &str) -> AppResult<Client> {
@@ -37,6 +41,7 @@ impl AppState {
             http,
             emoji: Arc::new(VisualClueCatalog::load()?),
             logo: Arc::new(LogoCatalog::load()?),
+            logo_images: Arc::new(LogoImageCache::default()),
         })
     }
 }

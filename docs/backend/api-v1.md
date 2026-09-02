@@ -68,6 +68,10 @@ Query parameters:
 
 ## Game routes
 
+Anonymous game ownership is established by the signed, HTTP-only `aaidle_player` cookie. The API creates this essential cookie on the first game request and derives every anonymous progress read and write from it. Caller-provided `playerId` values are retained temporarily for request compatibility but are ignored for ownership. The cookie uses `SameSite=Strict`, is scoped to `/api/v1`, and is marked `Secure` in production.
+
+All game guess and Timeline attempt mutations require an `Origin` exactly matching `APP_ORIGIN`, because anonymous browsers send their player cookie automatically. Authenticated browser mutations additionally require the existing CSRF token.
+
 `GET /api/v1/games/classic/{category}/{difficulty}` returns the public Classic challenge, exactly eligible model pool, displayed comparison columns, and global completion count.
 The six focused categories are `llm`, `cv`, `nlp`, `object-detection`, `classical-ml`, and `filters`.
 Focused categories support `normal` and `challenge` difficulties.
@@ -83,13 +87,14 @@ The signed token is bound to that challenge and answer model and does not disclo
 Generic `/challenges/*` routes are not part of the public v2 contract.
 
 `GET /api/v1/games/emoji/{difficulty}` returns an answer-safe Emoji challenge, its initially available clues, public entity choices, and global completion count. Supported difficulties are `normal`, `challenge`, and access-controlled `hardcore`.
-`GET /api/v1/games/emoji/challenges/{challengeId}/hints?playerId={uuid}` returns the clues earned by that player.
+`GET /api/v1/games/emoji/challenges/{challengeId}/hints` returns the clues earned by the cookie-owned player.
 `POST /api/v1/games/emoji/challenges/{challengeId}/guesses` accepts retry-safe `playerId`, `requestId`, `attemptNumber`, and `guessedEntityId` fields. The server validates and records every accepted guess, so rejected or duplicate requests cannot change progress.
 Attempts must be sequential, and their hard limit is the eligible entity-pool size for the challenge difficulty.
 Emoji supports curated `emoji`, `architecture`, `algorithm`, and `operator` entities. Selection and clue variants are deterministic for a day and difficulty without exposing the selected answer in public responses.
 
-`GET /api/v1/games/logo/normal?playerId={uuid}` returns the daily Logo challenge, its curated model pool, and server-authoritative reveal progress. The safe progress object contains an opaque `/logo-assets/asset-NNN.webp` URL, a 512-based focal point, the current and maximum image revisions, unlocked text clues, and solved state. The static image is served by the frontend/CDN; the browser changes only its presentation zoom from the persisted revision.
-`GET /api/v1/games/logo/challenges/{challengeId}/guesses?playerId={uuid}` restores accepted guesses and reveal progress. `POST` to the same route accepts `playerId`, `requestId`, `guessedModelId`, and sequential `attemptNumber` fields. Every incorrect accepted guess advances the bounded zoom-out revision. Text clues remain absent until their server-configured thresholds; every catalog entry has a general clue at five incorrect guesses. A correct guess exposes attribution but never serializes the hidden answer field.
+`GET /api/v1/games/logo/normal` returns the daily Logo challenge, its independent catalog answer pool, and server-authoritative reveal progress. The safe progress object contains a player-scoped API image URL, a curated focal point, the current and maximum image revisions, unlocked text clues, and solved state.
+`GET /api/v1/games/logo/challenges/{challengeId}/image?v={variant}` resolves the anonymous or authenticated player identity and serves the authorized server-rendered crop. A requested variant that does not equal the caller's persisted revision returns `404`; only `v=solved` after a server-confirmed solve returns the full source image. Raw source assets remain embedded in the API and are never served directly. Generated variants are cached in the API for the active daily challenge and responses use private browser caching bounded by the next UTC challenge.
+`GET /api/v1/games/logo/challenges/{challengeId}/guesses` restores accepted guesses and reveal progress. `POST` to the same route accepts retry-safe `requestId`, `guessedModelId`, and sequential `attemptNumber` fields. Every incorrect accepted guess advances the bounded zoom-out revision. Text clues remain absent until their server-configured thresholds; catalog entries may use educational or general clues. A correct guess never serializes the hidden answer field.
 When a session is authenticated, both Logo read routes and guess writes resolve the account's canonical player ID before accessing progress. A stale client attempt returns the stable `STALE_GUESS_STATE` conflict without exposing the server's expected attempt number; the browser reloads authoritative history instead of displaying duplicate or sequence errors.
 
 `GET /api/v1/games/timeline/{difficulty}` returns an answer-safe Timeline challenge and progress.

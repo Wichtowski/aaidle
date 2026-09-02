@@ -11,7 +11,7 @@ use crate::{
 
 use super::{
     ChallengeRecord, PlayerEventTable, ensure_anonymous_player, now_unix_millis,
-    public_models_by_ids, update_player_stats,
+    update_player_stats,
 };
 
 const MODE: &str = "logo:normal";
@@ -30,6 +30,16 @@ pub struct LogoGameData {
     pub models: Vec<PublicModel>,
     pub progress: LogoProgress,
     pub completion_count: i64,
+}
+
+fn public_logo_model(entry: &crate::domain::logo::LogoCatalogEntry) -> PublicModel {
+    PublicModel {
+        id: entry.answer_id.clone(),
+        name: entry.asset_name.clone(),
+        provider_name: "Logo catalog".to_owned(),
+        family_name: None,
+        aliases: Vec::new(),
+    }
 }
 
 #[derive(Clone)]
@@ -94,11 +104,10 @@ pub async fn game(
         ));
     }
     let challenge = ensure_challenge(pool, catalog, date, secret).await?;
-    let model_ids = catalog
+    let models = catalog
         .eligible(0)
-        .map(|entry| entry.answer_id.clone())
+        .map(public_logo_model)
         .collect::<Vec<_>>();
-    let models = public_models_by_ids(pool, &model_ids).await?;
     let progress = progress(pool, catalog, &challenge, player_id).await?;
     Ok(LogoGameData {
         completion_count: completion_count(pool, &challenge.id).await?,
@@ -124,18 +133,17 @@ pub async fn history(
     .bind(player_id.to_string())
     .fetch_all(pool)
     .await?;
-    let ids = stored
-        .iter()
-        .map(|guess| guess.guessed_model_id.clone())
-        .collect::<Vec<_>>();
-    let public = public_models_by_ids(pool, &ids).await?;
     let mut guesses = Vec::with_capacity(stored.len());
     for guess in stored {
-        let model = public
-            .iter()
-            .find(|model| model.id == guess.guessed_model_id)
-            .cloned()
-            .ok_or_else(|| AppError::Unavailable("Stored Logo guess is unavailable.".to_owned()))?;
+        // Logo answers are maintained independently from the Classic model catalog.
+        // Ignore guesses recorded by older builds that used Classic IDs; they cannot
+        // be rendered as Logo answers and must not make the whole game unavailable.
+        let Some(model) = catalog
+            .entry(&guess.guessed_model_id)
+            .map(public_logo_model)
+        else {
+            continue;
+        };
         guesses.push(LogoGuessHistoryEntry {
             model,
             is_correct: guess.is_correct != 0,
@@ -178,10 +186,9 @@ async fn process_guess_once(
             "This model is not available in the Logo pool.",
         ));
     }
-    let guessed_model = public_models_by_ids(pool, std::slice::from_ref(&input.guessed_model_id))
-        .await?
-        .into_iter()
-        .next()
+    let guessed_model = catalog
+        .entry(&input.guessed_model_id)
+        .map(public_logo_model)
         .ok_or_else(|| AppError::NotFound("Logo model not found.".to_owned()))?;
     let mut transaction = pool.begin().await?;
     let connection = &mut *transaction;
@@ -223,13 +230,20 @@ async fn process_guess_once(
     }
     let pool_size = i64::try_from(catalog.eligible(0).count())
         .map_err(|_| AppError::Unavailable("Logo attempt limit is invalid.".to_owned()))?;
-    let accepted_attempts = sqlx::query_scalar::<_, i64>(
-        "SELECT COUNT(*) FROM logo_guess_events WHERE challenge_id = ? AND player_id = ?",
+    let stored_attempt_ids = sqlx::query_scalar::<_, String>(
+        "SELECT guessed_model_id FROM logo_guess_events WHERE challenge_id = ? AND player_id = ?",
     )
     .bind(input.challenge_id.to_string())
     .bind(input.player_id.to_string())
-    .fetch_one(&mut *connection)
+    .fetch_all(&mut *connection)
     .await?;
+    let accepted_attempts = i64::try_from(
+        stored_attempt_ids
+            .iter()
+            .filter(|id| catalog.entry(id).is_some())
+            .count(),
+    )
+    .map_err(|_| AppError::Unavailable("Logo attempt limit is invalid.".to_owned()))?;
     if accepted_attempts >= pool_size {
         return Err(AppError::Conflict("ATTEMPT_LIMIT_REACHED".to_owned()));
     }
@@ -296,7 +310,24 @@ async fn ensure_challenge(
     secret: &str,
 ) -> AppResult<LogoChallengeRecord> {
     if let Some(challenge) = find_by_date(pool, date).await? {
-        return Ok(challenge);
+        if catalog.entry(&challenge.answer_model_id).is_some() {
+            return Ok(challenge);
+        }
+        let entry = catalog
+            .eligible(0)
+            .next()
+            .ok_or_else(|| AppError::Unavailable("No Logo entries are configured.".to_owned()))?;
+        sqlx::query(
+            "UPDATE logo_challenges SET answer_model_id = ?, asset_path = ?, selection_version = selection_version + 1 WHERE id = ?",
+        )
+        .bind(&entry.answer_id)
+        .bind(&entry.asset_path)
+        .bind(&challenge.id)
+        .execute(pool)
+        .await?;
+        return find_by_date(pool, date).await?.ok_or_else(|| {
+            AppError::Unavailable("Today’s Logo challenge is unavailable.".to_owned())
+        });
     }
     let recent = sqlx::query_scalar::<_, String>(
         "SELECT answer_model_id FROM logo_challenges WHERE mode = ? ORDER BY challenge_date DESC LIMIT 6",
@@ -391,7 +422,9 @@ fn progress_for_count(
         maximum_image_revision: MAX_REVEAL_REVISION,
         clues: revealed_clues(entry, wrong),
         solved,
-        attribution: solved.then(|| entry.attribution.clone()),
+        attribution: solved
+            .then(|| entry.attribution.clone())
+            .filter(|attribution| !attribution.trim().is_empty()),
     })
 }
 

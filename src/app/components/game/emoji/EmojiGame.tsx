@@ -1,9 +1,6 @@
 import { lazy, Suspense, useState, type CSSProperties } from "react";
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
-import {
-  type EmojiDifficulty,
-  type VisualClue,
-} from "@lib/api/client";
+import { type EmojiDifficulty, type VisualClue } from "@lib/api/client";
 import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
@@ -159,7 +156,7 @@ export function EmojiGame({
                       ) : clue?.type === "icon" ? (
                         <EmojiIcon icon={clue.icon} />
                       ) : clue?.type === "image" ? (
-                        <img alt={clue.alt ?? ""} loading="lazy" src={clue.src} />
+                        <img alt={clue.alt ?? ""} src={clue.src} />
                       ) : null}
                     </span>
                   </div>
@@ -207,6 +204,7 @@ export function EmojiGame({
                   }
                   className={guess.isCorrect ? "is-correct" : "is-incorrect"}
                   key={guess.id}
+                  style={{ "--result-index": index } as CSSProperties}
                 >
                   <span>{index + 1}</span>
                   <strong>{guess.name}</strong>

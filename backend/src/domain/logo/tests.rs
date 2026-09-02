@@ -1,12 +1,11 @@
 use super::*;
 
 #[test]
-fn bundled_catalog_is_valid_and_has_reachable_five_miss_clues() {
+fn bundled_catalog_is_valid_and_has_reachable_clues() {
     let catalog = LogoCatalog::load().unwrap();
     assert!(catalog.entries().count() >= 6);
     for entry in catalog.entries() {
-        assert!(revealed_clues(entry, 4).is_empty());
-        assert_eq!(revealed_clues(entry, 5).len(), 1);
+        assert!(!revealed_clues(entry, 5).is_empty());
     }
 }
 
@@ -57,4 +56,56 @@ fn portraits_require_an_educational_three_miss_clue() {
         },
     );
     assert!(validate_seed(&entries).is_ok());
+}
+
+#[test]
+fn renderer_returns_only_the_authorized_crop_until_solved() {
+    use image::GenericImageView;
+
+    let focal_point = FocalPoint { x: 164.0, y: 174.0 };
+    let cropped = render_logo_image("/logo-visual/company-logo-1.png", focal_point, 0, false)
+        .expect("render initial crop");
+    let solved = render_logo_image("/logo-visual/company-logo-1.png", focal_point, 0, true)
+        .expect("render solved image");
+
+    assert_eq!(
+        image::load_from_memory(&cropped).unwrap().dimensions(),
+        (512, 512)
+    );
+    assert_eq!(
+        image::load_from_memory(&solved).unwrap().dimensions(),
+        (512, 384)
+    );
+    assert_ne!(cropped, solved);
+}
+
+#[test]
+fn image_cache_reuses_variants_until_the_challenge_changes() {
+    let cache = LogoImageCache::default();
+    let focal_point = FocalPoint { x: 164.0, y: 174.0 };
+    let rendered = cache
+        .image(
+            "challenge-one",
+            "/logo-visual/company-logo-1.png",
+            focal_point,
+            0,
+            false,
+        )
+        .expect("render cached image");
+    let cached = cache
+        .image(
+            "challenge-one",
+            "/logo-visual/company-logo-1.png",
+            focal_point,
+            0,
+            false,
+        )
+        .expect("reuse cached image without reading the source again");
+
+    assert_eq!(cached, rendered);
+    assert!(
+        cache
+            .image("challenge-two", "/missing.png", focal_point, 0, false)
+            .is_err()
+    );
 }

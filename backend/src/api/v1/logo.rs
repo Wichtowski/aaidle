@@ -2,8 +2,10 @@ use std::net::SocketAddr;
 
 use axum::{
     Json,
-    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
-    http::HeaderMap,
+    body::Body,
+    extract::{ConnectInfo, Extension, Path, Query, State, rejection::JsonRejection},
+    http::{HeaderMap, HeaderValue, header},
+    response::Response,
 };
 use serde::Deserialize;
 use uuid::Uuid;
@@ -18,12 +20,21 @@ use crate::{
     state::AppState,
 };
 
-use super::{current_utc_date, format_next_midnight, is_model_id, parse_json_payload, parse_uuid};
+use super::{
+    AnonymousPlayerId, current_utc_date, format_next_midnight, is_model_id, parse_json_payload,
+    parse_uuid,
+};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(super) struct LogoPlayerQuery {
     player_id: Uuid,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct LogoImageQuery {
+    v: String,
 }
 
 pub(super) async fn game(
@@ -52,7 +63,7 @@ pub(super) async fn game(
             expires_at: format_next_midnight()?,
         },
         models: game.models,
-        progress: progress_response(game.progress),
+        progress: progress_response(challenge_id, game.progress),
         global_completion_count: game.completion_count,
     }))
 }
@@ -77,8 +88,83 @@ pub(super) async fn guess_history(
                 attempt_number: guess.attempt_number,
             })
             .collect(),
-        progress: progress_response(history.progress),
+        progress: progress_response(challenge_id, history.progress),
     }))
+}
+
+pub(super) async fn image(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+    Query(query): Query<LogoPlayerQuery>,
+    requested_variant: Option<String>,
+) -> AppResult<Response> {
+    let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    let player_id = read_player_id(&state, &headers, query.player_id).await?;
+    let is_current = sqlx::query_scalar::<_, i64>(
+        "SELECT EXISTS(SELECT 1 FROM logo_challenges WHERE id = ? AND challenge_date = ?)",
+    )
+    .bind(challenge_id.to_string())
+    .bind(current_utc_date()?)
+    .fetch_one(&state.db)
+    .await?
+        != 0;
+    if !is_current {
+        return Err(AppError::NotFound(
+            "Logo image challenge not found.".to_owned(),
+        ));
+    }
+    let history =
+        repository::logo::history(&state.db, &state.logo, challenge_id, player_id).await?;
+    let progress = history.progress;
+    let authorized_variant = if progress.solved {
+        "solved".to_owned()
+    } else {
+        progress.image_revision.to_string()
+    };
+    if requested_variant
+        .as_deref()
+        .is_some_and(|variant| variant != authorized_variant)
+    {
+        return Err(AppError::NotFound(
+            "Logo image variant not found.".to_owned(),
+        ));
+    }
+    let cache = state.logo_images.clone();
+    let challenge_key = challenge_id.to_string();
+    let image = tokio::task::spawn_blocking(move || {
+        cache.image(
+            &challenge_key,
+            &progress.image_url,
+            progress.focal_point,
+            progress.image_revision,
+            progress.solved,
+        )
+    })
+    .await
+    .map_err(|_| AppError::Unavailable("Logo image rendering was interrupted.".to_owned()))??;
+    let now = time::OffsetDateTime::now_utc();
+    let next_midnight = now
+        .date()
+        .next_day()
+        .and_then(|date| date.with_hms(0, 0, 0).ok())
+        .ok_or_else(|| AppError::Unavailable("Could not determine Logo cache expiry.".to_owned()))?
+        .assume_utc();
+    let max_age = (next_midnight - now).whole_seconds().max(0);
+    let mut response = Response::new(Body::from(image));
+    response
+        .headers_mut()
+        .insert(header::CONTENT_TYPE, HeaderValue::from_static("image/png"));
+    response.headers_mut().insert(
+        header::CACHE_CONTROL,
+        HeaderValue::from_str(&format!("private, max-age={max_age}, immutable"))
+            .map_err(|_| AppError::Unavailable("Logo cache metadata is invalid.".to_owned()))?,
+    );
+    response.headers_mut().insert(
+        header::X_CONTENT_TYPE_OPTIONS,
+        HeaderValue::from_static("nosniff"),
+    );
+    Ok(response)
 }
 
 async fn read_player_id(
@@ -127,8 +213,8 @@ pub(super) async fn guess(
             "This account has been disabled.".to_owned(),
         ));
     }
+    super::assert_same_origin_or_bearer(&state, &headers)?;
     if user.is_some() {
-        super::assert_same_origin_or_bearer(&state, &headers)?;
         super::assert_csrf_or_bearer(&headers)?;
     }
     let player_id = match &user {
@@ -161,15 +247,87 @@ pub(super) async fn guess(
         guessed_model: outcome.guessed_model,
         is_correct: outcome.is_correct,
         attempt_number: outcome.attempt_number,
-        progress: progress_response(outcome.progress),
+        progress: progress_response(challenge_id, outcome.progress),
         global_completion_count: outcome.completion_count,
         player_stats: outcome.player_stats,
     }))
 }
 
-fn progress_response(progress: repository::logo::LogoProgress) -> LogoProgressResponse {
+pub(super) async fn game_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path(difficulty): Path<String>,
+) -> AppResult<Json<LogoGameResponse>> {
+    game(
+        State(state),
+        headers,
+        Path(difficulty),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+}
+
+pub(super) async fn guess_history_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+) -> AppResult<Json<LogoGuessHistoryResponse>> {
+    guess_history(
+        State(state),
+        headers,
+        Path(challenge_id),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+}
+
+pub(super) async fn image_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path(challenge_id): Path<String>,
+    Query(query): Query<LogoImageQuery>,
+) -> AppResult<Response> {
+    image(
+        State(state),
+        headers,
+        Path(challenge_id),
+        Query(LogoPlayerQuery { player_id }),
+        Some(query.v),
+    )
+    .await
+}
+
+pub(super) async fn guess_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    peer: ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    path: Path<String>,
+    payload: Result<Json<LogoGuessRequest>, JsonRejection>,
+) -> AppResult<Json<LogoGuessResponse>> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    guess(State(state), peer, headers, path, payload).await
+}
+
+fn progress_response(
+    challenge_id: Uuid,
+    progress: repository::logo::LogoProgress,
+) -> LogoProgressResponse {
     LogoProgressResponse {
-        image_url: progress.image_url,
+        image_url: format!(
+            "/api/v1/games/logo/challenges/{challenge_id}/image?v={}",
+            if progress.solved {
+                "solved".to_owned()
+            } else {
+                progress.image_revision.to_string()
+            }
+        ),
         focal_point: progress.focal_point,
         image_revision: progress.image_revision,
         maximum_image_revision: progress.maximum_image_revision,

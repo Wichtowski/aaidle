@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export type GameGuessAutocompleteProps<Option> = {
   className: string;
@@ -102,13 +97,15 @@ export function GameGuessAutocomplete<Option>({
           ? availableIndexes[0]
           : availableIndexes[availableIndexes.length - 1];
       }
-      return availableIndexes[(position + direction + availableIndexes.length) % availableIndexes.length];
+      return availableIndexes[
+        (position + direction + availableIndexes.length) % availableIndexes.length
+      ];
     });
   };
 
   return (
     <form
-      className={className}
+      className={`${className} game-guess-autocomplete`}
       onSubmit={(event) => {
         event.preventDefault();
         if (selected) choose(selected);

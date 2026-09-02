@@ -410,7 +410,7 @@ a {
 }
 .hero {
   max-width: 780px;
-  padding: 6vh 0 5vh;
+  padding: 6vh 0 0;
 }
 .hero h1,
 .game-page h1,
@@ -896,6 +896,10 @@ a {
 .game-mode-card--in-progress:not(a) {
   cursor: default;
 }
+.game-mode-card--in-progress:hover {
+  box-shadow: none;
+  transform: none;
+}
 body.hell-mode .game-mode-card--in-progress {
   border-color: #69372f;
   background: #201014;
@@ -1068,6 +1072,11 @@ body.hell-mode .game-placeholder__status {
   display: flex;
   gap: 8px;
 }
+.autocomplete__input {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
 .autocomplete__field input {
   min-width: 0;
 }
@@ -1104,6 +1113,14 @@ body.hell-mode .game-placeholder__status {
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 14px 30px #17202c20;
+}
+.game-guess-autocomplete {
+  position: relative;
+  z-index: 30;
+}
+.game-guess-autocomplete ul {
+  background-color: var(--panel);
+  opacity: 1;
 }
 .autocomplete button {
   border: 0;
@@ -2546,6 +2563,12 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 }
 .game-page {
   max-width: 1250px;
+  animation: game-page-enter 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes game-page-enter {
+  from {
+    opacity: 0;
+  }
 }
 .game-page--hardcore {
   isolation: isolate;
@@ -4060,7 +4083,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .how-to-play-modal {
   position: fixed;
   inset: 0;
-  z-index: 25;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4866,6 +4889,57 @@ html {
 .emoji__history li.is-incorrect strong,
 .emoji-result-key--incorrect {
   color: color-mix(in srgb, var(--accent) 84%, var(--ink));
+}
+.emoji__history li,
+.logo-history li {
+  animation: result-card-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--result-index, 0) * 70ms);
+}
+.emoji__history li.is-correct,
+.logo-history li.is-correct {
+  animation-name: result-card-correct;
+}
+.emoji__history li.is-incorrect,
+.logo-history li.is-incorrect {
+  animation-name: result-card-incorrect;
+}
+@keyframes result-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes result-card-correct {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes result-card-incorrect {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) translateX(-4px) scale(0.98);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(0) translateX(3px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+  }
 }
 .completed--emoji {
   width: min(620px, 100%);
@@ -5871,6 +5945,38 @@ body.hell-mode .completed--timeline {
   justify-items: center;
   gap: 10px;
 }
+.logo-clue-layout {
+  display: grid;
+  grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+.logo-clue-rail {
+  display: flex;
+  max-height: 512px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+}
+.logo-clue-rail__icon {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 62%, var(--line));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+  color: var(--accent);
+  font-size: 14px;
+}
+.logo-clue-rail__icon.is-revealed {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--panel));
+  color: var(--accent);
+}
 .logo-clue__image-wrap {
   position: relative;
   width: min(512px, 100%);
@@ -5887,7 +5993,18 @@ body.hell-mode .completed--timeline {
   height: 100%;
   object-fit: cover;
   transform-origin: center;
-  transition: transform 420ms ease;
+}
+.logo-clue__image.is-solved {
+  object-fit: contain;
+  animation: logo-solved-reveal 1600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes logo-solved-reveal {
+  from {
+    transform: scale(var(--logo-solve-start-zoom, 1));
+  }
+  to {
+    transform: scale(1);
+  }
 }
 .logo-clue__image-error {
   position: absolute;
@@ -5982,7 +6099,7 @@ body.hell-mode .completed--timeline {
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--surface);
+  background: var(--panel);
   box-shadow: var(--shadow);
   list-style: none;
 }
@@ -5995,6 +6112,7 @@ body.hell-mode .completed--timeline {
   background: transparent;
   text-align: left;
   justify-content: space-between;
+  cursor: pointer;
 }
 .logo-search__input li[aria-selected="true"] button,
 .logo-search__input li button:hover {
@@ -6041,6 +6159,21 @@ body.hell-mode .completed--timeline {
   margin: 4px 0;
 }
 @media (max-width: 560px) {
+  .logo-clue-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .logo-clue-rail {
+    max-height: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    order: 2;
+    flex-wrap: wrap;
+  }
+  .logo-clue-layout > span {
+    display: none;
+  }
   .logo-search__controls {
     align-items: stretch;
     flex-direction: column;
@@ -6058,4 +6191,25 @@ body.hell-mode .completed--timeline {
 }
 :is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour .timeline-card__feedback {
   color: #ffe0d8;
+}
+
+/* Keep every autocomplete option's hover treatment subtle and readable across themes. */
+.autocomplete button:hover:not(:disabled),
+.autocomplete button.is-active,
+.emoji__search li button:hover:not(:disabled),
+.emoji__search li[aria-selected="true"] button,
+.logo-search__input li button:hover:not(:disabled),
+.logo-search__input li[aria-selected="true"] button {
+  background: color-mix(in srgb, var(--ink) 8%, var(--panel));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-page,
+  .emoji__history li,
+  .logo-history li,
+  .logo-clue__image {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
 }

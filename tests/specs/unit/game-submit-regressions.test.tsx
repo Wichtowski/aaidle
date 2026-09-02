@@ -108,6 +108,12 @@ describe("game submit regressions", () => {
         clear: () => values.clear(),
       },
     });
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn().mockReturnValue({
+        matches: true,
+      }),
+    });
   });
 
   afterEach(() => {
@@ -194,6 +200,32 @@ describe("game submit regressions", () => {
     await waitFor(() => expect(history).toHaveBeenCalledTimes(2));
     expect(await screen.findByText("Incorrect")).toBeTruthy();
     expect(screen.getByText("Your saved guesses were restored.")).toBeTruthy();
+  });
+
+  it("opens the Logo winning screen when solved history has no renderable winning guess", async () => {
+    const solvedProgress = { ...logoGame.progress, solved: true };
+    vi.spyOn(apiClient, "logoGame").mockResolvedValue({
+      ...logoGame,
+      progress: solvedProgress,
+      globalCompletionCount: 12,
+    });
+    vi.spyOn(apiClient, "logoGuessHistory").mockResolvedValue({
+      guesses: [],
+      progress: solvedProgress,
+    });
+
+    render(
+      <MemoryRouter>
+        <LogoGame />
+      </MemoryRouter>,
+    );
+
+    const revealedLogo = await screen.findByAltText("Fully revealed logo");
+    expect(revealedLogo).toHaveClass("is-solved");
+    expect(revealedLogo).toHaveStyle({ "--logo-solve-start-zoom": "4.2" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Show winning guess" }));
+    expect(screen.getByRole("dialog", { name: "Winning guess" })).toBeInTheDocument();
   });
 
   it("opens and closes Timeline rules and year annotations", async () => {

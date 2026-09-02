@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const source = new URL("../data/logo.seed.json", import.meta.url);
 const entries = JSON.parse(readFileSync(source, "utf8"));
@@ -19,13 +19,18 @@ for (const entry of entries) {
   if (!visualTypes.has(entry.visualType)) fail(`${entry.answerId} has invalid visualType`);
   if (typeof entry.assetName !== "string" || !entry.assetName.trim())
     fail(`${entry.answerId} needs an assetName`);
+  const assetPath = entry.assetPath ?? entry.asset;
   if (
-    typeof entry.assetPath !== "string" ||
-    !/^\/logo-assets\/asset-[0-9]{3}\.webp$/.test(entry.assetPath)
+    typeof assetPath !== "string" ||
+    assetPath.includes("..") ||
+    (!assetPath.startsWith("/logo-visual/") && assetPath.includes("/"))
   )
-    fail(`${entry.answerId} needs an opaque /logo-assets/asset-NNN.webp path`);
-  if (paths.has(entry.assetPath)) fail(`duplicate assetPath ${entry.assetPath}`);
-  paths.add(entry.assetPath);
+    fail(`${entry.answerId} needs a private Logo asset filename`);
+  const assetName = assetPath.replace(/^\/logo-visual\//, "");
+  if (paths.has(assetName)) fail(`duplicate asset ${assetName}`);
+  paths.add(assetName);
+  if (!existsSync(new URL(`../data/logo-visual/${assetName}`, import.meta.url)))
+    fail(`${entry.answerId} is missing private asset ${assetName}`);
   if (entry.revealProfile !== "progressive-zoom")
     fail(`${entry.answerId} has an invalid revealProfile`);
   if (
@@ -41,13 +46,13 @@ for (const entry of entries) {
     !Array.isArray(entry.clues) ||
     !entry.clues.some(
       (clue) =>
-        clue?.afterIncorrectGuesses === 5 &&
-        clue.kind === "general" &&
-        typeof clue.text === "string" &&
-        clue.text.trim(),
+        clue?.afterIncorrectGuesses <= 5 &&
+        typeof clue.kind === "string" &&
+        clue.kind &&
+        (clue.kind === "image" || (typeof clue.text === "string" && clue.text.trim())),
     )
   )
-    fail(`${entry.answerId} needs a general clue after five misses`);
+    fail(`${entry.answerId} needs a clue reachable by five misses`);
   if (entry.visualType === "discoverer-portrait") {
     if (!entry.people?.length) fail(`${entry.answerId} portrait needs person metadata`);
     if (

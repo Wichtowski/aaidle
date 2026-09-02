@@ -604,9 +604,9 @@ class ApiClient {
   }
 
   classicGuessHistory(challengeId: string, playerId: string) {
-    const query = new URLSearchParams({ playerId });
+    void playerId;
     return this.request<{ guesses: V2ClassicGuessHistoryEntry[] }>(
-      `/games/classic/challenges/${challengeId}/guesses?${query}`,
+      `/games/classic/challenges/${challengeId}/guesses`,
       { cache: "no-store" },
     ).then(({ guesses }) =>
       guesses.map((guess) => ({
@@ -635,8 +635,8 @@ class ApiClient {
   }
 
   timelineGame(difficulty: TimelineDifficulty, playerId: string, signal?: AbortSignal) {
-    const query = new URLSearchParams({ playerId });
-    return this.request<TimelineGamePayload>(`/games/timeline/${difficulty}?${query}`, {
+    void playerId;
+    return this.request<TimelineGamePayload>(`/games/timeline/${difficulty}`, {
       cache: "no-store",
       signal,
     });
@@ -730,24 +730,24 @@ class ApiClient {
   }
 
   emojiHints(challengeId: string, playerId: string) {
-    const query = new URLSearchParams({ playerId });
+    void playerId;
     return this.request<{ clues: VisualClue[] }>(
-      `/games/emoji/challenges/${challengeId}/hints?${query}`,
+      `/games/emoji/challenges/${challengeId}/hints`,
       { cache: "no-store" },
     );
   }
 
   emojiGuessHistory(challengeId: string, playerId: string) {
-    const query = new URLSearchParams({ playerId });
+    void playerId;
     return this.request<{
       guesses: Array<{ id: string; name: string; isCorrect: boolean; attemptNumber: number }>;
       clues: VisualClue[];
-    }>(`/games/emoji/challenges/${challengeId}/guesses?${query}`, { cache: "no-store" });
+    }>(`/games/emoji/challenges/${challengeId}/guesses`, { cache: "no-store" });
   }
 
   logoGame(playerId: string, signal?: AbortSignal) {
-    const query = new URLSearchParams({ playerId });
-    return this.request<LogoGamePayload>(`/games/logo/normal?${query}`, { signal }).then(
+    void playerId;
+    return this.request<LogoGamePayload>(`/games/logo/normal`, { signal }).then(
       (payload) => logoGameSchema.parse(payload) as LogoGamePayload,
     );
   }
@@ -773,11 +773,11 @@ class ApiClient {
   }
 
   logoGuessHistory(challengeId: string, playerId: string) {
-    const query = new URLSearchParams({ playerId });
+    void playerId;
     return this.request<{
       guesses: Array<{ model: LogoModel; isCorrect: boolean; attemptNumber: number }>;
       progress: LogoProgress;
-    }>(`/games/logo/challenges/${challengeId}/guesses?${query}`, {
+    }>(`/games/logo/challenges/${challengeId}/guesses`, {
       cache: "no-store",
     }).then((payload) => logoHistorySchema.parse(payload));
   }

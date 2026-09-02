@@ -97,7 +97,7 @@ async fn logo_game_progresses_to_text_clue_and_completes() {
         history_before
             .progress
             .image_url
-            .starts_with("/logo-assets/")
+            .starts_with("/logo-visual/")
     );
     let solved = process_guess(
         &pool,
@@ -115,9 +115,9 @@ async fn logo_game_progresses_to_text_clue_and_completes() {
     .unwrap();
     assert!(solved.is_correct);
     assert_eq!(solved.progress.image_revision, 5);
-    assert!(solved.progress.attribution.is_some());
+    assert!(solved.progress.attribution.is_none());
     assert_eq!(solved.completion_count, 1);
-    assert!(solved.progress.image_url.starts_with("/logo-assets/"));
+    assert!(solved.progress.image_url.starts_with("/logo-visual/"));
 }
 
 #[tokio::test]

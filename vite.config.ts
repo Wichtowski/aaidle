@@ -28,6 +28,9 @@ export default defineConfig({
     },
   },
   server: {
+    fs: {
+      deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/data/logo-visual/**"],
+    },
     proxy: {
       "/api": {
         target: "http://localhost:8080",

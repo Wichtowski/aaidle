@@ -9,13 +9,21 @@ export function useLogoGame() {
   const [game, setGame] = useState<LogoGamePayload | null>(null);
   const [guesses, setGuesses] = useState<LogoGuess[]>([]);
   const [query, setQuery] = useState("");
-  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const [showCompletion, setShowCompletion] = useState(false);
   const hydratedChallenge = useRef<string | null>(null);
+  const completionTimer = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -67,7 +75,6 @@ export function useLogoGame() {
       )
       .slice(0, 8);
   }, [game, guesses, query]);
-  const activeOption = available[activeOptionIndex] ?? available[0];
   const solved = game?.progress.solved ?? false;
 
   const choose = async (model: LogoModel) => {
@@ -100,7 +107,13 @@ export function useLogoGame() {
           : current,
       );
       setQuery("");
-      setActiveOptionIndex(0);
+      if (response.isCorrect) {
+        const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 3_200;
+        completionTimer.current = window.setTimeout(() => {
+          setShowCompletion(true);
+          completionTimer.current = null;
+        }, duration);
+      }
     } catch (nextError) {
       if (
         nextError instanceof ApiError &&
@@ -120,7 +133,6 @@ export function useLogoGame() {
               : current,
           );
           setQuery("");
-          setActiveOptionIndex(0);
           setToast("Your saved guesses were restored.");
           return;
         } catch (restoreError) {
@@ -143,8 +155,6 @@ export function useLogoGame() {
   };
 
   return {
-    activeOption,
-    activeOptionIndex,
     available,
     busy,
     choose,
@@ -153,10 +163,11 @@ export function useLogoGame() {
     guesses,
     loading,
     query,
-    setActiveOptionIndex,
     setLoadAttempt,
     setQuery,
     setToast,
+    setShowCompletion,
+    showCompletion,
     solved,
     toast,
   };

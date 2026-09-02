@@ -9,6 +9,7 @@ COPY data/classic.seed.json ./data/classic.seed.json
 COPY data/emoji.seed.json ./data/emoji.seed.json
 COPY data/timeline.seed.json ./data/timeline.seed.json
 COPY data/logo.seed.json ./data/logo.seed.json
+COPY data/logo-visual ./data/logo-visual
 
 WORKDIR /build/backend
 

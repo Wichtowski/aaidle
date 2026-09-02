@@ -20,7 +20,7 @@ Browser (Vite + React)
 ```
 
 Production serves the static `dist/` assets through the platform Caddy instance. Caddy serves the SPA fallback and proxies `/api/*` to the private Rust container. The API never serves frontend assets.
-Logo game images live under `public/logo-assets/`, are emitted into the frontend build, and use opaque filenames so CDN URLs do not reveal answer names. The API persists the selected opaque path and reveal revision; the browser applies the corresponding zoom around the curated focal point.
+Logo source images live under `data/logo-visual/` and are embedded only in the backend binary; they are never emitted into the frontend build or served as static files. Logo answers are independent catalog IDs rather than Classic model IDs. The API derives each player’s authorized reveal revision from persisted guesses, renders the corresponding crop, and caches generated variants only for the active daily challenge. The full image is returned by the protected image endpoint only after server-confirmed completion.
 
 ## Repository map
 

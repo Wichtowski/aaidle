@@ -1,137 +1,134 @@
 [
   {
-    "answerId": "gpt-4o",
+    "answerId": "openai",
     "minPool": 0,
     "visualType": "logo",
-    "assetName": "GPT-4o logo",
-    "assetPath": "/logo-assets/asset-001.webp",
+    "assetName": "OpenAI",
+    "assetPath": "/logo-visual/company-logo-1.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 164, "y": 174 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "Its launch emphasized natural, real-time interaction across several modalities."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "bert-base-uncased",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "BERT technology image",
-    "assetPath": "/logo-assets/asset-002.webp",
+    "assetName": "BERT",
+    "assetPath": "/logo-visual/asset-002.webp",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 338, "y": 184 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "This encoder learns from context arriving from both directions."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "yolov8",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "YOLOv8 technology image",
-    "assetPath": "/logo-assets/asset-003.webp",
+    "assetName": "YOLOv8",
+    "assetPath": "/logo-visual/asset-003.webp",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 350, "y": 316 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "Its model family predicts object locations and classes in a single detection pipeline."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "alexnet",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "AlexNet technology image",
+    "assetName": "AlexNet",
     "asset": "model_architecture_2.png",
-    "helpAsset": "/logo-assets/model_architecture_2_timeline.png",
     "additionalHelpAsset": "model_architecture_2_timeline.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 154, "y": 338 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "A landmark 2012 image-classification result helped renew interest in deep convolutional networks."
+      },
+      {
+        "afterIncorrectGuesses": 5,
+        "kind": "image",
+        "helpAsset": "/logo-visual/model_architecture_2_timeline.png"
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "resnet-50",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "ResNet-50 technology image",
-    "assetPath": "/logo-assets/model_architecture_1.png",
+    "assetName": "ResNet-50",
+    "assetPath": "/logo-visual/model_architecture_1.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 370, "y": 150 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "Shortcut connections let information bypass groups of learned layers."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "svm",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "Support Vector Machine technology image",
-    "assetPath": "/logo-assets/asset-006.webp",
+    "assetName": "Support Vector Machine",
+    "assetPath": "/logo-visual/asset-006.webp",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 330, "y": 340 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "The decision boundary is chosen to maximize its margin from the nearest training points."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   },
   {
     "answerId": "sobel-operator",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "Sobel Operator technology image",
-    "assetPath": "/logo-assets/asset-007.webp",
+    "assetName": "Sobel Operator",
+    "assetPath": "/logo-visual/asset-007.webp",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 178, "y": 332 },
     "clues": [
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "This local image operator estimates horizontal and vertical intensity gradients with paired kernels."
       }
     ],
-    "sourceUrl": "https://github.com/Wichtowski/aaidle",
-    "license": "maintainer-supplied",
-    "attribution": "Image supplied by the aAIdle maintainer."
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
   }
 ]

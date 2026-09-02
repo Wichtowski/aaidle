@@ -1,10 +1,19 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::{
+    collections::{HashMap, HashSet},
+    io::Cursor,
+    sync::Mutex,
+};
+
+use image::{ImageFormat, imageops::FilterType};
+use include_dir::{Dir, include_dir};
 
 use crate::error::{AppError, AppResult};
 
 pub const MAX_REVEAL_REVISION: usize = 7;
 const ZOOM_LEVELS: [f32; MAX_REVEAL_REVISION + 1] = [4.2, 3.5, 2.9, 2.4, 2.0, 1.65, 1.3, 1.0];
+const RENDER_SIZE: u32 = 512;
+static LOGO_ASSETS: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/../data/logo-visual");
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -13,12 +22,15 @@ pub struct LogoCatalogEntry {
     pub min_pool: u8,
     pub visual_type: VisualType,
     pub asset_name: String,
+    #[serde(default, alias = "asset")]
     pub asset_path: String,
     pub reveal_profile: String,
     pub focal_point: FocalPoint,
     pub clues: Vec<LogoTextClue>,
+    #[serde(default)]
     pub source_url: String,
     pub license: String,
+    #[serde(default)]
     pub attribution: String,
     #[serde(default)]
     pub people: Vec<LogoPerson>,
@@ -53,6 +65,7 @@ pub struct LogoPerson {
 pub struct LogoTextClue {
     pub after_incorrect_guesses: usize,
     pub kind: String,
+    #[serde(default)]
     pub text: String,
 }
 
@@ -61,10 +74,57 @@ pub struct LogoCatalog {
     entries: Vec<LogoCatalogEntry>,
 }
 
+#[derive(Debug, Default)]
+pub struct LogoImageCache {
+    inner: Mutex<CachedLogoImages>,
+}
+
+#[derive(Debug, Default)]
+struct CachedLogoImages {
+    challenge_id: Option<String>,
+    asset_path: Option<String>,
+    images: HashMap<(usize, bool), Vec<u8>>,
+}
+
+impl LogoImageCache {
+    pub fn image(
+        &self,
+        challenge_id: &str,
+        asset_path: &str,
+        focal_point: FocalPoint,
+        revision: usize,
+        solved: bool,
+    ) -> AppResult<Vec<u8>> {
+        let mut cache = self
+            .inner
+            .lock()
+            .map_err(|_| AppError::Unavailable("Logo image cache is unavailable.".to_owned()))?;
+        if cache.challenge_id.as_deref() != Some(challenge_id)
+            || cache.asset_path.as_deref() != Some(asset_path)
+        {
+            cache.challenge_id = Some(challenge_id.to_owned());
+            cache.asset_path = Some(asset_path.to_owned());
+            cache.images.clear();
+        }
+        let key = (revision.min(MAX_REVEAL_REVISION), solved);
+        if let Some(image) = cache.images.get(&key) {
+            return Ok(image.clone());
+        }
+        let image = render_logo_image(asset_path, focal_point, revision, solved)?;
+        cache.images.insert(key, image.clone());
+        Ok(image)
+    }
+}
+
 impl LogoCatalog {
     pub fn load() -> AppResult<Self> {
-        let entries: Vec<LogoCatalogEntry> =
+        let mut entries: Vec<LogoCatalogEntry> =
             serde_json::from_str(include_str!("../../../data/logo.seed.json"))?;
+        for entry in &mut entries {
+            if !entry.asset_path.starts_with('/') {
+                entry.asset_path = format!("/logo-visual/{}", entry.asset_path);
+            }
+        }
         validate_seed(&entries)?;
         Ok(Self { entries })
     }
@@ -119,6 +179,12 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
                 entry.answer_id
             )));
         }
+        if entry.clues.is_empty() {
+            return Err(AppError::config(format!(
+                "{} needs at least one Logo clue",
+                entry.answer_id
+            )));
+        }
         if !(0.0..=512.0).contains(&entry.focal_point.x)
             || !(0.0..=512.0).contains(&entry.focal_point.y)
         {
@@ -127,11 +193,11 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
                 entry.answer_id
             )));
         }
-        if !entry.source_url.starts_with("https://")
+        if (!entry.source_url.is_empty() && !entry.source_url.starts_with("https://"))
             || entry.license.trim().is_empty()
-            || entry.attribution.trim().is_empty()
             || entry.asset_name.trim().is_empty()
-            || !entry.asset_path.starts_with("/logo-assets/")
+            || (!entry.asset_path.starts_with("/logo-assets/")
+                && !entry.asset_path.starts_with("/logo-visual/"))
             || entry.asset_path.contains("..")
         {
             return Err(AppError::config(format!(
@@ -158,28 +224,18 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
             }
         }
         let mut previous_threshold = 0;
-        let mut has_general_five = false;
         for clue in &entry.clues {
             if clue.after_incorrect_guesses == 0
                 || clue.after_incorrect_guesses < previous_threshold
                 || clue.kind.trim().is_empty()
-                || clue.text.trim().is_empty()
+                || (clue.kind != "image" && clue.text.trim().is_empty())
             {
                 return Err(AppError::config(format!(
                     "{} has an invalid Logo clue",
                     entry.answer_id
                 )));
             }
-            if clue.kind == "general" && clue.after_incorrect_guesses == 5 {
-                has_general_five = true;
-            }
             previous_threshold = clue.after_incorrect_guesses;
-        }
-        if !has_general_five {
-            return Err(AppError::config(format!(
-                "{} needs a general Logo clue after five misses",
-                entry.answer_id
-            )));
         }
     }
     Ok(())
@@ -200,6 +256,49 @@ pub fn revealed_clues(entry: &LogoCatalogEntry, incorrect_guesses: usize) -> Vec
 
 pub fn zoom_for_revision(revision: usize) -> f32 {
     ZOOM_LEVELS[revision.min(MAX_REVEAL_REVISION)]
+}
+
+fn logo_asset(asset_path: &str) -> AppResult<&'static [u8]> {
+    let relative_path = asset_path
+        .strip_prefix("/logo-visual/")
+        .ok_or_else(|| AppError::Unavailable("Logo image asset is unavailable.".to_owned()))?;
+    LOGO_ASSETS
+        .get_file(relative_path)
+        .map(|file| file.contents())
+        .ok_or_else(|| AppError::Unavailable("Logo image asset is unavailable.".to_owned()))
+}
+
+pub fn render_logo_image(
+    asset_path: &str,
+    focal_point: FocalPoint,
+    revision: usize,
+    solved: bool,
+) -> AppResult<Vec<u8>> {
+    let source = image::load_from_memory(logo_asset(asset_path)?)
+        .map_err(|_| AppError::Unavailable("Logo image asset could not be decoded.".to_owned()))?;
+    let rendered = if solved {
+        source.resize(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3)
+    } else {
+        let normalized = source.resize_to_fill(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3);
+        let zoom = zoom_for_revision(revision);
+        let crop_size = ((RENDER_SIZE as f32 / zoom).round() as u32).clamp(1, RENDER_SIZE);
+        let maximum_offset = RENDER_SIZE - crop_size;
+        let offset_factor = 1.0 - (1.0 / zoom);
+        let left = (focal_point.x * offset_factor)
+            .round()
+            .clamp(0.0, maximum_offset as f32) as u32;
+        let top = (focal_point.y * offset_factor)
+            .round()
+            .clamp(0.0, maximum_offset as f32) as u32;
+        normalized
+            .crop_imm(left, top, crop_size, crop_size)
+            .resize_exact(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3)
+    };
+    let mut encoded = Cursor::new(Vec::new());
+    rendered
+        .write_to(&mut encoded, ImageFormat::Png)
+        .map_err(|_| AppError::Unavailable("Logo image could not be rendered.".to_owned()))?;
+    Ok(encoded.into_inner())
 }
 
 #[cfg(test)]

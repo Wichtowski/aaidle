@@ -25,6 +25,7 @@ use uuid::Uuid;
 
 const CSRF_HEADER: &str = "x-aaidle-csrf-token";
 const CSRF_TOKEN: &str = "test-csrf-token";
+const TEST_SECRET: &str = "test secret that is longer than thirty two bytes";
 
 async fn test_app() -> (axum::Router, SqlitePool) {
     test_app_with_environment(AppEnvironment::Local).await
@@ -292,6 +293,12 @@ fn cookie_value(response: &axum::response::Response, name: &str) -> String {
         .to_owned()
 }
 
+fn anonymous_player_cookie(player_id: Uuid) -> String {
+    let token = auth::create_anonymous_player_token(TEST_SECRET, player_id, current_millis())
+        .expect("anonymous player token");
+    format!("aaidle_player={token}")
+}
+
 fn current_millis() -> i64 {
     time::OffsetDateTime::now_utc()
         .unix_timestamp_nanos()
@@ -311,6 +318,7 @@ async fn routes_are_versioned_and_hide_the_answer() {
         .await
         .expect("health response");
     assert_eq!(missing_health_key.status(), StatusCode::UNAUTHORIZED);
+    assert!(missing_health_key.headers().get("set-cookie").is_none());
     assert!(
         missing_health_key
             .into_body()
@@ -402,6 +410,16 @@ async fn routes_are_versioned_and_hide_the_answer() {
         .await
         .expect("Classic response");
     assert_eq!(classic.status(), StatusCode::OK);
+    let anonymous_cookie = classic
+        .headers()
+        .get_all("set-cookie")
+        .iter()
+        .find_map(|value| value.to_str().ok())
+        .expect("anonymous player cookie");
+    assert!(anonymous_cookie.starts_with("aaidle_player="));
+    assert!(anonymous_cookie.contains("Path=/api/v1"));
+    assert!(anonymous_cookie.contains("SameSite=Strict"));
+    assert!(anonymous_cookie.contains("HttpOnly"));
     let challenge = response_json(classic).await["challenge"].clone();
     assert!(challenge.get("answerModelId").is_none());
     assert!(challenge.get("answer_model_id").is_none());
@@ -1590,10 +1608,12 @@ async fn account_progress_merges_verified_completions_without_granting_hardcore(
         )
         .await
         .expect("progress load response");
-    assert_eq!(
-        response_json(loaded).await["progress"]["playerId"],
-        player_id.to_string()
-    );
+    let loaded_player_id = response_json(loaded).await["progress"]["playerId"]
+        .as_str()
+        .expect("server-owned player ID")
+        .parse::<Uuid>()
+        .expect("valid server-owned player ID");
+    assert_ne!(loaded_player_id, player_id);
 }
 
 #[tokio::test]
@@ -1720,6 +1740,8 @@ async fn admin_permissions_and_soundtrack_are_enforced_server_side() {
 #[tokio::test]
 async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
     let (app, _) = test_app().await;
+    let player_id = Uuid::new_v4();
+    let player_cookie = anonymous_player_cookie(player_id);
     let game = app
         .clone()
         .oneshot(
@@ -1749,6 +1771,8 @@ async fn trajectory_requires_a_solve_and_accepts_only_a_bound_token() {
         .clone()
         .oneshot(
             Request::post(format!("/api/v1/games/classic/challenges/{challenge_id}/guesses"))
+                .header("origin", "http://localhost:3000")
+                .header("cookie", &player_cookie)
                 .header("content-type", "application/json")
                 .body(Body::from(
                     serde_json::json!({"playerId": Uuid::new_v4(), "requestId": Uuid::new_v4(), "guessedModelId": "model-one", "attemptNumber": 1}).to_string(),
@@ -1910,6 +1934,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
         .expect("challenge id")
         .to_owned();
     let player_id = Uuid::new_v4();
+    let player_cookie = anonymous_player_cookie(player_id);
     let request_id = Uuid::new_v4();
     let body = serde_json::json!({
         "playerId": player_id,
@@ -1922,6 +1947,8 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
         Request::post(format!(
             "/api/v1/games/classic/challenges/{challenge_id}/guesses"
         ))
+        .header("origin", "http://localhost:3000")
+        .header("cookie", &player_cookie)
         .header("content-type", "application/json")
         .body(Body::from(body.clone()))
         .expect("guess request")
@@ -1957,6 +1984,7 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
             Request::get(format!(
                 "/api/v1/games/classic/challenges/{challenge_id}/guesses?playerId={player_id}"
             ))
+            .header("cookie", &player_cookie)
             .body(Body::empty())
             .expect("guess history request"),
         )
@@ -1984,6 +2012,8 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
             Request::post(format!(
                 "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
+            .header("cookie", &player_cookie)
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2020,6 +2050,90 @@ async fn guesses_are_idempotent_and_stats_are_aggregated() {
 }
 
 #[tokio::test]
+async fn anonymous_player_cookie_prevents_cross_player_history_access() {
+    let (app, _) = test_app().await;
+    let game = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/games/classic/llm/normal")
+                .body(Body::empty())
+                .expect("classic game request"),
+        )
+        .await
+        .expect("classic game response");
+    let challenge_id = response_json(game).await["challenge"]["id"]
+        .as_str()
+        .expect("challenge ID")
+        .to_owned();
+    let player_a = Uuid::new_v4();
+    let player_b = Uuid::new_v4();
+    let player_a_cookie = anonymous_player_cookie(player_a);
+    let player_b_cookie = anonymous_player_cookie(player_b);
+
+    let guess = app
+        .clone()
+        .oneshot(
+            Request::post(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses"
+            ))
+            .header("origin", "http://localhost:3000")
+            .header("cookie", &player_a_cookie)
+            .header("content-type", "application/json")
+            .body(Body::from(
+                serde_json::json!({
+                    "playerId": player_b,
+                    "requestId": Uuid::new_v4(),
+                    "guessedModelId": "model-one",
+                    "attemptNumber": 1
+                })
+                .to_string(),
+            ))
+            .expect("guess request"),
+        )
+        .await
+        .expect("guess response");
+    assert_eq!(guess.status(), StatusCode::OK);
+
+    let owner_history = app
+        .clone()
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses?playerId={player_b}"
+            ))
+            .header("cookie", &player_a_cookie)
+            .body(Body::empty())
+            .expect("owner history request"),
+        )
+        .await
+        .expect("owner history response");
+    assert_eq!(
+        response_json(owner_history).await["guesses"]
+            .as_array()
+            .expect("owner guesses")
+            .len(),
+        1
+    );
+
+    let other_history = app
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/classic/challenges/{challenge_id}/guesses?playerId={player_a}"
+            ))
+            .header("cookie", player_b_cookie)
+            .body(Body::empty())
+            .expect("other history request"),
+        )
+        .await
+        .expect("other history response");
+    assert!(
+        response_json(other_history).await["guesses"]
+            .as_array()
+            .expect("other guesses")
+            .is_empty()
+    );
+}
+
+#[tokio::test]
 async fn classic_category_route_scopes_the_model_pool_and_rejects_outside_guesses() {
     let (app, _) = test_app().await;
     let game = app
@@ -2042,6 +2156,7 @@ async fn classic_category_route_scopes_the_model_pool_and_rejects_outside_guesse
             Request::post(format!(
                 "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2105,6 +2220,8 @@ async fn classic_attempts_are_sequential_and_bounded_by_the_eligible_pool() {
         Request::post(format!(
             "/api/v1/games/classic/challenges/{challenge_id}/guesses"
         ))
+        .header("origin", "http://localhost:3000")
+        .header("cookie", anonymous_player_cookie(player_id))
         .header("content-type", "application/json")
         .body(Body::from(
             serde_json::json!({
@@ -2184,6 +2301,7 @@ async fn attempt_numbers_above_the_legacy_limit_reach_dynamic_validation() {
             Request::post(format!(
                 "/api/v1/games/classic/challenges/{challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2227,6 +2345,7 @@ async fn emoji_attempts_must_follow_the_server_accepted_history() {
             Request::post(format!(
                 "/api/v1/games/emoji/challenges/{challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2271,6 +2390,7 @@ async fn guess_rate_limits_are_shared_across_game_modes_and_return_retry_after()
             Request::post(format!(
                 "/api/v1/games/classic/challenges/{classic_challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2329,6 +2449,7 @@ async fn guess_rate_limits_are_shared_across_game_modes_and_return_retry_after()
             Request::post(format!(
                 "/api/v1/games/emoji/challenges/{emoji_challenge_id}/guesses"
             ))
+            .header("origin", "http://localhost:3000")
             .header("content-type", "application/json")
             .body(Body::from(
                 serde_json::json!({
@@ -2597,10 +2718,13 @@ async fn timeline_attempts_are_positional_idempotent_and_reject_invalid_sets() {
     let anchors = serde_json::from_str::<Vec<usize>>(&anchors_json).expect("stored anchors");
     let wrong = rotate_movable_models(&correct, &anchors);
     let request_id = Uuid::new_v4();
+    let player_cookie = anonymous_player_cookie(player_id);
     let attempt_request = |request_id: Uuid, model_order: &[String]| {
         Request::post(format!(
             "/api/v1/games/timeline/challenges/{challenge_id}/attempts"
         ))
+        .header("origin", "http://localhost:3000")
+        .header("cookie", &player_cookie)
         .header("content-type", "application/json")
         .body(Body::from(
             serde_json::json!({

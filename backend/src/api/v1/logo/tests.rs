@@ -1,5 +1,7 @@
 use super::*;
 use axum::http::{HeaderValue, header};
+use http_body_util::BodyExt;
+use image::GenericImageView;
 
 async fn seed_models(state: &AppState) {
     sqlx::query(
@@ -50,7 +52,7 @@ async fn authenticated_headers(state: &AppState) -> (String, HeaderMap) {
 }
 
 #[tokio::test]
-async fn logo_handlers_load_guess_and_restore_public_asset_path() {
+async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
     let state = super::super::test_support::state().await;
     seed_models(&state).await;
     let player_id = Uuid::new_v4();
@@ -64,6 +66,57 @@ async fn logo_handlers_load_guess_and_restore_public_asset_path() {
     .unwrap();
     assert_eq!(loaded.challenge.mode, "logo:normal");
     assert_eq!(loaded.progress.image_revision, 0);
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai', asset_path = '/logo-visual/company-logo-1.png' WHERE id = ?")
+        .bind(loaded.challenge.id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(loaded.progress.image_url.starts_with(&format!(
+        "/api/v1/games/logo/challenges/{}/image?v=",
+        loaded.challenge.id
+    )));
+    let initial_response = image(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(loaded.challenge.id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("0".to_owned()),
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        initial_response.headers()[header::CONTENT_TYPE],
+        "image/png"
+    );
+    assert!(
+        initial_response.headers()[header::CACHE_CONTROL]
+            .to_str()
+            .unwrap()
+            .starts_with("private, max-age=")
+    );
+    let initial_image = initial_response
+        .into_body()
+        .collect()
+        .await
+        .unwrap()
+        .to_bytes();
+    assert_eq!(
+        image::load_from_memory(&initial_image)
+            .unwrap()
+            .dimensions(),
+        (512, 512)
+    );
+    assert!(matches!(
+        image(
+            State(state.clone()),
+            HeaderMap::new(),
+            Path(loaded.challenge.id.to_string()),
+            Query(LogoPlayerQuery { player_id }),
+            Some("solved".to_owned()),
+        )
+        .await,
+        Err(AppError::NotFound(_))
+    ));
     let answer =
         sqlx::query_scalar::<_, String>("SELECT answer_model_id FROM logo_challenges WHERE id = ?")
             .bind(loaded.challenge.id.to_string())
@@ -73,7 +126,10 @@ async fn logo_handlers_load_guess_and_restore_public_asset_path() {
     let Json(outcome) = guess(
         State(state.clone()),
         ConnectInfo("127.0.0.1:4321".parse().unwrap()),
-        HeaderMap::new(),
+        HeaderMap::from_iter([(
+            header::ORIGIN,
+            HeaderValue::from_static("http://localhost:3000"),
+        )]),
         Path(loaded.challenge.id.to_string()),
         Ok(Json(LogoGuessRequest {
             player_id,
@@ -96,7 +152,44 @@ async fn logo_handlers_load_guess_and_restore_public_asset_path() {
     .unwrap();
     assert_eq!(restored.guesses.len(), 1);
     assert!(restored.progress.solved);
-    assert!(restored.progress.image_url.starts_with("/logo-assets/"));
+    assert!(restored.progress.image_url.ends_with("/image?v=solved"));
+    let solved_response = image(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(loaded.challenge.id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("solved".to_owned()),
+    )
+    .await
+    .unwrap();
+    let solved_image = solved_response
+        .into_body()
+        .collect()
+        .await
+        .unwrap()
+        .to_bytes();
+    assert_eq!(
+        image::load_from_memory(&solved_image).unwrap().dimensions(),
+        (512, 384)
+    );
+    assert_ne!(initial_image, solved_image);
+
+    sqlx::query("UPDATE logo_challenges SET challenge_date = '2000-01-01' WHERE id = ?")
+        .bind(loaded.challenge.id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        image(
+            State(state),
+            HeaderMap::new(),
+            Path(loaded.challenge.id.to_string()),
+            Query(LogoPlayerQuery { player_id }),
+            Some("solved".to_owned()),
+        )
+        .await,
+        Err(AppError::NotFound(_))
+    ));
 }
 
 #[tokio::test]

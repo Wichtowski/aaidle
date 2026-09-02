@@ -15,7 +15,6 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
   const [game, setGame] = useState<EmojiGamePayload | null>(null);
   const [guesses, setGuesses] = useState<EmojiGuess[]>([]);
   const [queryState, setQueryState] = useState("");
-  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [isLoadingGame, setIsLoadingGame] = useState(true);
   const [loadAttempt, setLoadAttempt] = useState(0);
@@ -91,7 +90,9 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
         setGame(nextGame);
       })
       .catch((nextError: unknown) => {
-        if (!active || (nextError instanceof DOMException && nextError.name === "AbortError")) return;
+        if (!active || (nextError instanceof DOMException && nextError.name === "AbortError")) {
+          return;
+        }
         if (isApiUnavailable(nextError) && loadFailureCount.current === 0) {
           loadFailureCount.current += 1;
           retrying = true;
@@ -154,7 +155,6 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
       )
       .slice(0, 8);
   }, [game, guesses, queryState]);
-  const activeOption = available[activeOptionIndex] ?? available[0];
   const solved = guesses.some((guess) => guess.isCorrect);
 
   const choose = async (entity: EmojiGamePayload["entities"][number]) => {
@@ -170,9 +170,18 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
         guesses.length + 1,
       );
       setGuesses((current) => {
-        const nextGuesses = [...current, { id: entity.id, name: entity.name, isCorrect: response.isCorrect }];
+        const nextGuesses = [
+          ...current,
+          { id: entity.id, name: entity.name, isCorrect: response.isCorrect },
+        ];
         const cachedGame = gameCache.current[difficulty];
-        if (cachedGame) gameCache.current[difficulty] = { ...cachedGame, guesses: nextGuesses, query: "" };
+        if (cachedGame) {
+          gameCache.current[difficulty] = {
+            ...cachedGame,
+            guesses: nextGuesses,
+            query: "",
+          };
+        }
         return nextGuesses;
       });
       setGame((current) => {
@@ -183,7 +192,13 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
           challenge: { ...current.challenge, clues: response.clues },
         };
         const cachedGame = gameCache.current[difficulty];
-        if (cachedGame) gameCache.current[difficulty] = { ...cachedGame, game: nextGame, query: "" };
+        if (cachedGame) {
+          gameCache.current[difficulty] = {
+            ...cachedGame,
+            game: nextGame,
+            query: "",
+          };
+        }
         return nextGame;
       });
       guessFailureEntityId.current = null;
@@ -202,7 +217,11 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
         guessFailureCount.current = 0;
       }
       guessFailureCount.current += 1;
-      setToast(nextError instanceof Error ? nextError.message : "We could not submit that guess. Please try again.");
+      setToast(
+        nextError instanceof Error
+          ? nextError.message
+          : "We could not submit that guess. Please try again.",
+      );
       if (guessFailureCount.current > 1) setError(nextError);
     } finally {
       setBusy(false);
@@ -210,8 +229,6 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
   };
 
   return {
-    activeOption,
-    activeOptionIndex,
     available,
     busy,
     choose,
@@ -221,7 +238,6 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
     hardcore,
     isLoadingGame,
     query: queryState,
-    setActiveOptionIndex,
     setLoadAttempt,
     setQuery,
     setShowCompletion,
