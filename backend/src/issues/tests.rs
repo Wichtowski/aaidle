@@ -67,17 +67,20 @@ fn config(github_issues_token: Option<&str>) -> AppConfig {
 }
 
 #[test]
-fn issue_request_serializes_title_body_and_label() {
+fn issue_request_serializes_title_body_and_labels() {
     let request = CreateIssueRequest {
         title: "[Report] Broken challenge".to_owned(),
         body: "Details",
-        labels: ["classic"],
+        labels: ["user-report", "needs-triage", "classic"],
     };
     let value = serde_json::to_value(request).expect("serialize issue");
 
     assert_eq!(value["title"], "[Report] Broken challenge");
     assert_eq!(value["body"], "Details");
-    assert_eq!(value["labels"], serde_json::json!(["classic"]));
+    assert_eq!(
+        value["labels"],
+        serde_json::json!(["user-report", "needs-triage", "classic"])
+    );
 }
 
 #[test]
@@ -110,32 +113,39 @@ async fn reporting_without_a_token_fails_before_network_access() {
 
 #[tokio::test]
 async fn successful_reports_send_the_expected_request_and_return_the_issue_url() {
-    let (endpoint, server) = local_server(
-        "201 Created",
-        r#"{"html_url":"https://github.com/Wichtowski/aaidle/issues/7"}"#,
-    );
+    for game in ["classic", "emoji", "timeline", "logo"] {
+        let (endpoint, server) = local_server(
+            "201 Created",
+            r#"{"html_url":"https://github.com/Wichtowski/aaidle/issues/7"}"#,
+        );
 
-    let url = create_report_at(
-        &Client::new(),
-        &config(Some("token")),
-        "Broken challenge",
-        "Detailed description",
-        "classic",
-        &endpoint,
-    )
-    .await
-    .expect("created issue");
-    let request = server.join().expect("server thread");
-    let request_lower = request.to_ascii_lowercase();
+        let url = create_report_at(
+            &Client::new(),
+            &config(Some("token")),
+            "Broken challenge",
+            "Detailed description",
+            game,
+            &endpoint,
+        )
+        .await
+        .expect("created issue");
+        let request = server.join().expect("server thread");
+        let request_lower = request.to_ascii_lowercase();
 
-    assert_eq!(url, "https://github.com/Wichtowski/aaidle/issues/7");
-    assert!(request.starts_with("POST /issues HTTP/1.1"));
-    assert!(request_lower.contains("authorization: bearer token"));
-    assert!(request_lower.contains("accept: application/vnd.github+json"));
-    assert!(request_lower.contains("x-github-api-version: 2022-11-28"));
-    assert!(request.contains(r#""title":"[Report] Broken challenge""#));
-    assert!(request.contains(r#""body":"Detailed description""#));
-    assert!(request.contains(r#""labels":["classic"]"#));
+        assert_eq!(url, "https://github.com/Wichtowski/aaidle/issues/7");
+        assert!(request.starts_with("POST /issues HTTP/1.1"));
+        assert!(request_lower.contains("authorization: bearer token"));
+        assert!(request_lower.contains("accept: application/vnd.github+json"));
+        assert!(request_lower.contains("x-github-api-version: 2022-11-28"));
+        assert!(request.contains(r#""title":"[Report] Broken challenge""#));
+        assert!(request.contains(r#""body":"Detailed description""#));
+        let (_, body) = request.split_once("\r\n\r\n").expect("HTTP body");
+        let payload: serde_json::Value = serde_json::from_str(body).expect("JSON body");
+        assert_eq!(
+            payload["labels"],
+            serde_json::json!(["user-report", "needs-triage", game])
+        );
+    }
 }
 
 #[tokio::test]
