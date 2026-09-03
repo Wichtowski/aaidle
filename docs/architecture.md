@@ -20,7 +20,7 @@ Browser (Vite + React)
 ```
 
 Production serves the static `dist/` assets through the platform Caddy instance. Caddy serves the SPA fallback and proxies `/api/*` to the private Rust container. The API never serves frontend assets.
-Logo source images live under `data/logo-visual/` and are embedded only in the backend binary; they are never emitted into the frontend build or served as static files. Logo answers are independent catalog IDs rather than Classic model IDs. The API derives each player’s authorized reveal revision from persisted guesses, renders the corresponding crop, and caches generated variants only for the active daily challenge. The full image is returned by the protected image endpoint only after server-confirmed completion.
+Logo source images live in `public/logo-visual/` and shared `public/common/` and are published by the frontend alongside other static images. Seed JSON remains embedded only in the backend. Logo and Emoji may reference the same public source image. Logo answers are independent catalog IDs rather than Classic model IDs. The API derives each player’s authorized reveal revision from persisted guesses, downloads the catalog's `assetUrl` from `APP_ORIGIN`, and renders the configured crop or Gaussian blur. Zoom profiles use a focal point; Gaussian profiles use start and step strengths on the full frame. Downloaded originals expire after 24 hours; changing the active challenge or restarting the API clears originals and rendered variants. Public source images are directly accessible; the Logo UI uses only the API's player-authorized transformed image URLs.
 
 ## Repository map
 

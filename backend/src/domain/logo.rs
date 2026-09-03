@@ -1,19 +1,13 @@
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::{HashMap, HashSet},
-    io::Cursor,
-    sync::Mutex,
-};
+use std::{collections::HashSet, io::Cursor};
 
 use image::{ImageFormat, imageops::FilterType};
-use include_dir::{Dir, include_dir};
 
 use crate::error::{AppError, AppResult};
 
 pub const MAX_REVEAL_REVISION: usize = 7;
 const ZOOM_LEVELS: [f32; MAX_REVEAL_REVISION + 1] = [4.2, 3.5, 2.9, 2.4, 2.0, 1.65, 1.3, 1.0];
 const RENDER_SIZE: u32 = 512;
-static LOGO_ASSETS: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/../data/logo-visual");
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,10 +16,10 @@ pub struct LogoCatalogEntry {
     pub min_pool: u8,
     pub visual_type: VisualType,
     pub asset_name: String,
-    #[serde(default, alias = "asset")]
+    #[serde(default, rename = "assetUrl", alias = "assetPath", alias = "asset")]
     pub asset_path: String,
-    pub reveal_profile: String,
-    pub focal_point: FocalPoint,
+    #[serde(flatten)]
+    pub reveal: RevealProfile,
     pub clues: Vec<LogoTextClue>,
     #[serde(default)]
     pub source_url: String,
@@ -45,10 +39,75 @@ pub enum VisualType {
     Other,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
 pub struct FocalPoint {
     pub x: f32,
     pub y: f32,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(
+    tag = "revealProfile",
+    rename_all = "kebab-case",
+    rename_all_fields = "camelCase"
+)]
+pub enum RevealProfile {
+    ProgressiveZoom {
+        focal_point: FocalPoint,
+    },
+    GaussianBlur {
+        blur_start_strength: f32,
+        blur_step_strength: f32,
+    },
+}
+
+impl RevealProfile {
+    pub fn is_valid(self) -> bool {
+        match self {
+            Self::ProgressiveZoom { focal_point } => {
+                (0.0..=512.0).contains(&focal_point.x) && (0.0..=512.0).contains(&focal_point.y)
+            }
+            Self::GaussianBlur {
+                blur_start_strength,
+                blur_step_strength,
+            } => {
+                blur_start_strength.is_finite()
+                    && blur_start_strength > 0.0
+                    && blur_start_strength <= 64.0
+                    && blur_step_strength.is_finite()
+                    && blur_step_strength > 0.0
+                    && blur_step_strength <= 64.0
+            }
+        }
+    }
+
+    pub fn blur_strength(self, revision: usize) -> f32 {
+        match self {
+            Self::GaussianBlur {
+                blur_start_strength,
+                blur_step_strength,
+            } => (blur_start_strength
+                - revision.min(MAX_REVEAL_REVISION) as f32 * blur_step_strength)
+                .max(0.0),
+            Self::ProgressiveZoom { .. } => 0.0,
+        }
+    }
+
+    pub fn cache_key(self) -> (u8, u32, u32) {
+        match self {
+            Self::ProgressiveZoom { focal_point } => {
+                (0, focal_point.x.to_bits(), focal_point.y.to_bits())
+            }
+            Self::GaussianBlur {
+                blur_start_strength,
+                blur_step_strength,
+            } => (
+                1,
+                blur_start_strength.to_bits(),
+                blur_step_strength.to_bits(),
+            ),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -67,6 +126,8 @@ pub struct LogoTextClue {
     pub kind: String,
     #[serde(default)]
     pub text: String,
+    #[serde(default, rename = "assetUrl", alias = "asset", skip_serializing)]
+    pub asset: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -74,55 +135,25 @@ pub struct LogoCatalog {
     entries: Vec<LogoCatalogEntry>,
 }
 
-#[derive(Debug, Default)]
-pub struct LogoImageCache {
-    inner: Mutex<CachedLogoImages>,
-}
-
-#[derive(Debug, Default)]
-struct CachedLogoImages {
-    challenge_id: Option<String>,
-    asset_path: Option<String>,
-    images: HashMap<(usize, bool), Vec<u8>>,
-}
-
-impl LogoImageCache {
-    pub fn image(
-        &self,
-        challenge_id: &str,
-        asset_path: &str,
-        focal_point: FocalPoint,
-        revision: usize,
-        solved: bool,
-    ) -> AppResult<Vec<u8>> {
-        let mut cache = self
-            .inner
-            .lock()
-            .map_err(|_| AppError::Unavailable("Logo image cache is unavailable.".to_owned()))?;
-        if cache.challenge_id.as_deref() != Some(challenge_id)
-            || cache.asset_path.as_deref() != Some(asset_path)
-        {
-            cache.challenge_id = Some(challenge_id.to_owned());
-            cache.asset_path = Some(asset_path.to_owned());
-            cache.images.clear();
-        }
-        let key = (revision.min(MAX_REVEAL_REVISION), solved);
-        if let Some(image) = cache.images.get(&key) {
-            return Ok(image.clone());
-        }
-        let image = render_logo_image(asset_path, focal_point, revision, solved)?;
-        cache.images.insert(key, image.clone());
-        Ok(image)
-    }
-}
-
 impl LogoCatalog {
     pub fn load() -> AppResult<Self> {
-        let mut entries: Vec<LogoCatalogEntry> =
-            serde_json::from_str(include_str!("../../../data/logo.seed.json"))?;
+        let entries = serde_json::from_str(include_str!("../../../data/logo.seed.json"))?;
+        Self::from_entries(entries)
+    }
+
+    pub(crate) fn from_entries(mut entries: Vec<LogoCatalogEntry>) -> AppResult<Self> {
         for entry in &mut entries {
             if !entry.asset_path.starts_with('/') {
                 entry.asset_path = format!("/logo-visual/{}", entry.asset_path);
+            }
+        }
+        for entry in &mut entries {
+            for clue in &mut entry.clues {
+                if let Some(asset) = &mut clue.asset
+                    && !asset.starts_with('/')
+                {
+                    *asset = format!("/logo-visual/{asset}");
+                }
             }
         }
         validate_seed(&entries)?;
@@ -173,9 +204,9 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
                 entry.answer_id
             )));
         }
-        if entry.reveal_profile != "progressive-zoom" {
+        if !entry.reveal.is_valid() {
             return Err(AppError::config(format!(
-                "{} has an unsupported Logo revealProfile",
+                "{} has invalid Logo revealProfile settings",
                 entry.answer_id
             )));
         }
@@ -185,20 +216,10 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
                 entry.answer_id
             )));
         }
-        if !(0.0..=512.0).contains(&entry.focal_point.x)
-            || !(0.0..=512.0).contains(&entry.focal_point.y)
-        {
-            return Err(AppError::config(format!(
-                "{} has an invalid Logo focalPoint",
-                entry.answer_id
-            )));
-        }
         if (!entry.source_url.is_empty() && !entry.source_url.starts_with("https://"))
             || entry.license.trim().is_empty()
             || entry.asset_name.trim().is_empty()
-            || (!entry.asset_path.starts_with("/logo-assets/")
-                && !entry.asset_path.starts_with("/logo-visual/"))
-            || entry.asset_path.contains("..")
+            || !valid_asset_url(&entry.asset_path)
         {
             return Err(AppError::config(format!(
                 "{} has incomplete Logo asset provenance",
@@ -225,10 +246,14 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
         }
         let mut previous_threshold = 0;
         for clue in &entry.clues {
-            if clue.after_incorrect_guesses == 0
-                || clue.after_incorrect_guesses < previous_threshold
+            if clue.after_incorrect_guesses < previous_threshold
                 || clue.kind.trim().is_empty()
                 || (clue.kind != "image" && clue.text.trim().is_empty())
+                || (clue.kind == "image"
+                    && clue
+                        .asset
+                        .as_deref()
+                        .is_none_or(|asset| !valid_asset_url(asset)))
             {
                 return Err(AppError::config(format!(
                     "{} has an invalid Logo clue",
@@ -258,27 +283,37 @@ pub fn zoom_for_revision(revision: usize) -> f32 {
     ZOOM_LEVELS[revision.min(MAX_REVEAL_REVISION)]
 }
 
-fn logo_asset(asset_path: &str) -> AppResult<&'static [u8]> {
-    let relative_path = asset_path
-        .strip_prefix("/logo-visual/")
-        .ok_or_else(|| AppError::Unavailable("Logo image asset is unavailable.".to_owned()))?;
-    LOGO_ASSETS
-        .get_file(relative_path)
-        .map(|file| file.contents())
-        .ok_or_else(|| AppError::Unavailable("Logo image asset is unavailable.".to_owned()))
+/// Seed URLs identify public images on APP_ORIGIN, never arbitrary download hosts.
+pub fn valid_asset_url(value: &str) -> bool {
+    value.starts_with('/')
+        && !value.starts_with("//")
+        && !value.contains("..")
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"/-_.".contains(&byte))
+        && (value.ends_with(".png") || value.ends_with(".webp"))
 }
 
 pub fn render_logo_image(
-    asset_path: &str,
-    focal_point: FocalPoint,
+    bytes: &[u8],
+    profile: RevealProfile,
     revision: usize,
     solved: bool,
 ) -> AppResult<Vec<u8>> {
-    let source = image::load_from_memory(logo_asset(asset_path)?)
-        .map_err(|_| AppError::Unavailable("Logo image asset could not be decoded.".to_owned()))?;
+    let mut reader = image::ImageReader::new(Cursor::new(bytes))
+        .with_guessed_format()
+        .map_err(|_| AppError::Unavailable("Logo image could not be decoded.".to_owned()))?;
+    let mut limits = image::Limits::default();
+    limits.max_image_width = Some(8192);
+    limits.max_image_height = Some(8192);
+    limits.max_alloc = Some(128 * 1024 * 1024);
+    reader.limits(limits);
+    let source = reader
+        .decode()
+        .map_err(|_| AppError::Unavailable("Logo image could not be decoded.".to_owned()))?;
     let rendered = if solved {
         source.resize(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3)
-    } else {
+    } else if let RevealProfile::ProgressiveZoom { focal_point } = profile {
         let normalized = source.resize_to_fill(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3);
         let zoom = zoom_for_revision(revision);
         let crop_size = ((RENDER_SIZE as f32 / zoom).round() as u32).clamp(1, RENDER_SIZE);
@@ -293,6 +328,15 @@ pub fn render_logo_image(
         normalized
             .crop_imm(left, top, crop_size, crop_size)
             .resize_exact(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3)
+    } else {
+        let normalized = source.resize(RENDER_SIZE, RENDER_SIZE, FilterType::Lanczos3);
+        let strength = profile.blur_strength(revision);
+        // image::blur(0) still applies a small blur, so bypass it at zero.
+        if strength > 0.0 {
+            normalized.blur(strength)
+        } else {
+            normalized
+        }
     };
     let mut encoded = Cursor::new(Vec::new());
     rendered

@@ -29,7 +29,7 @@ export default defineConfig({
   },
   server: {
     fs: {
-      deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/data/logo-visual/**"],
+      deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/data/**"],
     },
     proxy: {
       "/api": {

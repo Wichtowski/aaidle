@@ -32,6 +32,13 @@ async fn test_app() -> (axum::Router, SqlitePool) {
 }
 
 async fn test_app_with_environment(environment: AppEnvironment) -> (axum::Router, SqlitePool) {
+    test_app_with_image_origin(environment, None).await
+}
+
+async fn test_app_with_image_origin(
+    environment: AppEnvironment,
+    image_origin: Option<&str>,
+) -> (axum::Router, SqlitePool) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
         .connect("sqlite::memory:")
@@ -55,14 +62,18 @@ async fn test_app_with_environment(environment: AppEnvironment) -> (axum::Router
         google_oauth: None,
         resend_api_key: None,
     });
+    let mut state = AppState::new(pool.clone(), config).expect("app state");
+    if let Some(origin) = image_origin {
+        state.logo_images = Arc::new(
+            aidle_api::logo_images::LogoImageCache::new(origin, Duration::from_secs(2)).unwrap(),
+        );
+    }
     (
-        api::router(AppState::new(pool.clone(), config).expect("app state")).layer(Extension(
-            ConnectInfo(
-                "127.0.0.1:0"
-                    .parse::<std::net::SocketAddr>()
-                    .expect("test peer address"),
-            ),
-        )),
+        api::router(state).layer(Extension(ConnectInfo(
+            "127.0.0.1:0"
+                .parse::<std::net::SocketAddr>()
+                .expect("test peer address"),
+        ))),
         pool,
     )
 }
@@ -2903,4 +2914,173 @@ async fn futures_join(
         results.push(task.await.expect("Timeline attempt task"));
     }
     results
+}
+
+#[tokio::test]
+async fn logo_image_clue_route_checks_unlocks_and_hides_asset_paths() {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let origin = format!("http://{}", listener.local_addr().unwrap());
+    let sources = axum::Router::new().route(
+        "/{*path}",
+        axum::routing::get(|| async {
+            let mut bytes = std::io::Cursor::new(Vec::new());
+            image::DynamicImage::new_rgb8(64, 48)
+                .write_to(&mut bytes, image::ImageFormat::Png)
+                .unwrap();
+            ([("content-type", "image/png")], bytes.into_inner())
+        }),
+    );
+    let source_server = tokio::spawn(async move {
+        axum::serve(listener, sources).await.unwrap();
+    });
+    let (app, pool) = test_app_with_image_origin(AppEnvironment::Local, Some(&origin)).await;
+    let player_id = Uuid::new_v4();
+    let cookie = anonymous_player_cookie(player_id);
+    let initial = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/games/logo/normal")
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(initial.status(), StatusCode::OK);
+    let initial: serde_json::Value =
+        serde_json::from_slice(&initial.into_body().collect().await.unwrap().to_bytes()).unwrap();
+    let id = initial["challenge"]["id"].as_str().unwrap();
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'alexnet' WHERE id = ?")
+        .bind(id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    let image_url = format!("/api/v1/games/logo/challenges/{id}/image?v=clue-1");
+    let locked = app
+        .clone()
+        .oneshot(
+            Request::get(&image_url)
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(locked.status(), StatusCode::NOT_FOUND);
+    let choices = initial["models"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|model| model["id"] != "alexnet")
+        .take(5);
+    for (index, model) in choices.enumerate() {
+        let response = app.clone().oneshot(Request::post(format!("/api/v1/games/logo/challenges/{id}/guesses"))
+            .header("cookie", &cookie).header("origin", "http://localhost:3000").header("content-type", "application/json")
+            .body(Body::from(serde_json::json!({"playerId": player_id, "requestId": Uuid::new_v4(), "guessedModelId": model["id"], "attemptNumber": index + 1}).to_string())).unwrap()).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        if index == 4 {
+            let bytes = response.into_body().collect().await.unwrap().to_bytes();
+            let value: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+            assert_eq!(value["progress"]["clues"][1]["imageUrl"], image_url);
+            assert!(value["progress"]["clues"][1].get("asset").is_none());
+            assert!(!String::from_utf8_lossy(&bytes).contains("model_architecture"));
+        }
+    }
+    let image = app
+        .clone()
+        .oneshot(
+            Request::get(&image_url)
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(image.status(), StatusCode::OK);
+    assert_eq!(image.headers()["content-type"], "image/png");
+    assert!(
+        image.headers()["cache-control"]
+            .to_str()
+            .unwrap()
+            .starts_with("private,")
+    );
+    for variant in ["clue-0", "clue-99", "clue-invalid"] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::get(format!(
+                    "/api/v1/games/logo/challenges/{id}/image?v={variant}"
+                ))
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+    let other = app
+        .oneshot(
+            Request::get(image_url)
+                .header("cookie", anonymous_player_cookie(Uuid::new_v4()))
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(other.status(), StatusCode::NOT_FOUND);
+    source_server.abort();
+}
+
+#[tokio::test]
+async fn logo_gaussian_profile_is_consistent_across_http_game_guess_and_history() {
+    let (app, pool) = test_app().await;
+    let player_id = Uuid::new_v4();
+    let cookie = anonymous_player_cookie(player_id);
+    let response = app
+        .clone()
+        .oneshot(
+            Request::get("/api/v1/games/logo/normal")
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    let initial = response_json(response).await;
+    let id = initial["challenge"]["id"].as_str().unwrap();
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'yolov8' WHERE id = ?")
+        .bind(id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    for path in [
+        "/api/v1/games/logo/normal".to_owned(),
+        format!("/api/v1/games/logo/challenges/{id}/guesses"),
+    ] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::get(path)
+                    .header("cookie", &cookie)
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let value = response_json(response).await;
+        assert_eq!(value["progress"]["revealProfile"], "gaussian-blur");
+        assert_eq!(value["progress"]["blurStartStrength"].as_f64(), Some(28.0));
+        assert_eq!(value["progress"]["blurStepStrength"].as_f64(), Some(4.0));
+        assert!(value["progress"].get("focalPoint").is_none());
+    }
+    let response = app.oneshot(Request::post(format!("/api/v1/games/logo/challenges/{id}/guesses"))
+        .header("cookie", &cookie).header("origin", "http://localhost:3000").header("content-type", "application/json")
+        .body(Body::from(serde_json::json!({"playerId": player_id, "requestId": Uuid::new_v4(), "guessedModelId": "openai", "attemptNumber": 1}).to_string())).unwrap()).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let value = response_json(response).await;
+    assert_eq!(value["progress"]["imageRevision"], 1);
+    assert_eq!(value["progress"]["revealProfile"], "gaussian-blur");
+    assert!(value["progress"].get("focalPoint").is_none());
 }

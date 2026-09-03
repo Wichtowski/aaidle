@@ -17,22 +17,33 @@ export const logoModelSchema = z.object({
   aliases: z.array(z.string()),
 });
 export const logoClueSchema = z.object({
-  afterIncorrectGuesses: z.number().int().positive(),
+  imageUrl: z.string().optional(),
+  afterIncorrectGuesses: z.number().int().nonnegative(),
   kind: z.string(),
   text: z.string(),
 });
-export const logoProgressSchema = z.object({
+const logoProgressBaseSchema = z.object({
   imageUrl: z.string(),
-  focalPoint: z.object({
-    x: z.number().min(0).max(512),
-    y: z.number().min(0).max(512),
-  }),
   imageRevision: z.number().int().nonnegative(),
   maximumImageRevision: z.number().int().nonnegative(),
   clues: z.array(logoClueSchema),
   solved: z.boolean(),
   attribution: z.string().optional(),
 });
+export const logoProgressSchema = z.discriminatedUnion("revealProfile", [
+  logoProgressBaseSchema.extend({
+    revealProfile: z.literal("progressive-zoom"),
+    focalPoint: z.object({
+      x: z.number().min(0).max(512),
+      y: z.number().min(0).max(512),
+    }),
+  }),
+  logoProgressBaseSchema.extend({
+    revealProfile: z.literal("gaussian-blur"),
+    blurStartStrength: z.number().positive().max(64),
+    blurStepStrength: z.number().positive().max(64),
+  }),
+]);
 export const logoGameSchema = z.object({
   challenge: z.object({
     id: z.uuid(),

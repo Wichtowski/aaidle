@@ -3,7 +3,8 @@ use uuid::Uuid;
 
 use crate::{
     domain::logo::{
-        FocalPoint, LogoCatalog, LogoTextClue, MAX_REVEAL_REVISION, reveal_revision, revealed_clues,
+        LogoCatalog, LogoTextClue, MAX_REVEAL_REVISION, RevealProfile, reveal_revision,
+        revealed_clues,
     },
     dto::{PlayerModeStats, PublicModel},
     error::{AppError, AppResult},
@@ -45,7 +46,7 @@ fn public_logo_model(entry: &crate::domain::logo::LogoCatalogEntry) -> PublicMod
 #[derive(Clone)]
 pub struct LogoProgress {
     pub image_url: String,
-    pub focal_point: FocalPoint,
+    pub reveal: RevealProfile,
     pub image_revision: usize,
     pub maximum_image_revision: usize,
     pub clues: Vec<LogoTextClue>,
@@ -417,7 +418,7 @@ fn progress_for_count(
         .ok_or_else(|| AppError::Unavailable("Logo challenge asset is unavailable.".to_owned()))?;
     Ok(LogoProgress {
         image_url: entry.asset_path.clone(),
-        focal_point: entry.focal_point,
+        reveal: entry.reveal,
         image_revision: reveal_revision(wrong),
         maximum_image_revision: MAX_REVEAL_REVISION,
         clues: revealed_clues(entry, wrong),

@@ -128,4 +128,32 @@ The category files are the source of truth for Classic models; the merge command
 
 Timeline events are maintained separately in `data/timeline/events.seed.json`. Run `pnpm timeline-merge-to-one` after `pnpm classic-merge-to-one` to combine those events with the merged Classic catalog and regenerate `data/timeline.seed.json`.
 
-Logo metadata lives in `data/logo.seed.json`. Put maintainer-supplied WebP files in `public/logo-assets/` using the opaque `asset-NNN.webp` paths declared by that catalog; do not put answer names in public filenames. The API does not package or decode these images. The frontend/CDN serves them directly and applies the server-returned reveal revision and focal point.
+Logo metadata lives in `data/logo.seed.json`; images live in `public/logo-visual/` or shared `public/common/` and are published with the frontend. Set `assetUrl` on the main entry and on each `kind: "image"` clue:
+
+```json
+"assetUrl": "/common/edge/output.png"
+```
+
+URLs are root-relative public PNG/WebP paths, resolved by the backend against `APP_ORIGIN`. Paths may point to shared images elsewhere in `public/`, such as `/emoji-visual/rtx.png`. Legacy `assetPath`/`asset` fields and bare filenames remain accepted, but new entries should use `assetUrl`. Do not use `sourceUrl` for image downloads; it is optional provenance metadata.
+
+The API downloads each original once, reuses it for crops, and returns transformed images through the existing Logo image endpoint. Originals expire after 24 hours; expiry invalidates their crops. A new active challenge or backend restart clears both caches. Failed fetches/decodes are retried on the next request. Public source images remain directly accessible. The API Docker image contains catalog JSON but no source images.
+
+For local development, run Vite at `APP_ORIGIN` (default `http://localhost:5173`) as well as the API. In production, `APP_ORIGIN` must be reachable from the API container and serve the public files. Deploy the frontend assets before the backend seed that references them. Downloads time out after `REQUEST_TIMEOUT_SECONDS`, reject redirects, and accept at most 10 MiB per PNG/WebP image.
+
+Reveal settings depend on the profile. `"progressive-zoom"` requires `focalPoint` with `x`/`y` coordinates between 0 and 512. `"gaussian-blur"` uses the full image (preserving its aspect ratio), ignores `focalPoint`, and instead requires `blurStartStrength` and `blurStepStrength`, each greater than 0 and at most 64. Strength is Gaussian sigma measured after resizing the image to fit 512×512.
+
+YOLO uses:
+
+```json
+"revealProfile": "gaussian-blur",
+"blurStartStrength": 28,
+"blurStepStrength": 4
+```
+
+Each accepted incorrect guess reduces the strength by `blurStepStrength`, down to zero. Image revision remains capped at seven for both profiles: these YOLO settings become clear on the seventh miss. Other settings may clear sooner or leave some blur at the cap; a correct guess always removes all blur immediately. Text/image clue thresholds remain independent of the image profile.
+
+Clues use ordered, nonnegative integer `afterIncorrectGuesses` thresholds. Set `0` to make a clue available immediately. Text clues require `text`; image clues require `assetUrl` and may include a caption in `text`. Clicking a clue opens its contents, marks it viewed, and records it in browser storage for the current player/challenge. Only opened clues count as used in the completion summary.
+
+The existing Sobel entry in `data/emoji.seed.json` shares `/common/edge/input.png` and `/common/edge/output.png` through its `edge-images` variant. Emoji uses `src` for these public paths; Logo uses `assetUrl`. Its existing pool eligibility remains unchanged.
+
+`sourceUrl` is optional provenance metadata (omit empty values). `license` is required provenance metadata; `revealProfile` may be `"progressive-zoom"` or `"gaussian-blur"`. `additionalHelpAsset` is ignored: declare help images directly in `clues` instead. `assetName` supplies the public answer name; `minPool` and `visualType` are used by selection and validation; `focalPoint` controls progressive zoom only.

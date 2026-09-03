@@ -24,7 +24,7 @@ export function LogoCompletedDialog({
       onClose={onClose}
       stats={[
         { value: guessCount, label: "Guesses" },
-        { value: clueCount, label: "Clues unlocked" },
+        { value: clueCount, label: "Clues used" },
         { value: "Normal", label: "Difficulty" },
         { value: globalCompletionCount.toLocaleString(), label: "Global solves" },
       ]}

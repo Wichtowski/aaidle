@@ -570,12 +570,23 @@ pub struct EmojiDifficultyHintsResponse {
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct LogoClueResponse {
+    pub after_incorrect_guesses: usize,
+    pub kind: String,
+    pub text: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub image_url: Option<String>,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LogoProgressResponse {
     pub image_url: String,
-    pub focal_point: crate::domain::logo::FocalPoint,
+    #[serde(flatten)]
+    pub reveal: crate::domain::logo::RevealProfile,
     pub image_revision: usize,
     pub maximum_image_revision: usize,
-    pub clues: Vec<crate::domain::logo::LogoTextClue>,
+    pub clues: Vec<LogoClueResponse>,
     pub solved: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attribution: Option<String>,

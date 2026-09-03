@@ -1,5 +1,10 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { FaCircleQuestion, FaQuestion } from "react-icons/fa6";
+import type { LogoProgress } from "@lib/api/client";
+import { FaCircleQuestion } from "react-icons/fa6";
+import { useLogoClueViews } from "@lib/storage/use-logo-clue-views";
+import { useLocalProgress } from "@lib/storage/use-local-progress";
+import { useAuth } from "../../auth/useAuth";
+import { LogoClues } from "./LogoClues";
 import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { ApiUnavailableState } from "../../ui/ApiUnavailableState";
@@ -13,19 +18,14 @@ import { LogoCompletedDialog } from "./LogoCompletedDialog";
 import { LogoShareButton } from "./LogoShareButton";
 import { useLogoGame } from "./use-logo-game";
 
-function ProgressiveImage({
-  focalPoint,
-  src,
-  revision,
-  solved,
-}: {
-  focalPoint: { x: number; y: number };
-  src: string;
-  revision: number;
-  solved: boolean;
-}) {
+function ProgressiveImage({ progress }: { progress: LogoProgress }) {
+  const { imageUrl: src, imageRevision: revision, solved } = progress;
+  const isBlur = progress.revealProfile === "gaussian-blur";
   const zoomLevels = [4.2, 3.5, 2.9, 2.4, 2, 1.65, 1.3, 1];
-  const zoom = zoomLevels[Math.min(revision, zoomLevels.length - 1)];
+  const zoom = isBlur ? 1 : zoomLevels[Math.min(revision, zoomLevels.length - 1)];
+  const blur = isBlur
+    ? Math.max(0, progress.blurStartStrength - revision * progress.blurStepStrength)
+    : 0;
   const [displayedSrc, setDisplayedSrc] = useState(src);
   const [displayedSolved, setDisplayedSolved] = useState(solved);
   const [failed, setFailed] = useState(false);
@@ -56,14 +56,18 @@ function ProgressiveImage({
     <div className="logo-clue__image-wrap">
       <img
         alt={displayedSolved ? "Fully revealed logo" : `Visual clue at reveal ${revision + 1}`}
-        className={`logo-clue__image${displayedSolved ? " is-solved" : ""}`}
+        className={`logo-clue__image${isBlur ? " is-blur-profile" : ""}${displayedSolved ? " is-solved" : ""}`}
         onError={() => setFailed(true)}
         onLoad={() => setFailed(false)}
         src={displayedSrc}
         style={
           {
             "--logo-solve-start-zoom": zoom,
-            transformOrigin: `${(focalPoint.x / 512) * 100}% ${(focalPoint.y / 512) * 100}%`,
+            "--logo-solve-start-blur": `${blur}px`,
+            transformOrigin:
+              progress.revealProfile === "progressive-zoom"
+                ? `${(progress.focalPoint.x / 512) * 100}% ${(progress.focalPoint.y / 512) * 100}%`
+                : "center",
           } as CSSProperties
         }
       />
@@ -95,6 +99,11 @@ export function LogoGame() {
     solved,
     toast,
   } = useLogoGame();
+  const { playerId } = useLocalProgress();
+  const { user } = useAuth();
+  const clueScope = user?.id ?? playerId;
+  const { viewedClues, markViewed } = useLogoClueViews(clueScope, game?.challenge.id);
+  const usedClueCount = viewedClues.filter((index) => game?.progress.clues[index]).length;
   const winningGuess = guesses.find((guess) => guess.isCorrect);
 
   return (
@@ -102,7 +111,11 @@ export function LogoGame() {
       <SiteNavbar />
       <GameIntro
         completionCount={solved ? (game?.globalCompletionCount ?? null) : null}
-        description="Start close, guess carefully, and watch the image zoom out after each miss."
+        description={
+          game?.progress.revealProfile === "gaussian-blur"
+            ? "Guess carefully, and watch the image become clearer after each miss."
+            : "Start close, guess carefully, and watch the image zoom out after each miss."
+        }
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
           <GameEyebrow date={game?.challenge.date ?? utcDate()} game="Logo" variant="Normal" />
@@ -148,25 +161,14 @@ export function LogoGame() {
           )}
 
           <div className="logo-clue-layout">
-            <aside className="logo-clue-rail" aria-label="Clue progress">
-              {game.progress.clues.map((clue) => (
-                <span
-                  aria-label={`${clue.kind} clue unlocked after ${clue.afterIncorrectGuesses} incorrect guesses`}
-                  className="logo-clue-rail__icon is-revealed"
-                  key={`text-${clue.afterIncorrectGuesses}:${clue.kind}`}
-                  title={clue.text || `${clue.kind} clue`}
-                >
-                  <FaQuestion aria-hidden="true" />
-                </span>
-              ))}
-            </aside>
+            <LogoClues
+              key={`${clueScope}:${game.challenge.id}`}
+              clues={game.progress.clues}
+              viewedClues={viewedClues}
+              onView={markViewed}
+            />
             <div className="logo-clue">
-              <ProgressiveImage
-                focalPoint={game.progress.focalPoint}
-                revision={game.progress.imageRevision}
-                solved={solved}
-                src={game.progress.imageUrl}
-              />
+              <ProgressiveImage progress={game.progress} />
               <p className="logo-clue__progress">
                 Reveal {game.progress.imageRevision + 1} of {game.progress.maximumImageRevision + 1}
               </p>
@@ -216,13 +218,11 @@ export function LogoGame() {
       {game && solved && showCompletion && (
         <LogoCompletedDialog
           answer={winningGuess?.model.name ?? "Winning guess"}
-          clueCount={game.progress.clues.length}
+          clueCount={usedClueCount}
           globalCompletionCount={game.globalCompletionCount}
           guessCount={guesses.length}
           onClose={() => setShowCompletion(false)}
-          shareAction={
-            <LogoShareButton guessCount={guesses.length} clueCount={game.progress.clues.length} />
-          }
+          shareAction={<LogoShareButton guessCount={guesses.length} clueCount={usedClueCount} />}
         />
       )}
       <Toast message={toast} onDismiss={() => setToast(null)} />

@@ -150,12 +150,15 @@ export type EmojiGamePayload = {
 };
 export type LogoTextClue = {
   afterIncorrectGuesses: number;
+  imageUrl?: string;
   kind: string;
   text: string;
 };
-export type LogoProgress = {
+export type LogoRevealProfile =
+  | { revealProfile: "progressive-zoom"; focalPoint: { x: number; y: number } }
+  | { revealProfile: "gaussian-blur"; blurStartStrength: number; blurStepStrength: number };
+export type LogoProgress = LogoRevealProfile & {
   imageUrl: string;
-  focalPoint: { x: number; y: number };
   imageRevision: number;
   maximumImageRevision: number;
   clues: LogoTextClue[];

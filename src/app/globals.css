@@ -5962,8 +5962,8 @@ body.hell-mode .completed--timeline {
 }
 .logo-clue-rail__icon {
   display: inline-grid;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--accent) 62%, var(--line));
@@ -5971,8 +5971,36 @@ body.hell-mode .completed--timeline {
   background: color-mix(in srgb, var(--accent) 10%, var(--panel));
   color: var(--accent);
   font-size: 14px;
+  cursor: pointer;
+  animation: logo-clue-appear 320ms ease-out both;
 }
-.logo-clue-rail__icon.is-revealed {
+.logo-clue-rail__icon:hover,
+.logo-clue-rail__icon:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.logo-clue-content {
+  animation: logo-clue-appear 220ms ease-out both;
+}
+.logo-clue-content img {
+  display: block;
+  max-width: 100%;
+  max-height: 55vh;
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 12px;
+}
+@keyframes logo-clue-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.logo-clue-rail__icon.is-viewed {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 16%, var(--panel));
   color: var(--accent);
@@ -5997,6 +6025,20 @@ body.hell-mode .completed--timeline {
 .logo-clue__image.is-solved {
   object-fit: contain;
   animation: logo-solved-reveal 1600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.logo-clue__image.is-blur-profile {
+  object-fit: contain;
+}
+.logo-clue__image.is-blur-profile.is-solved {
+  animation-name: logo-solved-unblur;
+}
+@keyframes logo-solved-unblur {
+  from {
+    filter: blur(var(--logo-solve-start-blur, 0px));
+  }
+  to {
+    filter: blur(0);
+  }
 }
 @keyframes logo-solved-reveal {
   from {
@@ -6207,7 +6249,11 @@ body.hell-mode .completed--timeline {
   .game-page,
   .emoji__history li,
   .logo-history li,
-  .logo-clue__image {
+  .logo-clue__image,
+  .logo-clue__image.is-solved,
+  .logo-clue__image.is-blur-profile.is-solved,
+  .logo-clue-rail__icon,
+  .logo-clue-content {
     animation: none;
     transition: none;
     transform: none;

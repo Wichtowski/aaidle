@@ -7,6 +7,13 @@ const fail = (message) => {
   throw new Error(`Logo seed: ${message}`);
 };
 
+const normalizeAsset = (value) =>
+  typeof value === "string" && value && !value.startsWith("/") ? `/logo-visual/${value}` : value;
+const validAsset = (value) =>
+  typeof value === "string" &&
+  /^\/(?!\/)[A-Za-z0-9/_.-]+\.(png|webp)$/.test(value) &&
+  !value.includes("..");
+
 if (!Array.isArray(entries) || entries.length < 6) fail("at least six entries are required");
 const answers = new Set();
 const paths = new Set();
@@ -19,29 +26,31 @@ for (const entry of entries) {
   if (!visualTypes.has(entry.visualType)) fail(`${entry.answerId} has invalid visualType`);
   if (typeof entry.assetName !== "string" || !entry.assetName.trim())
     fail(`${entry.answerId} needs an assetName`);
-  const assetPath = entry.assetPath ?? entry.asset;
-  if (
-    typeof assetPath !== "string" ||
-    assetPath.includes("..") ||
-    (!assetPath.startsWith("/logo-visual/") && assetPath.includes("/"))
-  )
-    fail(`${entry.answerId} needs a private Logo asset filename`);
-  const assetName = assetPath.replace(/^\/logo-visual\//, "");
-  if (paths.has(assetName)) fail(`duplicate asset ${assetName}`);
-  paths.add(assetName);
-  if (!existsSync(new URL(`../data/logo-visual/${assetName}`, import.meta.url)))
-    fail(`${entry.answerId} is missing private asset ${assetName}`);
-  if (entry.revealProfile !== "progressive-zoom")
+  const assetPath = normalizeAsset(entry.assetUrl ?? entry.assetPath ?? entry.asset);
+  if (!validAsset(assetPath))
+    fail(`${entry.answerId} needs a root-relative public PNG/WebP assetUrl`);
+  if (paths.has(assetPath)) fail(`duplicate asset ${assetPath}`);
+  paths.add(assetPath);
+  if (!existsSync(new URL(`../public${assetPath}`, import.meta.url)))
+    fail(`${entry.answerId} is missing public asset ${assetPath}`);
+  if (entry.revealProfile === "progressive-zoom") {
+    if (
+      !Number.isFinite(entry.focalPoint?.x) ||
+      !Number.isFinite(entry.focalPoint?.y) ||
+      entry.focalPoint.x < 0 ||
+      entry.focalPoint.x > 512 ||
+      entry.focalPoint.y < 0 ||
+      entry.focalPoint.y > 512
+    )
+      fail(`${entry.answerId} has an invalid focalPoint`);
+  } else if (entry.revealProfile === "gaussian-blur") {
+    for (const field of ["blurStartStrength", "blurStepStrength"]) {
+      if (!Number.isFinite(entry[field]) || entry[field] <= 0 || entry[field] > 64)
+        fail(`${entry.answerId} needs ${field} greater than 0 and at most 64`);
+    }
+  } else {
     fail(`${entry.answerId} has an invalid revealProfile`);
-  if (
-    typeof entry.focalPoint?.x !== "number" ||
-    typeof entry.focalPoint?.y !== "number" ||
-    entry.focalPoint.x < 0 ||
-    entry.focalPoint.x > 512 ||
-    entry.focalPoint.y < 0 ||
-    entry.focalPoint.y > 512
-  )
-    fail(`${entry.answerId} has an invalid focalPoint`);
+  }
   if (
     !Array.isArray(entry.clues) ||
     !entry.clues.some(
@@ -53,6 +62,23 @@ for (const entry of entries) {
     )
   )
     fail(`${entry.answerId} needs a clue reachable by five misses`);
+  let previousThreshold = 0;
+  for (const clue of entry.clues) {
+    if (
+      !Number.isSafeInteger(clue?.afterIncorrectGuesses) ||
+      clue.afterIncorrectGuesses < previousThreshold ||
+      typeof clue.kind !== "string" ||
+      !clue.kind.trim() ||
+      (clue.kind !== "image" && (typeof clue.text !== "string" || !clue.text.trim()))
+    )
+      fail(`${entry.answerId} has an invalid clue (thresholds must be nonnegative and ordered)`);
+    if (clue.kind === "image") {
+      const asset = normalizeAsset(clue.assetUrl ?? clue.asset);
+      if (!validAsset(asset) || !existsSync(new URL(`../public${asset}`, import.meta.url)))
+        fail(`${entry.answerId} image clue needs an existing public assetUrl`);
+    }
+    previousThreshold = clue.afterIncorrectGuesses;
+  }
   if (entry.visualType === "discoverer-portrait") {
     if (!entry.people?.length) fail(`${entry.answerId} portrait needs person metadata`);
     if (

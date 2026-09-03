@@ -4,7 +4,25 @@
     "minPool": 0,
     "visualType": "logo",
     "assetName": "OpenAI",
-    "assetPath": "/logo-visual/company-logo-1.png",
+    "assetUrl": "/common/company-logo-1.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 164, "y": 174 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "Its launch emphasized natural, real-time interaction across several modalities."
+      }
+    ],
+    "sourceUrl": "",
+    "license": "maintainer-supplied"
+  },
+  {
+    "answerId": "anthropic",
+    "minPool": 0,
+    "visualType": "logo",
+    "assetName": "Anthropic",
+    "assetUrl": "/common/company-logo-2.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 164, "y": 174 },
     "clues": [
@@ -22,7 +40,7 @@
     "minPool": 0,
     "visualType": "technology",
     "assetName": "BERT",
-    "assetPath": "/logo-visual/asset-002.webp",
+    "assetUrl": "/logo-visual/muppet.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 338, "y": 184 },
     "clues": [
@@ -31,47 +49,59 @@
         "kind": "general",
         "text": "This encoder learns from context arriving from both directions."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "yolov8",
     "minPool": 0,
     "visualType": "technology",
     "assetName": "YOLOv8",
-    "assetPath": "/logo-visual/asset-003.webp",
-    "revealProfile": "progressive-zoom",
-    "focalPoint": { "x": 350, "y": 316 },
+    "assetUrl": "/logo-visual/lytics.png",
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
     "clues": [
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "general",
+        "text": "This model family has had many versions and generations released over the years, making it one of the easiest object detection families to recognize."
+      },
       {
         "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "Its model family predicts object locations and classes in a single detection pipeline."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+
+    ]
   },
   {
     "answerId": "alexnet",
     "minPool": 0,
     "visualType": "technology",
     "assetName": "AlexNet",
-    "asset": "model_architecture_2.png",
-    "additionalHelpAsset": "model_architecture_2_timeline.png",
+    "assetUrl": "/logo-visual/model_architecture_2.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 154, "y": 338 },
     "clues": [
       {
-        "afterIncorrectGuesses": 3,
+        "afterIncorrectGuesses": 1,
         "kind": "general",
         "text": "A landmark 2012 image-classification result helped renew interest in deep convolutional networks."
       },
       {
-        "afterIncorrectGuesses": 5,
+        "afterIncorrectGuesses": 2,
         "kind": "image",
-        "helpAsset": "/logo-visual/model_architecture_2_timeline.png"
+        "assetUrl": "/logo-visual/alex/model_architecture_2_timeline.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/logo-visual/alex/alex.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/logo-visual/alex/net.png"
       }
     ],
     "sourceUrl": "",
@@ -82,7 +112,7 @@
     "minPool": 0,
     "visualType": "technology",
     "assetName": "ResNet-50",
-    "assetPath": "/logo-visual/model_architecture_1.png",
+    "assetUrl": "/logo-visual/model-architecture-1.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 370, "y": 150 },
     "clues": [
@@ -100,7 +130,7 @@
     "minPool": 0,
     "visualType": "technology",
     "assetName": "Support Vector Machine",
-    "assetPath": "/logo-visual/asset-006.webp",
+    "assetUrl": "/logo-visual/support-vector-machine.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 330, "y": 340 },
     "clues": [
@@ -118,14 +148,29 @@
     "minPool": 0,
     "visualType": "technology",
     "assetName": "Sobel Operator",
-    "assetPath": "/logo-visual/asset-007.webp",
+    "assetUrl": "/common/edge/output.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 178, "y": 332 },
     "clues": [
       {
-        "afterIncorrectGuesses": 3,
+        "afterIncorrectGuesses": 1,
         "kind": "general",
         "text": "This local image operator estimates horizontal and vertical intensity gradients with paired kernels."
+      },
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "image",
+        "assetUrl": "/common/edge/input.png"
+      },
+      {
+        "afterIncorrectGuesses": 2,
+        "kind": "image",
+        "assetUrl": "/common/edge/output.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/common/edge/woman.png"
       }
     ],
     "sourceUrl": "",

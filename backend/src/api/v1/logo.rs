@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 use crate::{
     dto::{
-        LogoChallengeResponse, LogoGameResponse, LogoGuessHistoryEntryResponse,
+        LogoChallengeResponse, LogoClueResponse, LogoGameResponse, LogoGuessHistoryEntryResponse,
         LogoGuessHistoryResponse, LogoGuessRequest, LogoGuessResponse, LogoProgressResponse,
     },
     error::{AppError, AppResult},
@@ -116,33 +116,45 @@ pub(super) async fn image(
     }
     let history =
         repository::logo::history(&state.db, &state.logo, challenge_id, player_id).await?;
-    let progress = history.progress;
+    let mut progress = history.progress;
+    let clue_index = requested_variant
+        .as_deref()
+        .and_then(|v| v.strip_prefix("clue-"));
+    if let Some(index) = clue_index {
+        let clue = index
+            .parse::<usize>()
+            .ok()
+            .and_then(|index| progress.clues.get(index))
+            .filter(|clue| clue.kind == "image")
+            .and_then(|clue| clue.asset.as_ref())
+            .ok_or_else(|| AppError::NotFound("Logo image variant not found.".to_owned()))?;
+        progress.image_url = clue.clone();
+        progress.solved = true;
+    }
     let authorized_variant = if progress.solved {
         "solved".to_owned()
     } else {
         progress.image_revision.to_string()
     };
-    if requested_variant
-        .as_deref()
-        .is_some_and(|variant| variant != authorized_variant)
+    if clue_index.is_none()
+        && requested_variant
+            .as_deref()
+            .is_some_and(|variant| variant != authorized_variant)
     {
         return Err(AppError::NotFound(
             "Logo image variant not found.".to_owned(),
         ));
     }
-    let cache = state.logo_images.clone();
-    let challenge_key = challenge_id.to_string();
-    let image = tokio::task::spawn_blocking(move || {
-        cache.image(
-            &challenge_key,
+    let image = state
+        .logo_images
+        .image(
+            &challenge_id.to_string(),
             &progress.image_url,
-            progress.focal_point,
+            progress.reveal,
             progress.image_revision,
             progress.solved,
         )
-    })
-    .await
-    .map_err(|_| AppError::Unavailable("Logo image rendering was interrupted.".to_owned()))??;
+        .await?;
     let now = time::OffsetDateTime::now_utc();
     let next_midnight = now
         .date()
@@ -328,10 +340,22 @@ fn progress_response(
                 progress.image_revision.to_string()
             }
         ),
-        focal_point: progress.focal_point,
+        reveal: progress.reveal,
         image_revision: progress.image_revision,
         maximum_image_revision: progress.maximum_image_revision,
-        clues: progress.clues,
+        clues: progress
+            .clues
+            .into_iter()
+            .enumerate()
+            .map(|(index, clue)| LogoClueResponse {
+                after_incorrect_guesses: clue.after_incorrect_guesses,
+                image_url: (clue.kind == "image").then(|| {
+                    format!("/api/v1/games/logo/challenges/{challenge_id}/image?v=clue-{index}")
+                }),
+                kind: clue.kind,
+                text: clue.text,
+            })
+            .collect(),
         solved: progress.solved,
         attribution: progress.attribution,
     }

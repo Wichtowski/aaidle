@@ -53,7 +53,15 @@ async fn authenticated_headers(state: &AppState) -> (String, HeaderMap) {
 
 #[tokio::test]
 async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
-    let state = super::super::test_support::state().await;
+    let mut state = super::super::test_support::state().await;
+    let source_server = crate::logo_images::tests::image_server().await;
+    state.logo_images = std::sync::Arc::new(
+        crate::logo_images::LogoImageCache::new(
+            &source_server.origin,
+            std::time::Duration::from_secs(2),
+        )
+        .unwrap(),
+    );
     seed_models(&state).await;
     let player_id = Uuid::new_v4();
     let Json(loaded) = game(
@@ -66,7 +74,7 @@ async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
     .unwrap();
     assert_eq!(loaded.challenge.mode, "logo:normal");
     assert_eq!(loaded.progress.image_revision, 0);
-    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai', asset_path = '/logo-visual/company-logo-1.png' WHERE id = ?")
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai', asset_path = '/common/company-logo-1.png' WHERE id = ?")
         .bind(loaded.challenge.id.to_string())
         .execute(&state.db)
         .await
@@ -301,4 +309,272 @@ async fn logo_handlers_validate_difficulty_ids_and_attempts() {
         .await
         .is_err()
     );
+}
+
+#[tokio::test]
+async fn initial_clues_and_protected_image_clues_follow_persisted_guesses() {
+    let mut state = super::super::test_support::state().await;
+    let source_server = crate::logo_images::tests::image_server().await;
+    state.logo_images = std::sync::Arc::new(
+        crate::logo_images::LogoImageCache::new(
+            &source_server.origin,
+            std::time::Duration::from_secs(2),
+        )
+        .unwrap(),
+    );
+    let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
+    let entry = entries
+        .iter_mut()
+        .find(|entry| entry.answer_id == "alexnet")
+        .unwrap();
+    entry.clues[0].after_incorrect_guesses = 0;
+    entry.clues[1].after_incorrect_guesses = 1;
+    state.logo =
+        std::sync::Arc::new(crate::domain::logo::LogoCatalog::from_entries(entries).unwrap());
+    let (user_id, headers) = authenticated_headers(&state).await;
+    let canonical = Uuid::new_v4();
+    crate::progress::canonical_player_id(
+        &state.db,
+        &user_id,
+        canonical,
+        super::super::now_millis(),
+    )
+    .await
+    .unwrap();
+    let player_id = Uuid::new_v4();
+    let Json(initial) = game(
+        State(state.clone()),
+        headers.clone(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    let id = initial.challenge.id;
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'alexnet' WHERE id = ?")
+        .bind(id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    let Json(loaded) = game(
+        State(state.clone()),
+        headers.clone(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    assert_eq!(loaded.progress.clues.len(), 1);
+    assert_eq!(loaded.progress.clues[0].after_incorrect_guesses, 0);
+    assert!(loaded.progress.clues[0].image_url.is_none());
+    for variant in ["clue-0", "clue-1", "clue-999", "clue-invalid"] {
+        assert!(matches!(
+            image(
+                State(state.clone()),
+                headers.clone(),
+                Path(id.to_string()),
+                Query(LogoPlayerQuery { player_id }),
+                Some(variant.into())
+            )
+            .await,
+            Err(AppError::NotFound(_))
+        ));
+    }
+    let Json(outcome) = guess(
+        State(state.clone()),
+        ConnectInfo("127.0.0.1:4321".parse().unwrap()),
+        headers.clone(),
+        Path(id.to_string()),
+        Ok(Json(LogoGuessRequest {
+            player_id,
+            request_id: Uuid::new_v4(),
+            guessed_model_id: "openai".into(),
+            attempt_number: 1,
+        })),
+    )
+    .await
+    .unwrap();
+    assert_eq!(outcome.progress.clues.len(), 2);
+    assert_eq!(
+        outcome.progress.clues[1].image_url.as_deref(),
+        Some(format!("/api/v1/games/logo/challenges/{id}/image?v=clue-1").as_str())
+    );
+    let serialized = serde_json::to_string(&outcome).unwrap();
+    assert!(!serialized.contains("model_architecture"));
+    assert!(!serialized.contains("answerModelId"));
+    let response = image(
+        State(state.clone()),
+        headers.clone(),
+        Path(id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("clue-1".into()),
+    )
+    .await
+    .unwrap();
+    assert_eq!(response.headers()[header::CONTENT_TYPE], "image/png");
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    assert!(image::load_from_memory(&bytes).is_ok());
+    let Json(restored) = guess_history(
+        State(state.clone()),
+        headers.clone(),
+        Path(id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    assert_eq!(restored.progress.clues.len(), 2);
+    assert!(matches!(
+        image(
+            State(state.clone()),
+            HeaderMap::new(),
+            Path(id.to_string()),
+            Query(LogoPlayerQuery {
+                player_id: Uuid::new_v4()
+            }),
+            Some("clue-1".into())
+        )
+        .await,
+        Err(AppError::NotFound(_))
+    ));
+    sqlx::query("UPDATE logo_challenges SET challenge_date = '2000-01-01' WHERE id = ?")
+        .bind(id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    assert!(matches!(
+        image(
+            State(state),
+            headers,
+            Path(id.to_string()),
+            Query(LogoPlayerQuery { player_id }),
+            Some("clue-1".into())
+        )
+        .await,
+        Err(AppError::NotFound(_))
+    ));
+}
+
+#[tokio::test]
+async fn gaussian_profile_progress_and_images_restore_without_focal_point() {
+    let mut state = super::super::test_support::state().await;
+    let source_server = crate::logo_images::tests::image_server().await;
+    state.logo_images = std::sync::Arc::new(
+        crate::logo_images::LogoImageCache::new(
+            &source_server.origin,
+            std::time::Duration::from_secs(2),
+        )
+        .unwrap(),
+    );
+    let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
+    entries
+        .iter_mut()
+        .find(|entry| entry.answer_id == "yolov8")
+        .unwrap()
+        .reveal = crate::domain::logo::RevealProfile::GaussianBlur {
+        blur_start_strength: 4.0,
+        blur_step_strength: 2.0,
+    };
+    state.logo =
+        std::sync::Arc::new(crate::domain::logo::LogoCatalog::from_entries(entries).unwrap());
+    let player_id = Uuid::new_v4();
+    let Json(initial) = game(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    let id = initial.challenge.id;
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'yolov8' WHERE id = ?")
+        .bind(id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+    let Json(loaded) = game(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    let value = serde_json::to_value(&loaded.progress).unwrap();
+    assert_eq!(value["revealProfile"], "gaussian-blur");
+    assert_eq!(value["blurStartStrength"].as_f64(), Some(4.0));
+    assert_eq!(value["blurStepStrength"].as_f64(), Some(2.0));
+    assert!(value.get("focalPoint").is_none());
+    let blurred = image(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("0".into()),
+    )
+    .await
+    .unwrap()
+    .into_body()
+    .collect()
+    .await
+    .unwrap()
+    .to_bytes();
+    assert_eq!(
+        image::load_from_memory(&blurred).unwrap().dimensions(),
+        (512, 384)
+    );
+    for (index, answer) in ["openai", "yolov8"].into_iter().enumerate() {
+        let Json(result) = guess(
+            State(state.clone()),
+            ConnectInfo("127.0.0.1:4321".parse().unwrap()),
+            HeaderMap::from_iter([(
+                header::ORIGIN,
+                HeaderValue::from_static("http://localhost:3000"),
+            )]),
+            Path(id.to_string()),
+            Ok(Json(LogoGuessRequest {
+                player_id,
+                request_id: Uuid::new_v4(),
+                guessed_model_id: answer.into(),
+                attempt_number: index as u16 + 1,
+            })),
+        )
+        .await
+        .unwrap();
+        assert_eq!(result.is_correct, index == 1);
+        assert_eq!(result.progress.image_revision, 1);
+        assert_eq!(
+            serde_json::to_value(&result.progress).unwrap()["revealProfile"],
+            "gaussian-blur"
+        );
+    }
+    let Json(restored) = guess_history(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    assert!(restored.progress.solved);
+    assert!(
+        serde_json::to_value(restored.progress)
+            .unwrap()
+            .get("focalPoint")
+            .is_none()
+    );
+    let clear = image(
+        State(state),
+        HeaderMap::new(),
+        Path(id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("solved".into()),
+    )
+    .await
+    .unwrap()
+    .into_body()
+    .collect()
+    .await
+    .unwrap()
+    .to_bytes();
+    assert_ne!(blurred, clear);
 }

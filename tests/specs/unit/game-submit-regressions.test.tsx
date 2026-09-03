@@ -87,6 +87,7 @@ const logoGame: LogoGamePayload = {
   ],
   progress: {
     imageUrl: "/logo-assets/asset-001.webp",
+    revealProfile: "progressive-zoom",
     focalPoint: { x: 256, y: 256 },
     imageRevision: 0,
     maximumImageRevision: 7,
@@ -226,6 +227,60 @@ describe("game submit regressions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Show winning guess" }));
     expect(screen.getByRole("dialog", { name: "Winning guess" })).toBeInTheDocument();
+  });
+
+  it("counts opened Logo clues once instead of counting every unlocked clue", async () => {
+    const progress = {
+      ...logoGame.progress,
+      solved: true,
+      clues: [
+        { afterIncorrectGuesses: 0, kind: "general", text: "First hint" },
+        { afterIncorrectGuesses: 0, kind: "general", text: "Second hint" },
+      ],
+    };
+    vi.spyOn(apiClient, "logoGame").mockResolvedValue({ ...logoGame, progress });
+    vi.spyOn(apiClient, "logoGuessHistory").mockResolvedValue({ guesses: [], progress });
+    render(
+      <MemoryRouter>
+        <LogoGame />
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Clue 1: general, available" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close clue" }));
+    fireEvent.click(screen.getByRole("button", { name: "Clue 1: general, viewed" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close clue" }));
+    fireEvent.click(screen.getByRole("button", { name: "Show winning guess" }));
+    expect(screen.getByText("Clues used").parentElement).toHaveTextContent("1Clues used");
+  });
+
+  it("renders Gaussian blur without focal-point positioning or a zoom completion animation", async () => {
+    const { focalPoint: _focalPoint, ...base } = logoGame.progress as Extract<
+      LogoGamePayload["progress"],
+      { revealProfile: "progressive-zoom" }
+    >;
+    const progress: LogoGamePayload["progress"] = {
+      ...base,
+      revealProfile: "gaussian-blur",
+      blurStartStrength: 28,
+      blurStepStrength: 4,
+      imageRevision: 1,
+      solved: true,
+    };
+    vi.spyOn(apiClient, "logoGame").mockResolvedValue({ ...logoGame, progress });
+    vi.spyOn(apiClient, "logoGuessHistory").mockResolvedValue({ guesses: [], progress });
+    render(
+      <MemoryRouter>
+        <LogoGame />
+      </MemoryRouter>,
+    );
+    const image = await screen.findByAltText("Fully revealed logo");
+    expect(image).toHaveClass("is-blur-profile", "is-solved");
+    expect(image).toHaveStyle({
+      "--logo-solve-start-zoom": "1",
+      "--logo-solve-start-blur": "24px",
+      transformOrigin: "center",
+    });
+    expect(screen.getByText(/watch the image become clearer/)).toBeVisible();
   });
 
   it("opens and closes Timeline rules and year annotations", async () => {

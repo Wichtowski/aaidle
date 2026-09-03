@@ -108,7 +108,9 @@ for (const entity of pool) {
           clue?.type === "image" &&
           typeof clue.src === "string" &&
           clue.src.trim() &&
-          clue.src.startsWith("/emoji-visual/")
+          (clue.src.startsWith("/emoji-visual/") ||
+            (/^\/(logo-visual|common)\/[A-Za-z0-9/_.-]+\.(png|webp)$/.test(clue.src) &&
+              !clue.src.includes("..")))
         )
           return `image:${clue.src}`;
         fail(`${entity.id}/${variant.id} has an unsupported clue, icon, or image path`);

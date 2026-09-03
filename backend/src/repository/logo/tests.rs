@@ -92,13 +92,15 @@ async fn logo_game_progresses_to_text_clue_and_completes() {
         .await
         .unwrap();
     assert_eq!(history_before.guesses.len(), 5);
-    assert_eq!(history_before.progress.clues.len(), 1);
-    assert!(
-        history_before
-            .progress
-            .image_url
-            .starts_with("/logo-visual/")
+    assert_eq!(
+        history_before.progress.clues.len(),
+        catalog
+            .entry(&data.challenge.answer_model_id)
+            .unwrap()
+            .clues
+            .len()
     );
+    assert!(history_before.progress.image_url.starts_with('/'));
     let solved = process_guess(
         &pool,
         &catalog,
@@ -117,7 +119,7 @@ async fn logo_game_progresses_to_text_clue_and_completes() {
     assert_eq!(solved.progress.image_revision, 5);
     assert!(solved.progress.attribution.is_none());
     assert_eq!(solved.completion_count, 1);
-    assert!(solved.progress.image_url.starts_with("/logo-visual/"));
+    assert!(solved.progress.image_url.starts_with('/'));
 }
 
 #[tokio::test]
