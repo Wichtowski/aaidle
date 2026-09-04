@@ -1,6 +1,6 @@
 use axum::{
     Json,
-    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Extension, Path, Query, State, rejection::JsonRejection},
     http::HeaderMap,
 };
 use serde::Deserialize;
@@ -18,8 +18,8 @@ use crate::{
 };
 
 use super::{
-    authenticated_user, current_utc_date, format_next_midnight, is_model_id, parse_json_payload,
-    parse_uuid,
+    AnonymousPlayerId, authenticated_user, current_utc_date, format_next_midnight, is_model_id,
+    parse_json_payload, parse_uuid,
 };
 
 pub(super) async fn game(
@@ -123,8 +123,8 @@ pub(super) async fn guess(
             "This account has been disabled.".to_owned(),
         ));
     }
+    super::assert_same_origin_or_bearer(&state, &headers)?;
     if user.is_some() {
-        super::assert_same_origin_or_bearer(&state, &headers)?;
         super::assert_csrf_or_bearer(&headers)?;
     }
     let player_id = match &user {
@@ -161,6 +161,47 @@ pub(super) async fn guess(
         player_stats: outcome.player_stats,
         clues: outcome.clues,
     }))
+}
+
+pub(super) async fn hints_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    Path(challenge_id): Path<String>,
+) -> AppResult<Json<EmojiDifficultyHintsResponse>> {
+    hints(
+        State(state),
+        Path(challenge_id),
+        Query(EmojiHintsQuery { player_id }),
+    )
+    .await
+}
+
+pub(super) async fn guess_history_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    Path(challenge_id): Path<String>,
+) -> AppResult<Json<EmojiDifficultyGuessHistoryResponse>> {
+    guess_history(
+        State(state),
+        Path(challenge_id),
+        Query(EmojiHintsQuery { player_id }),
+    )
+    .await
+}
+
+pub(super) async fn guess_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    peer: ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    path: Path<String>,
+    payload: Result<Json<EmojiDifficultyGuessRequest>, JsonRejection>,
+) -> AppResult<Json<EmojiDifficultyGuessResponse>> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    guess(State(state), peer, headers, path, payload).await
 }
 
 fn emoji_entity_response(

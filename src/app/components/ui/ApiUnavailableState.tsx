@@ -1,4 +1,5 @@
 import { FaTriangleExclamation } from "react-icons/fa6";
+import { Button } from "./Button";
 
 export function ApiUnavailableState({ onRetry }: { onRetry: () => void }) {
   return (
@@ -8,9 +9,9 @@ export function ApiUnavailableState({ onRetry }: { onRetry: () => void }) {
         <p className="eyebrow">Game unavailable</p>
         <h2>We’re having trouble loading this game.</h2>
         <p>The game is temporarily unavailable. Please try again in a moment.</p>
-        <button className="button button--primary" onClick={onRetry} type="button">
+        <Button variant="primary" color="black" onClick={onRetry} type="button">
           Try again
-        </button>
+        </Button>
       </div>
     </section>
   );

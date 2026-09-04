@@ -1,0 +1,167 @@
+[
+  {
+    "answerId": "openai",
+    "minPool": 0,
+    "visualType": "logo",
+    "assetName": "OpenAI",
+    "assetUrl": "/common/company-logo-1.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 164, "y": 174 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "Its launch emphasized natural, real-time interaction across several modalities."
+      }
+    ]
+  },
+  {
+    "answerId": "anthropic",
+    "minPool": 0,
+    "visualType": "logo",
+    "assetName": "Anthropic",
+    "assetUrl": "/common/company-logo-2.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 164, "y": 174 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "Its launch emphasized natural, real-time interaction across several modalities."
+      }
+    ]
+  },
+  {
+    "answerId": "bert-base-uncased",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "BERT",
+    "assetUrl": "/logo-visual/muppet.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 338, "y": 184 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "This encoder learns from context arriving from both directions."
+      }
+    ]
+  },
+  {
+    "answerId": "yolov8",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "YOLOv8",
+    "assetUrl": "/logo-visual/lytics.png",
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
+    "clues": [
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "general",
+        "text": "This model family has had many versions and generations released over the years, making it one of the easiest object detection families to recognize."
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "Its model family predicts object locations and classes in a single detection pipeline."
+      }
+
+    ]
+  },
+  {
+    "answerId": "alexnet",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "AlexNet",
+    "assetUrl": "/logo-visual/model_architecture_2.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 154, "y": 338 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "general",
+        "text": "A landmark 2012 image-classification result helped renew interest in deep convolutional networks."
+      },
+      {
+        "afterIncorrectGuesses": 2,
+        "kind": "image",
+        "assetUrl": "/logo-visual/alex/model_architecture_2_timeline.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/logo-visual/alex/alex.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/logo-visual/alex/net.png"
+      }
+    ]
+  },
+  {
+    "answerId": "resnet-50",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "ResNet-50",
+    "assetUrl": "/logo-visual/model-architecture-1.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 370, "y": 150 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "Shortcut connections let information bypass groups of learned layers."
+      }
+    ]
+  },
+  {
+    "answerId": "svm",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "Support Vector Machine",
+    "assetUrl": "/logo-visual/support-vector-machine.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 330, "y": 340 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "general",
+        "text": "The decision boundary is chosen to maximize its margin from the nearest training points."
+      }
+    ]
+  },
+  {
+    "answerId": "sobel-operator",
+    "minPool": 0,
+    "visualType": "technology",
+    "assetName": "Sobel Operator",
+    "assetUrl": "/common/edge/output.png",
+    "revealProfile": "progressive-zoom",
+    "focalPoint": { "x": 178, "y": 332 },
+    "clues": [
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "general",
+        "text": "This local image operator estimates horizontal and vertical intensity gradients with paired kernels."
+      },
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "image",
+        "assetUrl": "/common/edge/input.png"
+      },
+      {
+        "afterIncorrectGuesses": 2,
+        "kind": "image",
+        "assetUrl": "/common/edge/output.png"
+      },
+      {
+        "afterIncorrectGuesses": 3,
+        "kind": "image",
+        "assetUrl": "/common/edge/woman.png"
+      }
+    ]
+  }
+]

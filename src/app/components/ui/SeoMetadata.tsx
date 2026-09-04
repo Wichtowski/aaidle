@@ -22,6 +22,12 @@ const routeMetadata = [
     title: "Timeline | aAIdle Daily AI Model Guessing Game",
     description: "Arrange AI models in release order in the Timeline daily guessing game.",
   },
+  {
+    matches: (pathname: string) => pathname === "/logo",
+    title: "Logo | aAIdle Daily AI Model Guessing Game",
+    description:
+      "Identify today’s AI model or technology from a progressively revealed image and educational clues.",
+  },
 ];
 
 const privateRoutePatterns = ["/login", "/register", "/reset-password", "/delete-account", "/report-issue", "/account-disabled", "/profile", "/admin"];

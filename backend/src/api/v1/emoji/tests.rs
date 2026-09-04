@@ -50,6 +50,15 @@ async fn authenticated_headers(state: &AppState, disabled: bool) -> (String, Hea
     (user_id, headers)
 }
 
+fn anonymous_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        header::ORIGIN,
+        HeaderValue::from_static("http://localhost:3000"),
+    );
+    headers
+}
+
 #[tokio::test]
 async fn emoji_game_and_lookup_handlers_validate_route_parameters() {
     let state = super::super::test_support::state().await;
@@ -178,7 +187,7 @@ async fn emoji_game_guess_hints_and_history_succeed_with_seeded_data() {
     let Json(outcome) = guess(
         State(state.clone()),
         ConnectInfo("127.0.0.1:1234".parse().unwrap()),
-        HeaderMap::new(),
+        anonymous_headers(),
         Path(challenge_id.to_string()),
         Ok(Json(EmojiDifficultyGuessRequest {
             player_id,

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { apiClient } from "@lib/api/client";
 import { Toast } from "../ui/Toast";
+import { Button } from "../ui/Button";
 
 export function ActivationPrompt({ email }: { email: string }) {
   const [busy, setBusy] = useState(false);
@@ -45,14 +46,15 @@ export function ActivationPrompt({ email }: { email: string }) {
         <p>To use all account features, activate the email address for {email}.</p>
       </div>
       <div className="account-activation__actions">
-        <button
-          className="button button--primary"
+        <Button
+          variant="primary"
+          color="black"
           disabled={busy}
           onClick={sendActivationEmail}
           type="button"
         >
           {busy ? "Sending…" : "Send activation email"}
-        </button>
+        </Button>
         {notice && (
           <p aria-live="polite" className="account-activation__notice">
             {notice}

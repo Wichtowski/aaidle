@@ -1,6 +1,6 @@
 use axum::{
     Json,
-    extract::{Query, State, rejection::JsonRejection},
+    extract::{Extension, Query, State, rejection::JsonRejection},
     http::{HeaderMap, StatusCode},
     response::{IntoResponse, Response},
 };
@@ -14,8 +14,8 @@ use crate::{
 };
 
 use super::{
-    assert_csrf_or_bearer, assert_same_origin_or_bearer, authenticated_user, now_millis,
-    parse_json_payload,
+    AnonymousPlayerId, assert_csrf_or_bearer, assert_same_origin_or_bearer, authenticated_user,
+    now_millis, parse_json_payload,
 };
 
 const PROGRESS_WRITES_PER_MINUTE: i64 = 60;
@@ -96,6 +96,19 @@ pub(super) async fn put(
         }),
     )
         .into_response())
+}
+
+pub(super) async fn put_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    payload: Result<Json<ProgressSyncRequest>, JsonRejection>,
+) -> AppResult<Response> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    put(State(state), headers, payload).await
 }
 
 pub(super) async fn preferences(

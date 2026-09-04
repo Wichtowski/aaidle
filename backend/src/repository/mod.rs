@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 pub mod emoji;
+pub mod logo;
 pub mod timeline;
 
 use sqlx::{FromRow, SqliteConnection, SqlitePool};
@@ -198,6 +199,7 @@ pub struct ClassicGameData {
 enum PlayerEventTable {
     Classic,
     VisualClues,
+    Logo,
 }
 
 impl PlayerEventTable {
@@ -208,6 +210,9 @@ impl PlayerEventTable {
             }
             Self::VisualClues => {
                 "SELECT COUNT(*) FROM visual_clue_guess_events WHERE challenge_id = ? AND player_id = ?"
+            }
+            Self::Logo => {
+                "SELECT COUNT(*) FROM logo_guess_events WHERE challenge_id = ? AND player_id = ?"
             }
         }
     }
@@ -252,7 +257,7 @@ pub async fn list_public_models(
     Ok((models, next_cursor))
 }
 
-async fn public_models_by_ids(
+pub(super) async fn public_models_by_ids(
     pool: &SqlitePool,
     model_ids: &[String],
 ) -> AppResult<Vec<PublicModel>> {
@@ -857,6 +862,11 @@ async fn rebuild_player_stats(
         PlayerEventTable::VisualClues => {
             "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
              FROM visual_clue_guess_events g JOIN visual_clue_challenges d ON d.id = g.challenge_id \
+             WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
+        }
+        PlayerEventTable::Logo => {
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+             FROM logo_guess_events g JOIN logo_challenges d ON d.id = g.challenge_id \
              WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
         }
     };

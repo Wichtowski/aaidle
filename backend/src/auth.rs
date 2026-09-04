@@ -16,6 +16,7 @@ use crate::{
 const PASSWORD_KEY_LENGTH: usize = 64;
 const PRODUCTION_RESERVED_EMAIL: &str = "admin@aaidle.com";
 const SESSION_LIFETIME_MILLIS: i64 = 30 * 24 * 60 * 60 * 1_000;
+pub const ANONYMOUS_PLAYER_LIFETIME_SECONDS: i64 = 365 * 24 * 60 * 60;
 pub const API_ACCESS_TOKEN_LIFETIME_SECONDS: i64 = 15 * 60;
 const EMAIL_VERIFICATION_LIFETIME_MILLIS: i64 = 30 * 60 * 1_000;
 const PASSWORD_RESET_LIFETIME_MILLIS: i64 = 15 * 60 * 1_000;
@@ -259,6 +260,53 @@ pub fn random_token() -> String {
 
 pub fn token_hash(token: &str) -> String {
     URL_SAFE_NO_PAD.encode(Sha256::digest(token.as_bytes()))
+}
+
+pub fn create_anonymous_player_token(
+    auth_secret: &str,
+    player_id: Uuid,
+    now_millis: i64,
+) -> AppResult<String> {
+    let issued_at = now_millis.div_euclid(1_000);
+    let payload = format!("{player_id}.{issued_at}");
+    let signature = anonymous_player_signature(auth_secret, &payload)?;
+    Ok(format!("{payload}.{signature}"))
+}
+
+pub fn verify_anonymous_player_token(
+    auth_secret: &str,
+    token: &str,
+    now_millis: i64,
+) -> AppResult<Option<Uuid>> {
+    let mut parts = token.split('.');
+    let (Some(player_id), Some(issued_at), Some(signature), None) =
+        (parts.next(), parts.next(), parts.next(), parts.next())
+    else {
+        return Ok(None);
+    };
+    let Ok(player_id) = Uuid::parse_str(player_id) else {
+        return Ok(None);
+    };
+    let Ok(issued_at) = issued_at.parse::<i64>() else {
+        return Ok(None);
+    };
+    let now = now_millis.div_euclid(1_000);
+    if issued_at > now || now.saturating_sub(issued_at) > ANONYMOUS_PLAYER_LIFETIME_SECONDS {
+        return Ok(None);
+    }
+    let payload = format!("{player_id}.{issued_at}");
+    let expected = anonymous_player_signature(auth_secret, &payload)?;
+    if !constant_time_eq(signature.as_bytes(), expected.as_bytes()) {
+        return Ok(None);
+    }
+    Ok(Some(player_id))
+}
+
+fn anonymous_player_signature(auth_secret: &str, payload: &str) -> AppResult<String> {
+    let mut mac = HmacSha256::new_from_slice(auth_secret.as_bytes())
+        .map_err(|_| AppError::config("AUTH_SECRET is invalid"))?;
+    mac.update(format!("aaidle-anonymous-player-v1:{payload}").as_bytes());
+    Ok(URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes()))
 }
 
 pub fn hash_password(password: &str) -> AppResult<String> {

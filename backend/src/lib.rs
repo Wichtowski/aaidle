@@ -9,6 +9,7 @@ pub mod dto;
 pub mod email;
 pub mod error;
 pub mod issues;
+pub mod logo_images;
 pub mod progress;
 pub mod repository;
 pub mod state;

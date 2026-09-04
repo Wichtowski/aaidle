@@ -4,6 +4,7 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { apiClient, type ClassicGamePayload } from "@lib/api/client";
 import { GuessBoard } from "./board/GuessBoard";
 import { SiteNavbar } from "../../ui/SiteNavbar";
+import { Button } from "../../ui/Button";
 import { PageEyebrow } from "../../ui/PageEyebrow";
 import { ClassicHTP } from "./ClassicHTP";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
@@ -551,9 +552,9 @@ export function ClassicGame({
       )}
       {game?.status === "solved" && (
         <div className="game-completion-action">
-          <button className="button" onClick={() => setShowCompletion(true)} type="button">
+          <Button onClick={() => setShowCompletion(true)} type="button">
             Show winning guess
-          </button>
+          </Button>
         </div>
       )}
 

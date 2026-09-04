@@ -32,7 +32,7 @@ import {
 } from "@lib/domain/games/timeline/timeline-types";
 
 const historyPageSize = 3;
-type StatsGame = "classic" | "emoji" | "timeline";
+type StatsGame = "classic" | "emoji" | "logo" | "timeline";
 type ProfileDifficulty = Difficulty | TimelineDifficulty;
 const ritualHints = [
   "Complete focused Challenge boards to see whether the ledger starts watching back.",
@@ -294,7 +294,7 @@ export function ProfilePage() {
         </details>
       )}
       <div className="profile-game-tabs" role="tablist" aria-label="Game statistics">
-        {(["classic", "emoji", "timeline"] as const).map((game) => (
+        {(["classic", "emoji", "logo", "timeline"] as const).map((game) => (
           <button
             aria-selected={statsGame === game}
             key={game}
@@ -308,7 +308,13 @@ export function ProfilePage() {
             role="tab"
             type="button"
           >
-            {game === "classic" ? "Classic" : game === "emoji" ? "Emoji" : "Timeline"}
+            {game === "classic"
+              ? "Classic"
+              : game === "emoji"
+                ? "Emoji"
+                : game === "logo"
+                  ? "Logo"
+                  : "Timeline"}
           </button>
         ))}
       </div>
@@ -334,7 +340,11 @@ export function ProfilePage() {
                   {classicCategoryDetails[item].label}
                 </button>
               ))
-          : (statsGame === "emoji" ? difficulties : timelineDifficulties)
+          : (statsGame === "emoji"
+                ? difficulties
+                : statsGame === "logo"
+                  ? (["normal"] as const)
+                  : timelineDifficulties)
               .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
               .map((item) => (
                 <button

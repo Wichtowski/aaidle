@@ -36,6 +36,15 @@ async fn authenticated_headers(state: &AppState, disabled: bool) -> (String, Hea
     (user_id, headers)
 }
 
+fn anonymous_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        header::ORIGIN,
+        HeaderValue::from_static("http://localhost:3000"),
+    );
+    headers
+}
+
 async fn insert_challenge(
     state: &AppState,
     date: &str,
@@ -286,7 +295,7 @@ async fn normal_game_attempt_and_leaderboard_handlers_return_seeded_state() {
     let Json(attempt_response) = attempt(
         State(state.clone()),
         ConnectInfo("127.0.0.1:1234".parse().unwrap()),
-        HeaderMap::new(),
+        anonymous_headers(),
         Path(challenge.id.to_string()),
         Ok(Json(TimelineAttemptRequest {
             player_id,
@@ -757,7 +766,7 @@ async fn leaderboard_handlers_cover_missing_invalid_and_anonymous_results() {
     assert!(matches!(
         leaderboard(
             State(state.clone()),
-            HeaderMap::new(),
+            anonymous_headers(),
             Path(Uuid::new_v4().to_string()),
         )
         .await,
@@ -842,7 +851,7 @@ async fn timeline_database_errors_propagate_across_handler_queries() {
         attempt(
             State(state),
             ConnectInfo("127.0.0.10:1234".parse().unwrap()),
-            HeaderMap::new(),
+            anonymous_headers(),
             Path(Uuid::new_v4().to_string()),
             Ok(Json(TimelineAttemptRequest {
                 player_id,

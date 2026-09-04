@@ -20,6 +20,7 @@ Browser (Vite + React)
 ```
 
 Production serves the static `dist/` assets through the platform Caddy instance. Caddy serves the SPA fallback and proxies `/api/*` to the private Rust container. The API never serves frontend assets.
+Logo source images live in `public/logo-visual/` and shared `public/common/` and are published by the frontend alongside other static images. Seed JSON remains embedded only in the backend. Logo and Emoji may reference the same public source image. Logo answers are independent catalog IDs rather than Classic model IDs. The API derives each player’s authorized reveal revision from persisted guesses, downloads the catalog's `assetUrl` from `APP_ORIGIN`, and renders the configured crop or Gaussian blur. Zoom profiles use a focal point; Gaussian profiles use start and step strengths on the full frame. Downloaded originals expire after 24 hours; changing the active challenge or restarting the API clears originals and rendered variants. Public source images are directly accessible; the Logo UI uses only the API's player-authorized transformed image URLs.
 
 ## Repository map
 
@@ -81,6 +82,7 @@ The public contract is documented in [API v1](backend/api-v1.md). Major route gr
 
 - `/api/v1/games/classic/*` — Classic categories, guesses, stats, trajectory, and Hardcore access.
 - `/api/v1/games/emoji/*` — Emoji challenges, hints, and guesses.
+- `/api/v1/games/logo/*` — Logo challenge, progressive reveal state, and guesses.
 - `/api/v1/games/timeline/*` — Timeline challenges and progress.
 - `/api/v1/models` — Paginated public model discovery.
 - `/api/v1/auth/*` — Password, OAuth, verification, reset, sessions, and progress sync.

@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import { useState, type SubmitEvent } from "react";
 import { ApiError, apiClient } from "@lib/api/client";
 
@@ -134,26 +135,28 @@ export function IssueReportForm() {
               Your request for more daily reports was sent to the administrators.
             </p>
           ) : (
-            <button
-              className="button"
+            <Button
+              variant="outline"
               data-testid="issue-report-request-limit"
               disabled={requestingIncrease}
               onClick={requestIncrease}
               type="button"
             >
               {requestingIncrease ? "Sending request…" : "Request more reports"}
-            </button>
+            </Button>
           )}
         </div>
       )}
-      <button
-        className="button button--primary"
+      <Button
+        variant="primary"
+        color="black"
+        fullWidth
         data-testid="issue-report-submit"
         disabled={submitting}
         type="submit"
       >
         {submitting ? "Sending report…" : "Send report"}
-      </button>
+      </Button>
     </form>
   );
 }

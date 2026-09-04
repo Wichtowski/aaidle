@@ -1,6 +1,49 @@
-import { Link } from "react-router-dom";
+import { Button } from "@components/ui/Button";
 import { FaArrowRight } from "react-icons/fa6";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
+
+type GameModeCard = {
+  title: string;
+  description: string;
+  path: string;
+  status?: "Available now" | "new game" | "new speedrun mode" | "in progress";
+  testId?: string;
+};
+
+const gameModes: GameModeCard[] = [
+  {
+    title: "Classic",
+    description: "Use model metadata and comparison clues to find today’s answer.",
+    path: "/classic",
+  },
+  {
+    title: "Emoji",
+    description: "Recognize AI systems and algorithms from visual associations.",
+    path: "/emoji",
+    testId: "home-play-emoji",
+  },
+  {
+    title: "Timeline",
+    description: "Arrange a limited set of AI models in release order.",
+    path: "/timeline",
+    status: "new speedrun mode",
+    testId: "home-play-timeline",
+  },
+  {
+    title: "Logo",
+    description: "Identify an AI model or technology as its image progressively zooms out.",
+    path: "/logo",
+    status: "new game",
+    testId: "home-play-logo",
+  },
+  {
+    title: "Connections",
+    description: "Find the hidden connections between different AI models and technologies.",
+    path: "/connections",
+    status: "in progress",
+    testId: "home-play-connections",
+  },
+];
 
 export function HomePage() {
   return (
@@ -15,14 +58,9 @@ export function HomePage() {
           and more, one guess at a time.
         </p>
         <div className="hero__actions">
-          <Link
-            className="button button--primary"
-            data-testid="home-play-classic"
-            to="/classic"
-            prefetch="intent"
-          >
+          <Button variant="3d" data-testid="home-play-classic" to="/classic" prefetch="intent">
             <span>Play Classic</span> <FaArrowRight aria-hidden="true" />
-          </Link>
+          </Button>
         </div>
       </section>
       <section aria-labelledby="games-title" className="game-modes">
@@ -31,48 +69,41 @@ export function HomePage() {
           <h2 id="games-title">Choose your challenge</h2>
         </div>
         <div className="game-modes__grid">
-          <Link className="game-mode-card" to="/classic" prefetch="intent">
-            <span>Available now</span>
-            <h3>Classic</h3>
-            <p>Use model metadata and comparison clues to find today’s answer.</p>
-            <strong>
-              Play Classic <FaArrowRight aria-hidden="true" />
-            </strong>
-          </Link>
-          <Link
-            className="game-mode-card"
-            data-testid="home-play-emoji"
-            to="/emoji"
-            prefetch="intent"
-          >
-            <span>Available now</span>
-            <h3>Emoji</h3>
-            <p>Recognize AI systems and algorithms from visual associations.</p>
-            <strong>
-              Play Emoji <FaArrowRight aria-hidden="true" />
-            </strong>
-          </Link>
-          <Link
-            className="game-mode-card"
-            data-testid="home-play-timeline"
-            to="/timeline"
-            prefetch="intent"
-          >
-            <span>Available now</span>
-            <h3>Timeline</h3>
-            <p>Arrange a limited set of AI models in release order.</p>
-            <strong>
-              Play Timeline <FaArrowRight aria-hidden="true" />
-            </strong>
-          </Link>
-          <article className="game-mode-card game-mode-card--in-progress">
-            <span>
-              <span aria-hidden>▧</span> In progress
-            </span>
-            <h3>Logo</h3>
-            <p>Identify a model from a distorted logo.</p>
-            <strong>Coming soon</strong>
-          </article>
+          {gameModes.map(({ description, path, status, testId, title }) => {
+            if (status === "in progress") {
+              return (
+                <div
+                  aria-disabled="true"
+                  className="game-mode-card game-mode-card--in-progress"
+                  data-testid={testId}
+                  key={path}
+                >
+                  <span>In progress</span>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                  <strong>Ongoing development</strong>
+                </div>
+              );
+            }
+
+            return (
+              <Button
+                variant="outline"
+                className="game-mode-card"
+                data-testid={testId}
+                key={path}
+                prefetch="intent"
+                to={path}
+              >
+                {status && <span>{status}</span>}
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <strong>
+                  Play {title} <FaArrowRight aria-hidden="true" />
+                </strong>
+              </Button>
+            );
+          })}
         </div>
       </section>
     </AppPageLayout>

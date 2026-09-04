@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { TimelineDifficulty } from "@lib/domain/games/timeline/timeline-types";
 import { timelineDifficultyLabel } from "@lib/domain/games/timeline/timeline-types";
+import { Button } from "../../ui/Button";
 
 export function TimelineShareButton({
   date,
@@ -32,8 +33,8 @@ export function TimelineShareButton({
   };
 
   return (
-    <button className="button" onClick={() => void share()} type="button">
+    <Button onClick={() => void share()} type="button">
       {copied ? "Copied result" : "Share result"}
-    </button>
+    </Button>
   );
 }

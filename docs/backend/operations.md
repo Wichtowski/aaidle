@@ -104,3 +104,11 @@ To restore, stop the API, replace the database with the verified backup, remove 
 The service has no application cache, queues, or background workers.
 Optional development tools include `heaptrack`, `valgrind --tool=massif`, `cargo flamegraph`, and `perf`.
 Use them outside the container when investigating a real memory or CPU issue.
+
+### Logo image sources
+
+Publish `public/logo-visual/` and shared `public/common/` with the frontend before deploying catalog changes. The backend downloads seed `assetUrl` paths from `APP_ORIGIN`; it no longer embeds Logo image files. Ensure the API container can reach that origin (including any edge access controls). Local development needs Vite running at `APP_ORIGIN` alongside the Rust API.
+
+Downloaded originals are cached in API memory for 24 hours and reused for all reveal variants. Expiration discards the original and its rendered images; a challenge change or API restart clears all Logo image caches. Browser crops expire at the next UTC midnight. Use a new image filename and update the catalog when replacing an original. This changes the server cache key; already-cached browser variants can still remain until the next UTC midnight.
+
+An unavailable source, redirect, timeout, download above 10 MiB, or invalid/oversized decoded image yields a retryable 503 from the Logo image endpoint. Source URLs are not included in error messages. Verify the static file is published and reachable from the API container; restarting cannot repair a missing source file.
