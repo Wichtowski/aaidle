@@ -23,6 +23,7 @@ pub struct LogoCatalogEntry {
     pub clues: Vec<LogoTextClue>,
     #[serde(default)]
     pub source_url: String,
+    #[serde(default)]
     pub license: String,
     #[serde(default)]
     pub attribution: String,
@@ -217,7 +218,6 @@ pub fn validate_seed(entries: &[LogoCatalogEntry]) -> AppResult<()> {
             )));
         }
         if (!entry.source_url.is_empty() && !entry.source_url.starts_with("https://"))
-            || entry.license.trim().is_empty()
             || entry.asset_name.trim().is_empty()
             || !valid_asset_url(&entry.asset_path)
         {

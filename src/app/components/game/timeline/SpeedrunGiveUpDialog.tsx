@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Button } from "../../ui/Button";
 
 export function SpeedrunGiveUpDialog({
   onClose,
@@ -46,23 +47,18 @@ export function SpeedrunGiveUpDialog({
           This run will be marked unfinished and cannot be resumed or submitted.
         </p>
         <div className="danger-modal__actions">
-          <button
-            className="button"
-            disabled={busy}
-            onClick={onClose}
-            ref={cancelRef}
-            type="button"
-          >
+          <Button disabled={busy} onClick={onClose} ref={cancelRef} type="button">
             Keep playing
-          </button>
-          <button
-            className="button button--danger-solid"
+          </Button>
+          <Button
+            variant="primary"
+            color="danger"
             disabled={busy}
             onClick={() => void confirm()}
             type="button"
           >
             {busy ? "Giving up…" : "Give up Speedrun"}
-          </button>
+          </Button>
         </div>
       </section>
     </div>

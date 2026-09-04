@@ -7,6 +7,7 @@ import { useAuth } from "../../auth/useAuth";
 import { LogoClues } from "./LogoClues";
 import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
+import { Button } from "../../ui/Button";
 import { ApiUnavailableState } from "../../ui/ApiUnavailableState";
 import { GameLoadingState } from "../../ui/GameLoadingState";
 import { Toast } from "../../ui/Toast";
@@ -194,9 +195,9 @@ export function LogoGame() {
 
           {solved && !showCompletion && (
             <div className="game-completion-action">
-              <button className="button" onClick={() => setShowCompletion(true)} type="button">
+              <Button onClick={() => setShowCompletion(true)} type="button">
                 Show winning guess
-              </button>
+              </Button>
             </div>
           )}
         </section>

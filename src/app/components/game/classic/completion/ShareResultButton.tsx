@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaCheck, FaCopy } from "react-icons/fa6";
+import { Button } from "../../../ui/Button";
 import type { ClassicComparison } from "@lib/domain/guesses/comparison-types";
 import type { Difficulty } from "@lib/domain/difficulty";
 import { classicCategoryDetails, type ClassicCategory } from "@lib/domain/models/model-types";
@@ -69,9 +70,9 @@ export function ShareResultButton({
 
   const Icon = copied ? FaCheck : FaCopy;
   return (
-    <button className="button completed__copy" onClick={copy}>
+    <Button className="completed__copy" onClick={copy}>
       <Icon aria-hidden focusable="false" />
       {copied ? "Copied!" : "Copy result"}
-    </button>
+    </Button>
   );
 }

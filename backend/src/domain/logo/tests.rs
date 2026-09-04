@@ -10,6 +10,12 @@ fn bundled_catalog_is_valid_and_has_reachable_clues() {
 }
 
 #[test]
+fn license_is_optional_logo_metadata() {
+    let catalog = LogoCatalog::load().expect("catalog without license metadata is valid");
+    assert!(catalog.entries().all(|entry| entry.license.is_empty()));
+}
+
+#[test]
 fn reveal_revision_is_monotonic_and_bounded() {
     assert_eq!(reveal_revision(0), 0);
     assert_eq!(reveal_revision(3), 3);

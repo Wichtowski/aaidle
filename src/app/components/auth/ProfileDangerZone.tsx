@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@components/ui/Button";
+
 import { useEffect, useState } from "react";
 import { FaTriangleExclamation, FaXmark } from "react-icons/fa6";
 import { apiClient } from "@lib/api/client";
@@ -63,13 +65,14 @@ export function ProfileDangerZone() {
             Your permanent Inner Circle access remains available.
           </p>
         </div>
-        <button
-          className="button button--danger"
+        <Button
+          variant="outline"
+          color="danger"
           onClick={() => setConfirmation("local-data")}
           type="button"
         >
           Clear local data
-        </button>
+        </Button>
       </div>
       {!loading && user && (
         <div className="danger-zone__item">
@@ -80,13 +83,14 @@ export function ProfileDangerZone() {
               five-minute email link.
             </p>
           </div>
-          <button
-            className="button button--danger"
+          <Button
+            variant="outline"
+            color="danger"
             onClick={() => setConfirmation("account")}
             type="button"
           >
             Delete account
-          </button>
+          </Button>
         </div>
       )}
 
@@ -120,9 +124,9 @@ export function ProfileDangerZone() {
                   deleted until you open it.
                 </p>
                 <div className="danger-modal__actions">
-                  <button className="button" onClick={close} type="button">
+                  <Button variant="outline" onClick={close} type="button">
                     Done
-                  </button>
+                  </Button>
                 </div>
               </>
             ) : confirmation === "local-data" ? (
@@ -135,16 +139,12 @@ export function ProfileDangerZone() {
                   or account progress.
                 </p>
                 <div className="danger-modal__actions">
-                  <button className="button" onClick={close} type="button">
+                  <Button variant="outline" onClick={close} type="button">
                     Cancel
-                  </button>
-                  <button
-                    className="button button--danger-solid"
-                    onClick={clearLocalData}
-                    type="button"
-                  >
+                  </Button>
+                  <Button variant="primary" color="danger" onClick={clearLocalData} type="button">
                     Yes, clear everything
-                  </button>
+                  </Button>
                 </div>
               </>
             ) : (
@@ -161,17 +161,18 @@ export function ProfileDangerZone() {
                   </p>
                 )}
                 <div className="danger-modal__actions">
-                  <button className="button" disabled={sending} onClick={close} type="button">
+                  <Button variant="outline" disabled={sending} onClick={close} type="button">
                     Cancel
-                  </button>
-                  <button
-                    className="button button--danger-solid"
+                  </Button>
+                  <Button
+                    variant="primary"
+                    color="danger"
                     disabled={sending}
                     onClick={requestAccountDeletion}
                     type="button"
                   >
                     {sending ? "Sending…" : "Yes, email deletion link"}
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

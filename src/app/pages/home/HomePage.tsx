@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Button } from "@components/ui/Button";
 import { FaArrowRight } from "react-icons/fa6";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 
@@ -7,7 +7,7 @@ type GameModeCard = {
   description: string;
   path: string;
   status?: "Available now" | "new game" | "new speedrun mode" | "in progress";
-    testId?: string;
+  testId?: string;
 };
 
 const gameModes: GameModeCard[] = [
@@ -58,14 +58,9 @@ export function HomePage() {
           and more, one guess at a time.
         </p>
         <div className="hero__actions">
-          <Link
-            className="button button--primary"
-            data-testid="home-play-classic"
-            to="/classic"
-            prefetch="intent"
-          >
+          <Button variant="3d" data-testid="home-play-classic" to="/classic" prefetch="intent">
             <span>Play Classic</span> <FaArrowRight aria-hidden="true" />
-          </Link>
+          </Button>
         </div>
       </section>
       <section aria-labelledby="games-title" className="game-modes">
@@ -92,7 +87,8 @@ export function HomePage() {
             }
 
             return (
-              <Link
+              <Button
+                variant="outline"
                 className="game-mode-card"
                 data-testid={testId}
                 key={path}
@@ -105,7 +101,7 @@ export function HomePage() {
                 <strong>
                   Play {title} <FaArrowRight aria-hidden="true" />
                 </strong>
-              </Link>
+              </Button>
             );
           })}
         </div>

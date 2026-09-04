@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Button } from "./Button";
 
 type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -22,9 +23,7 @@ export function InstallPrompt() {
   const { pathname } = useLocation();
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(wasInstallPromptDismissedRecently);
-  const [isMobile, setIsMobile] = useState(() =>
-    window.matchMedia("(max-width: 560px)").matches,
-  );
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 560px)").matches);
 
   useEffect(() => {
     if (window.matchMedia("(display-mode: standalone)").matches) return;
@@ -82,12 +81,12 @@ export function InstallPrompt() {
         <p>Install the daily game for quick access from your home screen.</p>
       </div>
       <div className="install-prompt__actions">
-        <button className="button button--primary" onClick={() => void install()} type="button">
+        <Button variant="primary" color="black" onClick={() => void install()} type="button">
           Install
-        </button>
-        <button aria-label="Dismiss install prompt" className="button" onClick={dismiss} type="button">
+        </Button>
+        <Button aria-label="Dismiss install prompt" onClick={dismiss} type="button">
           Not now
-        </button>
+        </Button>
       </div>
     </aside>
   );

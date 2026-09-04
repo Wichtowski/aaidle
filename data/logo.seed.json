@@ -13,9 +13,7 @@
         "kind": "general",
         "text": "Its launch emphasized natural, real-time interaction across several modalities."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "anthropic",
@@ -31,9 +29,7 @@
         "kind": "general",
         "text": "Its launch emphasized natural, real-time interaction across several modalities."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "bert-base-uncased",
@@ -103,9 +99,7 @@
         "kind": "image",
         "assetUrl": "/logo-visual/alex/net.png"
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "resnet-50",
@@ -121,9 +115,7 @@
         "kind": "general",
         "text": "Shortcut connections let information bypass groups of learned layers."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "svm",
@@ -139,9 +131,7 @@
         "kind": "general",
         "text": "The decision boundary is chosen to maximize its margin from the nearest training points."
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   },
   {
     "answerId": "sobel-operator",
@@ -172,8 +162,6 @@
         "kind": "image",
         "assetUrl": "/common/edge/woman.png"
       }
-    ],
-    "sourceUrl": "",
-    "license": "maintainer-supplied"
+    ]
   }
 ]

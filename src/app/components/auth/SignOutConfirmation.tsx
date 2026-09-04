@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Button } from "../ui/Button";
 
 export function SignOutConfirmation({
   onClose,
@@ -67,23 +68,18 @@ export function SignOutConfirmation({
           </p>
         )}
         <div className="danger-modal__actions">
-          <button
-            className="button"
-            disabled={signingOut}
-            onClick={onClose}
-            ref={cancelRef}
-            type="button"
-          >
+          <Button disabled={signingOut} onClick={onClose} ref={cancelRef} type="button">
             Cancel
-          </button>
-          <button
-            className="button button--accent"
+          </Button>
+          <Button
+            variant="primary"
+            color="accent"
             disabled={signingOut}
             onClick={() => void confirm()}
             type="button"
           >
             {signingOut ? "Signing out…" : "Sign out"}
-          </button>
+          </Button>
         </div>
       </section>
     </div>

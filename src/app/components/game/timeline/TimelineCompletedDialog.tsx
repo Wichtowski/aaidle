@@ -3,7 +3,7 @@ import {
   timelineDifficultyLabel,
   timelineLeaderboardPath,
 } from "@lib/domain/games/timeline/timeline-types";
-import { Link } from "react-router-dom";
+import { Button } from "../../ui/Button";
 import { CompletionDialog } from "../common/completion/CompletionDialog";
 import { TimelineShareButton } from "./TimelineShareButton";
 
@@ -36,9 +36,9 @@ export function TimelineCompletedDialog({
             totalPositions={totalPositions}
           />
           {difficulty === "speedrun" && (
-            <Link className="button button--primary" to={timelineLeaderboardPath(date)}>
+            <Button variant="primary" color="black" to={timelineLeaderboardPath(date)}>
               View leaderboard
-            </Link>
+            </Button>
           )}
         </>
       }

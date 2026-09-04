@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { EmojiDifficulty } from "@lib/api/client";
+import { Button } from "../../ui/Button";
 
 export function EmojiShareButton({
   difficulty,
@@ -22,8 +23,8 @@ export function EmojiShareButton({
   };
 
   return (
-    <button className="button" onClick={() => void share()} type="button">
+    <Button onClick={() => void share()} type="button">
       {copied ? "Copied result" : "Share result"}
-    </button>
+    </Button>
   );
 }

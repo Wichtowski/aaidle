@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "./Button";
 
 const consentCookie = "aaidle_cookie_consent";
 
@@ -60,16 +61,12 @@ export function CookieConsent() {
           Cookies &amp; Privacy page after making your choice.
         </p>
         <div className="cookie-consent__actions">
-          <button
-            data-testid="cookie-consent-essential"
-            className="button"
-            onClick={() => choose("essential")}
-          >
+          <Button data-testid="cookie-consent-essential" onClick={() => choose("essential")}>
             Essential only
-          </button>
-          <button className="button button--primary" onClick={() => choose("accepted")}>
+          </Button>
+          <Button variant="primary" color="black" onClick={() => choose("accepted")}>
             Accept all
-          </button>
+          </Button>
         </div>
       </div>
     </dialog>

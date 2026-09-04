@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaTriangleExclamation } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AppPageLayout } from "@app/layouts/AppPageLayout";
 import { PageEyebrow } from "@components/ui/PageEyebrow";
 import { apiClient } from "@lib/api/client";
+import { Button } from "@components/ui/Button";
 import { resetProgressAfterSignOut } from "@lib/storage/local-progress-store";
 
 export function DeleteAccountPage() {
@@ -92,18 +93,19 @@ export function DeleteAccountPage() {
           </p>
         )}
         <div className="danger-modal__actions">
-          <Link className="button" data-testid="delete-account-cancel" to="/profile">
+          <Button data-testid="delete-account-cancel" to="/profile">
             Cancel
-          </Link>
-          <button
-            className="button button--danger-solid"
+          </Button>
+          <Button
+            variant="primary"
+            color="danger"
             data-testid="delete-account-confirm"
             disabled={deleting || confirmation !== phrase || !maskedEmail}
             onClick={() => void deleteAccount()}
             type="button"
           >
             {deleting ? "Deleting…" : "Permanently delete account"}
-          </button>
+          </Button>
         </div>
       </section>
     </AppPageLayout>

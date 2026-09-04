@@ -410,7 +410,7 @@ a {
 }
 .hero {
   max-width: 780px;
-  padding: 6vh 0 0;
+  padding: 6vh 0 5vh;
 }
 .hero h1,
 .game-page h1,
@@ -896,10 +896,6 @@ a {
 .game-mode-card--in-progress:not(a) {
   cursor: default;
 }
-.game-mode-card--in-progress:hover {
-  box-shadow: none;
-  transform: none;
-}
 body.hell-mode .game-mode-card--in-progress {
   border-color: #69372f;
   background: #201014;
@@ -1072,11 +1068,6 @@ body.hell-mode .game-placeholder__status {
   display: flex;
   gap: 8px;
 }
-.autocomplete__input {
-  position: relative;
-  min-width: 0;
-  flex: 1;
-}
 .autocomplete__field input {
   min-width: 0;
 }
@@ -1113,14 +1104,6 @@ body.hell-mode .game-placeholder__status {
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 14px 30px #17202c20;
-}
-.game-guess-autocomplete {
-  position: relative;
-  z-index: 30;
-}
-.game-guess-autocomplete ul {
-  background-color: var(--panel);
-  opacity: 1;
 }
 .autocomplete button {
   border: 0;
@@ -1263,7 +1246,7 @@ body.hell-mode .game-placeholder__status {
 .privacy-page {
   max-width: 960px;
 }
-.profile-page > :not(.site-navbar):not(.danger-modal) {
+.profile-page > :not(.site-navbar) {
   max-width: 850px;
   margin-inline: auto;
 }
@@ -2283,13 +2266,6 @@ body.hell-mode .hell-mode-toggle__control::after {
 .issue-report__success a {
   color: inherit;
 }
-.issue-report__limit-request {
-  display: flex;
-  align-items: center;
-}
-.issue-report__limit-request .button {
-  padding: 9px 13px;
-}
 body.hell-mode .issue-report__form {
   border-color: #7f3028;
   background: #1a0d10;
@@ -2563,12 +2539,6 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 }
 .game-page {
   max-width: 1250px;
-  animation: game-page-enter 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-@keyframes game-page-enter {
-  from {
-    opacity: 0;
-  }
 }
 .game-page--hardcore {
   isolation: isolate;
@@ -4083,7 +4053,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
 .how-to-play-modal {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4890,57 +4860,6 @@ html {
 .emoji-result-key--incorrect {
   color: color-mix(in srgb, var(--accent) 84%, var(--ink));
 }
-.emoji__history li,
-.logo-history li {
-  animation: result-card-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: calc(var(--result-index, 0) * 70ms);
-}
-.emoji__history li.is-correct,
-.logo-history li.is-correct {
-  animation-name: result-card-correct;
-}
-.emoji__history li.is-incorrect,
-.logo-history li.is-incorrect {
-  animation-name: result-card-incorrect;
-}
-@keyframes result-card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes result-card-correct {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.96);
-  }
-  65% {
-    opacity: 1;
-    transform: translateY(-3px) scale(1.01);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes result-card-incorrect {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) translateX(-4px) scale(0.98);
-  }
-  55% {
-    opacity: 1;
-    transform: translateY(0) translateX(3px) scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) translateX(0) scale(1);
-  }
-}
 .completed--emoji {
   width: min(620px, 100%);
   min-height: 0;
@@ -5110,12 +5029,6 @@ body.hell-mode .completed--timeline {
 .timeline-game__status strong {
   color: var(--ink);
   font-size: 17px;
-}
-.timeline-game__speedrun-start,
-.timeline-game__speedrun-give-up {
-  margin-top: 0;
-  padding: 8px 12px;
-  font-size: 12px;
 }
 .timeline-board {
   display: grid;
@@ -5376,7 +5289,9 @@ body.hell-mode .completed--timeline {
   font-weight: 800;
   text-align: center;
 }
-.timeline-leaderboard__medal {
+.timeline-leaderboard__rank[data-podium] {
+  width: 100%;
+  text-align: center;
   font-size: 32px;
   line-height: 1;
 }
@@ -5513,30 +5428,8 @@ body.hell-mode .completed--timeline {
   cursor: grabbing;
   transform: translateY(-4px) scale(1.01);
 }
-.timeline-card--pointer-dragging {
-  position: fixed;
-  z-index: 20;
-  width: min(220px, calc(100vw - 32px));
-  animation: none;
-  border-color: var(--accent);
-  box-shadow: 0 12px 28px rgb(23 36 29 / 20%);
-  pointer-events: none;
-  transform: translate(-20px, -20px) rotate(1deg);
-  will-change: left, top;
-}
-.timeline-card--pointer-returning {
-  box-shadow: 0 6px 14px rgb(23 36 29 / 12%);
-  opacity: 0.92;
-}
-.timeline-card--pointer-snapping {
-  box-shadow: 0 4px 10px rgb(23 36 29 / 10%);
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
-}
 .timeline-card--drag-origin {
-  animation-play-state: paused;
+  animation: none;
   display: grid;
   border-color: var(--line);
   border-style: dashed;
@@ -5551,15 +5444,10 @@ body.hell-mode .completed--timeline {
   transform: none;
   transition: none;
 }
-.timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--swapping):not(
+.timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--dragging):not(
     .timeline-card--winning
   ) {
   animation: none;
-}
-.timeline-card--swapping {
-  animation: timeline-card-swap 480ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
-  pointer-events: none;
-  will-change: transform;
 }
 .timeline-card--landing {
   animation: timeline-card-land 560ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
@@ -5612,15 +5500,6 @@ body.hell-mode .completed--timeline {
   box-shadow: inset 0 4px 0 #c58b24;
   animation: timeline-result-incorrect 480ms both;
 }
-.timeline-card__result {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: auto;
-}
-.timeline-card__result .timeline-card__date {
-  margin-top: 0;
-}
 .timeline-card__feedback {
   display: flex;
   align-items: center;
@@ -5644,19 +5523,8 @@ body.hell-mode .completed--timeline {
   color: #e1ffe8;
   box-shadow: inset 0 4px 0 #63ad83;
 }
-:is(:root.hell-mode, body.hell-mode)
-  .timeline-card--correct
-  :is(.timeline-card__date-help, .timeline-card__feedback, time) {
-  color: #fff;
-}
-:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year {
-  border-color: #9d6224;
-  background: #482c18;
-  color: #ffe1a4;
-  box-shadow: inset 0 4px 0 #9d6224;
-}
-:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year .timeline-card__feedback {
-  color: #ffe1a4;
+:is(:root.hell-mode, body.hell-mode) .timeline-card--correct .timeline-card__feedback {
+  color: #e1ffe8;
 }
 :is(:root.hell-mode, body.hell-mode) .timeline-card--incorrect {
   border-color: #a94432;
@@ -5771,14 +5639,6 @@ body.hell-mode .completed--timeline {
   }
   100% {
     transform: translateY(0) scale(1);
-  }
-}
-@keyframes timeline-card-swap {
-  from {
-    transform: translate(var(--timeline-swap-x), var(--timeline-swap-y)) scale(1.01);
-  }
-  to {
-    transform: translate(0, 0) scale(1);
   }
 }
 @keyframes timeline-result-incorrect {
@@ -5929,302 +5789,6 @@ body.hell-mode .completed--timeline {
 .timeline-card--neighbour .timeline-card__feedback {
   color: #1d5f9f;
 }
-
-.logo-stage {
-  display: grid;
-  width: min(760px, 100%);
-  margin: 24px auto 0;
-  gap: 24px;
-}
-.logo-loading-stage {
-  width: min(760px, 100%);
-  margin: 24px auto 0;
-}
-.logo-clue {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-}
-.logo-clue-layout {
-  display: grid;
-  grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
-  align-items: center;
-  width: 100%;
-  gap: 16px;
-}
-.logo-clue-rail {
-  display: flex;
-  max-height: 512px;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 10px;
-}
-.logo-clue-rail__icon {
-  display: inline-grid;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 62%, var(--line));
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
-  color: var(--accent);
-  font-size: 14px;
-  cursor: pointer;
-  animation: logo-clue-appear 320ms ease-out both;
-}
-.logo-clue-rail__icon:hover,
-.logo-clue-rail__icon:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-.logo-clue-content {
-  animation: logo-clue-appear 220ms ease-out both;
-}
-.logo-clue-content img {
-  display: block;
-  max-width: 100%;
-  max-height: 55vh;
-  margin: 0 auto;
-  object-fit: contain;
-  border-radius: 12px;
-}
-@keyframes logo-clue-appear {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.logo-clue-rail__icon.is-viewed {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, var(--panel));
-  color: var(--accent);
-}
-.logo-clue__image-wrap {
-  position: relative;
-  width: min(512px, 100%);
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: var(--shadow);
-  aspect-ratio: 1;
-}
-.logo-clue__image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: center;
-}
-.logo-clue__image.is-solved {
-  object-fit: contain;
-  animation: logo-solved-reveal 1600ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.logo-clue__image.is-blur-profile {
-  object-fit: contain;
-}
-.logo-clue__image.is-blur-profile.is-solved {
-  animation-name: logo-solved-unblur;
-}
-@keyframes logo-solved-unblur {
-  from {
-    filter: blur(var(--logo-solve-start-blur, 0px));
-  }
-  to {
-    filter: blur(0);
-  }
-}
-@keyframes logo-solved-reveal {
-  from {
-    transform: scale(var(--logo-solve-start-zoom, 1));
-  }
-  to {
-    transform: scale(1);
-  }
-}
-.logo-clue__image-error {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  left: 12px;
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgb(255 255 255 / 92%);
-  color: #8a2d24;
-  font-size: 13px;
-}
-.logo-clue__progress {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-}
-.logo-unlocked-clues {
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface);
-}
-.logo-unlocked-clues h2,
-.logo-unlocked-clues p {
-  margin-top: 0;
-}
-.logo-unlocked-clues > p {
-  margin-bottom: 0;
-  color: var(--muted);
-}
-.logo-unlocked-clues ol {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  gap: 12px;
-  list-style: none;
-}
-.logo-unlocked-clues li {
-  padding-left: 14px;
-  border-left: 4px solid var(--accent);
-}
-.logo-unlocked-clues li span {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.logo-unlocked-clues li p {
-  margin: 4px 0 0;
-}
-.logo-search {
-  position: relative;
-}
-.logo-search > label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-weight: 800;
-}
-.logo-search__controls {
-  display: flex;
-  gap: 10px;
-}
-.logo-search__input {
-  position: relative;
-  min-width: 0;
-  flex: 1;
-}
-.logo-search__input input {
-  min-width: 0;
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--panel);
-  color: var(--ink);
-  font: inherit;
-}
-.logo-search__input ul {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 6px);
-  right: 0;
-  left: 0;
-  max-height: 280px;
-  margin: 0;
-  padding: 6px;
-  overflow-y: auto;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel);
-  box-shadow: var(--shadow);
-  list-style: none;
-}
-.logo-search__input li button {
-  display: flex;
-  width: 100%;
-  padding: 10px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  text-align: left;
-  justify-content: space-between;
-  cursor: pointer;
-}
-.logo-search__input li[aria-selected="true"] button,
-.logo-search__input li button:hover {
-  background: var(--surface-muted);
-}
-.logo-history {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  gap: 8px;
-  list-style: none;
-}
-.logo-history li {
-  display: grid;
-  align-items: center;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  grid-template-columns: 32px 1fr auto;
-}
-.logo-history li.is-correct {
-  border-color: color-mix(in srgb, var(--lime) 46%, var(--line));
-  background: color-mix(in srgb, var(--lime) 16%, var(--panel));
-  color: color-mix(in srgb, var(--lime) 78%, var(--ink));
-}
-.logo-history li.is-incorrect {
-  border-color: color-mix(in srgb, var(--accent) 46%, var(--line));
-  background: color-mix(in srgb, var(--accent) 12%, var(--panel));
-}
-.logo-history li.is-correct strong {
-  color: color-mix(in srgb, var(--lime) 78%, var(--ink));
-}
-.logo-history li.is-incorrect strong {
-  color: color-mix(in srgb, var(--accent) 84%, var(--ink));
-}
-.logo-complete {
-  padding: 22px;
-  border: 2px solid var(--success);
-  border-radius: 16px;
-  text-align: center;
-}
-.logo-complete h2,
-.logo-complete p {
-  margin: 4px 0;
-}
-@media (max-width: 560px) {
-  .logo-clue-layout {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .logo-clue-rail {
-    max-height: none;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    order: 2;
-    flex-wrap: wrap;
-  }
-  .logo-clue-layout > span {
-    display: none;
-  }
-  .logo-search__controls {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .logo-search__controls > .autocomplete__confirm {
-    width: 100%;
-    min-height: 46px;
-  }
-}
 :is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour {
   border-color: #a94432;
   background: #68221d;
@@ -6233,29 +5797,4 @@ body.hell-mode .completed--timeline {
 }
 :is(:root.hell-mode, body.hell-mode) .timeline-card--neighbour .timeline-card__feedback {
   color: #ffe0d8;
-}
-
-/* Keep every autocomplete option's hover treatment subtle and readable across themes. */
-.autocomplete button:hover:not(:disabled),
-.autocomplete button.is-active,
-.emoji__search li button:hover:not(:disabled),
-.emoji__search li[aria-selected="true"] button,
-.logo-search__input li button:hover:not(:disabled),
-.logo-search__input li[aria-selected="true"] button {
-  background: color-mix(in srgb, var(--ink) 8%, var(--panel));
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .game-page,
-  .emoji__history li,
-  .logo-history li,
-  .logo-clue__image,
-  .logo-clue__image.is-solved,
-  .logo-clue__image.is-blur-profile.is-solved,
-  .logo-clue-rail__icon,
-  .logo-clue-content {
-    animation: none;
-    transition: none;
-    transform: none;
-  }
 }

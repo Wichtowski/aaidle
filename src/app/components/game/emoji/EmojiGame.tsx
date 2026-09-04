@@ -3,6 +3,7 @@ import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import { type EmojiDifficulty, type VisualClue } from "@lib/api/client";
 import { utcDate } from "@lib/utils/dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
+import { Button } from "../../ui/Button";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
 import { GameIntro } from "../common/layout/GameLayout";
 import { GameGuessAutocomplete } from "../common";
@@ -214,9 +215,9 @@ export function EmojiGame({
           )}
           {solved && !showCompletion && (
             <div className="game-completion-action">
-              <button className="button" onClick={() => setShowCompletion(true)} type="button">
+              <Button onClick={() => setShowCompletion(true)} type="button">
                 Show winning guess
-              </button>
+              </Button>
             </div>
           )}
         </section>

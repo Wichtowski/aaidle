@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export type GameGuessAutocompleteProps<Option> = {
@@ -184,14 +185,16 @@ export function GameGuessAutocomplete<Option>({
             </ul>
           )}
         </div>
-        <button
-          className="autocomplete__confirm"
+        <Button
+          variant="primary"
+          color="accent"
+          shape="square"
           data-testid={confirmTestId}
           disabled={!selected || disabled}
           type="submit"
         >
           {confirmLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );
