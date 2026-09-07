@@ -46,4 +46,3 @@ jobs:
           set -euo pipefail
           pnpm run timeline-merge-to-one
           git diff --exit-code -- data/timeline.seed.json
-

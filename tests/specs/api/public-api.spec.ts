@@ -34,7 +34,9 @@ test("production API health is available with its health key", async ({ apiClien
   });
 });
 
-test("normal account can access public game modes but not unlock Hardcore", async ({ apiClient }) => {
+test("normal account can access public game modes but not unlock Hardcore", async ({
+  apiClient,
+}) => {
   const { email, password } = env.normalTestCredentials;
   test.skip(!email || !password, "Production login credentials are not configured.");
   if (!email || !password) return;

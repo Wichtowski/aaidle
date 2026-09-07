@@ -38,12 +38,7 @@ const FOCUSED_CATEGORIES = new Set([
 ]);
 
 const CATEGORY_DETAIL_KEYS = {
-  "language-model": new Set([
-    "supportedLanguages",
-    "architecture",
-    "toolUse",
-    "multimodal",
-  ]),
+  "language-model": new Set(["supportedLanguages", "architecture", "toolUse", "multimodal"]),
   "computer-vision": new Set(["visionTasks", "architecture", "trainingDatasets", "license"]),
   nlp: new Set(["nlpTasks", "supportedLanguages", "architecture", "trainingDatasets"]),
   "object-detection": new Set([

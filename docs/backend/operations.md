@@ -31,16 +31,16 @@ This fixture is for local development only, and the fixture command refuses to r
 
 ## Configuration
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `AIDLE_BIND_ADDR` | `0.0.0.0:8080` | HTTP listen address |
-| `DATABASE_URL` | `sqlite://../data/aidle.db` | SQLite URL when running Rust directly |
-| `DAILY_SELECTION_SECRET` | development-only fallback | HMAC secret for deterministic daily selection |
-| `AUTH_SECRET` | development-only fallback | Session, OAuth state, and trajectory-token HMAC secret |
-| `HEALTH_KEY` | development-only fallback | Secret required in the `x-aaidle-health-key` health-check header |
-| `AAIDLE_VERSION` | Cargo package version locally | Deployed release tag reported by authenticated health endpoints |
-| `REQUEST_TIMEOUT_SECONDS` | `10` | Per-request timeout |
-| `RUST_LOG` | `info` | Structured log filter |
+| Variable                  | Default                       | Purpose                                                          |
+| ------------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| `AIDLE_BIND_ADDR`         | `0.0.0.0:8080`                | HTTP listen address                                              |
+| `DATABASE_URL`            | `sqlite://../data/aidle.db`   | SQLite URL when running Rust directly                            |
+| `DAILY_SELECTION_SECRET`  | development-only fallback     | HMAC secret for deterministic daily selection                    |
+| `AUTH_SECRET`             | development-only fallback     | Session, OAuth state, and trajectory-token HMAC secret           |
+| `HEALTH_KEY`              | development-only fallback     | Secret required in the `x-aaidle-health-key` health-check header |
+| `AAIDLE_VERSION`          | Cargo package version locally | Deployed release tag reported by authenticated health endpoints  |
+| `REQUEST_TIMEOUT_SECONDS` | `10`                          | Per-request timeout                                              |
+| `RUST_LOG`                | `info`                        | Structured log filter                                            |
 
 Local development uses `http://localhost:5173` as the application origin.
 In production, set `AIDLE_ENV=production`, `APP_ORIGIN`, `AAIDLE_VERSION`, and secrets of at least 32 bytes, including `HEALTH_KEY`.

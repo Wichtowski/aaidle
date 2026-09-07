@@ -5,9 +5,7 @@
     "name": "OpenAI founded",
     "minPool": 0,
     "provider": "OpenAI",
-    "categories": [
-      "language-model"
-    ],
+    "categories": ["language-model"],
     "releaseDate": "2015-12-08",
     "sourceUrl": "https://openai.com/index/introducing-openai/"
   }

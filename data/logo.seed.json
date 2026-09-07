@@ -67,7 +67,6 @@
         "kind": "general",
         "text": "Its model family predicts object locations and classes in a single detection pipeline."
       }
-
     ]
   },
   {
@@ -75,9 +74,10 @@
     "minPool": 0,
     "visualType": "technology",
     "assetName": "AlexNet",
-    "assetUrl": "/logo-visual/model_architecture_2.png",
-    "revealProfile": "progressive-zoom",
-    "focalPoint": { "x": 154, "y": 338 },
+    "assetUrl": "/logo-visual/alex/model_architecture_2_timeline.png",
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
     "clues": [
       {
         "afterIncorrectGuesses": 1,

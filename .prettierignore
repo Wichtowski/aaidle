@@ -1,4 +1,5 @@
 backend/**
+scripts/tui/target/**
 dist/**
 node_modules/**
 tests/reports/**

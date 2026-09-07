@@ -3,9 +3,7 @@ import { BasePage } from "./BasePage";
 
 export class ClassicPage extends BasePage {
   readonly heading: Locator = this.page.locator('[data-testid="game-heading"]');
-  readonly difficultyNavigation: Locator = this.page.locator(
-    '[data-testid="classic-difficulty"]',
-  );
+  readonly difficultyNavigation: Locator = this.page.locator('[data-testid="classic-difficulty"]');
   readonly closeRulesButton: Locator = this.page.getByRole("button", {
     name: "Close Classic rules",
   });

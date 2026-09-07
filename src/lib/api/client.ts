@@ -19,11 +19,7 @@ import type {
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
 import type { LocalProgress } from "../storage/local-progress-schema";
-import {
-  logoGameSchema,
-  logoGuessResponseSchema,
-  logoHistorySchema,
-} from "../validation/api";
+import { logoGameSchema, logoGuessResponseSchema, logoHistorySchema } from "../validation/api";
 
 const apiPath = (path: string) => `/api/v1${path}`;
 
@@ -735,10 +731,9 @@ class ApiClient {
 
   emojiHints(challengeId: string, playerId: string) {
     void playerId;
-    return this.request<{ clues: VisualClue[] }>(
-      `/games/emoji/challenges/${challengeId}/hints`,
-      { cache: "no-store" },
-    );
+    return this.request<{ clues: VisualClue[] }>(`/games/emoji/challenges/${challengeId}/hints`, {
+      cache: "no-store",
+    });
   }
 
   emojiGuessHistory(challengeId: string, playerId: string) {

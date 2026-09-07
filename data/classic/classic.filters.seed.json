@@ -6,51 +6,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Irwin Sobel",
-    "family": [
-      "Edge detection",
-      "Sobel",
-      "Operator"
-    ],
-    "aliases": [
-      "Sobel filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "gradient-image",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "gradient"
-    ],
+    "family": ["Edge detection", "Sobel", "Operator"],
+    "aliases": ["Sobel filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["gradient-image", "edges"],
+    "useCases": ["edge-detection", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1968-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "gradient"
-        ],
+        "operationTypes": ["edge-detection", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3"
-        ],
+        "kernelSizes": ["3x3"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "gradient-image",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["gradient-image", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -61,52 +34,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "John Canny",
-    "family": [
-      "Edge detection",
-      "Canny",
-      "Edge",
-      "Detector"
-    ],
-    "aliases": [
-      "Canny"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection"
-    ],
+    "family": ["Edge detection", "Canny", "Edge", "Detector"],
+    "aliases": ["Canny"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask", "edges"],
+    "useCases": ["edge-detection"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1986-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection"
-        ],
+        "operationTypes": ["edge-detection"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -117,51 +62,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Carl Friedrich Gauss",
-    "family": [
-      "Smoothing",
-      "Gaussian",
-      "Blur"
-    ],
-    "aliases": [
-      "Gaussian filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "blurred-image"
-    ],
-    "useCases": [
-      "smoothing",
-      "denoising"
-    ],
+    "family": ["Smoothing", "Gaussian", "Blur"],
+    "aliases": ["Gaussian filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["blurred-image"],
+    "useCases": ["smoothing", "denoising"],
     "weightAvailability": "not-applicable",
     "country": "Germany",
     "releaseDate": "1809-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "smoothing",
-          "denoising"
-        ],
+        "operationTypes": ["smoothing", "denoising"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "blurred-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["blurred-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -172,51 +90,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "John Tukey",
-    "family": [
-      "Smoothing",
-      "Median",
-      "Filter"
-    ],
-    "aliases": [
-      "Median blur"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "filtered-image"
-    ],
-    "useCases": [
-      "smoothing",
-      "denoising"
-    ],
+    "family": ["Smoothing", "Median", "Filter"],
+    "aliases": ["Median blur"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["filtered-image"],
+    "useCases": ["smoothing", "denoising"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1971-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "smoothing",
-          "denoising"
-        ],
+        "operationTypes": ["smoothing", "denoising"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "filtered-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["filtered-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -227,52 +118,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Pierre-Simon Laplace",
-    "family": [
-      "Edge detection",
-      "Laplacian",
-      "Operator"
-    ],
-    "aliases": [
-      "Laplacian filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "gradient-image",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "gradient"
-    ],
+    "family": ["Edge detection", "Laplacian", "Operator"],
+    "aliases": ["Laplacian filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["gradient-image", "edges"],
+    "useCases": ["edge-detection", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1782",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "gradient"
-        ],
+        "operationTypes": ["edge-detection", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": ["3x3", "5x5"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "gradient-image",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["gradient-image", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -283,49 +146,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Erosion"
-    ],
-    "aliases": [
-      "Morphological erosion"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask"
-    ],
-    "useCases": [
-      "morphology"
-    ],
+    "family": ["Mathematical morphology", "Erosion"],
+    "aliases": ["Morphological erosion"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask"],
+    "useCases": ["morphology"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "erosion"
-        ],
+        "operationTypes": ["morphology", "erosion"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -336,49 +174,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Dilation"
-    ],
-    "aliases": [
-      "Morphological dilation"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask"
-    ],
-    "useCases": [
-      "morphology"
-    ],
+    "family": ["Mathematical morphology", "Dilation"],
+    "aliases": ["Morphological dilation"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask"],
+    "useCases": ["morphology"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "dilation"
-        ],
+        "operationTypes": ["morphology", "dilation"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -389,47 +202,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Nobuyuki Otsu",
-    "family": [
-      "Thresholding"
-    ],
-    "aliases": [
-      "Otsu method"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask",
-      "threshold"
-    ],
-    "useCases": [
-      "thresholding",
-      "segmentation"
-    ],
+    "family": ["Thresholding"],
+    "aliases": ["Otsu method"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask", "threshold"],
+    "useCases": ["thresholding", "segmentation"],
     "weightAvailability": "not-applicable",
     "country": "Japan",
     "releaseDate": "1979-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "thresholding",
-          "segmentation"
-        ],
+        "operationTypes": ["thresholding", "segmentation"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask",
-          "threshold"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask", "threshold"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -440,53 +230,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Chris Harris",
-    "family": [
-      "Feature detection",
-      "Harris",
-      "Corner",
-      "Detector"
-    ],
-    "aliases": [
-      "Harris detector"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "corners",
-      "keypoints"
-    ],
-    "useCases": [
-      "corner-detection",
-      "feature-detection"
-    ],
+    "family": ["Feature detection", "Harris", "Corner", "Detector"],
+    "aliases": ["Harris detector"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["corners", "keypoints"],
+    "useCases": ["corner-detection", "feature-detection"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "1988-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "corner-detection",
-          "feature-detection"
-        ],
+        "operationTypes": ["corner-detection", "feature-detection"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": ["3x3", "5x5"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "corners",
-          "keypoints"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["corners", "keypoints"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -497,51 +258,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "David Lowe",
-    "family": [
-      "Feature detection",
-      "SIFT"
-    ],
-    "aliases": [
-      "Scale-Invariant Feature Transform"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "keypoints",
-      "descriptors"
-    ],
-    "useCases": [
-      "feature-detection",
-      "feature-description"
-    ],
+    "family": ["Feature detection", "SIFT"],
+    "aliases": ["Scale-Invariant Feature Transform"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["keypoints", "descriptors"],
+    "useCases": ["feature-detection", "feature-description"],
     "weightAvailability": "not-applicable",
     "country": "Canada",
     "releaseDate": "1999-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-detection",
-          "feature-description"
-        ],
+        "operationTypes": ["feature-detection", "feature-description"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": ["3x3", "5x5"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "keypoints",
-          "descriptors"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["keypoints", "descriptors"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -552,48 +286,24 @@
     "entityType": "algorithm",
     "minPool": 0,
     "provider": "Navneet Dalal",
-    "family": [
-      "Feature description",
-      "HOG"
-    ],
-    "aliases": [
-      "Histogram of Oriented Gradients"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "feature-vector"
-    ],
-    "useCases": [
-      "feature-description",
-      "gradient"
-    ],
+    "family": ["Feature description", "HOG"],
+    "aliases": ["Histogram of Oriented Gradients"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["feature-vector"],
+    "useCases": ["feature-description", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "2005-06-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-description",
-          "gradient"
-        ],
+        "operationTypes": ["feature-description", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "8x8"
-        ],
+        "kernelSizes": ["8x8"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "feature-vector"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["feature-vector"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -604,51 +314,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "H. Scharr",
-    "family": [
-      "Edge detection",
-      "Scharr",
-      "Operator"
-    ],
-    "aliases": [
-      "Scharr filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "gradient-image",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "gradient"
-    ],
+    "family": ["Edge detection", "Scharr", "Operator"],
+    "aliases": ["Scharr filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["gradient-image", "edges"],
+    "useCases": ["edge-detection", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "Germany",
     "releaseDate": "2000-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "gradient"
-        ],
+        "operationTypes": ["edge-detection", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3"
-        ],
+        "kernelSizes": ["3x3"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "gradient-image",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["gradient-image", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -659,51 +342,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Judith Prewitt",
-    "family": [
-      "Edge detection",
-      "Prewitt",
-      "Operator"
-    ],
-    "aliases": [
-      "Prewitt filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "gradient-image",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "gradient"
-    ],
+    "family": ["Edge detection", "Prewitt", "Operator"],
+    "aliases": ["Prewitt filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["gradient-image", "edges"],
+    "useCases": ["edge-detection", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1970-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "gradient"
-        ],
+        "operationTypes": ["edge-detection", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3"
-        ],
+        "kernelSizes": ["3x3"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "gradient-image",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["gradient-image", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -714,51 +370,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Lawrence Roberts",
-    "family": [
-      "Edge detection",
-      "Roberts",
-      "Cross"
-    ],
-    "aliases": [
-      "Roberts operator"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "gradient-image",
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "gradient"
-    ],
+    "family": ["Edge detection", "Roberts", "Cross"],
+    "aliases": ["Roberts operator"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["gradient-image", "edges"],
+    "useCases": ["edge-detection", "gradient"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1963-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "gradient"
-        ],
+        "operationTypes": ["edge-detection", "gradient"],
         "kernelBased": true,
-        "kernelSizes": [
-          "2x2"
-        ],
+        "kernelSizes": ["2x2"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "gradient-image",
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["gradient-image", "edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -769,52 +398,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "David Marr",
-    "family": [
-      "Edge detection",
-      "Laplacian",
-      "of",
-      "Gaussian"
-    ],
-    "aliases": [
-      "LoG"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "edges"
-    ],
-    "useCases": [
-      "edge-detection",
-      "smoothing"
-    ],
+    "family": ["Edge detection", "Laplacian", "of", "Gaussian"],
+    "aliases": ["LoG"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["edges"],
+    "useCases": ["edge-detection", "smoothing"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "1980-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "smoothing"
-        ],
+        "operationTypes": ["edge-detection", "smoothing"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -825,54 +426,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "David Marr",
-    "family": [
-      "Feature detection",
-      "Difference",
-      "of",
-      "Gaussians"
-    ],
-    "aliases": [
-      "DoG"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "edges",
-      "keypoints"
-    ],
-    "useCases": [
-      "edge-detection",
-      "feature-detection"
-    ],
+    "family": ["Feature detection", "Difference", "of", "Gaussians"],
+    "aliases": ["DoG"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["edges", "keypoints"],
+    "useCases": ["edge-detection", "feature-detection"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "1980-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "edge-detection",
-          "feature-detection"
-        ],
+        "operationTypes": ["edge-detection", "feature-detection"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "edges",
-          "keypoints"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["edges", "keypoints"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -883,51 +454,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Carlo Tomasi",
-    "family": [
-      "Edge-preserving smoothing",
-      "Bilateral",
-      "Filter"
-    ],
-    "aliases": [
-      "Bilateral blur"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "filtered-image"
-    ],
-    "useCases": [
-      "smoothing",
-      "denoising"
-    ],
+    "family": ["Edge-preserving smoothing", "Bilateral", "Filter"],
+    "aliases": ["Bilateral blur"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["filtered-image"],
+    "useCases": ["smoothing", "denoising"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1998-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "smoothing",
-          "denoising"
-        ],
+        "operationTypes": ["smoothing", "denoising"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "filtered-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["filtered-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -938,49 +482,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Image processing",
-    "family": [
-      "Smoothing",
-      "Box",
-      "Filter"
-    ],
-    "aliases": [
-      "Averaging filter"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "blurred-image"
-    ],
-    "useCases": [
-      "smoothing"
-    ],
+    "family": ["Smoothing", "Box", "Filter"],
+    "aliases": ["Averaging filter"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["blurred-image"],
+    "useCases": ["smoothing"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1960-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "smoothing"
-        ],
+        "operationTypes": ["smoothing"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "blurred-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["blurred-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -991,51 +510,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Dennis Gabor",
-    "family": [
-      "Texture analysis",
-      "Gabor",
-      "Filter"
-    ],
-    "aliases": [
-      "Gabor wavelet"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "filter-response"
-    ],
-    "useCases": [
-      "feature-extraction",
-      "texture-analysis"
-    ],
+    "family": ["Texture analysis", "Gabor", "Filter"],
+    "aliases": ["Gabor wavelet"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["filter-response"],
+    "useCases": ["feature-extraction", "texture-analysis"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "1946-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-extraction",
-          "texture-analysis"
-        ],
+        "operationTypes": ["feature-extraction", "texture-analysis"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "filter-response"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["filter-response"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1046,51 +538,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Morphological",
-      "Opening"
-    ],
-    "aliases": [
-      "Opening"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask"
-    ],
-    "useCases": [
-      "morphology",
-      "noise-removal"
-    ],
+    "family": ["Mathematical morphology", "Morphological", "Opening"],
+    "aliases": ["Opening"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask"],
+    "useCases": ["morphology", "noise-removal"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "noise-removal"
-        ],
+        "operationTypes": ["morphology", "noise-removal"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1101,51 +566,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Morphological",
-      "Closing"
-    ],
-    "aliases": [
-      "Closing"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask"
-    ],
-    "useCases": [
-      "morphology",
-      "hole-filling"
-    ],
+    "family": ["Mathematical morphology", "Morphological", "Closing"],
+    "aliases": ["Closing"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask"],
+    "useCases": ["morphology", "hole-filling"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "hole-filling"
-        ],
+        "operationTypes": ["morphology", "hole-filling"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1156,51 +594,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Morphological",
-      "Gradient"
-    ],
-    "aliases": [
-      "Morphological gradient"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "edges"
-    ],
-    "useCases": [
-      "morphology",
-      "edge-detection"
-    ],
+    "family": ["Mathematical morphology", "Morphological", "Gradient"],
+    "aliases": ["Morphological gradient"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["edges"],
+    "useCases": ["morphology", "edge-detection"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "edge-detection"
-        ],
+        "operationTypes": ["morphology", "edge-detection"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "edges"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["edges"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1211,52 +622,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Top",
-      "Hat"
-    ],
-    "aliases": [
-      "White top-hat"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "enhanced-image"
-    ],
-    "useCases": [
-      "morphology",
-      "contrast-enhancement"
-    ],
+    "family": ["Mathematical morphology", "Top", "Hat"],
+    "aliases": ["White top-hat"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["enhanced-image"],
+    "useCases": ["morphology", "contrast-enhancement"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "contrast-enhancement",
-          "white-top-hat"
-        ],
+        "operationTypes": ["morphology", "contrast-enhancement", "white-top-hat"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "enhanced-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["enhanced-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1267,52 +650,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Georges Matheron",
-    "family": [
-      "Mathematical morphology",
-      "Black",
-      "Hat"
-    ],
-    "aliases": [
-      "Black top-hat"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "enhanced-image"
-    ],
-    "useCases": [
-      "morphology",
-      "contrast-enhancement"
-    ],
+    "family": ["Mathematical morphology", "Black", "Hat"],
+    "aliases": ["Black top-hat"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["enhanced-image"],
+    "useCases": ["morphology", "contrast-enhancement"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1964-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "morphology",
-          "contrast-enhancement",
-          "black-top-hat"
-        ],
+        "operationTypes": ["morphology", "contrast-enhancement", "black-top-hat"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "enhanced-image"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["enhanced-image"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1323,49 +678,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Image processing",
-    "family": [
-      "Thresholding"
-    ],
-    "aliases": [
-      "Local thresholding"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "binary-mask"
-    ],
-    "useCases": [
-      "thresholding",
-      "segmentation"
-    ],
+    "family": ["Thresholding"],
+    "aliases": ["Local thresholding"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["binary-mask"],
+    "useCases": ["thresholding", "segmentation"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1989-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "thresholding",
-          "segmentation"
-        ],
+        "operationTypes": ["thresholding", "segmentation"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": ["3x3", "5x5", "7x7"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "binary-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["binary-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1376,54 +706,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Jianbo Shi",
-    "family": [
-      "Feature detection",
-      "Shi",
-      "Tomasi",
-      "Corner",
-      "Detector"
-    ],
-    "aliases": [
-      "Good Features to Track"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "corners",
-      "keypoints"
-    ],
-    "useCases": [
-      "corner-detection",
-      "feature-detection"
-    ],
+    "family": ["Feature detection", "Shi", "Tomasi", "Corner", "Detector"],
+    "aliases": ["Good Features to Track"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["corners", "keypoints"],
+    "useCases": ["corner-detection", "feature-detection"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1994-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "corner-detection",
-          "feature-detection"
-        ],
+        "operationTypes": ["corner-detection", "feature-detection"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": ["3x3", "5x5"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "corners",
-          "keypoints"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["corners", "keypoints"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1434,51 +734,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Herbert Bay",
-    "family": [
-      "Feature detection",
-      "SURF"
-    ],
-    "aliases": [
-      "Speeded-Up Robust Features"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "keypoints",
-      "descriptors"
-    ],
-    "useCases": [
-      "feature-detection",
-      "feature-description"
-    ],
+    "family": ["Feature detection", "SURF"],
+    "aliases": ["Speeded-Up Robust Features"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["keypoints", "descriptors"],
+    "useCases": ["feature-detection", "feature-description"],
     "weightAvailability": "not-applicable",
     "country": "Switzerland",
     "releaseDate": "2006-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-detection",
-          "feature-description"
-        ],
+        "operationTypes": ["feature-detection", "feature-description"],
         "kernelBased": true,
-        "kernelSizes": [
-          "9x9",
-          "15x15"
-        ],
+        "kernelSizes": ["9x9", "15x15"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "keypoints",
-          "descriptors"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["keypoints", "descriptors"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1489,51 +762,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Ethan Rublee",
-    "family": [
-      "Feature detection",
-      "ORB"
-    ],
-    "aliases": [
-      "Oriented FAST and Rotated BRIEF"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "keypoints",
-      "descriptors"
-    ],
-    "useCases": [
-      "feature-detection",
-      "feature-description"
-    ],
+    "family": ["Feature detection", "ORB"],
+    "aliases": ["Oriented FAST and Rotated BRIEF"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["keypoints", "descriptors"],
+    "useCases": ["feature-detection", "feature-description"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2011-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-detection",
-          "feature-description"
-        ],
+        "operationTypes": ["feature-detection", "feature-description"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": ["3x3", "5x5"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "keypoints",
-          "descriptors"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["keypoints", "descriptors"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1544,50 +790,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Edward Rosten",
-    "family": [
-      "Feature detection",
-      "FAST",
-      "Corner",
-      "Detector"
-    ],
-    "aliases": [
-      "FAST"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "corners",
-      "keypoints"
-    ],
-    "useCases": [
-      "corner-detection",
-      "feature-detection"
-    ],
+    "family": ["Feature detection", "FAST", "Corner", "Detector"],
+    "aliases": ["FAST"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["corners", "keypoints"],
+    "useCases": ["corner-detection", "feature-detection"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "2006-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "corner-detection",
-          "feature-detection"
-        ],
+        "operationTypes": ["corner-detection", "feature-detection"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "corners",
-          "keypoints"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["corners", "keypoints"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1598,44 +818,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Michael Calonder",
-    "family": [
-      "Feature description",
-      "BRIEF"
-    ],
-    "aliases": [
-      "Binary Robust Independent Elementary Features"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "descriptors"
-    ],
-    "useCases": [
-      "feature-description"
-    ],
+    "family": ["Feature description", "BRIEF"],
+    "aliases": ["Binary Robust Independent Elementary Features"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["descriptors"],
+    "useCases": ["feature-description"],
     "weightAvailability": "not-applicable",
     "country": "Switzerland",
     "releaseDate": "2010-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-description"
-        ],
+        "operationTypes": ["feature-description"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "descriptors"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["descriptors"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1646,50 +846,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Timo Ojala",
-    "family": [
-      "Texture analysis",
-      "Local",
-      "Binary",
-      "Pattern"
-    ],
-    "aliases": [
-      "LBP"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "feature-vector"
-    ],
-    "useCases": [
-      "feature-extraction",
-      "texture-analysis"
-    ],
+    "family": ["Texture analysis", "Local", "Binary", "Pattern"],
+    "aliases": ["LBP"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["feature-vector"],
+    "useCases": ["feature-extraction", "texture-analysis"],
     "weightAvailability": "not-applicable",
     "country": "Finland",
     "releaseDate": "1996-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "feature-extraction",
-          "texture-analysis"
-        ],
+        "operationTypes": ["feature-extraction", "texture-analysis"],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3"
-        ],
+        "kernelSizes": ["3x3"],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "feature-vector"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["feature-vector"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1700,48 +874,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Paul Hough",
-    "family": [
-      "Shape detection",
-      "Hough",
-      "Line",
-      "Transform"
-    ],
-    "aliases": [
-      "Hough transform"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "lines"
-    ],
-    "useCases": [
-      "line-detection",
-      "shape-detection"
-    ],
+    "family": ["Shape detection", "Hough", "Line", "Transform"],
+    "aliases": ["Hough transform"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["lines"],
+    "useCases": ["line-detection", "shape-detection"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1962-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "line-detection",
-          "shape-detection"
-        ],
+        "operationTypes": ["line-detection", "shape-detection"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "lines"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["lines"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1752,48 +902,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Richard Duda",
-    "family": [
-      "Shape detection",
-      "Hough",
-      "Circle",
-      "Transform"
-    ],
-    "aliases": [
-      "Circular Hough transform"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "circles"
-    ],
-    "useCases": [
-      "circle-detection",
-      "shape-detection"
-    ],
+    "family": ["Shape detection", "Hough", "Circle", "Transform"],
+    "aliases": ["Circular Hough transform"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["circles"],
+    "useCases": ["circle-detection", "shape-detection"],
     "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "1972-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "circle-detection",
-          "shape-detection"
-        ],
+        "operationTypes": ["circle-detection", "shape-detection"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "circles"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["circles"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1804,44 +930,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Serge Beucher",
-    "family": [
-      "Segmentation",
-      "Watershed"
-    ],
-    "aliases": [
-      "Watershed transform"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "segmentation-mask"
-    ],
-    "useCases": [
-      "segmentation"
-    ],
+    "family": ["Segmentation", "Watershed"],
+    "aliases": ["Watershed transform"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["segmentation-mask"],
+    "useCases": ["segmentation"],
     "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "1979-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "segmentation"
-        ],
+        "operationTypes": ["segmentation"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "segmentation-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["segmentation-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   },
@@ -1852,46 +958,24 @@
     "entityType": "algorithm",
     "minPool": 1,
     "provider": "Carsten Rother",
-    "family": [
-      "Segmentation",
-      "GrabCut"
-    ],
-    "aliases": [
-      "Grab cut"
-    ],
-    "categories": [
-      "filters"
-    ],
-    "inputModalities": [
-      "image"
-    ],
-    "outputModalities": [
-      "segmentation-mask"
-    ],
-    "useCases": [
-      "segmentation",
-      "foreground-extraction"
-    ],
+    "family": ["Segmentation", "GrabCut"],
+    "aliases": ["Grab cut"],
+    "categories": ["filters"],
+    "inputModalities": ["image"],
+    "outputModalities": ["segmentation-mask"],
+    "useCases": ["segmentation", "foreground-extraction"],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "2004-01-01",
     "categoryDetails": {
       "filters": {
-        "operationTypes": [
-          "segmentation",
-          "foreground-extraction"
-        ],
+        "operationTypes": ["segmentation", "foreground-extraction"],
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
-        "outputTypes": [
-          "segmentation-mask"
-        ],
-        "frameworks": [
-          "opencv",
-          "scipy"
-        ]
+        "outputTypes": ["segmentation-mask"],
+        "frameworks": ["opencv", "scipy"]
       }
     }
   }

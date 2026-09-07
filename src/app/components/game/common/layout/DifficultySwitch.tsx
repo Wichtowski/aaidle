@@ -24,12 +24,7 @@ export function DifficultySwitch({
   return (
     <div aria-busy={loading} className="game-intro__difficulty">
       <span>Difficulty</span>
-      <div
-        aria-label={ariaLabel}
-        className="difficulty-switch"
-        data-testid={testId}
-        role="group"
-      >
+      <div aria-label={ariaLabel} className="difficulty-switch" data-testid={testId} role="group">
         {options.map((option) => (
           <button
             aria-pressed={option.value === selected}

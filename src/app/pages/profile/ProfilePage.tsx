@@ -341,10 +341,11 @@ export function ProfilePage() {
                 </button>
               ))
           : (statsGame === "emoji"
-                ? difficulties
-                : statsGame === "logo"
-                  ? (["normal"] as const)
-                  : timelineDifficulties)
+              ? difficulties
+              : statsGame === "logo"
+                ? (["normal"] as const)
+                : timelineDifficulties
+            )
               .filter((item) => item !== "hardcore" || Boolean(user && hardcoreUnlocked))
               .map((item) => (
                 <button

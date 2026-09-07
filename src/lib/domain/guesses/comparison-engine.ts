@@ -85,10 +85,7 @@ export function compareClassicModels(
       language(guessed)?.supportedLanguages ?? nlp(guessed)?.supportedLanguages ?? null,
       language(answer)?.supportedLanguages ?? nlp(answer)?.supportedLanguages ?? null,
     ),
-    toolUse: compareToolUse(
-      language(guessed)?.toolUse ?? null,
-      language(answer)?.toolUse ?? null,
-    ),
+    toolUse: compareToolUse(language(guessed)?.toolUse ?? null, language(answer)?.toolUse ?? null),
     multimodal: compareNullableBoolean(
       language(guessed)?.multimodal ?? null,
       language(answer)?.multimodal ?? null,

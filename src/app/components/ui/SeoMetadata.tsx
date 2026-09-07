@@ -3,14 +3,16 @@ import { useLocation } from "react-router-dom";
 
 const defaultMetadata = {
   title: "aAIdle | Daily AI Model Guessing Game",
-  description: "Play a new daily AI model guessing game. Compare model clues, make your guess, and build your streak.",
+  description:
+    "Play a new daily AI model guessing game. Compare model clues, make your guess, and build your streak.",
 };
 
 const routeMetadata = [
   {
     matches: (pathname: string) => pathname === "/classic" || pathname.startsWith("/classic/"),
     title: "Classic | aAIdle Daily AI Model Guessing Game",
-    description: "Compare AI model clues and identify today’s model in the Classic daily guessing game.",
+    description:
+      "Compare AI model clues and identify today’s model in the Classic daily guessing game.",
   },
   {
     matches: (pathname: string) => pathname === "/emoji",
@@ -30,7 +32,16 @@ const routeMetadata = [
   },
 ];
 
-const privateRoutePatterns = ["/login", "/register", "/reset-password", "/delete-account", "/report-issue", "/account-disabled", "/profile", "/admin"];
+const privateRoutePatterns = [
+  "/login",
+  "/register",
+  "/reset-password",
+  "/delete-account",
+  "/report-issue",
+  "/account-disabled",
+  "/profile",
+  "/admin",
+];
 function setMetaContent(selector: string, content: string) {
   const element = document.querySelector<HTMLMetaElement>(selector);
   if (element) element.content = content;
@@ -41,16 +52,18 @@ export function SeoMetadata() {
 
   useEffect(() => {
     const metadata = routeMetadata.find((route) => route.matches(pathname)) ?? defaultMetadata;
-    const isPrivateRoute = privateRoutePatterns.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-    const canonical = document.querySelector<HTMLLinkElement>("link[rel=\"canonical\"]");
+    const isPrivateRoute = privateRoutePatterns.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    );
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 
     document.title = metadata.title;
-    setMetaContent("meta[name=\"description\"]", metadata.description);
-    setMetaContent("meta[name=\"robots\"]", isPrivateRoute ? "noindex,nofollow" : "index,follow");
-    setMetaContent("meta[property=\"og:title\"]", metadata.title);
-    setMetaContent("meta[property=\"og:description\"]", metadata.description);
-    setMetaContent("meta[name=\"twitter:title\"]", metadata.title);
-    setMetaContent("meta[name=\"twitter:description\"]", metadata.description);
+    setMetaContent('meta[name="description"]', metadata.description);
+    setMetaContent('meta[name="robots"]', isPrivateRoute ? "noindex,nofollow" : "index,follow");
+    setMetaContent('meta[property="og:title"]', metadata.title);
+    setMetaContent('meta[property="og:description"]', metadata.description);
+    setMetaContent('meta[name="twitter:title"]', metadata.title);
+    setMetaContent('meta[name="twitter:description"]', metadata.description);
 
     if (canonical) canonical.href = new URL(pathname, window.location.origin).href;
   }, [pathname]);

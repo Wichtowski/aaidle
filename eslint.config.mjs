@@ -4,7 +4,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["scripts/**/*.mjs", ".github/scripts/**/*.mjs", ],
+    files: ["scripts/**/*.mjs", ".github/scripts/**/*.mjs"],
     languageOptions: { globals: { URL: "readonly", process: "readonly", console: "readonly" } },
   },
   {
@@ -23,6 +23,9 @@ export default tseslint.config(
       ".wrangler/**",
       "tests/results/**",
       "tests/reports/**",
+      "target/**",
+      "node_modules/**",
+      "scripts/tui/**",
     ],
   },
 );
