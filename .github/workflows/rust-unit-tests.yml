@@ -11,8 +11,8 @@ env:
   RUST_COVERAGE_TOOLCHAIN: nightly-2026-08-17
 
 jobs:
-  build-tests:
-    name: Build instrumented Rust tests
+  test:
+    name: Rust tests and coverage
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,6 +20,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.release_tag }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
       - name: Install coverage toolchain
         run: rustup toolchain install ${{ env.RUST_COVERAGE_TOOLCHAIN }} --profile minimal --component llvm-tools-preview
       - name: Install Rust test tools
@@ -27,55 +30,19 @@ jobs:
         with:
           tool: cargo-llvm-cov@0.9.0,cargo-nextest@0.9.143
           fallback: none
-      - name: Build instrumented test archive
+      - name: Run Rust tests in parallel
+        id: rust-tests
+        continue-on-error: true
         working-directory: backend
         shell: bash
         run: |
-          source <(cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov show-env --sh)
-          cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov clean --workspace
-          cargo +"$RUST_COVERAGE_TOOLCHAIN" nextest archive \
-            --locked \
-            --archive-file "$RUNNER_TEMP/rust-tests.tar.zst"
-      - name: Upload instrumented test archive
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: rust-instrumented-tests
-          path: ${{ runner.temp }}/rust-tests.tar.zst
-          if-no-files-found: error
-          compression-level: 0
-
-  test:
-    name: Rust coverage tests
-    needs: build-tests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          ref: ${{ inputs.release_tag }}
-      - name: Install cargo-nextest
-        uses: taiki-e/install-action@ba47c86ac325773530516bb756137ac718732518 # v2.86.5
-        with:
-          tool: cargo-nextest@0.9.143
-          fallback: none
-      - name: Download instrumented test archive
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v7.0.0
-        with:
-          name: rust-instrumented-tests
-          path: ${{ runner.temp }}
-      - name: Run Rust coverage tests
-        working-directory: backend
-        shell: bash
-        env:
-          LLVM_PROFILE_FILE: ${{ runner.temp }}/rust-coverage/rust-%p-%16m.profraw
-        run: |
-          mkdir -p "$RUNNER_TEMP/rust-coverage"
           set -o pipefail
-          cargo nextest run \
-            --archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
+          cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov clean --workspace
+          cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov nextest \
+            --locked \
+            --branch \
+            --no-report \
             --no-fail-fast \
-            --status-level all \
             2>&1 | tee "$RUNNER_TEMP/rust-test-output"
       - name: Write Rust test report
         if: always()
@@ -94,105 +61,46 @@ jobs:
           if [[ "$summary" =~ ([0-9]+)[[:space:]]skipped ]]; then
             ignored="${BASH_REMATCH[1]}"
           fi
-          mkdir -p "$RUNNER_TEMP/rust-test-reports"
-          printf 'backend tests\t%s\t%s\t%s\n' \
-            "$passed" "$failed" "$ignored" \
-            > "$RUNNER_TEMP/rust-test-reports/backend.tsv"
-      - name: Upload Rust coverage results
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: rust-coverage-results
-          path: |
-            ${{ runner.temp }}/rust-coverage
-            ${{ runner.temp }}/rust-test-reports
-          if-no-files-found: error
-          compression-level: 1
-
-  coverage:
-    name: Merge Rust coverage
-    if: always()
-    needs: [build-tests, test]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          ref: ${{ inputs.release_tag }}
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: ${{ vars.NODE_VERSION }}
-      - name: Install coverage toolchain
-        run: rustup toolchain install ${{ env.RUST_COVERAGE_TOOLCHAIN }} --profile minimal --component llvm-tools-preview
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@ba47c86ac325773530516bb756137ac718732518 # v2.86.5
-        with:
-          tool: cargo-llvm-cov@0.9.0
-          fallback: none
-      - name: Download instrumented test archive
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v7.0.0
-        with:
-          name: rust-instrumented-tests
-          path: ${{ runner.temp }}
-      - name: Download Rust coverage results
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v7.0.0
-        with:
-          name: rust-coverage-results
-          path: ${{ runner.temp }}/rust-results
-      - name: Write Rust test summary
-        if: always()
-        shell: bash
-        run: |
           mkdir -p tests/reports/backend-coverage
-          passed=0
-          failed=0
-          ignored=0
           {
             echo "## 🦀 Rust tests"
             echo
             echo "| Namespace | Passed | Failed | Ignored |"
             echo "| --- | ---: | ---: | ---: |"
-            shopt -s nullglob
-            reports=("$RUNNER_TEMP"/rust-results/rust-test-reports/*.tsv)
-            for report in "${reports[@]}"; do
-              IFS=$'\t' read -r namespace namespace_passed namespace_failed namespace_ignored < "$report"
-              printf '| %s | %s | %s | %s |\n' \
-                "$namespace" "$namespace_passed" "$namespace_failed" "$namespace_ignored"
-              passed=$((passed + namespace_passed))
-              failed=$((failed + namespace_failed))
-              ignored=$((ignored + namespace_ignored))
-            done
-            total=$((passed + failed))
+            printf '| Backend | %s | %s | %s |\n' "$passed" "$failed" "$ignored"
             echo
-            echo "**Total:** ${passed} passed · ${failed} failed · ${ignored} ignored (${total} executed)"
+            echo "**Total:** ${passed} passed · ${failed} failed · ${ignored} ignored ($((passed + failed)) executed)"
           } > tests/reports/backend-coverage/rust-test-summary.md
-      - name: Generate merged backend coverage reports
+      - name: Generate backend coverage reports
         working-directory: backend
         run: |
-          mapfile -t profile_files < <(
-            find "$RUNNER_TEMP/rust-results/rust-coverage" \
-              -type f -name '*.profraw' -print
-          )
-          if (( ${#profile_files[@]} == 0 )); then
-            echo "No Rust coverage profiles were downloaded." >&2
-            exit 1
-          fi
-          mkdir -p target/llvm-cov-target
-          cp "${profile_files[@]}" target/llvm-cov-target/
           cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report \
-            --nextest-archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
             --branch \
             --html \
             --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' \
             --output-dir ../tests/reports/backend-coverage
           cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report \
-            --nextest-archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
             --branch \
             --json \
             --summary-only \
             --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' \
             --output-path ../tests/reports/backend-coverage/coverage-summary.json
+          node --input-type=module <<'NODE'
+          import { appendFile, readFile } from "node:fs/promises";
+
+          const reportPath = "../tests/reports/backend-coverage/coverage-summary.json";
+          const report = JSON.parse(await readFile(reportPath, "utf8"));
+          const totals = report.data?.[0]?.totals;
+          if (!totals) throw new Error("Backend coverage totals are unavailable.");
+
+          const rows = ["lines", "functions", "regions", "branches"]
+            .map((name) => `| ${name} | ${totals[name].percent.toFixed(2)}% |`)
+            .join("\n");
+          await appendFile(
+            "../tests/reports/backend-coverage/rust-test-summary.md",
+            `\n## Coverage\n\n| Metric | Covered |\n| --- | ---: |\n${rows}\n`,
+          );
+          NODE
           node ../scripts/check-rust-coverage.mjs \
             ../tests/reports/backend-coverage/coverage-summary.json
       - name: Upload backend coverage report
@@ -202,3 +110,6 @@ jobs:
           name: backend-coverage-report
           path: tests/reports/backend-coverage
           if-no-files-found: error
+      - name: Fail when Rust tests failed
+        if: always() && steps.rust-tests.outcome == 'failure'
+        run: exit 1
