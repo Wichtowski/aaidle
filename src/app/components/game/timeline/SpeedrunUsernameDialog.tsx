@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import { useState } from "react";
 import { isValidUsername, usernamePattern } from "@lib/auth/username";
 
@@ -48,12 +49,12 @@ export function SpeedrunUsernameDialog({
             />
           </label>
           <div className="speedrun-username-modal__actions">
-            <button className="button" onClick={() => onChoose(null)} type="button">
+            <Button variant="outline" onClick={() => onChoose(null)} type="button">
               Use {emailName}
-            </button>
-            <button className="button button--primary" disabled={!usernameIsValid} type="submit">
+            </Button>
+            <Button variant="primary" color="accent" disabled={!usernameIsValid} type="submit">
               Save username
-            </button>
+            </Button>
           </div>
         </form>
       </section>

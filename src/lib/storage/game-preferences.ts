@@ -16,12 +16,14 @@ export type GamePreferences = {
   classic: { category: ClassicCategory; difficulty: ClassicDifficulty };
   emoji: EmojiDifficulty;
   timeline: TimelineDifficulty;
+  logo: "normal";
 };
 
 const defaults: GamePreferences = {
   classic: { category: "llm", difficulty: "normal" },
   emoji: "normal",
   timeline: "normal",
+  logo: "normal",
 };
 
 const isClassicCategory = (value: unknown): value is ClassicCategory =>
@@ -56,6 +58,7 @@ export function readGamePreferences(): GamePreferences {
           ? value.emoji
           : defaults.emoji,
       timeline: isTimelineDifficulty(value?.timeline) ? value.timeline : defaults.timeline,
+      logo: "normal",
     };
   } catch {
     return defaults;

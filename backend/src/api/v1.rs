@@ -1,8 +1,9 @@
 use axum::{
     Json, Router,
     extract::DefaultBodyLimit,
-    extract::{Query, State, rejection::JsonRejection},
+    extract::{Query, Request, State, rejection::JsonRejection},
     http::{HeaderMap, HeaderName, HeaderValue, StatusCode, header},
+    middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, patch, post, put},
 };
@@ -36,11 +37,15 @@ const GUESS_IP_PER_HOUR: i64 = 5_000;
 pub(super) const CLASSIC_CHALLENGE_COMPLETION_CATEGORIES: [&str; 6] =
     ["llm", "cv", "nlp", "od", "classical-ml", "filters"];
 
+#[derive(Clone, Copy)]
+pub(super) struct AnonymousPlayerId(pub Uuid);
+
 mod admin;
 mod auth;
 mod classic;
 mod emoji;
 mod issues;
+mod logo;
 mod progress;
 mod timeline;
 
@@ -80,7 +85,10 @@ pub fn router(state: AppState) -> Router {
             "/auth/account-deletion/complete",
             post(auth::account_deletion_complete),
         )
-        .route("/auth/progress", get(progress::get).put(progress::put))
+        .route(
+            "/auth/progress",
+            get(progress::get).put(progress::put_route),
+        )
         .route("/auth/progress/preferences", patch(progress::preferences))
         .route("/auth/progress/history", get(progress::history))
         .route("/auth/oauth/{provider}", get(auth::oauth_start))
@@ -125,18 +133,19 @@ pub fn router(state: AppState) -> Router {
             post(classic::trajectory),
         )
         .route("/games/emoji/{difficulty}", get(emoji::game))
-        .route("/games/timeline/{difficulty}", get(timeline::game))
+        .route("/games/logo/{difficulty}", get(logo::game_route))
+        .route("/games/timeline/{difficulty}", get(timeline::game_route))
         .route(
             "/games/timeline/challenges/{challenge_id}/attempts",
-            post(timeline::attempt),
+            post(timeline::attempt_route),
         )
         .route(
             "/games/timeline/challenges/{challenge_id}/start",
-            post(timeline::start),
+            post(timeline::start_route),
         )
         .route(
             "/games/timeline/challenges/{challenge_id}/give-up",
-            post(timeline::give_up),
+            post(timeline::give_up_route),
         )
         .route(
             "/games/timeline/challenges/{challenge_id}/leaderboard",
@@ -156,14 +165,26 @@ pub fn router(state: AppState) -> Router {
         )
         .route(
             "/games/emoji/challenges/{challenge_id}/guesses",
-            get(emoji::guess_history).post(emoji::guess),
+            get(emoji::guess_history_route).post(emoji::guess_route),
         )
         .route(
             "/games/emoji/challenges/{challenge_id}/hints",
-            get(emoji::hints),
+            get(emoji::hints_route),
+        )
+        .route(
+            "/games/logo/challenges/{challenge_id}/guesses",
+            get(logo::guess_history_route).post(logo::guess_route),
+        )
+        .route(
+            "/games/logo/challenges/{challenge_id}/image",
+            get(logo::image_route),
         )
         .route("/players/{player_id}/stats", get(classic::player_stats))
         .with_state(state.clone())
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            anonymous_player_identity,
+        ))
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
@@ -176,6 +197,56 @@ pub fn router(state: AppState) -> Router {
                 .layer(PropagateRequestIdLayer::new(request_id))
                 .layer(DefaultBodyLimit::max(MAX_BODY_BYTES)),
         )
+}
+
+async fn anonymous_player_identity(
+    State(state): State<AppState>,
+    mut request: Request,
+    next: Next,
+) -> Response {
+    let path = request.uri().path();
+    if !path.starts_with("/games/") && path != "/auth/progress" {
+        return next.run(request).await;
+    }
+    let now = now_millis();
+    let existing = cookie_value(request.headers(), "aaidle_player");
+    let player_id = match existing {
+        Some(token) => {
+            match crate::auth::verify_anonymous_player_token(&state.config.auth_secret, token, now)
+            {
+                Ok(Some(player_id)) => player_id,
+                Ok(None) => Uuid::new_v4(),
+                Err(error) => return error.into_response(),
+            }
+        }
+        None => Uuid::new_v4(),
+    };
+    let issue_cookie = existing.is_none_or(|token| {
+        !matches!(
+            crate::auth::verify_anonymous_player_token(&state.config.auth_secret, token, now),
+            Ok(Some(_))
+        )
+    });
+    request
+        .extensions_mut()
+        .insert(AnonymousPlayerId(player_id));
+    let mut response = next.run(request).await;
+    if issue_cookie {
+        let token = match crate::auth::create_anonymous_player_token(
+            &state.config.auth_secret,
+            player_id,
+            now,
+        ) {
+            Ok(token) => token,
+            Err(error) => return error.into_response(),
+        };
+        let cookie = match anonymous_player_cookie_header(&state, &token) {
+            Ok(cookie) => cookie,
+            Err(error) => return error.into_response(),
+        };
+        response.headers_mut().append(header::SET_COOKIE, cookie);
+    }
+    response
 }
 
 async fn health(State(state): State<AppState>, headers: HeaderMap) -> Response {
@@ -399,6 +470,19 @@ pub(super) fn no_store_with_cookie(state: &AppState, token: String) -> AppResult
 
 pub(super) fn cookie_header(state: &AppState, token: &str, max_age: i64) -> AppResult<HeaderValue> {
     named_cookie_header(state, "aaidle_session", token, max_age)
+}
+
+fn anonymous_player_cookie_header(state: &AppState, token: &str) -> AppResult<HeaderValue> {
+    let secure = if state.config.secure_cookies {
+        "; Secure"
+    } else {
+        ""
+    };
+    HeaderValue::from_str(&format!(
+        "aaidle_player={token}; Path=/api/v1; Max-Age={}; SameSite=Strict; HttpOnly{secure}",
+        crate::auth::ANONYMOUS_PLAYER_LIFETIME_SECONDS,
+    ))
+    .map_err(|_| AppError::config("anonymous player cookie could not be encoded"))
 }
 
 pub(super) fn csrf_cookie_header(

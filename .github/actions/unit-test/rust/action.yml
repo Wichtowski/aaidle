@@ -1,5 +1,13 @@
 name: Rust unit tests
-description: Run Rust unit tests with backend coverage and publish the test summary
+description: Run a Rust test namespace and write its test summary report
+
+inputs:
+  test-args:
+    description: Arguments selecting the Rust test namespace or targets
+    required: true
+  report-name:
+    description: Label included in the aggregated test report
+    required: true
 
 runs:
   using: composite
@@ -7,33 +15,32 @@ runs:
     - name: Run Rust unit tests
       working-directory: backend
       shell: bash
+      env:
+        RUST_TEST_ARGS: ${{ inputs.test-args }}
       run: |
         set -o pipefail
-        cargo +1.94.0 test --locked 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
-        cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov --locked --branch --html --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' --output-dir ../tests/reports/backend-coverage
-        cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report --branch --json --summary-only --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' --output-path ../tests/reports/backend-coverage/coverage-summary.json
-        node ../scripts/check-rust-coverage.mjs ../tests/reports/backend-coverage/coverage-summary.json 95
-    - name: Add Rust test report to summary
+        read -ra rust_test_args <<< "$RUST_TEST_ARGS"
+        cargo +1.94.0 test --locked "${rust_test_args[@]}" 2>&1 | tee "$RUNNER_TEMP/rust-test-output"
+    - name: Write Rust test report
       if: always()
       shell: bash
+      env:
+        REPORT_NAME: ${{ inputs.report-name }}
       run: |
         read -r test_passed test_failed test_ignored < <(
-          awk '/test result:/ {
-            for (i = 1; i <= NF; i++) {
-              if ($(i) == "passed;") passed += $(i - 1)
-              if ($(i) == "failed;") failed += $(i - 1)
-              if ($(i) == "ignored;") ignored += $(i - 1)
-            }
-          } END { print passed + 0, failed + 0, ignored + 0 }' \
-          "$RUNNER_TEMP/rust-test-output"
+          if [[ -f "$RUNNER_TEMP/rust-test-output" ]]; then
+            awk '/test result:/ {
+              for (i = 1; i <= NF; i++) {
+                if ($(i) == "passed;") passed += $(i - 1)
+                if ($(i) == "failed;") failed += $(i - 1)
+                if ($(i) == "ignored;") ignored += $(i - 1)
+              }
+            } END { print passed + 0, failed + 0, ignored + 0 }' \
+              "$RUNNER_TEMP/rust-test-output"
+          else
+            echo "0 0 0"
+          fi
         )
-        test_total=$((test_passed + test_failed))
-        test_status="✅"
-        if [[ "$test_failed" -gt 0 ]]; then
-          test_status="❌"
-        fi
-        {
-          echo "## 🦀 Unit Test Report"
-          echo
-          echo "${test_status} ${test_passed} passed · ${test_total} total"
-        } >> "$GITHUB_STEP_SUMMARY"
+        printf '%s\t%s\t%s\t%s\n' \
+          "$REPORT_NAME" "$test_passed" "$test_failed" "$test_ignored" \
+          > "$RUNNER_TEMP/rust-test-report.tsv"

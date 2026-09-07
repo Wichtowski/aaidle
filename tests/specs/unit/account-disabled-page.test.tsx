@@ -50,8 +50,7 @@ describe("AccountDisabledPage", () => {
     const confirmButton = within(screen.getByRole("dialog")).getByRole("button", {
       name: "Sign out",
     });
-    expect(confirmButton).toHaveClass("button--accent");
-    expect(confirmButton).not.toHaveClass("button--primary");
+    expect(confirmButton).toHaveClass("button--primary", "button--orange");
     fireEvent.click(confirmButton);
     expect(signOut).toHaveBeenCalledOnce();
   });

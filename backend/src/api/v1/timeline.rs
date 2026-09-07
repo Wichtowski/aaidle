@@ -2,7 +2,7 @@ use std::{collections::BTreeSet, net::SocketAddr};
 
 use axum::{
     Json,
-    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Extension, Path, Query, State, rejection::JsonRejection},
     http::HeaderMap,
 };
 use serde::Deserialize;
@@ -26,8 +26,9 @@ use crate::{
 };
 
 use super::{
-    assert_csrf_or_bearer, assert_same_origin_or_bearer, current_utc_date, format_next_midnight,
-    is_model_id, now_millis, optional_authenticated_user, parse_json_payload, parse_uuid,
+    AnonymousPlayerId, assert_csrf_or_bearer, assert_same_origin_or_bearer, current_utc_date,
+    format_next_midnight, is_model_id, now_millis, optional_authenticated_user, parse_json_payload,
+    parse_uuid,
 };
 
 #[derive(Deserialize)]
@@ -168,6 +169,21 @@ pub(super) async fn game(
     }))
 }
 
+pub(super) async fn game_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path(difficulty): Path<String>,
+) -> AppResult<Json<TimelineGameResponse>> {
+    game(
+        State(state),
+        headers,
+        Path(difficulty),
+        Query(TimelineGameQuery { player_id }),
+    )
+    .await
+}
+
 #[cfg(test)]
 mod tests;
 
@@ -214,6 +230,34 @@ pub(super) async fn give_up(
         progress::canonical_player_id(&state.db, &user.id, payload.player_id, now_millis()).await?;
     let given_up_at = timeline::give_up_speedrun(&state.db, challenge_id, player_id).await?;
     Ok(Json(TimelineSpeedrunGiveUpResponse { given_up_at }))
+}
+
+pub(super) async fn start_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    path: Path<String>,
+    payload: Result<Json<TimelineSpeedrunStartRequest>, JsonRejection>,
+) -> AppResult<Json<TimelineSpeedrunStartResponse>> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    start(State(state), headers, path, payload).await
+}
+
+pub(super) async fn give_up_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    path: Path<String>,
+    payload: Result<Json<TimelineSpeedrunGiveUpRequest>, JsonRejection>,
+) -> AppResult<Json<TimelineSpeedrunGiveUpResponse>> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    give_up(State(state), headers, path, payload).await
 }
 
 pub(super) async fn leaderboard(
@@ -438,8 +482,8 @@ pub(super) async fn attempt(
             "This account has been disabled.".to_owned(),
         ));
     }
+    assert_same_origin_or_bearer(&state, &headers)?;
     if user.is_some() {
-        assert_same_origin_or_bearer(&state, &headers)?;
         assert_csrf_or_bearer(&headers)?;
     }
     let player_id = match &user {
@@ -484,4 +528,19 @@ pub(super) async fn attempt(
             })
             .collect(),
     }))
+}
+
+pub(super) async fn attempt_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
+    peer: ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    path: Path<String>,
+    payload: Result<Json<TimelineAttemptRequest>, JsonRejection>,
+) -> AppResult<Json<TimelineAttemptResponse>> {
+    let payload = payload.map(|Json(mut payload)| {
+        payload.player_id = player_id;
+        Json(payload)
+    });
+    attempt(State(state), peer, headers, path, payload).await
 }

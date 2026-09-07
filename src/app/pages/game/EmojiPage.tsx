@@ -4,9 +4,7 @@ import type { EmojiDifficulty } from "@lib/api/client";
 import { readGamePreferences, saveEmojiDifficulty } from "@lib/storage/game-preferences";
 
 export function EmojiPage() {
-  const [difficulty, setDifficulty] = useState<EmojiDifficulty>(
-    () => readGamePreferences().emoji,
-  );
+  const [difficulty, setDifficulty] = useState<EmojiDifficulty>(() => readGamePreferences().emoji);
 
   const handleDifficultyChange = (nextDifficulty: string) => {
     const next = nextDifficulty as EmojiDifficulty;

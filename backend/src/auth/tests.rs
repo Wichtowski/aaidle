@@ -613,6 +613,35 @@ fn tokens_are_random_hashable_and_compared_safely() {
     );
 }
 
+#[test]
+fn anonymous_player_tokens_are_bound_signed_and_expiring() {
+    let player_id = Uuid::new_v4();
+    let issued_at = 2_000_000;
+    let token = create_anonymous_player_token("secret", player_id, issued_at).unwrap();
+
+    assert_eq!(
+        verify_anonymous_player_token("secret", &token, issued_at).unwrap(),
+        Some(player_id)
+    );
+    assert_eq!(
+        verify_anonymous_player_token("different", &token, issued_at).unwrap(),
+        None
+    );
+    assert_eq!(
+        verify_anonymous_player_token(
+            "secret",
+            &token,
+            issued_at + (ANONYMOUS_PLAYER_LIFETIME_SECONDS + 1) * 1_000,
+        )
+        .unwrap(),
+        None
+    );
+    assert_eq!(
+        verify_anonymous_player_token("secret", "malformed", issued_at).unwrap(),
+        None
+    );
+}
+
 #[tokio::test]
 async fn input_validation_precedes_auth_database_access() {
     let pool = SqlitePoolOptions::new()

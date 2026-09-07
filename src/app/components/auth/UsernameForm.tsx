@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import { useState } from "react";
 import { apiClient } from "@lib/api/client";
 import { usernamePattern } from "@lib/auth/username";
@@ -76,9 +77,9 @@ export function UsernameForm() {
             value={username}
           />
         </label>
-        <button className="button button--primary" disabled={busy} type="submit">
+        <Button variant="primary" color="accent" disabled={busy} type="submit">
           {busy ? "Saving…" : "Save username"}
-        </button>
+        </Button>
       </form>
     </section>
   );

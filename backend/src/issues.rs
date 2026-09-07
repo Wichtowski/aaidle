@@ -13,7 +13,7 @@ const GITHUB_ISSUES_URL: &str = "https://api.github.com/repos/Wichtowski/aaidle/
 struct CreateIssueRequest<'a> {
     title: String,
     body: &'a str,
-    labels: [&'a str; 1],
+    labels: [&'a str; 3],
 }
 
 #[derive(Deserialize)]
@@ -52,7 +52,7 @@ async fn create_report_at(
         .json(&CreateIssueRequest {
             title: format!("[Report] {title}"),
             body: description,
-            labels: [game],
+            labels: ["user-report", "needs-triage", game],
         })
         .send()
         .await

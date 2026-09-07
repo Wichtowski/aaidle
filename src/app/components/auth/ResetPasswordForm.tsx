@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Toast } from "../ui/Toast";
 import { apiClient } from "@lib/api/client";
+import { Button } from "../ui/Button";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -97,14 +98,15 @@ export function ResetPasswordForm() {
           </button>
         </span>
       </label>
-      <button
-        className="button button--primary"
+      <Button
+        variant="primary"
+        color="black"
         data-testid="reset-submit"
         disabled={busy || !password || !confirmPassword}
         type="submit"
       >
         Set new password
-      </button>
+      </Button>
     </form>
   );
 }

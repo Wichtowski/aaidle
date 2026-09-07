@@ -221,10 +221,12 @@ pub fn validate_seed(entities: &[VisualClueEntity]) -> AppResult<()> {
                     )));
                 }
                 if let VisualClue::Image { src, .. } = clue
-                    && (!src.starts_with("/emoji-visual/") || src.trim().is_empty())
+                    && !(src.starts_with("/emoji-visual/")
+                        || ((src.starts_with("/logo-visual/") || src.starts_with("/common/"))
+                            && super::logo::valid_asset_url(src)))
                 {
                     return Err(AppError::config(format!(
-                        "{}/{} image src must be a non-empty /emoji-visual/ path",
+                        "{}/{} image src must be a public /emoji-visual/, /logo-visual/, or /common/ path",
                         entity.id, variant.id
                     )));
                 }

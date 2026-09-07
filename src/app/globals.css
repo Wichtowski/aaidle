@@ -1246,7 +1246,7 @@ body.hell-mode .game-placeholder__status {
 .privacy-page {
   max-width: 960px;
 }
-.profile-page > :not(.site-navbar):not(.danger-modal) {
+.profile-page > :not(.site-navbar) {
   max-width: 850px;
   margin-inline: auto;
 }
@@ -2265,13 +2265,6 @@ body.hell-mode .hell-mode-toggle__control::after {
 }
 .issue-report__success a {
   color: inherit;
-}
-.issue-report__limit-request {
-  display: flex;
-  align-items: center;
-}
-.issue-report__limit-request .button {
-  padding: 9px 13px;
 }
 body.hell-mode .issue-report__form {
   border-color: #7f3028;
@@ -5037,12 +5030,6 @@ body.hell-mode .completed--timeline {
   color: var(--ink);
   font-size: 17px;
 }
-.timeline-game__speedrun-start,
-.timeline-game__speedrun-give-up {
-  margin-top: 0;
-  padding: 8px 12px;
-  font-size: 12px;
-}
 .timeline-board {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -5302,7 +5289,9 @@ body.hell-mode .completed--timeline {
   font-weight: 800;
   text-align: center;
 }
-.timeline-leaderboard__medal {
+.timeline-leaderboard__rank[data-podium] {
+  width: 100%;
+  text-align: center;
   font-size: 32px;
   line-height: 1;
 }
@@ -5439,30 +5428,8 @@ body.hell-mode .completed--timeline {
   cursor: grabbing;
   transform: translateY(-4px) scale(1.01);
 }
-.timeline-card--pointer-dragging {
-  position: fixed;
-  z-index: 20;
-  width: min(220px, calc(100vw - 32px));
-  animation: none;
-  border-color: var(--accent);
-  box-shadow: 0 12px 28px rgb(23 36 29 / 20%);
-  pointer-events: none;
-  transform: translate(-20px, -20px) rotate(1deg);
-  will-change: left, top;
-}
-.timeline-card--pointer-returning {
-  box-shadow: 0 6px 14px rgb(23 36 29 / 12%);
-  opacity: 0.92;
-}
-.timeline-card--pointer-snapping {
-  box-shadow: 0 4px 10px rgb(23 36 29 / 10%);
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
-}
 .timeline-card--drag-origin {
-  animation-play-state: paused;
+  animation: none;
   display: grid;
   border-color: var(--line);
   border-style: dashed;
@@ -5477,15 +5444,10 @@ body.hell-mode .completed--timeline {
   transform: none;
   transition: none;
 }
-.timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--swapping):not(
+.timeline-card--landed:not(.timeline-card--landing):not(.timeline-card--dragging):not(
     .timeline-card--winning
   ) {
   animation: none;
-}
-.timeline-card--swapping {
-  animation: timeline-card-swap 480ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
-  pointer-events: none;
-  will-change: transform;
 }
 .timeline-card--landing {
   animation: timeline-card-land 560ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
@@ -5538,15 +5500,6 @@ body.hell-mode .completed--timeline {
   box-shadow: inset 0 4px 0 #c58b24;
   animation: timeline-result-incorrect 480ms both;
 }
-.timeline-card__result {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: auto;
-}
-.timeline-card__result .timeline-card__date {
-  margin-top: 0;
-}
 .timeline-card__feedback {
   display: flex;
   align-items: center;
@@ -5570,19 +5523,8 @@ body.hell-mode .completed--timeline {
   color: #e1ffe8;
   box-shadow: inset 0 4px 0 #63ad83;
 }
-:is(:root.hell-mode, body.hell-mode)
-  .timeline-card--correct
-  :is(.timeline-card__date-help, .timeline-card__feedback, time) {
-  color: #fff;
-}
-:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year {
-  border-color: #9d6224;
-  background: #482c18;
-  color: #ffe1a4;
-  box-shadow: inset 0 4px 0 #9d6224;
-}
-:is(:root.hell-mode, body.hell-mode) .timeline-card--same-year .timeline-card__feedback {
-  color: #ffe1a4;
+:is(:root.hell-mode, body.hell-mode) .timeline-card--correct .timeline-card__feedback {
+  color: #e1ffe8;
 }
 :is(:root.hell-mode, body.hell-mode) .timeline-card--incorrect {
   border-color: #a94432;
@@ -5697,14 +5639,6 @@ body.hell-mode .completed--timeline {
   }
   100% {
     transform: translateY(0) scale(1);
-  }
-}
-@keyframes timeline-card-swap {
-  from {
-    transform: translate(var(--timeline-swap-x), var(--timeline-swap-y)) scale(1.01);
-  }
-  to {
-    transform: translate(0, 0) scale(1);
   }
 }
 @keyframes timeline-result-incorrect {

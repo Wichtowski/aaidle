@@ -42,9 +42,12 @@ describe("HardcoreSoundtrack", () => {
     play: vi.fn(),
     setVolume: vi.fn(),
   };
-  const Widget = Object.assign(vi.fn(() => widget), {
-    Events: { PLAY: "play", READY: "ready" },
-  });
+  const Widget = Object.assign(
+    vi.fn(() => widget),
+    {
+      Events: { PLAY: "play", READY: "ready" },
+    },
+  );
 
   beforeEach(() => {
     listeners.clear();

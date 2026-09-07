@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import {
   lazy,
   Suspense,
@@ -11,7 +12,6 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
-import { Link } from "react-router-dom";
 import {
   FaCheck,
   FaCircleQuestion,
@@ -810,8 +810,8 @@ export function TimelineGame() {
   );
   const speedrunActions = (
     <div className="timeline-speedrun-controls__actions">
-      <Link
-        className="button"
+      <Button
+        variant="outline"
         to={
           game
             ? `/timeline/leaderboard/${game.challenge.date.replaceAll("-", "")}`
@@ -819,15 +819,16 @@ export function TimelineGame() {
         }
       >
         Leaderboard
-      </Link>
-      <button
+      </Button>
+      <Button
         aria-pressed={focusMode}
-        className="button"
+        variant="outline"
+        size="small"
         onClick={() => setFocusMode((focused) => !focused)}
         type="button"
       >
         {focusMode ? "Exit focus" : "Focus mode"}
-      </button>
+      </Button>
     </div>
   );
   const difficultyControls =
@@ -899,8 +900,11 @@ export function TimelineGame() {
                   </p>
                 )}
                 {difficulty === "speedrun" && !solved && speedrunStartedAt === null && (
-                  <button
-                    className="button button--primary timeline-game__speedrun-start"
+                  <Button
+                    variant="primary"
+                    color="black"
+                    size="small"
+                    className="timeline-game__speedrun-start"
                     onClick={() => {
                       void startSpeedrun().catch((startError: unknown) => {
                         setToast(
@@ -913,20 +917,22 @@ export function TimelineGame() {
                     type="button"
                   >
                     Show cards and start
-                  </button>
+                  </Button>
                 )}
                 {difficulty === "speedrun" &&
                   !solved &&
                   !speedrunUnfinished &&
                   speedrunStartedAt !== null && (
-                    <button
-                      className="button button--danger timeline-game__speedrun-give-up"
+                    <Button
+                      variant="outline"
+                      color="danger"
+                      className="timeline-game__speedrun-give-up"
                       disabled={busy}
                       onClick={() => setShowSpeedrunGiveUp(true)}
                       type="button"
                     >
                       Give up
-                    </button>
+                    </Button>
                   )}
                 {attemptsRemaining !== null && (
                   <p>
@@ -1078,7 +1084,10 @@ export function TimelineGame() {
                                     </>
                                   ) : feedback === "same-year" ? (
                                     <>
-                                      <FaEquals aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
+                                      <FaEquals
+                                        aria-hidden="true"
+                                        size={timelineFeedbackIconSize}
+                                      />{" "}
                                       Same year
                                     </>
                                   ) : (
@@ -1215,8 +1224,9 @@ export function TimelineGame() {
 
           <div className="timeline-submit">
             {!solved && !speedrunUnfinished && (
-              <button
-                className="button button--primary"
+              <Button
+                variant="primary"
+                color="black"
                 disabled={!complete || busy || solved || exhausted || submissionCoolingDown}
                 onClick={() => void submit()}
                 type="button"
@@ -1230,20 +1240,18 @@ export function TimelineGame() {
                       : exhausted
                         ? "No submissions remaining"
                         : "Submit complete timeline"}
-              </button>
+              </Button>
             )}
-            {!complete && !speedrunUnfinished && (
-              <p>Fill every position exactly once to submit.</p>
-            )}
+            {!complete && !speedrunUnfinished && <p>Fill every position exactly once to submit.</p>}
             {exhausted && (
               <p>Your final arrangement remains private. The answer is not revealed.</p>
             )}
           </div>
           {solved && !showCompletion && (
             <div className="game-completion-action">
-              <button className="button" onClick={() => setShowCompletion(true)} type="button">
+              <Button variant="outline" onClick={() => setShowCompletion(true)} type="button">
                 Show winning timeline
-              </button>
+              </Button>
             </div>
           )}
         </section>

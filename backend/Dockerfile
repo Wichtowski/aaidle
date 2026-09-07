@@ -8,6 +8,7 @@ COPY backend/migrations ./backend/migrations
 COPY data/classic.seed.json ./data/classic.seed.json
 COPY data/emoji.seed.json ./data/emoji.seed.json
 COPY data/timeline.seed.json ./data/timeline.seed.json
+COPY data/logo.seed.json ./data/logo.seed.json
 
 WORKDIR /build/backend
 
@@ -33,7 +34,6 @@ RUN useradd --create-home --system --uid 10001 --user-group aaidle \
 COPY --from=builder /out/aidle-api /usr/local/bin/aidle-api
 COPY --from=builder /out/aidle-seed /usr/local/bin/aidle-seed
 COPY --from=builder /out/aidle-fixture-admin /usr/local/bin/aidle-fixture-admin
-
 USER aaidle
 
 VOLUME ["/data"]

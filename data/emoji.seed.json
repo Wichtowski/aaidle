@@ -1313,8 +1313,9 @@
         "weight": 3,
         "visuals": [
           {
-            "type": "emoji",
-            "value": "🧸"
+            "type": "image",
+            "src": "/emoji-visual/muppet.png",
+            "alt": "A muppet character"
           },
           {
             "type": "emoji",
@@ -2145,6 +2146,27 @@
     "categories": ["image-processing"],
     "minPool": 2,
     "variants": [
+      {
+        "id": "edge-images",
+        "minPool": 2,
+        "weight": 3,
+        "initialRevealCount": 3,
+        "visuals": [
+          {
+            "type": "image",
+            "src": "/common/edge/input.png",
+            "alt": "Input image",
+            "revealPriority": 1
+          },
+          { "type": "emoji", "value": "➡️", "revealPriority": 2 },
+          {
+            "type": "image",
+            "src": "/common/edge/output.png",
+            "alt": "Detected image edges",
+            "revealPriority": 3
+          }
+        ]
+      },
       {
         "id": "image-gradient",
         "minPool": 2,

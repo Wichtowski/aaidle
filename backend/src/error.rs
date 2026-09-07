@@ -111,6 +111,11 @@ impl IntoResponse for AppError {
                     "ATTEMPT_LIMIT_REACHED",
                     "Every available answer for this challenge has already been guessed.",
                 ),
+                "STALE_GUESS_STATE" => (
+                    StatusCode::CONFLICT,
+                    "STALE_GUESS_STATE",
+                    "Your saved guesses changed. Reload the challenge and try again.",
+                ),
                 "TIMELINE_ATTEMPT_LIMIT_REACHED" => (
                     StatusCode::CONFLICT,
                     "ATTEMPT_LIMIT_REACHED",

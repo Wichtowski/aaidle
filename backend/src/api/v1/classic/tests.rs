@@ -1,9 +1,11 @@
 use super::*;
 use axum::{
     body::Body,
+    extract::Extension,
     http::{HeaderValue, Request, StatusCode, header},
 };
 use tower::ServiceExt;
+use uuid::Uuid;
 
 async fn seed_models(state: &AppState) {
     sqlx::query("INSERT INTO providers (id,name,slug,country_code,is_active,created_at,updated_at) VALUES ('p','Provider','provider','US',1,0,0)")
@@ -54,6 +56,15 @@ async fn authenticated_headers(state: &AppState) -> (String, HeaderMap) {
     (user_id, headers)
 }
 
+fn anonymous_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        header::ORIGIN,
+        HeaderValue::from_static("http://localhost:3000"),
+    );
+    headers
+}
+
 #[tokio::test]
 async fn classic_route_parameters_are_validated_before_repository_access() {
     let state = super::super::test_support::state().await;
@@ -98,6 +109,7 @@ async fn guesses_reject_invalid_identifiers_and_attempt_numbers_early() {
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             peer,
             HeaderMap::new(),
             Path("bad-id".to_owned()),
@@ -115,6 +127,7 @@ async fn guesses_reject_invalid_identifiers_and_attempt_numbers_early() {
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             peer,
             HeaderMap::new(),
             Path(Uuid::new_v4().to_string()),
@@ -133,6 +146,7 @@ async fn guesses_reject_invalid_identifiers_and_attempt_numbers_early() {
     assert!(matches!(
         guess(
             State(state),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             peer,
             HeaderMap::new(),
             Path(Uuid::new_v4().to_string()),
@@ -212,8 +226,9 @@ async fn classic_game_guess_history_stats_and_trajectory_succeed() {
         .unwrap();
     let Json(wrong_outcome) = guess(
         State(state.clone()),
+        Extension(AnonymousPlayerId(player_id)),
         ConnectInfo("127.0.0.1:1234".parse().unwrap()),
-        HeaderMap::new(),
+        anonymous_headers(),
         Path(challenge_id.to_string()),
         Ok(Json(GuessRequest {
             player_id,
@@ -228,8 +243,9 @@ async fn classic_game_guess_history_stats_and_trajectory_succeed() {
     assert!(wrong_outcome.trajectory_access_token.is_none());
     let Json(outcome) = guess(
         State(state.clone()),
+        Extension(AnonymousPlayerId(player_id)),
         ConnectInfo("127.0.0.1:1234".parse().unwrap()),
-        HeaderMap::new(),
+        anonymous_headers(),
         Path(challenge_id.to_string()),
         Ok(Json(GuessRequest {
             player_id,
@@ -246,6 +262,7 @@ async fn classic_game_guess_history_stats_and_trajectory_succeed() {
     let (_, authenticated) = authenticated_headers(&state).await;
     let Json(authenticated_outcome) = guess(
         State(state.clone()),
+        Extension(AnonymousPlayerId(Uuid::new_v4())),
         ConnectInfo("127.0.0.2:1234".parse().unwrap()),
         authenticated.clone(),
         Path(challenge_id.to_string()),
@@ -273,8 +290,8 @@ async fn classic_game_guess_history_stats_and_trajectory_succeed() {
 
     let Json(history) = guess_history(
         State(state.clone()),
+        Extension(AnonymousPlayerId(player_id)),
         Path(challenge_id.to_string()),
-        Query(GuessHistoryQuery { player_id }),
     )
     .await
     .unwrap();
@@ -383,6 +400,7 @@ async fn classic_guess_and_trajectory_cover_auth_security_and_disabled_accounts(
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
             ConnectInfo("127.0.0.3:1234".parse().unwrap()),
             missing_origin,
             Path(challenge_id.to_string()),
@@ -401,6 +419,7 @@ async fn classic_guess_and_trajectory_cover_auth_security_and_disabled_accounts(
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
             ConnectInfo("127.0.0.3:1234".parse().unwrap()),
             missing_csrf,
             Path(challenge_id.to_string()),
@@ -454,6 +473,7 @@ async fn classic_guess_and_trajectory_cover_auth_security_and_disabled_accounts(
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
             ConnectInfo("127.0.0.4:1234".parse().unwrap()),
             disabled_headers.clone(),
             Path(challenge_id.to_string()),
@@ -487,10 +507,8 @@ async fn classic_lookup_and_hardcore_game_cover_empty_error_and_success_paths() 
     assert!(matches!(
         guess_history(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             Path("bad-id".to_owned()),
-            Query(GuessHistoryQuery {
-                player_id: Uuid::new_v4(),
-            }),
         )
         .await,
         Err(AppError::Validation(_))
@@ -498,10 +516,8 @@ async fn classic_lookup_and_hardcore_game_cover_empty_error_and_success_paths() 
     assert!(matches!(
         guess_history(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             Path(Uuid::new_v4().to_string()),
-            Query(GuessHistoryQuery {
-                player_id: Uuid::new_v4(),
-            }),
         )
         .await,
         Err(AppError::NotFound(_))
@@ -542,7 +558,7 @@ async fn classic_game_rejects_an_invalid_stored_challenge_id() {
     assert!(matches!(
         game(
             State(state),
-            HeaderMap::new(),
+            anonymous_headers(),
             Path(("llm".to_owned(), "challenge".to_owned())),
         )
         .await,
@@ -566,8 +582,9 @@ async fn classic_database_errors_propagate_from_each_public_read_path() {
     assert!(matches!(
         guess(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             ConnectInfo("127.0.0.11:1234".parse().unwrap()),
-            HeaderMap::new(),
+            anonymous_headers(),
             Path(Uuid::new_v4().to_string()),
             Ok(Json(GuessRequest {
                 player_id: Uuid::new_v4(),
@@ -582,10 +599,8 @@ async fn classic_database_errors_propagate_from_each_public_read_path() {
     assert!(matches!(
         guess_history(
             State(state.clone()),
+            Extension(AnonymousPlayerId(Uuid::new_v4())),
             Path(Uuid::new_v4().to_string()),
-            Query(GuessHistoryQuery {
-                player_id: Uuid::new_v4(),
-            }),
         )
         .await,
         Err(AppError::Database(_))

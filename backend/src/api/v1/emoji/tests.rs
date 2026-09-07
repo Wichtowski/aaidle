@@ -50,6 +50,15 @@ async fn authenticated_headers(state: &AppState, disabled: bool) -> (String, Hea
     (user_id, headers)
 }
 
+fn anonymous_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        header::ORIGIN,
+        HeaderValue::from_static("http://localhost:3000"),
+    );
+    headers
+}
+
 #[tokio::test]
 async fn emoji_game_and_lookup_handlers_validate_route_parameters() {
     let state = super::super::test_support::state().await;
@@ -178,7 +187,7 @@ async fn emoji_game_guess_hints_and_history_succeed_with_seeded_data() {
     let Json(outcome) = guess(
         State(state.clone()),
         ConnectInfo("127.0.0.1:1234".parse().unwrap()),
-        HeaderMap::new(),
+        anonymous_headers(),
         Path(challenge_id.to_string()),
         Ok(Json(EmojiDifficultyGuessRequest {
             player_id,
@@ -500,5 +509,46 @@ async fn emoji_guess_propagates_authentication_and_player_repository_errors() {
         )
         .await,
         Err(AppError::Database(_))
+    ));
+}
+
+#[tokio::test]
+async fn anonymous_route_wrappers_forward_player_identity() {
+    let state = super::super::test_support::state().await;
+    let player_id = Uuid::new_v4();
+    assert!(matches!(
+        hints_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            Path("invalid".to_owned()),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        guess_history_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            Path("invalid".to_owned()),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        guess_route(
+            State(state),
+            Extension(AnonymousPlayerId(player_id)),
+            ConnectInfo("127.0.0.1:1234".parse().unwrap()),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Ok(Json(EmojiDifficultyGuessRequest {
+                player_id: Uuid::new_v4(),
+                request_id: Uuid::new_v4(),
+                guessed_entity_id: "openai".to_owned(),
+                attempt_number: 1,
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
     ));
 }

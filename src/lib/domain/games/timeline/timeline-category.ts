@@ -12,5 +12,7 @@ const classicCategoryLabels: Record<string, string> = {
 
 export function timelineCategoryLabel(categories: readonly string[] | undefined, itemKind: string) {
   const category = categories?.find((value) => classicCategoryLabels[value]);
-  return category ? classicCategoryLabels[category] : itemKind[0]!.toUpperCase() + itemKind.slice(1);
+  return category
+    ? classicCategoryLabels[category]
+    : itemKind[0]!.toUpperCase() + itemKind.slice(1);
 }

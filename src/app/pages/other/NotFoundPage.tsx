@@ -2,6 +2,7 @@ import { FaArrowRight, FaHouse } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
 import { PageEyebrow } from "@components/ui/PageEyebrow";
+import { Button } from "@components/ui/Button";
 
 export function NotFoundPage() {
   return (
@@ -18,9 +19,9 @@ export function NotFoundPage() {
           wait—there’s always a model to identify.
         </p>
         <div className="not-found__actions">
-          <Link className="button button--primary" to="/classic">
+          <Button variant="primary" color="black" to="/classic">
             Play Classic <FaArrowRight aria-hidden="true" />
-          </Link>
+          </Button>
           <Link className="not-found__classic-link" to="/">
             <FaHouse aria-hidden="true" /> Return to homepage
           </Link>

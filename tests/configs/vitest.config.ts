@@ -25,6 +25,7 @@ export default defineConfig({
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/**/*.d.ts"],
+      reportOnFailure: true,
       reporter: ["text", "html", "json-summary"],
       reportsDirectory: "tests/reports/frontend-coverage",
     },

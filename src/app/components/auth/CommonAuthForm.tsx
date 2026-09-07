@@ -1,3 +1,4 @@
+import { Button } from "@components/ui/Button";
 import { useState, type ReactNode } from "react";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa6";
 import { ActivationPrompt } from "./ActivationPrompt";
@@ -49,12 +50,12 @@ export function CommonAuthForm({
       <Toast message={toast?.message ?? null} variant={toast?.variant} onDismiss={onToastDismiss} />
       {user && !user.emailVerified && user.email && <ActivationPrompt email={user.email} />}
       <div className="auth-card__providers">
-        <a className="button" href="/api/v1/auth/oauth/github">
+        <Button variant="outline" color="oauth" fullWidth href="/api/v1/auth/oauth/github">
           <FaGithub aria-hidden="true" /> Continue with GitHub
-        </a>
-        <a className="button" href="/api/v1/auth/oauth/google">
+        </Button>
+        <Button variant="outline" color="oauth" fullWidth href="/api/v1/auth/oauth/google">
           <FaGoogle aria-hidden="true" /> Continue with Google
-        </a>
+        </Button>
       </div>
       <div className="auth-divider">or use your email</div>
       <form
@@ -101,14 +102,16 @@ export function CommonAuthForm({
           </span>
         </label>
         {children}
-        <button
-          className="button button--primary"
+        <Button
+          variant="primary"
+          color="black"
+          fullWidth
           data-testid="auth-submit"
           disabled={busy}
           type="submit"
         >
           {submitLabel}
-        </button>
+        </Button>
       </form>
       {afterForm}
       {footer}

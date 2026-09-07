@@ -84,8 +84,8 @@ export function ClassicHTP({
             : "Release compares both year and quarter, so arrows help narrow the date precisely."}
         </li>
         <li>
-          Some older scientific papers were recorded with only a publication year, so their date
-          may appear as just a year.
+          Some older scientific papers were recorded with only a publication year, so their date may
+          appear as just a year.
         </li>
         <li>
           {hardcore
@@ -130,7 +130,6 @@ export function ClassicHTP({
         are saved only in this browser on this device. They are never stored in our database.
         Clearing browser or site data removes them. Account sync will be available after sign in.
       </p>
-
     </HowToPlayDialog>
   );
 }

@@ -156,7 +156,14 @@ fn validation_rejects_each_invalid_count_priority_and_image_path() {
         assert!(validate_seed(&[entity_with(vec![variant(vec![emoji(Some(priority))])])]).is_err());
     }
 
-    for src in ["", "image.webp", " /emoji-visual/image.webp"] {
+    for src in [
+        "",
+        "image.webp",
+        " /emoji-visual/image.webp",
+        "/logo-visual/../secret.png",
+        "/logo-visual/image.svg",
+        "//logo-visual/image.png",
+    ] {
         let image = VisualClue::Image {
             src: src.to_owned(),
             alt: None,
@@ -208,4 +215,23 @@ fn weighted_selection_rejects_empty_weight_and_can_reach_later_variants() {
     );
     assert_eq!(stable_hash("emoji"), stable_hash("emoji"));
     assert_ne!(stable_hash("emoji"), stable_hash("Emoji"));
+}
+
+#[test]
+fn sobel_uses_shared_public_logo_images() {
+    let catalog = VisualClueCatalog::load().unwrap();
+    let sobel = catalog.entity("sobel").unwrap();
+    let resolved = resolve_variant(sobel, "edge-images").unwrap();
+    assert_eq!(resolved.initial_reveal_count, 3);
+    assert!(
+        matches!(&resolved.clues[0], VisualClue::Image { src, .. } if src == "/common/edge/input.png")
+    );
+    assert!(
+        matches!(&resolved.clues[2], VisualClue::Image { src, .. } if src == "/common/edge/output.png")
+    );
+    let logo = crate::domain::logo::LogoCatalog::load().unwrap();
+    assert_eq!(
+        logo.entry("sobel-operator").unwrap().asset_path,
+        "/common/edge/output.png"
+    );
 }

@@ -15,8 +15,6 @@ test("disabled user receives a restricted session with the disable reason", asyn
 
   await expect(page).toHaveURL(/\/account-disabled$/);
   await expect(accountDisabledPage.heading).toBeVisible();
-  await expect(accountDisabledPage.reason).toContainText(
-    "Production E2E disabled-account fixture",
-  );
+  await expect(accountDisabledPage.reason).toContainText("Production E2E disabled-account fixture");
   await expect(page.getByRole("button", { name: "Sign out" }).first()).toBeVisible();
 });

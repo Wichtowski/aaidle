@@ -57,7 +57,7 @@ describe("v1 API client", () => {
       "75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
     );
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/hints",
     );
   });
 
@@ -76,7 +76,7 @@ describe("v1 API client", () => {
     );
 
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/emoji/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses",
     );
     expect(history.guesses).toEqual([
       { id: "gpt-4o", name: "GPT-4o", isCorrect: false, attemptNumber: 1 },
@@ -122,7 +122,7 @@ describe("v1 API client", () => {
     );
 
     expect(fetchMock.mock.calls[0][0]).toBe(
-      "/api/v1/games/classic/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses?playerId=75f5c6f0-0f47-4dc2-b094-a1acb1e1cbf9",
+      "/api/v1/games/classic/challenges/2c8d3858-8e24-4ad0-b1d3-7d231af19a58/guesses",
     );
     expect(history[0]).toMatchObject({
       requestId: "2ad7aefe-9a37-41cb-b0cd-43d068c0a1eb",

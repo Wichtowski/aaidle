@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Button } from "../ui/Button";
 
 export function RegistrationSuccessDialog({
   activationUrl,
@@ -38,9 +39,9 @@ export function RegistrationSuccessDialog({
           </a>
         )}
         <div className="auth-success-modal__actions">
-          <a className="button button--primary" href={loginUrl} ref={continueRef}>
+          <Button variant="primary" color="black" href={loginUrl} ref={continueRef}>
             Continue to sign in
-          </a>
+          </Button>
         </div>
       </section>
     </div>

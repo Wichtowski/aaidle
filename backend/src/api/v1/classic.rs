@@ -1,10 +1,9 @@
 use axum::{
     Json,
-    extract::{ConnectInfo, Path, Query, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Extension, Path, State, rejection::JsonRejection},
     http::HeaderMap,
 };
 use std::net::SocketAddr;
-use uuid::Uuid;
 
 use crate::{
     dto::{
@@ -18,13 +17,14 @@ use crate::{
 };
 
 use super::{
-    CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf_or_bearer, assert_same_origin,
-    assert_same_origin_or_bearer, authenticated_user, current_utc_date, format_next_midnight,
-    is_model_id, now_millis, parse_json_payload, parse_uuid, session_cookie,
+    AnonymousPlayerId, CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf_or_bearer,
+    assert_same_origin, assert_same_origin_or_bearer, authenticated_user, current_utc_date,
+    format_next_midnight, is_model_id, now_millis, parse_json_payload, parse_uuid, session_cookie,
 };
 
 pub(super) async fn guess(
     State(state): State<AppState>,
+    Extension(AnonymousPlayerId(anonymous_player_id)): Extension<AnonymousPlayerId>,
     ConnectInfo(peer): ConnectInfo<SocketAddr>,
     headers: HeaderMap,
     Path(challenge_id): Path<String>,
@@ -49,8 +49,8 @@ pub(super) async fn guess(
             "This account has been disabled.".to_owned(),
         ));
     }
+    assert_same_origin_or_bearer(&state, &headers)?;
     if user.is_some() {
-        assert_same_origin_or_bearer(&state, &headers)?;
         assert_csrf_or_bearer(&headers)?;
     }
     let player_id = match &user {
@@ -58,12 +58,12 @@ pub(super) async fn guess(
             crate::progress::canonical_player_id(
                 &state.db,
                 &user.id,
-                payload.player_id,
+                anonymous_player_id,
                 now_millis(),
             )
             .await?
         }
-        None => payload.player_id,
+        None => anonymous_player_id,
     };
     super::consume_guess_rate_limits(&state, &headers, Some(peer), player_id, challenge_id).await?;
     let result = repository::process_guess(
@@ -115,21 +115,14 @@ pub(super) async fn guess(
     }))
 }
 
-#[derive(serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub(super) struct GuessHistoryQuery {
-    player_id: Uuid,
-}
-
 pub(super) async fn guess_history(
     State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player_id)): Extension<AnonymousPlayerId>,
     Path(challenge_id): Path<String>,
-    Query(query): Query<GuessHistoryQuery>,
 ) -> AppResult<Json<ClassicGuessHistoryResponse>> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     Ok(Json(ClassicGuessHistoryResponse {
-        guesses: repository::classic_guess_history(&state.db, challenge_id, query.player_id)
-            .await?,
+        guesses: repository::classic_guess_history(&state.db, challenge_id, player_id).await?,
     }))
 }
 

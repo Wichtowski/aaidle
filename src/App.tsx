@@ -57,6 +57,9 @@ const DeferredIssuePage = lazy(() =>
 const TimelinePage = lazy(() =>
   import("@app/pages/game/TimelinePage").then(({ TimelinePage }) => ({ default: TimelinePage })),
 );
+const LogoPage = lazy(() =>
+  import("@app/pages/game/LogoPage").then(({ LogoPage }) => ({ default: LogoPage })),
+);
 const TimelineLeaderboardPage = lazy(() =>
   import("@app/pages/game/TimelineLeaderboardPage").then(({ TimelineLeaderboardPage }) => ({
     default: TimelineLeaderboardPage,
@@ -99,6 +102,7 @@ function Content() {
           <Route path="/classic" element={<ClassicPage />} />
           <Route path="/classic/:category" element={<ClassicPage />} />
           <Route path="/emoji" element={<EmojiPage />} />
+          <Route path="/logo" element={<LogoPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/timeline/leaderboard" element={<TimelineLeaderboardPage />} />
           <Route path="/timeline/leaderboard/:date" element={<TimelineDailyLeaderboardPage />} />
