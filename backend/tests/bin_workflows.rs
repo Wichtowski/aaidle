@@ -30,7 +30,13 @@ impl Drop for TestDatabase {
     }
 }
 
-fn local_command(binary: &str, database: &TestDatabase) -> Command {
+fn binary_path(name: &str, cargo_path: &str) -> PathBuf {
+    std::env::var_os(format!("CARGO_BIN_EXE_{name}"))
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from(cargo_path))
+}
+
+fn local_command(binary: PathBuf, database: &TestDatabase) -> Command {
     let mut command = Command::new(binary);
     command
         .env("AIDLE_ENV", "local")
@@ -53,12 +59,15 @@ fn local_command(binary: &str, database: &TestDatabase) -> Command {
 }
 
 fn hash_password(input: &str) -> std::process::Output {
-    let mut child = Command::new(env!("CARGO_BIN_EXE_hash_password"))
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("spawn password hasher");
+    let mut child = Command::new(binary_path(
+        "hash_password",
+        env!("CARGO_BIN_EXE_hash_password"),
+    ))
+    .stdin(Stdio::piped())
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .spawn()
+    .expect("spawn password hasher");
     child
         .stdin
         .take()
@@ -90,10 +99,13 @@ fn password_hash_binary_reports_success_and_validation_failure() {
 #[ignore = "disabled because the real migration, seed, and fixture workflow does not terminate reliably"]
 fn server_migration_seed_and_fixture_binaries_complete_real_workflows() {
     let server_database = TestDatabase::new();
-    let server = local_command(env!("CARGO_BIN_EXE_aidle-api"), &server_database)
-        .arg("--migrate-only")
-        .output()
-        .expect("run server migration");
+    let server = local_command(
+        binary_path("aidle-api", env!("CARGO_BIN_EXE_aidle-api")),
+        &server_database,
+    )
+    .arg("--migrate-only")
+    .output()
+    .expect("run server migration");
     assert!(
         server.status.success(),
         "{}",
@@ -102,18 +114,24 @@ fn server_migration_seed_and_fixture_binaries_complete_real_workflows() {
     assert!(server_database.0.exists());
 
     let seeded_database = TestDatabase::new();
-    let seed = local_command(env!("CARGO_BIN_EXE_seed"), &seeded_database)
-        .output()
-        .expect("run seed binary");
+    let seed = local_command(
+        binary_path("seed", env!("CARGO_BIN_EXE_seed")),
+        &seeded_database,
+    )
+    .output()
+    .expect("run seed binary");
     assert!(
         seed.status.success(),
         "{}",
         String::from_utf8_lossy(&seed.stderr)
     );
 
-    let fixture = local_command(env!("CARGO_BIN_EXE_fixture_admin"), &seeded_database)
-        .output()
-        .expect("run fixture admin binary");
+    let fixture = local_command(
+        binary_path("fixture_admin", env!("CARGO_BIN_EXE_fixture_admin")),
+        &seeded_database,
+    )
+    .output()
+    .expect("run fixture admin binary");
     assert!(
         fixture.status.success(),
         "{}",

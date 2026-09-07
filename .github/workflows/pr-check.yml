@@ -90,6 +90,7 @@ jobs:
       - name: Build pull request test summaries
         shell: bash
         run: |
+          workflow_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           {
             if [[ -s reports/typescript/typescript-test-summary.md ]]; then
               sed '1s/^### TypeScript$/## 🧪 TypeScript tests/' \
@@ -100,7 +101,8 @@ jobs:
               echo "Test report unavailable."
             fi
             echo
-            echo "<sub>Updated by the \\`Pull Request Check / Publish test summaries\\` workflow.</sub>"
+            printf '<sub>Updated by the [%s](%s) workflow.</sub>\n' \
+              "Pull Request Check / Publish test summaries" "$workflow_url"
           } > reports/typescript-test-summary.md
           {
             if [[ -s reports/rust/rust-test-summary.md ]]; then
@@ -111,7 +113,8 @@ jobs:
               echo "Test report unavailable."
             fi
             echo
-            echo "<sub>Updated by the \\`Pull Request Check / Publish test summaries\\` workflow.</sub>"
+            printf '<sub>Updated by the [%s](%s) workflow.</sub>\n' \
+              "Pull Request Check / Publish test summaries" "$workflow_url"
           } > reports/rust-test-summary.md
       - name: Remove legacy combined test summary comment
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
