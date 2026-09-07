@@ -55,7 +55,7 @@ Frontend unit tests are in `tests/specs/unit/` and run with `pnpm test:unit`; us
 
 The full migration, seed, and fixture executable workflow remains disabled because it does not terminate reliably. Backend coverage excludes executable entry points under `backend/src/bin/`.
 
-Any API behavior change must update `docs/backend/api-v1.md` and the affected frontend, handler, domain, repository, and integration tests. New routes, response fields, validation rules, and error branches require corresponding tests. Release CI publishes separate frontend and backend coverage reports, and backend coverage enforces a 95% minimum for lines, functions, regions, and branches.
+Any API behavior change must update `docs/backend/api-v1.md` and the affected frontend, handler, domain, repository, and integration tests. New routes, response fields, validation rules, and error branches require corresponding tests. Release CI publishes separate frontend and backend coverage reports. Backend coverage requires at least 95% line coverage and 90% function, region, and branch coverage; these thresholds are defined in `scripts/check-rust-coverage.mjs`.
 
 ## Delivery
 

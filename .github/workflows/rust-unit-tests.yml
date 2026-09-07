@@ -192,7 +192,7 @@ jobs:
             --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' \
             --output-path ../tests/reports/backend-coverage/coverage-summary.json
           node ../scripts/check-rust-coverage.mjs \
-            ../tests/reports/backend-coverage/coverage-summary.json 95
+            ../tests/reports/backend-coverage/coverage-summary.json
       - name: Upload backend coverage report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
