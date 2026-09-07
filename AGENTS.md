@@ -29,8 +29,8 @@ Read [docs/architecture.md](docs/architecture.md) for the detailed system map an
 5. For every API behavior change, update the API contract, frontend validation, and affected unit, integration, and end-to-end tests together; add tests for every new route, field, validation rule, and error branch.
 6. Keep Rust test bodies in adjacent `tests.rs` files or `backend/tests/`, never inline in production source files. Test-only modules must remain behind `#[cfg(test)]` and absent from release binaries.
 7. Keep backend coverage for:
-    - lines at or above 95%
-    - functions, regions, and branches at or above 90%
+   - lines at or above 95%
+   - functions, regions, and branches at or above 90%
 8. Do not edit generated `dist/` or `backend/target/` output.
 9. Do not restore removed legacy migration documentation or unversioned compatibility routes without an explicit requirement.
 
