@@ -579,6 +579,168 @@ async fn gaussian_profile_progress_and_images_restore_without_focal_point() {
     assert_ne!(blurred, clear);
 }
 
+#[tokio::test]
+async fn null_reveal_profile_stays_unmodified_across_game_guess_history_and_solve() {
+    let mut state = super::super::test_support::state().await;
+    let source_server = crate::logo_images::tests::image_server().await;
+    state.logo_images = std::sync::Arc::new(
+        crate::logo_images::LogoImageCache::new(
+            &source_server.origin,
+            std::time::Duration::from_secs(2),
+        )
+        .unwrap(),
+    );
+    let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
+    entries
+        .iter_mut()
+        .find(|entry| entry.answer_id == "openai")
+        .unwrap()
+        .reveal = crate::domain::logo::RevealProfile::None;
+    state.logo =
+        std::sync::Arc::new(crate::domain::logo::LogoCatalog::from_entries(entries).unwrap());
+    seed_models(&state).await;
+
+    let player_id = Uuid::new_v4();
+    let Json(initial) = game(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    let challenge_id = initial.challenge.id;
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai' WHERE id = ?")
+        .bind(challenge_id.to_string())
+        .execute(&state.db)
+        .await
+        .unwrap();
+
+    let Json(loaded) = game(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path("normal".into()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    let loaded_progress = serde_json::to_value(&loaded.progress).unwrap();
+    assert_eq!(loaded_progress["revealProfile"], serde_json::Value::Null);
+    assert_eq!(loaded_progress["imageRevision"], 0);
+    assert!(loaded_progress.get("focalPoint").is_none());
+    assert!(loaded_progress.get("blurStartStrength").is_none());
+    assert!(loaded_progress.get("blurStepStrength").is_none());
+
+    let original = crate::logo_images::tests::source_image();
+    let initial_image = image(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(challenge_id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("0".into()),
+    )
+    .await
+    .unwrap()
+    .into_body()
+    .collect()
+    .await
+    .unwrap()
+    .to_bytes();
+    assert_eq!(initial_image.as_ref(), original.as_slice());
+
+    let Json(wrong) = guess(
+        State(state.clone()),
+        ConnectInfo("127.0.0.1:4321".parse().unwrap()),
+        HeaderMap::from_iter([(
+            header::ORIGIN,
+            HeaderValue::from_static("http://localhost:3000"),
+        )]),
+        Path(challenge_id.to_string()),
+        Ok(Json(LogoGuessRequest {
+            player_id,
+            request_id: Uuid::new_v4(),
+            guessed_model_id: "anthropic".into(),
+            attempt_number: 1,
+        })),
+    )
+    .await
+    .unwrap();
+    assert!(!wrong.is_correct);
+    assert_eq!(wrong.progress.image_revision, 1);
+    assert_eq!(
+        serde_json::to_value(&wrong.progress).unwrap()["revealProfile"],
+        serde_json::Value::Null
+    );
+    let revised_image = image(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(challenge_id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("1".into()),
+    )
+    .await
+    .unwrap()
+    .into_body()
+    .collect()
+    .await
+    .unwrap()
+    .to_bytes();
+    assert_eq!(revised_image, initial_image);
+
+    let Json(restored) = guess_history(
+        State(state.clone()),
+        HeaderMap::new(),
+        Path(challenge_id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+    )
+    .await
+    .unwrap();
+    assert_eq!(restored.guesses.len(), 1);
+    assert_eq!(restored.progress.image_revision, 1);
+    assert_eq!(
+        serde_json::to_value(&restored.progress).unwrap()["revealProfile"],
+        serde_json::Value::Null
+    );
+
+    let Json(solved) = guess(
+        State(state.clone()),
+        ConnectInfo("127.0.0.1:4321".parse().unwrap()),
+        HeaderMap::from_iter([(
+            header::ORIGIN,
+            HeaderValue::from_static("http://localhost:3000"),
+        )]),
+        Path(challenge_id.to_string()),
+        Ok(Json(LogoGuessRequest {
+            player_id,
+            request_id: Uuid::new_v4(),
+            guessed_model_id: "openai".into(),
+            attempt_number: 2,
+        })),
+    )
+    .await
+    .unwrap();
+    assert!(solved.is_correct);
+    assert_eq!(
+        serde_json::to_value(&solved.progress).unwrap()["revealProfile"],
+        serde_json::Value::Null
+    );
+    let solved_image = image(
+        State(state),
+        HeaderMap::new(),
+        Path(challenge_id.to_string()),
+        Query(LogoPlayerQuery { player_id }),
+        Some("solved".into()),
+    )
+    .await
+    .unwrap()
+    .into_body()
+    .collect()
+    .await
+    .unwrap()
+    .to_bytes();
+    assert_eq!(solved_image, initial_image);
+}
+
 #[test]
 fn null_reveal_profile_is_included_in_api_progress() {
     let response = progress_response(

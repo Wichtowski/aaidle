@@ -65,7 +65,7 @@ jobs:
       release_tag: ${{ github.event.pull_request.head.sha }}
 
   test-summary:
-    name: Publish test summary
+    name: Publish test summaries
     if: always()
     needs: [vitest, rust]
     runs-on: ubuntu-latest
@@ -87,33 +87,46 @@ jobs:
         with:
           name: backend-coverage-report
           path: reports/rust
-      - name: Build pull request test summary
+      - name: Build pull request test summaries
         shell: bash
         run: |
           {
-            echo "## Test summary"
-            echo
             if [[ -s reports/typescript/typescript-test-summary.md ]]; then
-              cat reports/typescript/typescript-test-summary.md
+              sed '1s/^### TypeScript$/## 🧪 TypeScript tests/' \
+                reports/typescript/typescript-test-summary.md
             else
-              echo "### TypeScript"
+              echo "## 🧪 TypeScript tests"
               echo
               echo "Test report unavailable."
             fi
             echo
+            echo "<sub>Updated by the \\`Pull Request Check / Publish test summaries\\` workflow.</sub>"
+          } > reports/typescript-test-summary.md
+          {
             if [[ -s reports/rust/rust-test-summary.md ]]; then
-              sed '1s/^## /### /' reports/rust/rust-test-summary.md
+              cat reports/rust/rust-test-summary.md
             else
-              echo "### Rust"
+              echo "## 🦀 Rust tests"
               echo
               echo "Test report unavailable."
             fi
             echo
-            echo "<sub>Updated by the \\`Pull Request Check / Publish test summary\\` workflow.</sub>"
-          } > reports/test-summary.md
-      - name: Update pull request test summary comment
+            echo "<sub>Updated by the \\`Pull Request Check / Publish test summaries\\` workflow.</sub>"
+          } > reports/rust-test-summary.md
+      - name: Remove legacy combined test summary comment
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: test-summary
-          path: reports/test-summary.md
+          delete: true
+      - name: Update TypeScript test summary comment
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: typescript-test-summary
+          path: reports/typescript-test-summary.md
+          skip_unchanged: true
+      - name: Update Rust test summary comment
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: rust-test-summary
+          path: reports/rust-test-summary.md
           skip_unchanged: true
