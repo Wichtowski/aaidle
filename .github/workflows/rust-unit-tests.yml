@@ -12,7 +12,73 @@ env:
 
 jobs:
   test:
-    name: Rust unit tests
+    name: Rust unit tests / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            test_args: "--lib api::"
+          - name: auth
+            test_args: "--lib auth::tests::"
+          - name: config
+            test_args: "--lib config::"
+          - name: database
+            test_args: "--lib db::"
+          - name: domain
+            test_args: "--lib domain::"
+          - name: dto
+            test_args: "--lib dto::"
+          - name: email
+            test_args: "--lib email::"
+          - name: errors
+            test_args: "--lib error::"
+          - name: issues
+            test_args: "--lib issues::"
+          - name: logo-images
+            test_args: "--lib logo_images::"
+          - name: progress
+            test_args: "--lib progress::"
+          - name: repository
+            test_args: "--lib repository::"
+          - name: state
+            test_args: "--lib state::"
+          - name: binaries
+            test_args: "--bins"
+          - name: integration
+            test_args: "--test api_v1 --test bin_workflows"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.release_tag }}
+      - name: Install Rust
+        run: rustup toolchain install ${{ vars.RUST_TOOLCHAIN }} --profile minimal
+      - name: Run Rust unit tests
+        uses: ./.github/actions/unit-test/rust
+        with:
+          report-name: ${{ matrix.name }} tests
+          test-args: ${{ matrix.test_args }}
+      - name: Prepare Rust test report artifact
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/rust-test-reports"
+          cp "$RUNNER_TEMP/rust-test-report.tsv" \
+            "$RUNNER_TEMP/rust-test-reports/${{ matrix.name }}.tsv"
+      - name: Upload Rust test report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rust-test-report-${{ matrix.name }}
+          path: ${{ runner.temp }}/rust-test-reports
+          if-no-files-found: error
+
+  coverage:
+    name: Rust coverage
+    if: always()
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,11 +86,44 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.release_tag }}
+      - name: Download Rust test reports
+        if: always()
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v7.0.0
+        with:
+          pattern: rust-test-report-*
+          path: tests/reports/rust-test-reports
+          merge-multiple: true
+      - name: Add Rust test summary to coverage report
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p tests/reports/backend-coverage
+          summary_file="tests/reports/backend-coverage/rust-test-summary.md"
+          total_passed=0
+          total_failed=0
+          total_ignored=0
+          {
+            echo "## 🦀 Rust tests"
+            echo
+            echo "| Namespace | Passed | Failed | Ignored |"
+            echo "| --- | ---: | ---: | ---: |"
+            shopt -s nullglob
+            reports=(tests/reports/rust-test-reports/*.tsv)
+            for report in "${reports[@]}"; do
+              IFS=$'\t' read -r name passed failed ignored < "$report"
+              printf '| %s | %s | %s | %s |\n' "$name" "$passed" "$failed" "$ignored"
+              total_passed=$((total_passed + passed))
+              total_failed=$((total_failed + failed))
+              total_ignored=$((total_ignored + ignored))
+            done
+            total=$((total_passed + total_failed))
+            echo
+            echo "**Total:** ${total_passed} passed · ${total_failed} failed · ${total_ignored} ignored (${total} executed)"
+          } > "$summary_file"
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ vars.NODE_VERSION }}
-      - name: Install Rust
-        run: rustup toolchain install ${{ vars.RUST_TOOLCHAIN }} --profile minimal
       - name: Install coverage toolchain
         run: rustup toolchain install ${{ env.RUST_COVERAGE_TOOLCHAIN }} --profile minimal --component llvm-tools-preview
       - name: Install cargo-llvm-cov
@@ -32,8 +131,12 @@ jobs:
         with:
           tool: cargo-llvm-cov@0.9.0
           fallback: none
-      - name: Run Rust unit tests
-        uses: ./.github/actions/unit-test/rust
+      - name: Generate backend coverage
+        working-directory: backend
+        run: |
+          cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov --locked --branch --html --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' --output-dir ../tests/reports/backend-coverage
+          cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report --branch --json --summary-only --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' --output-path ../tests/reports/backend-coverage/coverage-summary.json
+          node ../scripts/check-rust-coverage.mjs ../tests/reports/backend-coverage/coverage-summary.json 95
       - name: Upload backend coverage report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

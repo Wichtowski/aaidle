@@ -1366,3 +1366,61 @@ async fn timeline_attempt_validates_path_and_propagates_auth_security_and_access
         Err(AppError::Database(_))
     ));
 }
+
+#[tokio::test]
+async fn timeline_route_wrappers_forward_player_identity() {
+    let state = super::super::test_support::state().await;
+    let player_id = Uuid::new_v4();
+    assert!(matches!(
+        game_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        start_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Ok(Json(TimelineSpeedrunStartRequest {
+                player_id: Uuid::new_v4()
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        give_up_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Ok(Json(TimelineSpeedrunGiveUpRequest {
+                player_id: Uuid::new_v4()
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        attempt_route(
+            State(state),
+            Extension(AnonymousPlayerId(player_id)),
+            ConnectInfo("127.0.0.1:1234".parse().unwrap()),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Ok(Json(TimelineAttemptRequest {
+                player_id: Uuid::new_v4(),
+                request_id: Uuid::new_v4(),
+                model_order: Vec::new(),
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+}

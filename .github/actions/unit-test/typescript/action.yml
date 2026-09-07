@@ -1,5 +1,5 @@
 name: TypeScript unit tests
-description: Run Vitest unit tests with frontend coverage and publish the test summary
+description: Run Vitest unit tests with frontend coverage and write a test summary report
 
 runs:
   using: composite
@@ -8,27 +8,31 @@ runs:
       shell: bash
       run: pnpm run test:unit:coverage
 
-    - name: Add Vitest test report to summary
+    - name: Write Vitest test report
       if: always()
       shell: bash
       run: |
+        report_file="$RUNNER_TEMP/typescript-test-summary.md"
         if [[ ! -f tests/reports/vitest.json ]]; then
           {
-            echo "## 🧪 Unit Test Report"
+            echo "### TypeScript"
             echo
-            echo "❌ Vitest did not run because an earlier step failed."
-          } >> "$GITHUB_STEP_SUMMARY"
+            echo "| Passed | Failed | Total |"
+            echo "| ---: | ---: | ---: |"
+            echo "| 0 | — | — |"
+            echo
+            echo "> Vitest did not run because an earlier step failed."
+          } > "$report_file"
           exit 0
         fi
 
         vitest_passed=$(jq '.numPassedTests // 0' tests/reports/vitest.json)
         vitest_total=$(jq '.numTotalTests // 0' tests/reports/vitest.json)
-        vitest_status="✅"
-        if [[ "$(jq -r '.success' tests/reports/vitest.json)" != "true" ]]; then
-          vitest_status="❌"
-        fi
+        vitest_failed=$(jq '.numFailedTests // 0' tests/reports/vitest.json)
         {
-          echo "## 🧪 Unit Test Report"
+          echo "### TypeScript"
           echo
-          echo "${vitest_status} ${vitest_passed} passed · ${vitest_total} total"
-        } >> "$GITHUB_STEP_SUMMARY"
+          echo "| Passed | Failed | Total |"
+          echo "| ---: | ---: | ---: |"
+          echo "| ${vitest_passed} | ${vitest_failed} | ${vitest_total} |"
+        } > "$report_file"

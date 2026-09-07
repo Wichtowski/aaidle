@@ -210,3 +210,104 @@ async fn missing_challenges_are_not_disclosed() {
             .is_err()
     );
 }
+
+#[tokio::test]
+async fn logo_repository_helpers_repairs_and_error_branches_are_covered() {
+    let (pool, catalog) = pool_and_catalog().await;
+    let date = "2026-09-03";
+    let player_id = Uuid::new_v4();
+    assert!(find_by_date(&pool, date).await.unwrap().is_none());
+    assert_eq!(stable_hash("logo"), stable_hash("logo"));
+    assert_ne!(stable_hash("logo"), stable_hash("other"));
+
+    let data = game(&pool, &catalog, date, "normal", "secret", player_id)
+        .await
+        .unwrap();
+    let challenge_id = Uuid::parse_str(&data.challenge.id).unwrap();
+    assert!(find_by_date(&pool, date).await.unwrap().is_some());
+    assert!(
+        challenge_by_id(&pool, challenge_id)
+            .await
+            .unwrap()
+            .is_some()
+    );
+    assert_eq!(
+        completion_count(&pool, &data.challenge.id).await.unwrap(),
+        0
+    );
+    assert_eq!(
+        wrong_guess_count(&pool, challenge_id, player_id)
+            .await
+            .unwrap(),
+        0
+    );
+
+    let mut connection = pool.acquire().await.unwrap();
+    assert!(
+        challenge_by_id(&mut *connection, challenge_id)
+            .await
+            .unwrap()
+            .is_some()
+    );
+    assert_eq!(
+        completion_count(&mut *connection, &data.challenge.id)
+            .await
+            .unwrap(),
+        0
+    );
+    assert_eq!(
+        increment_completion_count(&mut connection, &data.challenge.id)
+            .await
+            .unwrap(),
+        1
+    );
+    drop(connection);
+    assert_eq!(
+        completion_count(&pool, &data.challenge.id).await.unwrap(),
+        1
+    );
+
+    let invalid_challenge = LogoChallengeRecord {
+        id: "not-a-uuid".to_owned(),
+        challenge_date: date.to_owned(),
+        mode: MODE.to_owned(),
+        answer_model_id: data.challenge.answer_model_id.clone(),
+        asset_path: data.challenge.asset_path.clone(),
+    };
+    assert!(
+        progress(&pool, &catalog, &invalid_challenge, player_id)
+            .await
+            .is_err()
+    );
+    let mut missing_answer = data.challenge.clone();
+    missing_answer.answer_model_id = "removed-answer".to_owned();
+    assert!(progress_for_count(&catalog, &missing_answer, 0, false).is_err());
+
+    let mut attributed_entries = catalog.entries().cloned().collect::<Vec<_>>();
+    attributed_entries
+        .iter_mut()
+        .find(|entry| entry.answer_id == data.challenge.answer_model_id)
+        .unwrap()
+        .attribution = "Example attribution".to_owned();
+    let attributed_catalog = LogoCatalog::from_entries(attributed_entries).unwrap();
+    assert_eq!(
+        progress_for_count(&attributed_catalog, &data.challenge, 0, true)
+            .unwrap()
+            .attribution
+            .as_deref(),
+        Some("Example attribution")
+    );
+
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'removed-answer' WHERE id = ?")
+        .bind(&data.challenge.id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    let repaired = game(&pool, &catalog, date, "normal", "secret", player_id)
+        .await
+        .unwrap();
+    assert!(catalog.entry(&repaired.challenge.answer_model_id).is_some());
+    rebuild_player_stats(&pool, player_id, MODE, now_unix_millis())
+        .await
+        .unwrap();
+}

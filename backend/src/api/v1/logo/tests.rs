@@ -599,3 +599,57 @@ fn null_reveal_profile_is_included_in_api_progress() {
     assert!(value.get("blurStartStrength").is_none());
     assert!(value.get("blurStepStrength").is_none());
 }
+
+#[tokio::test]
+async fn logo_route_wrappers_forward_player_identity_and_variants() {
+    let state = super::super::test_support::state().await;
+    let player_id = Uuid::new_v4();
+    assert!(matches!(
+        game_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("challenge".to_owned()),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        guess_history_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        image_route(
+            State(state.clone()),
+            Extension(AnonymousPlayerId(player_id)),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Query(LogoImageQuery { v: "0".to_owned() }),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+    assert!(matches!(
+        guess_route(
+            State(state),
+            Extension(AnonymousPlayerId(player_id)),
+            ConnectInfo("127.0.0.1:1234".parse().unwrap()),
+            HeaderMap::new(),
+            Path("invalid".to_owned()),
+            Ok(Json(LogoGuessRequest {
+                player_id: Uuid::new_v4(),
+                request_id: Uuid::new_v4(),
+                guessed_model_id: "openai".to_owned(),
+                attempt_number: 1,
+            })),
+        )
+        .await,
+        Err(AppError::Validation(_))
+    ));
+}
