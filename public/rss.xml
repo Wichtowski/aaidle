@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>aAIdle Daily AI Games</title>
+    <link>https://aaidle.com/</link>
+    <description>Daily AI model, visual clue, logo, and timeline guessing games.</description>
+    <language>en</language>
+    <atom:link href="https://aaidle.com/rss.xml" rel="self" type="application/rss+xml" />
+    <ttl>1440</ttl>
+    <item>
+      <title>Classic — Daily AI Model Guessing Game</title>
+      <link>https://aaidle.com/classic</link>
+      <guid isPermaLink="true">https://aaidle.com/classic</guid>
+      <description>Use model metadata and comparison clues to identify today’s AI model.</description>
+      <category>Classic</category>
+    </item>
+    <item>
+      <title>Emoji — Daily Visual AI Guessing Game</title>
+      <link>https://aaidle.com/emoji</link>
+      <guid isPermaLink="true">https://aaidle.com/emoji</guid>
+      <description>Recognize AI systems, technologies, and algorithms from visual associations.</description>
+      <category>Emoji</category>
+    </item>
+    <item>
+      <title>Timeline — Daily AI Release Order Game</title>
+      <link>https://aaidle.com/timeline</link>
+      <guid isPermaLink="true">https://aaidle.com/timeline</guid>
+      <description>Arrange AI models in the correct release order.</description>
+      <category>Timeline</category>
+    </item>
+    <item>
+      <title>Logo — Daily AI Image Guessing Game</title>
+      <link>https://aaidle.com/logo</link>
+      <guid isPermaLink="true">https://aaidle.com/logo</guid>
+      <description>Identify an AI model, company, or technology from its progressively revealed image.</description>
+      <category>Logo</category>
+    </item>
+  </channel>
+</rss>

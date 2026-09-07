@@ -10,6 +10,18 @@ test("robots.txt is served as a valid crawler policy", async ({ page }) => {
   );
 });
 
+test("rss.xml exposes the playable aAIdle games", async ({ page }) => {
+  const response = await page.request.get("/rss.xml");
+
+  expect(response.ok()).toBe(true);
+  expect(response.headers()["content-type"]).toMatch(/application\/(rss\+xml|xml)|text\/xml/);
+  const feed = await response.text();
+  expect(feed).toContain("<title>aAIdle Daily AI Games</title>");
+  for (const path of ["classic", "emoji", "timeline", "logo"]) {
+    expect(feed).toContain(`<link>https://aaidle.com/${path}</link>`);
+  }
+});
+
 test("Home page exposes both playable game modes", async ({ homePage }) => {
   await homePage.goto();
 
