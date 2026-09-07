@@ -178,21 +178,16 @@ jobs:
             echo "No Rust coverage profiles were downloaded." >&2
             exit 1
           fi
-          llvm_profdata="$(rustc +"$RUST_COVERAGE_TOOLCHAIN" --print target-libdir)/../bin/llvm-profdata"
-          "$llvm_profdata" merge \
-            -sparse \
-            "${profile_files[@]}" \
-            -o "$RUNNER_TEMP/rust-coverage.profdata"
+          mkdir -p target/llvm-cov-target
+          cp "${profile_files[@]}" target/llvm-cov-target/
           cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report \
             --nextest-archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
-            --profdata-path "$RUNNER_TEMP/rust-coverage.profdata" \
             --branch \
             --html \
             --ignore-filename-regex '(^|/)tests/|/tests\.rs$|(^|/)src/bin/' \
             --output-dir ../tests/reports/backend-coverage
           cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report \
             --nextest-archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
-            --profdata-path "$RUNNER_TEMP/rust-coverage.profdata" \
             --branch \
             --json \
             --summary-only \
