@@ -33,7 +33,9 @@ for (const entry of entries) {
   paths.add(assetPath);
   if (!existsSync(new URL(`../public${assetPath}`, import.meta.url)))
     fail(`${entry.answerId} is missing public asset ${assetPath}`);
-  if (entry.revealProfile === "progressive-zoom") {
+  if (entry.revealProfile === null) {
+    // A null profile serves the source image without any reveal processing.
+  } else if (entry.revealProfile === "progressive-zoom") {
     if (
       !Number.isFinite(entry.focalPoint?.x) ||
       !Number.isFinite(entry.focalPoint?.y) ||

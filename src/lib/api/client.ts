@@ -155,6 +155,7 @@ export type LogoTextClue = {
   text: string;
 };
 export type LogoRevealProfile =
+  | { revealProfile: null }
   | { revealProfile: "progressive-zoom"; focalPoint: { x: number; y: number } }
   | { revealProfile: "gaussian-blur"; blurStartStrength: number; blurStepStrength: number };
 export type LogoProgress = LogoRevealProfile & {

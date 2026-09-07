@@ -275,3 +275,21 @@ async fn caches_distinct_reveal_profiles_and_blur_parameters_for_the_same_origin
     );
     assert_eq!(server.requests.load(Ordering::SeqCst), 1);
 }
+
+#[tokio::test]
+async fn null_profile_returns_one_unchanged_original_for_every_revision() {
+    let server = image_server().await;
+    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(2)).unwrap();
+    let original = source_image();
+    for (revision, solved) in [(0, false), (4, false), (7, true)] {
+        assert_eq!(
+            cache
+                .image("today", "/image.png", RevealProfile::None, revision, solved)
+                .await
+                .unwrap(),
+            original
+        );
+    }
+    assert_eq!(server.requests.load(Ordering::SeqCst), 1);
+    assert_eq!(cache.inner.lock().await.rendered.len(), 1);
+}

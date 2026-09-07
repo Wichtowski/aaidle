@@ -578,3 +578,24 @@ async fn gaussian_profile_progress_and_images_restore_without_focal_point() {
     .to_bytes();
     assert_ne!(blurred, clear);
 }
+
+#[test]
+fn null_reveal_profile_is_included_in_api_progress() {
+    let response = progress_response(
+        Uuid::nil(),
+        repository::logo::LogoProgress {
+            image_url: "/logo-visual/plain.png".to_owned(),
+            reveal: crate::domain::logo::RevealProfile::None,
+            image_revision: 3,
+            maximum_image_revision: 7,
+            clues: Vec::new(),
+            solved: false,
+            attribution: None,
+        },
+    );
+    let value = serde_json::to_value(response).unwrap();
+    assert_eq!(value["revealProfile"], serde_json::Value::Null);
+    assert!(value.get("focalPoint").is_none());
+    assert!(value.get("blurStartStrength").is_none());
+    assert!(value.get("blurStepStrength").is_none());
+}

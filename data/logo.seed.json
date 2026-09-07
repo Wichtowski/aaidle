@@ -102,18 +102,24 @@
     ]
   },
   {
-    "answerId": "resnet-50",
+    "answerId": "u-net",
     "minPool": 0,
     "visualType": "technology",
-    "assetName": "ResNet-50",
-    "assetUrl": "/logo-visual/model-architecture-1.png",
-    "revealProfile": "progressive-zoom",
-    "focalPoint": { "x": 370, "y": 150 },
+    "assetName": "U-Net",
+    "assetUrl": "/logo-visual/u-net.png",
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
     "clues": [
+      {
+        "afterIncorrectGuesses": 1,
+        "kind": "general",
+        "text": "This convolutional network architecture is widely used for biomedical image segmentation."
+      },
       {
         "afterIncorrectGuesses": 3,
         "kind": "general",
-        "text": "Shortcut connections let information bypass groups of learned layers."
+        "text": "Its architecture is named for its U-shaped structure."
       }
     ]
   },
@@ -123,8 +129,9 @@
     "visualType": "technology",
     "assetName": "Support Vector Machine",
     "assetUrl": "/logo-visual/support-vector-machine.png",
-    "revealProfile": "progressive-zoom",
-    "focalPoint": { "x": 330, "y": 340 },
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
     "clues": [
       {
         "afterIncorrectGuesses": 3,
@@ -139,8 +146,9 @@
     "visualType": "technology",
     "assetName": "Sobel Operator",
     "assetUrl": "/common/edge/output.png",
-    "revealProfile": "progressive-zoom",
-    "focalPoint": { "x": 178, "y": 332 },
+    "revealProfile": "gaussian-blur",
+    "blurStartStrength": 28,
+    "blurStepStrength": 4,
     "clues": [
       {
         "afterIncorrectGuesses": 1,

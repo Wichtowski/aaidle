@@ -89,11 +89,16 @@ impl LogoImageCache {
             cache.originals.remove(asset_url);
             cache.rendered.retain(|key, _| key.0 != asset_url);
         }
+        let transforms_image = profile != RevealProfile::None;
         let key = (
             asset_url.to_owned(),
             profile.cache_key(),
-            revision.min(MAX_REVEAL_REVISION),
-            solved,
+            if transforms_image {
+                revision.min(MAX_REVEAL_REVISION)
+            } else {
+                0
+            },
+            transforms_image && solved,
         );
         if let Some(image) = cache.rendered.get(&key) {
             return Ok(image.clone());

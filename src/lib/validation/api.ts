@@ -32,6 +32,9 @@ const logoProgressBaseSchema = z.object({
 });
 export const logoProgressSchema = z.discriminatedUnion("revealProfile", [
   logoProgressBaseSchema.extend({
+    revealProfile: z.null(),
+  }),
+  logoProgressBaseSchema.extend({
     revealProfile: z.literal("progressive-zoom"),
     focalPoint: z.object({
       x: z.number().min(0).max(512),

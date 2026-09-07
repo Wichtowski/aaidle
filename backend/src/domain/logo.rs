@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer, ser::SerializeMap};
 use std::{collections::HashSet, io::Cursor};
 
 use image::{ImageFormat, imageops::FilterType};
@@ -46,13 +46,9 @@ pub struct FocalPoint {
     pub y: f32,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
-#[serde(
-    tag = "revealProfile",
-    rename_all = "kebab-case",
-    rename_all_fields = "camelCase"
-)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RevealProfile {
+    None,
     ProgressiveZoom {
         focal_point: FocalPoint,
     },
@@ -62,9 +58,75 @@ pub enum RevealProfile {
     },
 }
 
+impl Serialize for RevealProfile {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut map = serializer.serialize_map(None)?;
+        match self {
+            Self::None => map.serialize_entry("revealProfile", &Option::<String>::None)?,
+            Self::ProgressiveZoom { focal_point } => {
+                map.serialize_entry("revealProfile", "progressive-zoom")?;
+                map.serialize_entry("focalPoint", focal_point)?;
+            }
+            Self::GaussianBlur {
+                blur_start_strength,
+                blur_step_strength,
+            } => {
+                map.serialize_entry("revealProfile", "gaussian-blur")?;
+                map.serialize_entry("blurStartStrength", blur_start_strength)?;
+                map.serialize_entry("blurStepStrength", blur_step_strength)?;
+            }
+        }
+        map.end()
+    }
+}
+
+impl<'de> Deserialize<'de> for RevealProfile {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let value = serde_json::Value::deserialize(deserializer)?;
+        match value.get("revealProfile") {
+            Some(serde_json::Value::Null) => Ok(Self::None),
+            Some(serde_json::Value::String(profile)) if profile == "progressive-zoom" => {
+                let focal_point = value
+                    .get("focalPoint")
+                    .cloned()
+                    .ok_or_else(|| serde::de::Error::missing_field("focalPoint"))?;
+                Ok(Self::ProgressiveZoom {
+                    focal_point: serde_json::from_value(focal_point)
+                        .map_err(serde::de::Error::custom)?,
+                })
+            }
+            Some(serde_json::Value::String(profile)) if profile == "gaussian-blur" => {
+                let blur_start_strength = value
+                    .get("blurStartStrength")
+                    .and_then(serde_json::Value::as_f64)
+                    .ok_or_else(|| serde::de::Error::missing_field("blurStartStrength"))?
+                    as f32;
+                let blur_step_strength = value
+                    .get("blurStepStrength")
+                    .and_then(serde_json::Value::as_f64)
+                    .ok_or_else(|| serde::de::Error::missing_field("blurStepStrength"))?
+                    as f32;
+                Ok(Self::GaussianBlur {
+                    blur_start_strength,
+                    blur_step_strength,
+                })
+            }
+            Some(_) => Err(serde::de::Error::custom("invalid revealProfile")),
+            None => Err(serde::de::Error::missing_field("revealProfile")),
+        }
+    }
+}
+
 impl RevealProfile {
     pub fn is_valid(self) -> bool {
         match self {
+            Self::None => true,
             Self::ProgressiveZoom { focal_point } => {
                 (0.0..=512.0).contains(&focal_point.x) && (0.0..=512.0).contains(&focal_point.y)
             }
@@ -90,12 +152,13 @@ impl RevealProfile {
             } => (blur_start_strength
                 - revision.min(MAX_REVEAL_REVISION) as f32 * blur_step_strength)
                 .max(0.0),
-            Self::ProgressiveZoom { .. } => 0.0,
+            Self::None | Self::ProgressiveZoom { .. } => 0.0,
         }
     }
 
     pub fn cache_key(self) -> (u8, u32, u32) {
         match self {
+            Self::None => (2, 0, 0),
             Self::ProgressiveZoom { focal_point } => {
                 (0, focal_point.x.to_bits(), focal_point.y.to_bits())
             }
@@ -300,6 +363,16 @@ pub fn render_logo_image(
     revision: usize,
     solved: bool,
 ) -> AppResult<Vec<u8>> {
+    if profile == RevealProfile::None {
+        match image::guess_format(bytes) {
+            Ok(ImageFormat::Png | ImageFormat::WebP) => return Ok(bytes.to_vec()),
+            _ => {
+                return Err(AppError::Unavailable(
+                    "Logo image could not be decoded.".to_owned(),
+                ));
+            }
+        }
+    }
     let mut reader = image::ImageReader::new(Cursor::new(bytes))
         .with_guessed_format()
         .map_err(|_| AppError::Unavailable("Logo image could not be decoded.".to_owned()))?;

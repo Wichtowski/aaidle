@@ -163,10 +163,14 @@ pub(super) async fn image(
         .ok_or_else(|| AppError::Unavailable("Could not determine Logo cache expiry.".to_owned()))?
         .assume_utc();
     let max_age = (next_midnight - now).whole_seconds().max(0);
+    let content_type = match image::guess_format(&image) {
+        Ok(image::ImageFormat::WebP) => "image/webp",
+        _ => "image/png",
+    };
     let mut response = Response::new(Body::from(image));
     response
         .headers_mut()
-        .insert(header::CONTENT_TYPE, HeaderValue::from_static("image/png"));
+        .insert(header::CONTENT_TYPE, HeaderValue::from_static(content_type));
     response.headers_mut().insert(
         header::CACHE_CONTROL,
         HeaderValue::from_str(&format!("private, max-age={max_age}, immutable"))

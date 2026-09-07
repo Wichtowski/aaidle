@@ -67,6 +67,7 @@ describe("Logo clues", () => {
       blurStepStrength: 4,
     };
     expect(logoProgressSchema.parse(blur)).not.toHaveProperty("focalPoint");
+    expect(logoProgressSchema.parse({ ...base, revealProfile: null }).revealProfile).toBeNull();
     expect(
       logoProgressSchema.safeParse({
         ...base,

@@ -23,7 +23,10 @@ function ProgressiveImage({ progress }: { progress: LogoProgress }) {
   const { imageUrl: src, imageRevision: revision, solved } = progress;
   const isBlur = progress.revealProfile === "gaussian-blur";
   const zoomLevels = [4.2, 3.5, 2.9, 2.4, 2, 1.65, 1.3, 1];
-  const zoom = isBlur ? 1 : zoomLevels[Math.min(revision, zoomLevels.length - 1)];
+  const zoom =
+    progress.revealProfile === "progressive-zoom"
+      ? zoomLevels[Math.min(revision, zoomLevels.length - 1)]
+      : 1;
   const blur = isBlur
     ? Math.max(0, progress.blurStartStrength - revision * progress.blurStepStrength)
     : 0;
@@ -115,7 +118,9 @@ export function LogoGame() {
         description={
           game?.progress.revealProfile === "gaussian-blur"
             ? "Guess carefully, and watch the image become clearer after each miss."
-            : "Start close, guess carefully, and watch the image zoom out after each miss."
+            : game?.progress.revealProfile === "progressive-zoom"
+              ? "Start close, guess carefully, and watch the image zoom out after each miss."
+              : "Study the image and identify the AI model, algorithm, or technology."
         }
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={

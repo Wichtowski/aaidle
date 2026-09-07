@@ -290,3 +290,27 @@ fn gaussian_renderer_preserves_the_full_frame_and_clears_blur_at_zero_or_on_solv
     assert_eq!(zoom.blur_strength(0), 0.0);
     assert_ne!(zoom.cache_key(), profile.cache_key());
 }
+
+#[test]
+fn null_profile_round_trips_and_returns_the_original_bytes_unchanged() {
+    let profile: RevealProfile =
+        serde_json::from_value(serde_json::json!({ "revealProfile": null })).unwrap();
+    assert_eq!(profile, RevealProfile::None);
+    assert!(profile.is_valid());
+    assert_eq!(profile.blur_strength(5), 0.0);
+    assert_eq!(
+        serde_json::to_value(profile).unwrap()["revealProfile"],
+        serde_json::Value::Null
+    );
+
+    let source = crate::logo_images::tests::source_image();
+    assert_eq!(
+        render_logo_image(&source, profile, 4, false).unwrap(),
+        source
+    );
+    assert_eq!(
+        render_logo_image(&source, profile, 7, true).unwrap(),
+        source
+    );
+    assert!(render_logo_image(b"not an image", profile, 0, false).is_err());
+}

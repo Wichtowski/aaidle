@@ -54,6 +54,9 @@ describe("Logo seed validation", () => {
       blurStepStrength: 4,
     };
     expect(validate(clues, profile)).toContain("validation passed");
+    expect(validate(clues, { revealProfile: null, focalPoint: undefined })).toContain(
+      "validation passed",
+    );
     for (const field of ["blurStartStrength", "blurStepStrength"]) {
       for (const value of [undefined, 0, -1, 65, "4", null]) {
         expect(() => validate(clues, { ...profile, [field]: value })).toThrow();
