@@ -153,7 +153,7 @@ fn clue_validation_rejects_unordered_thresholds_and_invalid_image_assets() {
 }
 
 #[test]
-fn public_asset_urls_are_local_png_or_webp_paths() {
+fn private_asset_urls_are_local_png_or_webp_paths() {
     for url in [
         "/logo-visual/edge/output.png",
         "/emoji-visual/rtx.webp",

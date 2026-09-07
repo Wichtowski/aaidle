@@ -9,8 +9,8 @@ for (const profile of [
     page,
   }) => {
     const challengeId = "1d10665e-31dc-460b-8964-a9a293671bee";
-    const imageUrl = `/api/v1/games/logo/challenges/${challengeId}/image?v=0`;
-    const clueImageUrl = `/api/v1/games/logo/challenges/${challengeId}/image?v=clue-1`;
+    const imageUrl = `/api/v1/games/logo/challenges/${challengeId}/image?token=initial-capability`;
+    const clueImageUrl = `/api/v1/games/logo/challenges/${challengeId}/image?token=clue-capability`;
     const clues = [
       {
         afterIncorrectGuesses: 0,
@@ -122,15 +122,15 @@ for (const profile of [
     await expect(page.locator(".logo-clue-content")).toHaveCSS("animation-name", "none");
   });
 
-test("shared Logo and Emoji originals are published as public images", async ({ request }) => {
-  for (const path of [
-    "/common/edge/input.png",
-    "/common/edge/output.png",
-    "/logo-visual/lytics.png",
-  ]) {
+test("Logo-only originals are not published with frontend assets", async ({ request }) => {
+  for (const path of ["/common/edge/input.png", "/common/edge/output.png"]) {
     const response = await request.get(path);
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("image/png");
     expect((await response.body()).subarray(1, 4).toString()).toBe("PNG");
+  }
+  for (const path of ["/logo-visual/lytics.png", "/common/company-logo-1.png"]) {
+    const privateLogo = await request.get(path);
+    expect(privateLogo.headers()["content-type"]).not.toContain("image/png");
   }
 });

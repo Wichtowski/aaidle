@@ -33,10 +33,7 @@ fn build_http_client(timeout: Duration, user_agent: &str) -> AppResult<Client> {
 impl AppState {
     pub fn new(db: SqlitePool, config: Arc<AppConfig>) -> AppResult<Self> {
         let http = build_http_client(config.request_timeout, "aAIdle/1.0")?;
-        let logo_images = Arc::new(LogoImageCache::new(
-            &config.app_origin,
-            config.request_timeout,
-        )?);
+        let logo_images = Arc::new(LogoImageCache::new(&config.logo_asset_dir)?);
         Ok(Self {
             db,
             config,

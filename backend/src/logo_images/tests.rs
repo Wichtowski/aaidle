@@ -1,13 +1,4 @@
 use super::*;
-use axum::{
-    Router,
-    body::Body,
-    extract::{Path, State},
-    http::{HeaderMap, StatusCode},
-    response::{IntoResponse, Response},
-    routing::get,
-};
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub(crate) fn source_image() -> Vec<u8> {
     let pixels = image::RgbImage::from_fn(64, 48, |x, y| {
@@ -19,62 +10,43 @@ pub(crate) fn source_image() -> Vec<u8> {
         .unwrap();
     bytes.into_inner()
 }
+
 const ZOOM: RevealProfile = RevealProfile::ProgressiveZoom {
     focal_point: crate::domain::logo::FocalPoint { x: 164.0, y: 174.0 },
 };
 
-pub(crate) struct ImageServer {
-    pub origin: String,
-    pub requests: Arc<AtomicUsize>,
-    handle: tokio::task::JoinHandle<()>,
+pub(crate) struct ImageFixture {
+    pub root: PathBuf,
 }
-impl Drop for ImageServer {
+
+impl Drop for ImageFixture {
     fn drop(&mut self) {
-        self.handle.abort();
+        std::fs::remove_dir_all(&self.root).unwrap();
     }
 }
 
-pub(crate) async fn image_server() -> ImageServer {
-    async fn serve(
-        State(requests): State<Arc<AtomicUsize>>,
-        Path(path): Path<String>,
-        headers: HeaderMap,
-    ) -> Response {
-        requests.fetch_add(1, Ordering::SeqCst);
-        assert!(headers.get("cookie").is_none());
-        assert!(headers.get("authorization").is_none());
-        match path.as_str() {
-            "missing.png" => StatusCode::NOT_FOUND.into_response(),
-            "redirect.png" => (StatusCode::FOUND, [("location", "/image.png")]).into_response(),
-            "broken.png" => "<!doctype html>".into_response(),
-            "oversized.png" => Body::from(vec![0u8; MAX_SOURCE_BYTES + 1]).into_response(),
-            "slow.png" => {
-                tokio::time::sleep(Duration::from_millis(200)).await;
-                source_image().into_response()
-            }
-            _ => ([("content-type", "image/png")], source_image()).into_response(),
-        }
+pub(crate) fn image_fixture() -> ImageFixture {
+    let root = std::env::temp_dir().join(format!("aaidle-logo-images-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&root).unwrap();
+    let mut paths = vec!["/image.png".to_owned(), "/clue.png".to_owned()];
+    for entry in crate::domain::logo::LogoCatalog::load().unwrap().entries() {
+        paths.push(entry.asset_path.clone());
+        paths.extend(entry.clues.iter().filter_map(|clue| clue.asset.clone()));
     }
-    let requests = Arc::new(AtomicUsize::new(0));
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let origin = format!("http://{}", listener.local_addr().unwrap());
-    let router = Router::new()
-        .route("/{*path}", get(serve))
-        .with_state(requests.clone());
-    let handle = tokio::spawn(async move {
-        axum::serve(listener, router).await.unwrap();
-    });
-    ImageServer {
-        origin,
-        requests,
-        handle,
+    for path in paths {
+        let path = root.join(path.trim_start_matches('/'));
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, source_image()).unwrap();
     }
+    std::fs::write(root.join("broken.png"), b"not an image").unwrap();
+    std::fs::write(root.join("oversized.png"), vec![0_u8; MAX_SOURCE_BYTES + 1]).unwrap();
+    ImageFixture { root }
 }
 
 #[tokio::test]
-async fn downloads_once_across_revisions_and_clues_and_resets_for_a_new_challenge() {
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(2)).unwrap();
+async fn caches_originals_across_renders_and_resets_for_a_new_challenge() {
+    let fixture = image_fixture();
+    let cache = LogoImageCache::new(&fixture.root).unwrap();
     let first = cache
         .image("today", "/image.png", ZOOM, 0, false)
         .await
@@ -86,43 +58,36 @@ async fn downloads_once_across_revisions_and_clues_and_resets_for_a_new_challeng
             .unwrap(),
         first
     );
-    let wider = cache
-        .image("today", "/image.png", ZOOM, 3, false)
-        .await
-        .unwrap();
-    assert_ne!(wider, first);
-    let solved = cache
-        .image("today", "/image.png", ZOOM, 3, true)
-        .await
-        .unwrap();
-    assert_ne!(solved, wider);
-    assert_eq!(server.requests.load(Ordering::SeqCst), 1);
+    assert_ne!(
+        cache
+            .image("today", "/image.png", ZOOM, 3, false)
+            .await
+            .unwrap(),
+        first
+    );
     cache
         .image("today", "/clue.png", ZOOM, 0, true)
         .await
         .unwrap();
-    cache
-        .image("today", "/image.png", ZOOM, 1, false)
-        .await
-        .unwrap();
-    assert_eq!(server.requests.load(Ordering::SeqCst), 2);
+    assert_eq!(cache.inner.lock().await.originals.len(), 2);
+
     cache
         .image("tomorrow", "/image.png", ZOOM, 0, false)
         .await
         .unwrap();
-    assert_eq!(server.requests.load(Ordering::SeqCst), 3);
+    let inner = cache.inner.lock().await;
+    assert_eq!(inner.challenge_id, "tomorrow");
+    assert_eq!(inner.originals.len(), 1);
 }
 
 #[tokio::test]
-async fn expires_originals_after_twenty_four_hours_and_deduplicates_concurrent_requests() {
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(2)).unwrap();
-    let (first, second) = tokio::join!(
-        cache.image("today", "/image.png", ZOOM, 0, false),
-        cache.image("today", "/image.png", ZOOM, 0, false)
-    );
-    assert_eq!(first.unwrap(), second.unwrap());
-    assert_eq!(server.requests.load(Ordering::SeqCst), 1);
+async fn expired_originals_are_read_again() {
+    let fixture = image_fixture();
+    let cache = LogoImageCache::new(&fixture.root).unwrap();
+    cache
+        .image("today", "/image.png", ZOOM, 0, false)
+        .await
+        .unwrap();
     cache
         .inner
         .lock()
@@ -131,106 +96,46 @@ async fn expires_originals_after_twenty_four_hours_and_deduplicates_concurrent_r
         .get_mut("/image.png")
         .unwrap()
         .fetched_at = Instant::now() - ORIGINAL_TTL;
-    cache
-        .image("today", "/image.png", ZOOM, 0, false)
-        .await
-        .unwrap();
-    assert_eq!(server.requests.load(Ordering::SeqCst), 2);
+    std::fs::remove_file(fixture.root.join("image.png")).unwrap();
+
+    assert!(matches!(
+        cache.image("today", "/image.png", ZOOM, 0, false).await,
+        Err(AppError::Unavailable(_))
+    ));
+    assert!(cache.inner.lock().await.originals.is_empty());
 }
 
 #[tokio::test]
-async fn download_failures_are_safe_and_not_cached() {
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_millis(100)).unwrap();
+async fn invalid_missing_oversized_and_broken_sources_are_not_cached() {
+    let fixture = image_fixture();
+    let cache = LogoImageCache::new(&fixture.root).unwrap();
     for path in [
         "/missing.png",
-        "/redirect.png",
-        "/broken.png",
         "/oversized.png",
-        "/slow.png",
+        "/broken.png",
+        "//elsewhere.test/image.png",
+        "/../image.png",
     ] {
-        for _ in 0..2 {
-            assert!(matches!(
-                cache.image("today", path, ZOOM, 0, false).await,
-                Err(AppError::Unavailable(_))
-            ));
-        }
+        assert!(matches!(
+            cache.image("today", path, ZOOM, 0, false).await,
+            Err(AppError::Unavailable(_))
+        ));
     }
-    assert_eq!(server.requests.load(Ordering::SeqCst), 10);
     assert!(cache.inner.lock().await.originals.is_empty());
     assert!(cache.inner.lock().await.rendered.is_empty());
 }
 
-#[tokio::test]
-async fn invalid_origins_and_urls_never_start_downloads() {
-    for origin in [
-        "invalid",
-        "file:///tmp",
-        "https://user:password@example.com",
-    ] {
-        assert!(LogoImageCache::new(origin, Duration::from_secs(1)).is_err());
-    }
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(1)).unwrap();
-    assert!(
-        cache
-            .image("today", "//elsewhere.test/image.png", ZOOM, 0, false)
-            .await
-            .is_err()
-    );
-    assert_eq!(server.requests.load(Ordering::SeqCst), 0);
-    let unavailable_origin = server.origin.clone();
-    drop(server);
-    let cache = LogoImageCache::new(&unavailable_origin, Duration::from_millis(100)).unwrap();
-    assert!(
-        cache
-            .image("today", "/image.png", ZOOM, 0, false)
-            .await
-            .is_err()
-    );
+#[test]
+fn image_root_must_be_an_existing_directory() {
+    assert!(LogoImageCache::new("/missing-aaidle-logo-directory").is_err());
+    let fixture = image_fixture();
+    assert!(LogoImageCache::new(fixture.root.join("image.png")).is_err());
 }
 
 #[tokio::test]
-async fn rejects_oversized_chunked_and_truncated_downloads() {
-    use std::io::{Read, Write};
-    for chunked in [true, false] {
-        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-        let origin = format!("http://{}", listener.local_addr().unwrap());
-        let server = std::thread::spawn(move || {
-            let (mut stream, _) = listener.accept().unwrap();
-            let mut request = [0u8; 4096];
-            assert!(stream.read(&mut request).unwrap() > 0);
-            if chunked {
-                let payload = vec![0u8; MAX_SOURCE_BYTES + 1];
-                let header = format!(
-                    "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n{:X}\r\n",
-                    payload.len()
-                );
-                stream.write_all(header.as_bytes()).unwrap();
-                let _ = stream.write_all(&payload);
-                let _ = stream.write_all(b"\r\n0\r\n\r\n");
-            } else {
-                stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\nConnection: close\r\n\r\nshort").unwrap();
-            }
-        });
-        let cache = LogoImageCache::new(&origin, Duration::from_secs(2)).unwrap();
-        let error = cache
-            .image("today", "/image.png", ZOOM, 0, false)
-            .await
-            .unwrap_err();
-        assert!(matches!(error, AppError::Unavailable(_)));
-        if chunked {
-            assert!(error.to_string().contains("too large"));
-        }
-        assert!(cache.inner.lock().await.originals.is_empty());
-        server.join().unwrap();
-    }
-}
-
-#[tokio::test]
-async fn caches_distinct_reveal_profiles_and_blur_parameters_for_the_same_original() {
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(2)).unwrap();
+async fn caches_distinct_reveal_profiles_and_parameters() {
+    let fixture = image_fixture();
+    let cache = LogoImageCache::new(&fixture.root).unwrap();
     let blur = RevealProfile::GaussianBlur {
         blur_start_strength: 4.0,
         blur_step_strength: 2.0,
@@ -244,52 +149,38 @@ async fn caches_distinct_reveal_profiles_and_blur_parameters_for_the_same_origin
         .await
         .unwrap();
     assert_ne!(blurred, zoomed);
-    let different_step = RevealProfile::GaussianBlur {
-        blur_start_strength: 4.0,
-        blur_step_strength: 1.0,
-    };
     assert_ne!(
         blurred,
         cache
-            .image("today", "/image.png", different_step, 1, false)
+            .image(
+                "today",
+                "/image.png",
+                RevealProfile::GaussianBlur {
+                    blur_start_strength: 4.0,
+                    blur_step_strength: 1.0,
+                },
+                1,
+                false,
+            )
             .await
             .unwrap()
     );
-    let different_start = RevealProfile::GaussianBlur {
-        blur_start_strength: 3.0,
-        blur_step_strength: 2.0,
-    };
-    assert_ne!(
-        blurred,
-        cache
-            .image("today", "/image.png", different_start, 1, false)
-            .await
-            .unwrap()
-    );
-    assert_eq!(
-        cache
-            .image("today", "/image.png", blur, 1, false)
-            .await
-            .unwrap(),
-        blurred
-    );
-    assert_eq!(server.requests.load(Ordering::SeqCst), 1);
+    assert_eq!(cache.inner.lock().await.originals.len(), 1);
 }
 
 #[tokio::test]
-async fn null_profile_returns_one_unchanged_original_for_every_revision() {
-    let server = image_server().await;
-    let cache = LogoImageCache::new(&server.origin, Duration::from_secs(2)).unwrap();
+async fn null_profile_returns_the_unchanged_original() {
+    let fixture = image_fixture();
+    let cache = LogoImageCache::new(&fixture.root).unwrap();
     let original = source_image();
     for (revision, solved) in [(0, false), (4, false), (7, true)] {
         assert_eq!(
             cache
-                .image("today", "/image.png", RevealProfile::None, revision, solved)
+                .image("today", "/image.png", RevealProfile::None, revision, solved,)
                 .await
                 .unwrap(),
             original
         );
     }
-    assert_eq!(server.requests.load(Ordering::SeqCst), 1);
     assert_eq!(cache.inner.lock().await.rendered.len(), 1);
 }

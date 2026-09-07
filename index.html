@@ -32,15 +32,7 @@
     />
     <meta name="twitter:image" content="https://aaidle.com/og-image.png" />
     <meta name="twitter:image:alt" content="aAIdle daily AI model guessing game" />
-    <script>
-      try {
-        if (localStorage.getItem("aaidle:hell-mode-active:v1") === "true") {
-          document.documentElement.classList.add("hell-mode");
-        }
-      } catch {
-        // Ignore unavailable browser storage
-      }
-    </script>
+    <script src="/hell-mode-bootstrap.js"></script>
     <link rel="icon" href="/favicon.ico" />
     <link rel="preconnect" crossorigin href="https://static.cloudflareinsights.com" />
     <link rel="manifest" href="/manifest.webmanifest" />

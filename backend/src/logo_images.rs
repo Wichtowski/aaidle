@@ -1,10 +1,10 @@
 use std::{
     collections::HashMap,
+    path::{Path, PathBuf},
     sync::Arc,
     time::{Duration, Instant},
 };
 
-use reqwest::{Client, Url, redirect::Policy};
 use tokio::sync::Mutex;
 
 use crate::{
@@ -18,8 +18,7 @@ const MAX_SOURCE_BYTES: usize = 10 * 1024 * 1024;
 type RenderKey = (String, (u8, u32, u32), usize, bool);
 
 pub struct LogoImageCache {
-    client: Client,
-    origin: Url,
+    asset_root: PathBuf,
     inner: Mutex<CachedImages>,
 }
 
@@ -36,26 +35,13 @@ struct Original {
 }
 
 impl LogoImageCache {
-    pub fn new(origin: &str, timeout: Duration) -> AppResult<Self> {
-        let origin = Url::parse(origin)
+    pub fn new(asset_root: impl AsRef<Path>) -> AppResult<Self> {
+        let asset_root = std::fs::canonicalize(asset_root)
             .ok()
-            .filter(|url| {
-                matches!(url.scheme(), "http" | "https")
-                    && url.host_str().is_some()
-                    && url.username().is_empty()
-                    && url.password().is_none()
-            })
-            .ok_or_else(|| {
-                AppError::config("APP_ORIGIN must be an HTTP(S) origin for Logo images")
-            })?;
-        let client = Client::builder()
-            .timeout(timeout)
-            .redirect(Policy::none())
-            .build()
-            .map_err(|_| AppError::config("Could not configure Logo image downloads"))?;
+            .filter(|path| path.is_dir())
+            .ok_or_else(|| AppError::config("LOGO_ASSET_DIR must be an existing directory"))?;
         Ok(Self {
-            client,
-            origin,
+            asset_root,
             inner: Mutex::new(CachedImages::default()),
         })
     }
@@ -73,7 +59,7 @@ impl LogoImageCache {
                 "Logo image URL is invalid.".to_owned(),
             ));
         }
-        // Serialize misses so concurrent guesses download an original only once.
+        // Serialize misses so concurrent requests read an original only once
         let mut cache = self.inner.lock().await;
         if cache.challenge_id != challenge_id {
             *cache = CachedImages {
@@ -106,11 +92,7 @@ impl LogoImageCache {
         let original = if let Some(original) = cache.originals.get(asset_url) {
             original.bytes.clone()
         } else {
-            let url = self
-                .origin
-                .join(asset_url)
-                .map_err(|_| AppError::Unavailable("Logo image URL is invalid.".to_owned()))?;
-            Arc::new(self.download(url).await?)
+            Arc::new(self.read(asset_url).await?)
         };
         let bytes = original.clone();
         let image = tokio::task::spawn_blocking(move || {
@@ -118,7 +100,7 @@ impl LogoImageCache {
         })
         .await
         .map_err(|_| AppError::Unavailable("Logo image rendering was interrupted.".to_owned()))??;
-        // Failed downloads/decodes are not cached; a repaired public file can be retried.
+        // Failed reads/decodes are not cached; a repaired private file can be retried
         cache
             .originals
             .entry(asset_url.to_owned())
@@ -130,34 +112,31 @@ impl LogoImageCache {
         Ok(image)
     }
 
-    async fn download(&self, url: Url) -> AppResult<Vec<u8>> {
-        let unavailable =
-            || AppError::Unavailable("Logo source image could not be downloaded.".to_owned());
-        let mut response = self
-            .client
-            .get(url)
-            .send()
+    async fn read(&self, asset_url: &str) -> AppResult<Vec<u8>> {
+        let unavailable = || AppError::Unavailable("Logo source image is unavailable.".to_owned());
+        let path = self.asset_root.join(asset_url.trim_start_matches('/'));
+        let path = tokio::fs::canonicalize(path)
             .await
             .map_err(|_| unavailable())?;
-        if !response.status().is_success() {
+        if !path.starts_with(&self.asset_root) {
             return Err(unavailable());
         }
-        if response
-            .content_length()
-            .is_some_and(|length| length > MAX_SOURCE_BYTES as u64)
-        {
+        let metadata = tokio::fs::metadata(&path)
+            .await
+            .map_err(|_| unavailable())?;
+        if !metadata.is_file() {
+            return Err(unavailable());
+        }
+        if metadata.len() > MAX_SOURCE_BYTES as u64 {
             return Err(AppError::Unavailable(
                 "Logo source image is too large.".to_owned(),
             ));
         }
-        let mut bytes = Vec::new();
-        while let Some(chunk) = response.chunk().await.map_err(|_| unavailable())? {
-            if chunk.len() > MAX_SOURCE_BYTES - bytes.len() {
-                return Err(AppError::Unavailable(
-                    "Logo source image is too large.".to_owned(),
-                ));
-            }
-            bytes.extend_from_slice(&chunk);
+        let bytes = tokio::fs::read(path).await.map_err(|_| unavailable())?;
+        if bytes.len() > MAX_SOURCE_BYTES {
+            return Err(AppError::Unavailable(
+                "Logo source image is too large.".to_owned(),
+            ));
         }
         Ok(bytes)
     }

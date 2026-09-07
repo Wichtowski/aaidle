@@ -34,6 +34,7 @@ RUN useradd --create-home --system --uid 10001 --user-group aaidle \
 COPY --from=builder /out/aidle-api /usr/local/bin/aidle-api
 COPY --from=builder /out/aidle-seed /usr/local/bin/aidle-seed
 COPY --from=builder /out/aidle-fixture-admin /usr/local/bin/aidle-fixture-admin
+COPY private/logo-assets /opt/aaidle/logo-assets
 USER aaidle
 
 VOLUME ["/data"]
@@ -44,5 +45,6 @@ HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=12 CMD curl -
 
 ENV AIDLE_BIND_ADDR=0.0.0.0:8080
 ENV DATABASE_URL=sqlite:///data/aidle.db
+ENV LOGO_ASSET_DIR=/opt/aaidle/logo-assets
 
 CMD ["aidle-api"]

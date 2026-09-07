@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { z } from "zod";
+import { z } from "../validation/zod";
 
 const viewedCluesSchema = z.object({
   scope: z.string(),

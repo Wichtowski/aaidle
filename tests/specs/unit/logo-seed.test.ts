@@ -10,10 +10,10 @@ describe("Logo seed validation", () => {
     directory = mkdtempSync(join(tmpdir(), "aaidle-logo-seed-"));
     mkdirSync(join(directory, "scripts"));
     mkdirSync(join(directory, "data"));
-    mkdirSync(join(directory, "public/logo-visual"), { recursive: true });
+    mkdirSync(join(directory, "private/logo-assets/logo-visual"), { recursive: true });
     cpSync("scripts/validate-logo-data.mjs", join(directory, "scripts/validate-logo-data.mjs"));
     for (let index = 0; index < 6; index++) {
-      writeFileSync(join(directory, `public/logo-visual/${index}.png`), "fixture");
+      writeFileSync(join(directory, `private/logo-assets/logo-visual/${index}.png`), "fixture");
     }
   });
   afterEach(() => rmSync(directory, { recursive: true, force: true }));
@@ -43,6 +43,20 @@ describe("Logo seed validation", () => {
         { afterIncorrectGuesses: 0, kind: "image", assetUrl: "/logo-visual/0.png" },
       ]),
     ).toContain("validation passed");
+  });
+
+  it("rejects a missing primary private image", () => {
+    expect(() => validate([], { assetUrl: "/logo-visual/missing.png" })).toThrow(
+      "missing private asset",
+    );
+  });
+
+  it("rejects private Logo content duplicated under a public filename", () => {
+    mkdirSync(join(directory, "public"), { recursive: true });
+    writeFileSync(join(directory, "public/spoiler.png"), "fixture");
+    expect(() =>
+      validate([{ afterIncorrectGuesses: 0, kind: "general", text: "Initial clue" }]),
+    ).toThrow("is also published by the frontend");
   });
 
   it("accepts Gaussian blur without a focal point and rejects invalid settings", () => {

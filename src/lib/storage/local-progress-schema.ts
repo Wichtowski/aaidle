@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "../validation/zod";
 import { classicColumns } from "../domain/guesses/comparison-types";
 const comparison = z.object(
   Object.fromEntries(

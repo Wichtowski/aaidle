@@ -2,7 +2,12 @@
 # The API also sets its own security headers; the defer makes the static SPA
 # responses receive the same baseline headers without overwriting API values.
 
+# Prevent stale Logo originals from an older frontend release being served
+@logo_source_paths path /logo-visual/* /logo-common/*
+respond @logo_source_paths 404
+
 header {
+	+Cache-Control "no-transform"
 	Strict-Transport-Security "max-age=31536000; includeSubDomains"
 	Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://w.soundcloud.com; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self'; frame-src https://w.soundcloud.com; upgrade-insecure-requests"
 	X-Content-Type-Options "nosniff"

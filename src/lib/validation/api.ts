@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "./zod";
 import { readRequestText } from "./request-body";
 export const modeSchema = z.literal("classic");
 export const guessRequestSchema = z.object({

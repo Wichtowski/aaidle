@@ -28,6 +28,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     fs: {
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/data/**"],
     },

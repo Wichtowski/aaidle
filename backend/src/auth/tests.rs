@@ -30,6 +30,8 @@ fn config() -> AppConfig {
         daily_selection_secret: "daily-selection-secret-1234567890".to_owned(),
         request_timeout: Duration::from_secs(1),
         app_origin: "https://aaidle.example".to_owned(),
+        logo_asset_dir: std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../private/logo-assets"),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
         health_key: "health-key-that-is-longer-than-thirty-two-bytes".to_owned(),
@@ -638,6 +640,59 @@ fn anonymous_player_tokens_are_bound_signed_and_expiring() {
     );
     assert_eq!(
         verify_anonymous_player_token("secret", "malformed", issued_at).unwrap(),
+        None
+    );
+}
+
+#[test]
+fn logo_image_capabilities_are_unpredictable_bound_and_expiring() {
+    let challenge_id = Uuid::new_v4();
+    let player_id = Uuid::new_v4();
+    let expires_at = 2_000_000;
+    let first =
+        create_logo_image_capability("secret", challenge_id, player_id, "3", expires_at).unwrap();
+    let second =
+        create_logo_image_capability("secret", challenge_id, player_id, "3", expires_at).unwrap();
+
+    assert_ne!(first, second);
+    assert_eq!(
+        verify_logo_image_capability("secret", &first, challenge_id, player_id, expires_at - 1,)
+            .unwrap(),
+        Some("3".to_owned())
+    );
+    assert_eq!(
+        verify_logo_image_capability(
+            "secret",
+            &first,
+            challenge_id,
+            Uuid::new_v4(),
+            expires_at - 1,
+        )
+        .unwrap(),
+        None
+    );
+    assert_eq!(
+        verify_logo_image_capability("secret", &first, Uuid::new_v4(), player_id, expires_at - 1,)
+            .unwrap(),
+        None
+    );
+    assert_eq!(
+        verify_logo_image_capability("secret", &first, challenge_id, player_id, expires_at)
+            .unwrap(),
+        None
+    );
+
+    let mut tampered = first.into_bytes();
+    tampered[0] = if tampered[0] == b'A' { b'B' } else { b'A' };
+    assert_eq!(
+        verify_logo_image_capability(
+            "secret",
+            std::str::from_utf8(&tampered).unwrap(),
+            challenge_id,
+            player_id,
+            expires_at - 1,
+        )
+        .unwrap(),
         None
     );
 }

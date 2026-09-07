@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "../../validation/zod";
 import { localProgressSchema, type LocalProgress } from "../../storage/local-progress-schema";
 import { distribution } from "../../utils/dates";
 

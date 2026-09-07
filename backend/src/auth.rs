@@ -26,6 +26,16 @@ pub const RECENT_AUTHENTICATION_MILLIS: i64 = 15 * 60 * 1_000;
 type HmacSha256 = Hmac<Sha256>;
 
 #[derive(Debug, Deserialize, Serialize)]
+struct LogoImageCapabilityClaims {
+    version: u8,
+    challenge_id: Uuid,
+    player_id: Uuid,
+    variant: String,
+    exp: i64,
+    nonce: Uuid,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct AccessTokenClaims {
     pub sub: String,
     pub email: String,
@@ -306,6 +316,69 @@ fn anonymous_player_signature(auth_secret: &str, payload: &str) -> AppResult<Str
     let mut mac = HmacSha256::new_from_slice(auth_secret.as_bytes())
         .map_err(|_| AppError::config("AUTH_SECRET is invalid"))?;
     mac.update(format!("aaidle-anonymous-player-v1:{payload}").as_bytes());
+    Ok(URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes()))
+}
+
+pub fn create_logo_image_capability(
+    auth_secret: &str,
+    challenge_id: Uuid,
+    player_id: Uuid,
+    variant: &str,
+    expires_at: i64,
+) -> AppResult<String> {
+    let claims = LogoImageCapabilityClaims {
+        version: 1,
+        challenge_id,
+        player_id,
+        variant: variant.to_owned(),
+        exp: expires_at,
+        nonce: Uuid::new_v4(),
+    };
+    let payload = URL_SAFE_NO_PAD.encode(
+        serde_json::to_vec(&claims)
+            .map_err(|_| AppError::Unavailable("Could not create a Logo image URL.".to_owned()))?,
+    );
+    let signature = logo_image_capability_signature(auth_secret, &payload)?;
+    Ok(format!("{payload}.{signature}"))
+}
+
+pub fn verify_logo_image_capability(
+    auth_secret: &str,
+    token: &str,
+    challenge_id: Uuid,
+    player_id: Uuid,
+    now: i64,
+) -> AppResult<Option<String>> {
+    let Some((payload, signature)) = token.split_once('.') else {
+        return Ok(None);
+    };
+    if signature.contains('.') {
+        return Ok(None);
+    }
+    let expected = logo_image_capability_signature(auth_secret, payload)?;
+    if !constant_time_eq(signature.as_bytes(), expected.as_bytes()) {
+        return Ok(None);
+    }
+    let Ok(bytes) = URL_SAFE_NO_PAD.decode(payload) else {
+        return Ok(None);
+    };
+    let Ok(claims) = serde_json::from_slice::<LogoImageCapabilityClaims>(&bytes) else {
+        return Ok(None);
+    };
+    if claims.version != 1
+        || claims.challenge_id != challenge_id
+        || claims.player_id != player_id
+        || claims.exp <= now
+    {
+        return Ok(None);
+    }
+    Ok(Some(claims.variant))
+}
+
+fn logo_image_capability_signature(auth_secret: &str, payload: &str) -> AppResult<String> {
+    let mut mac = HmacSha256::new_from_slice(auth_secret.as_bytes())
+        .map_err(|_| AppError::config("AUTH_SECRET is invalid"))?;
+    mac.update(format!("aaidle-logo-image-v1:{payload}").as_bytes());
     Ok(URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes()))
 }
 

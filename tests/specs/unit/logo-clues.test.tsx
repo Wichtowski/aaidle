@@ -12,7 +12,7 @@ const clues = [
     afterIncorrectGuesses: 3,
     kind: "image",
     text: "Timeline caption.",
-    imageUrl: "/api/v1/games/logo/challenges/test/image?v=clue-1",
+    imageUrl: "/api/v1/games/logo/challenges/test/image?token=clue-capability",
   },
 ];
 function Harness({ player = "player", challenge = "today", available = clues }) {
@@ -54,7 +54,7 @@ describe("Logo clues", () => {
 
   it("validates profile-specific API fields without requiring a blur focal point", () => {
     const base = {
-      imageUrl: "/api/v1/games/logo/challenges/test/image?v=0",
+      imageUrl: "/api/v1/games/logo/challenges/test/image?token=initial-capability",
       imageRevision: 0,
       maximumImageRevision: 7,
       clues: [],

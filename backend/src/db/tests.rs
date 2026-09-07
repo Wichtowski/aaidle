@@ -13,6 +13,8 @@ fn config(database_url: &str) -> AppConfig {
         daily_selection_secret: "daily-selection-secret-1234567890".to_owned(),
         request_timeout: Duration::from_secs(1),
         app_origin: "http://localhost:5173".to_owned(),
+        logo_asset_dir: std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../private/logo-assets"),
         secure_cookies: false,
         auth_secret: "authentication-secret-123456789012".to_owned(),
         health_key: "health-check-secret-1234567890123".to_owned(),

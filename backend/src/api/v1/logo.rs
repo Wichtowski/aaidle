@@ -34,7 +34,7 @@ pub(super) struct LogoPlayerQuery {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct LogoImageQuery {
-    v: String,
+    token: String,
 }
 
 pub(super) async fn game(
@@ -63,7 +63,7 @@ pub(super) async fn game(
             expires_at: format_next_midnight()?,
         },
         models: game.models,
-        progress: progress_response(challenge_id, game.progress),
+        progress: progress_response(&state, challenge_id, player_id, game.progress)?,
         global_completion_count: game.completion_count,
     }))
 }
@@ -88,7 +88,7 @@ pub(super) async fn guess_history(
                 attempt_number: guess.attempt_number,
             })
             .collect(),
-        progress: progress_response(challenge_id, history.progress),
+        progress: progress_response(&state, challenge_id, player_id, history.progress)?,
     }))
 }
 
@@ -155,14 +155,6 @@ pub(super) async fn image(
             progress.solved,
         )
         .await?;
-    let now = time::OffsetDateTime::now_utc();
-    let next_midnight = now
-        .date()
-        .next_day()
-        .and_then(|date| date.with_hms(0, 0, 0).ok())
-        .ok_or_else(|| AppError::Unavailable("Could not determine Logo cache expiry.".to_owned()))?
-        .assume_utc();
-    let max_age = (next_midnight - now).whole_seconds().max(0);
     let content_type = match image::guess_format(&image) {
         Ok(image::ImageFormat::WebP) => "image/webp",
         _ => "image/png",
@@ -173,8 +165,7 @@ pub(super) async fn image(
         .insert(header::CONTENT_TYPE, HeaderValue::from_static(content_type));
     response.headers_mut().insert(
         header::CACHE_CONTROL,
-        HeaderValue::from_str(&format!("private, max-age={max_age}, immutable"))
-            .map_err(|_| AppError::Unavailable("Logo cache metadata is invalid.".to_owned()))?,
+        HeaderValue::from_static("private, no-store"),
     );
     response.headers_mut().insert(
         header::X_CONTENT_TYPE_OPTIONS,
@@ -263,7 +254,7 @@ pub(super) async fn guess(
         guessed_model: outcome.guessed_model,
         is_correct: outcome.is_correct,
         attempt_number: outcome.attempt_number,
-        progress: progress_response(challenge_id, outcome.progress),
+        progress: progress_response(&state, challenge_id, player_id, outcome.progress)?,
         global_completion_count: outcome.completion_count,
         player_stats: outcome.player_stats,
     }))
@@ -306,12 +297,22 @@ pub(super) async fn image_route(
     Path(challenge_id): Path<String>,
     Query(query): Query<LogoImageQuery>,
 ) -> AppResult<Response> {
+    let parsed_challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
+    let player_id = read_player_id(&state, &headers, player_id).await?;
+    let requested_variant = crate::auth::verify_logo_image_capability(
+        &state.config.auth_secret,
+        &query.token,
+        parsed_challenge_id,
+        player_id,
+        time::OffsetDateTime::now_utc().unix_timestamp(),
+    )?
+    .ok_or_else(|| AppError::NotFound("Logo image variant not found.".to_owned()))?;
     image(
         State(state),
         headers,
         Path(challenge_id),
         Query(LogoPlayerQuery { player_id }),
-        Some(query.v),
+        Some(requested_variant),
     )
     .await
 }
@@ -332,17 +333,27 @@ pub(super) async fn guess_route(
 }
 
 fn progress_response(
+    state: &AppState,
     challenge_id: Uuid,
+    player_id: Uuid,
     progress: repository::logo::LogoProgress,
-) -> LogoProgressResponse {
-    LogoProgressResponse {
+) -> AppResult<LogoProgressResponse> {
+    let expires_at = next_logo_image_expiry()?;
+    let image_variant = if progress.solved {
+        "solved".to_owned()
+    } else {
+        progress.image_revision.to_string()
+    };
+    let image_token = crate::auth::create_logo_image_capability(
+        &state.config.auth_secret,
+        challenge_id,
+        player_id,
+        &image_variant,
+        expires_at,
+    )?;
+    Ok(LogoProgressResponse {
         image_url: format!(
-            "/api/v1/games/logo/challenges/{challenge_id}/image?v={}",
-            if progress.solved {
-                "solved".to_owned()
-            } else {
-                progress.image_revision.to_string()
-            }
+            "/api/v1/games/logo/challenges/{challenge_id}/image?token={image_token}"
         ),
         reveal: progress.reveal,
         image_revision: progress.image_revision,
@@ -351,18 +362,41 @@ fn progress_response(
             .clues
             .into_iter()
             .enumerate()
-            .map(|(index, clue)| LogoClueResponse {
-                after_incorrect_guesses: clue.after_incorrect_guesses,
-                image_url: (clue.kind == "image").then(|| {
-                    format!("/api/v1/games/logo/challenges/{challenge_id}/image?v=clue-{index}")
-                }),
-                kind: clue.kind,
-                text: clue.text,
+            .map(|(index, clue)| {
+                let image_url = if clue.kind == "image" {
+                    let token = crate::auth::create_logo_image_capability(
+                        &state.config.auth_secret,
+                        challenge_id,
+                        player_id,
+                        &format!("clue-{index}"),
+                        expires_at,
+                    )?;
+                    Some(format!(
+                        "/api/v1/games/logo/challenges/{challenge_id}/image?token={token}"
+                    ))
+                } else {
+                    None
+                };
+                Ok(LogoClueResponse {
+                    after_incorrect_guesses: clue.after_incorrect_guesses,
+                    image_url,
+                    kind: clue.kind,
+                    text: clue.text,
+                })
             })
-            .collect(),
+            .collect::<AppResult<Vec<_>>>()?,
         solved: progress.solved,
         attribution: progress.attribution,
-    }
+    })
+}
+
+fn next_logo_image_expiry() -> AppResult<i64> {
+    time::OffsetDateTime::now_utc()
+        .date()
+        .next_day()
+        .and_then(|date| date.with_hms(0, 0, 0).ok())
+        .map(|expiry| expiry.assume_utc().unix_timestamp())
+        .ok_or_else(|| AppError::Unavailable("Could not determine Logo image expiry.".to_owned()))
 }
 
 #[cfg(test)]

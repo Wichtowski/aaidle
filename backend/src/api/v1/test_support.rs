@@ -27,6 +27,8 @@ pub(super) fn state_with_pool(pool: SqlitePool) -> AppState {
         daily_selection_secret: "test secret that is longer than thirty two bytes".to_owned(),
         request_timeout: Duration::from_secs(10),
         app_origin: "http://localhost:3000".to_owned(),
+        logo_asset_dir: std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../private/logo-assets"),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
         health_key: "test health key that is longer than thirty two bytes".to_owned(),

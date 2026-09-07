@@ -32,13 +32,6 @@ async fn test_app() -> (axum::Router, SqlitePool) {
 }
 
 async fn test_app_with_environment(environment: AppEnvironment) -> (axum::Router, SqlitePool) {
-    test_app_with_image_origin(environment, None).await
-}
-
-async fn test_app_with_image_origin(
-    environment: AppEnvironment,
-    image_origin: Option<&str>,
-) -> (axum::Router, SqlitePool) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
         .connect("sqlite::memory:")
@@ -53,6 +46,7 @@ async fn test_app_with_image_origin(
         daily_selection_secret: "test secret that is longer than thirty two bytes".to_owned(),
         request_timeout: Duration::from_secs(10),
         app_origin: "http://localhost:3000".to_owned(),
+        logo_asset_dir: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../private/logo-assets"),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
         health_key: "test health key that is longer than thirty two bytes".to_owned(),
@@ -62,12 +56,7 @@ async fn test_app_with_image_origin(
         google_oauth: None,
         resend_api_key: None,
     });
-    let mut state = AppState::new(pool.clone(), config).expect("app state");
-    if let Some(origin) = image_origin {
-        state.logo_images = Arc::new(
-            aidle_api::logo_images::LogoImageCache::new(origin, Duration::from_secs(2)).unwrap(),
-        );
-    }
+    let state = AppState::new(pool.clone(), config).expect("app state");
     (
         api::router(state).layer(Extension(ConnectInfo(
             "127.0.0.1:0"
@@ -87,6 +76,7 @@ async fn production_style_test_pool() -> (SqlitePool, PathBuf) {
         daily_selection_secret: "test secret that is longer than thirty two bytes".to_owned(),
         request_timeout: Duration::from_secs(10),
         app_origin: "http://localhost:3000".to_owned(),
+        logo_asset_dir: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../private/logo-assets"),
         secure_cookies: false,
         auth_secret: "test secret that is longer than thirty two bytes".to_owned(),
         health_key: "test health key that is longer than thirty two bytes".to_owned(),
@@ -2918,22 +2908,7 @@ async fn futures_join(
 
 #[tokio::test]
 async fn logo_image_clue_route_checks_unlocks_and_hides_asset_paths() {
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let origin = format!("http://{}", listener.local_addr().unwrap());
-    let sources = axum::Router::new().route(
-        "/{*path}",
-        axum::routing::get(|| async {
-            let mut bytes = std::io::Cursor::new(Vec::new());
-            image::DynamicImage::new_rgb8(64, 48)
-                .write_to(&mut bytes, image::ImageFormat::Png)
-                .unwrap();
-            ([("content-type", "image/png")], bytes.into_inner())
-        }),
-    );
-    let source_server = tokio::spawn(async move {
-        axum::serve(listener, sources).await.unwrap();
-    });
-    let (app, pool) = test_app_with_image_origin(AppEnvironment::Local, Some(&origin)).await;
+    let (app, pool) = test_app().await;
     let player_id = Uuid::new_v4();
     let cookie = anonymous_player_cookie(player_id);
     let initial = app
@@ -2950,42 +2925,90 @@ async fn logo_image_clue_route_checks_unlocks_and_hides_asset_paths() {
     let initial: serde_json::Value =
         serde_json::from_slice(&initial.into_body().collect().await.unwrap().to_bytes()).unwrap();
     let id = initial["challenge"]["id"].as_str().unwrap();
+    let initial_image_url = initial["progress"]["imageUrl"].as_str().unwrap();
+    assert!(initial_image_url.contains("?token="));
+    assert!(!initial_image_url.contains("?v="));
     sqlx::query("UPDATE logo_challenges SET answer_model_id = 'alexnet' WHERE id = ?")
         .bind(id)
         .execute(&pool)
         .await
         .unwrap();
-    let image_url = format!("/api/v1/games/logo/challenges/{id}/image?v=clue-1");
-    let locked = app
+    let initial_image = app
         .clone()
         .oneshot(
-            Request::get(&image_url)
+            Request::get(initial_image_url)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
-    assert_eq!(locked.status(), StatusCode::NOT_FOUND);
+    assert_eq!(initial_image.status(), StatusCode::OK);
+    let mut tampered_url = initial_image_url.to_owned();
+    let last = tampered_url.pop().unwrap();
+    tampered_url.push(if last == 'A' { 'B' } else { 'A' });
+    let tampered = app
+        .clone()
+        .oneshot(
+            Request::get(tampered_url)
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(tampered.status(), StatusCode::NOT_FOUND);
+    let legacy_variant = app
+        .clone()
+        .oneshot(
+            Request::get(format!("/api/v1/games/logo/challenges/{id}/image?v=3"))
+                .header("cookie", &cookie)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(legacy_variant.status(), StatusCode::BAD_REQUEST);
     let choices = initial["models"]
         .as_array()
         .unwrap()
         .iter()
         .filter(|model| model["id"] != "alexnet")
         .take(5);
+    let mut image_url = None;
     for (index, model) in choices.enumerate() {
         let response = app.clone().oneshot(Request::post(format!("/api/v1/games/logo/challenges/{id}/guesses"))
             .header("cookie", &cookie).header("origin", "http://localhost:3000").header("content-type", "application/json")
             .body(Body::from(serde_json::json!({"playerId": player_id, "requestId": Uuid::new_v4(), "guessedModelId": model["id"], "attemptNumber": index + 1}).to_string())).unwrap()).await.unwrap();
         assert_eq!(response.status(), StatusCode::OK);
+        if index == 0 {
+            let stale_capability = app
+                .clone()
+                .oneshot(
+                    Request::get(initial_image_url)
+                        .header("cookie", &cookie)
+                        .body(Body::empty())
+                        .unwrap(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(stale_capability.status(), StatusCode::NOT_FOUND);
+        }
         if index == 4 {
             let bytes = response.into_body().collect().await.unwrap().to_bytes();
             let value: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
-            assert_eq!(value["progress"]["clues"][1]["imageUrl"], image_url);
+            image_url = Some(
+                value["progress"]["clues"][1]["imageUrl"]
+                    .as_str()
+                    .unwrap()
+                    .to_owned(),
+            );
+            assert!(image_url.as_deref().unwrap().contains("?token="));
             assert!(value["progress"]["clues"][1].get("asset").is_none());
             assert!(!String::from_utf8_lossy(&bytes).contains("model_architecture"));
         }
     }
+    let image_url = image_url.unwrap();
     let image = app
         .clone()
         .oneshot(
@@ -2998,27 +3021,20 @@ async fn logo_image_clue_route_checks_unlocks_and_hides_asset_paths() {
         .unwrap();
     assert_eq!(image.status(), StatusCode::OK);
     assert_eq!(image.headers()["content-type"], "image/png");
-    assert!(
-        image.headers()["cache-control"]
-            .to_str()
-            .unwrap()
-            .starts_with("private,")
-    );
-    for variant in ["clue-0", "clue-99", "clue-invalid"] {
-        let response = app
-            .clone()
-            .oneshot(
-                Request::get(format!(
-                    "/api/v1/games/logo/challenges/{id}/image?v={variant}"
-                ))
-                .header("cookie", &cookie)
-                .body(Body::empty())
-                .unwrap(),
-            )
-            .await
-            .unwrap();
-        assert_eq!(response.status(), StatusCode::NOT_FOUND);
-    }
+    assert!(image.headers()["cache-control"].to_str().unwrap() == "private, no-store");
+    let forged = app
+        .clone()
+        .oneshot(
+            Request::get(format!(
+                "/api/v1/games/logo/challenges/{id}/image?token=clue-99"
+            ))
+            .header("cookie", &cookie)
+            .body(Body::empty())
+            .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(forged.status(), StatusCode::NOT_FOUND);
     let other = app
         .oneshot(
             Request::get(image_url)
@@ -3029,7 +3045,6 @@ async fn logo_image_clue_route_checks_unlocks_and_hides_asset_paths() {
         .await
         .unwrap();
     assert_eq!(other.status(), StatusCode::NOT_FOUND);
-    source_server.abort();
 }
 
 #[tokio::test]

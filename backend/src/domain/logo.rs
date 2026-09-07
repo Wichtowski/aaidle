@@ -346,7 +346,7 @@ pub fn zoom_for_revision(revision: usize) -> f32 {
     ZOOM_LEVELS[revision.min(MAX_REVEAL_REVISION)]
 }
 
-/// Seed URLs identify public images on APP_ORIGIN, never arbitrary download hosts.
+/// Seed URLs identify files below LOGO_ASSET_DIR, never arbitrary filesystem paths
 pub fn valid_asset_url(value: &str) -> bool {
     value.starts_with('/')
         && !value.starts_with("//")

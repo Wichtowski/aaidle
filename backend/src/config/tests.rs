@@ -8,6 +8,7 @@ const CONFIG_KEYS: &[&str] = &[
     "REQUEST_TIMEOUT_SECONDS",
     "DAILY_SELECTION_SECRET",
     "APP_ORIGIN",
+    "LOGO_ASSET_DIR",
     "AUTH_SECRET",
     "HEALTH_KEY",
     "AAIDLE_VERSION",
@@ -113,6 +114,7 @@ fn local_configuration_uses_defaults_and_filters_blank_optional_values() {
             assert_eq!(config.database_url, "sqlite://../data/aidle.db");
             assert_eq!(config.request_timeout, Duration::from_secs(10));
             assert_eq!(config.app_origin, LOCAL_APP_ORIGIN);
+            assert_eq!(config.logo_asset_dir, PathBuf::from(LOCAL_LOGO_ASSET_DIR));
             assert!(!config.secure_cookies);
             assert_eq!(config.release_version, env!("CARGO_PKG_VERSION"));
             assert!(config.github_oauth.is_none());
@@ -136,6 +138,7 @@ fn complete_production_configuration_is_normalized() {
                 Some("daily-selection-secret-1234567890"),
             ),
             ("APP_ORIGIN", Some("https://aaidle.example///")),
+            ("LOGO_ASSET_DIR", Some("/srv/aaidle/logo-assets")),
             ("AUTH_SECRET", Some("authentication-secret-123456789012")),
             ("HEALTH_KEY", Some("health-check-secret-1234567890123")),
             ("AAIDLE_VERSION", Some("v9")),
@@ -151,6 +154,10 @@ fn complete_production_configuration_is_normalized() {
             assert_eq!(config.bind_addr, "127.0.0.1:9000".parse().unwrap());
             assert_eq!(config.request_timeout, Duration::from_secs(120));
             assert_eq!(config.app_origin, "https://aaidle.example");
+            assert_eq!(
+                config.logo_asset_dir,
+                PathBuf::from("/srv/aaidle/logo-assets")
+            );
             assert!(config.secure_cookies);
             assert_eq!(config.release_version, "v9");
             assert_eq!(config.github_issues_token.as_deref(), Some("issues-token"));

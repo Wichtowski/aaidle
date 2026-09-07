@@ -4,7 +4,7 @@
     "minPool": 0,
     "visualType": "logo",
     "assetName": "OpenAI",
-    "assetUrl": "/common/company-logo-1.png",
+    "assetUrl": "/logo-common/company-logo-1.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 164, "y": 174 },
     "clues": [
@@ -20,7 +20,7 @@
     "minPool": 0,
     "visualType": "logo",
     "assetName": "Anthropic",
-    "assetUrl": "/common/company-logo-2.png",
+    "assetUrl": "/logo-common/company-logo-2.png",
     "revealProfile": "progressive-zoom",
     "focalPoint": { "x": 164, "y": 174 },
     "clues": [
@@ -137,38 +137,6 @@
         "afterIncorrectGuesses": 3,
         "kind": "general",
         "text": "The decision boundary is chosen to maximize its margin from the nearest training points."
-      }
-    ]
-  },
-  {
-    "answerId": "sobel-operator",
-    "minPool": 0,
-    "visualType": "technology",
-    "assetName": "Sobel Operator",
-    "assetUrl": "/common/edge/output.png",
-    "revealProfile": "gaussian-blur",
-    "blurStartStrength": 28,
-    "blurStepStrength": 4,
-    "clues": [
-      {
-        "afterIncorrectGuesses": 1,
-        "kind": "general",
-        "text": "This local image operator estimates horizontal and vertical intensity gradients with paired kernels."
-      },
-      {
-        "afterIncorrectGuesses": 1,
-        "kind": "image",
-        "assetUrl": "/common/edge/input.png"
-      },
-      {
-        "afterIncorrectGuesses": 2,
-        "kind": "image",
-        "assetUrl": "/common/edge/output.png"
-      },
-      {
-        "afterIncorrectGuesses": 3,
-        "kind": "image",
-        "assetUrl": "/common/edge/woman.png"
       }
     ]
   }

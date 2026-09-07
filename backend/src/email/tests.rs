@@ -52,6 +52,8 @@ fn config(secure_cookies: bool, resend_api_key: Option<&str>) -> AppConfig {
         daily_selection_secret: "daily-selection-secret-1234567890".to_owned(),
         request_timeout: Duration::from_millis(100),
         app_origin: "https://aaidle.example".to_owned(),
+        logo_asset_dir: std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../private/logo-assets"),
         secure_cookies,
         auth_secret: "authentication-secret-123456789012".to_owned(),
         health_key: "health-check-secret-1234567890123".to_owned(),

@@ -218,7 +218,7 @@ fn weighted_selection_rejects_empty_weight_and_can_reach_later_variants() {
 }
 
 #[test]
-fn sobel_uses_shared_public_logo_images() {
+fn sobel_uses_public_emoji_images() {
     let catalog = VisualClueCatalog::load().unwrap();
     let sobel = catalog.entity("sobel").unwrap();
     let resolved = resolve_variant(sobel, "edge-images").unwrap();
@@ -228,10 +228,5 @@ fn sobel_uses_shared_public_logo_images() {
     );
     assert!(
         matches!(&resolved.clues[2], VisualClue::Image { src, .. } if src == "/common/edge/output.png")
-    );
-    let logo = crate::domain::logo::LogoCatalog::load().unwrap();
-    assert_eq!(
-        logo.entry("sobel-operator").unwrap().asset_path,
-        "/common/edge/output.png"
     );
 }

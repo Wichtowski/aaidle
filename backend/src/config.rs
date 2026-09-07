@@ -1,10 +1,11 @@
-use std::{env, net::SocketAddr, str::FromStr, time::Duration};
+use std::{env, net::SocketAddr, path::PathBuf, str::FromStr, time::Duration};
 
 use crate::error::{AppError, AppResult};
 
 pub const DB_MAX_CONNECTIONS: u32 = 4;
 pub const DAILY_ANSWER_COOLDOWN_DAYS: i64 = 60;
 const LOCAL_APP_ORIGIN: &str = "http://localhost:5173";
+const LOCAL_LOGO_ASSET_DIR: &str = "../private/logo-assets";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AppEnvironment {
@@ -42,6 +43,7 @@ pub struct AppConfig {
     pub daily_selection_secret: String,
     pub request_timeout: Duration,
     pub app_origin: String,
+    pub logo_asset_dir: PathBuf,
     pub secure_cookies: bool,
     pub auth_secret: String,
     pub health_key: String,
@@ -88,6 +90,7 @@ impl AppConfig {
             }
             _ => LOCAL_APP_ORIGIN.to_owned(),
         };
+        let logo_asset_dir = PathBuf::from(env_or("LOGO_ASSET_DIR", LOCAL_LOGO_ASSET_DIR));
         let auth_secret = required_secret(
             "AUTH_SECRET",
             is_production,
@@ -113,6 +116,7 @@ impl AppConfig {
             daily_selection_secret,
             request_timeout: Duration::from_secs(request_timeout_seconds),
             app_origin,
+            logo_asset_dir,
             secure_cookies: is_production,
             auth_secret,
             health_key,

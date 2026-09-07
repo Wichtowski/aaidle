@@ -1,7 +1,12 @@
-import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const source = new URL("../data/logo.seed.json", import.meta.url);
 const entries = JSON.parse(readFileSync(source, "utf8"));
+const privateRoot = fileURLToPath(new URL("../private/logo-assets/", import.meta.url));
+const publicRoot = fileURLToPath(new URL("../public/", import.meta.url));
 const visualTypes = new Set(["logo", "discoverer-portrait", "technology", "other"]);
 const fail = (message) => {
   throw new Error(`Logo seed: ${message}`);
@@ -13,10 +18,34 @@ const validAsset = (value) =>
   typeof value === "string" &&
   /^\/(?!\/)[A-Za-z0-9/_.-]+\.(png|webp)$/.test(value) &&
   !value.includes("..");
+const privateAssetExists = (assetPath) => {
+  try {
+    return statSync(new URL(`../private/logo-assets${assetPath}`, import.meta.url)).isFile();
+  } catch {
+    return false;
+  }
+};
+const imageHash = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
+const publicImageHashes = new Set();
+const collectPublicImageHashes = (directory) => {
+  let directoryEntries;
+  try {
+    directoryEntries = readdirSync(directory, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const entry of directoryEntries) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) collectPublicImageHashes(path);
+    else if (entry.isFile() && /\.(png|webp)$/i.test(entry.name)) publicImageHashes.add(imageHash(path));
+  }
+};
+collectPublicImageHashes(publicRoot);
 
 if (!Array.isArray(entries) || entries.length < 6) fail("at least six entries are required");
 const answers = new Set();
 const paths = new Set();
+const privateAssets = new Set();
 for (const entry of entries) {
   if (!entry || typeof entry !== "object") fail("each entry must be an object");
   if (typeof entry.answerId !== "string" || !entry.answerId) fail("entry has an invalid answerId");
@@ -28,11 +57,12 @@ for (const entry of entries) {
     fail(`${entry.answerId} needs an assetName`);
   const assetPath = normalizeAsset(entry.assetUrl ?? entry.assetPath ?? entry.asset);
   if (!validAsset(assetPath))
-    fail(`${entry.answerId} needs a root-relative public PNG/WebP assetUrl`);
+    fail(`${entry.answerId} needs a root-relative private PNG/WebP assetUrl`);
   if (paths.has(assetPath)) fail(`duplicate asset ${assetPath}`);
   paths.add(assetPath);
-  if (!existsSync(new URL(`../public${assetPath}`, import.meta.url)))
-    fail(`${entry.answerId} is missing public asset ${assetPath}`);
+  if (!privateAssetExists(assetPath))
+    fail(`${entry.answerId} is missing private asset ${assetPath}`);
+  privateAssets.add(assetPath);
   if (entry.revealProfile === null) {
     // A null profile serves the source image without any reveal processing.
   } else if (entry.revealProfile === "progressive-zoom") {
@@ -76,8 +106,9 @@ for (const entry of entries) {
       fail(`${entry.answerId} has an invalid clue (thresholds must be nonnegative and ordered)`);
     if (clue.kind === "image") {
       const asset = normalizeAsset(clue.assetUrl ?? clue.asset);
-      if (!validAsset(asset) || !existsSync(new URL(`../public${asset}`, import.meta.url)))
-        fail(`${entry.answerId} image clue needs an existing public assetUrl`);
+      if (!validAsset(asset) || !privateAssetExists(asset))
+        fail(`${entry.answerId} image clue needs an existing private assetUrl`);
+      privateAssets.add(asset);
     }
     previousThreshold = clue.afterIncorrectGuesses;
   }
@@ -88,6 +119,11 @@ for (const entry of entries) {
     )
       fail(`${entry.answerId} portrait needs an educational clue after three misses`);
   }
+}
+
+for (const asset of privateAssets) {
+  if (publicImageHashes.has(imageHash(join(privateRoot, asset))))
+    fail(`private asset ${asset} is also published by the frontend`);
 }
 
 console.log(

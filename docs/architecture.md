@@ -20,7 +20,14 @@ Browser (Vite + React)
 ```
 
 Production serves the static `dist/` assets through the platform Caddy instance. Caddy serves the SPA fallback and proxies `/api/*` to the private Rust container. The API never serves frontend assets.
-Logo source images live in `public/logo-visual/` and shared `public/common/` and are published by the frontend alongside other static images. Seed JSON remains embedded only in the backend. Logo and Emoji may reference the same public source image. Logo answers are independent catalog IDs rather than Classic model IDs. The API derives each player’s authorized reveal revision from persisted guesses, downloads the catalog's `assetUrl` from `APP_ORIGIN`, and renders the configured crop or Gaussian blur, or returns the original bytes for a null reveal profile. Zoom profiles use a focal point; Gaussian profiles use start and step strengths on the full frame. Downloaded originals expire after 24 hours; changing the active challenge or restarting the API clears originals and rendered variants. Public source images are directly accessible; the Logo UI uses only the API's player-authorized transformed image URLs.
+Logo source images live in the backend-only `private/logo-assets/` directory and are bundled into the API image.
+Seed JSON remains embedded only in the backend.
+The Logo catalog must not reuse image content published by Emoji or another frontend route.
+Logo answers are independent catalog IDs rather than Classic model IDs.
+The API derives each player’s authorized reveal revision from persisted guesses, reads the catalog's `assetUrl` below `LOGO_ASSET_DIR`, and renders the configured crop or Gaussian blur, or returns the original bytes for a null reveal profile.
+Every returned image URL contains a short-lived HMAC capability bound to the challenge, resolved player, and authorized variant.
+Zoom profiles use a focal point; Gaussian profiles use start and step strengths on the full frame.
+Loaded originals expire after 24 hours; changing the active challenge or restarting the API clears originals and rendered variants.
 
 ## Repository map
 

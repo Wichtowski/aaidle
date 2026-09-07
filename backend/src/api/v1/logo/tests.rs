@@ -54,14 +54,9 @@ async fn authenticated_headers(state: &AppState) -> (String, HeaderMap) {
 #[tokio::test]
 async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
     let mut state = super::super::test_support::state().await;
-    let source_server = crate::logo_images::tests::image_server().await;
-    state.logo_images = std::sync::Arc::new(
-        crate::logo_images::LogoImageCache::new(
-            &source_server.origin,
-            std::time::Duration::from_secs(2),
-        )
-        .unwrap(),
-    );
+    let image_fixture = crate::logo_images::tests::image_fixture();
+    state.logo_images =
+        std::sync::Arc::new(crate::logo_images::LogoImageCache::new(&image_fixture.root).unwrap());
     seed_models(&state).await;
     let player_id = Uuid::new_v4();
     let Json(loaded) = game(
@@ -74,13 +69,13 @@ async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
     .unwrap();
     assert_eq!(loaded.challenge.mode, "logo:normal");
     assert_eq!(loaded.progress.image_revision, 0);
-    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai', asset_path = '/common/company-logo-1.png' WHERE id = ?")
+    sqlx::query("UPDATE logo_challenges SET answer_model_id = 'openai', asset_path = '/logo-common/company-logo-1.png' WHERE id = ?")
         .bind(loaded.challenge.id.to_string())
         .execute(&state.db)
         .await
         .unwrap();
     assert!(loaded.progress.image_url.starts_with(&format!(
-        "/api/v1/games/logo/challenges/{}/image?v=",
+        "/api/v1/games/logo/challenges/{}/image?token=",
         loaded.challenge.id
     )));
     let initial_response = image(
@@ -100,7 +95,7 @@ async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
         initial_response.headers()[header::CACHE_CONTROL]
             .to_str()
             .unwrap()
-            .starts_with("private, max-age=")
+            == "private, no-store"
     );
     let initial_image = initial_response
         .into_body()
@@ -160,7 +155,10 @@ async fn logo_handlers_serve_authorized_crop_then_full_solved_image() {
     .unwrap();
     assert_eq!(restored.guesses.len(), 1);
     assert!(restored.progress.solved);
-    assert!(restored.progress.image_url.ends_with("/image?v=solved"));
+    assert!(restored.progress.image_url.starts_with(&format!(
+        "/api/v1/games/logo/challenges/{}/image?token=",
+        loaded.challenge.id
+    )));
     let solved_response = image(
         State(state.clone()),
         HeaderMap::new(),
@@ -314,14 +312,9 @@ async fn logo_handlers_validate_difficulty_ids_and_attempts() {
 #[tokio::test]
 async fn initial_clues_and_protected_image_clues_follow_persisted_guesses() {
     let mut state = super::super::test_support::state().await;
-    let source_server = crate::logo_images::tests::image_server().await;
-    state.logo_images = std::sync::Arc::new(
-        crate::logo_images::LogoImageCache::new(
-            &source_server.origin,
-            std::time::Duration::from_secs(2),
-        )
-        .unwrap(),
-    );
+    let image_fixture = crate::logo_images::tests::image_fixture();
+    state.logo_images =
+        std::sync::Arc::new(crate::logo_images::LogoImageCache::new(&image_fixture.root).unwrap());
     let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
     let entry = entries
         .iter_mut()
@@ -395,9 +388,10 @@ async fn initial_clues_and_protected_image_clues_follow_persisted_guesses() {
     .await
     .unwrap();
     assert_eq!(outcome.progress.clues.len(), 2);
-    assert_eq!(
-        outcome.progress.clues[1].image_url.as_deref(),
-        Some(format!("/api/v1/games/logo/challenges/{id}/image?v=clue-1").as_str())
+    assert!(
+        outcome.progress.clues[1].image_url.as_deref().is_some_and(
+            |url| url.starts_with(&format!("/api/v1/games/logo/challenges/{id}/image?token="))
+        )
     );
     let serialized = serde_json::to_string(&outcome).unwrap();
     assert!(!serialized.contains("model_architecture"));
@@ -457,14 +451,9 @@ async fn initial_clues_and_protected_image_clues_follow_persisted_guesses() {
 #[tokio::test]
 async fn gaussian_profile_progress_and_images_restore_without_focal_point() {
     let mut state = super::super::test_support::state().await;
-    let source_server = crate::logo_images::tests::image_server().await;
-    state.logo_images = std::sync::Arc::new(
-        crate::logo_images::LogoImageCache::new(
-            &source_server.origin,
-            std::time::Duration::from_secs(2),
-        )
-        .unwrap(),
-    );
+    let image_fixture = crate::logo_images::tests::image_fixture();
+    state.logo_images =
+        std::sync::Arc::new(crate::logo_images::LogoImageCache::new(&image_fixture.root).unwrap());
     let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
     entries
         .iter_mut()
@@ -582,14 +571,9 @@ async fn gaussian_profile_progress_and_images_restore_without_focal_point() {
 #[tokio::test]
 async fn null_reveal_profile_stays_unmodified_across_game_guess_history_and_solve() {
     let mut state = super::super::test_support::state().await;
-    let source_server = crate::logo_images::tests::image_server().await;
-    state.logo_images = std::sync::Arc::new(
-        crate::logo_images::LogoImageCache::new(
-            &source_server.origin,
-            std::time::Duration::from_secs(2),
-        )
-        .unwrap(),
-    );
+    let image_fixture = crate::logo_images::tests::image_fixture();
+    state.logo_images =
+        std::sync::Arc::new(crate::logo_images::LogoImageCache::new(&image_fixture.root).unwrap());
     let mut entries = state.logo.entries().cloned().collect::<Vec<_>>();
     entries
         .iter_mut()
@@ -741,9 +725,12 @@ async fn null_reveal_profile_stays_unmodified_across_game_guess_history_and_solv
     assert_eq!(solved_image, initial_image);
 }
 
-#[test]
-fn null_reveal_profile_is_included_in_api_progress() {
+#[tokio::test]
+async fn null_reveal_profile_is_included_in_api_progress() {
+    let state = super::super::test_support::state().await;
     let response = progress_response(
+        &state,
+        Uuid::nil(),
         Uuid::nil(),
         repository::logo::LogoProgress {
             image_url: "/logo-visual/plain.png".to_owned(),
@@ -754,7 +741,8 @@ fn null_reveal_profile_is_included_in_api_progress() {
             solved: false,
             attribution: None,
         },
-    );
+    )
+    .unwrap();
     let value = serde_json::to_value(response).unwrap();
     assert_eq!(value["revealProfile"], serde_json::Value::Null);
     assert!(value.get("focalPoint").is_none());
@@ -792,7 +780,9 @@ async fn logo_route_wrappers_forward_player_identity_and_variants() {
             Extension(AnonymousPlayerId(player_id)),
             HeaderMap::new(),
             Path("invalid".to_owned()),
-            Query(LogoImageQuery { v: "0".to_owned() }),
+            Query(LogoImageQuery {
+                token: "invalid".to_owned(),
+            }),
         )
         .await,
         Err(AppError::Validation(_))
