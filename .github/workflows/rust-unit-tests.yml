@@ -45,7 +45,7 @@ jobs:
           compression-level: 0
 
   test:
-    name: Rust coverage shard ${{ matrix.shard }}/${{ strategy.job-total }}
+    name: Rust coverage / ${{ matrix.name }}
     needs: build-tests
     runs-on: ubuntu-latest
     permissions:
@@ -53,7 +53,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        include:
+          - name: api
+            filter: "kind(lib) & test(/^api::/)"
+          - name: auth
+            filter: "kind(lib) & test(/^auth::/)"
+          - name: config
+            filter: "kind(lib) & test(/^config::/)"
+          - name: database
+            filter: "kind(lib) & test(/^db::/)"
+          - name: domain
+            filter: "kind(lib) & test(/^domain::/)"
+          - name: dto
+            filter: "kind(lib) & test(/^dto::/)"
+          - name: email
+            filter: "kind(lib) & test(/^email::/)"
+          - name: errors
+            filter: "kind(lib) & test(/^error::/)"
+          - name: issues
+            filter: "kind(lib) & test(/^issues::/)"
+          - name: logo-images
+            filter: "kind(lib) & test(/^logo_images::/)"
+          - name: progress
+            filter: "kind(lib) & test(/^progress::/)"
+          - name: repository
+            filter: "kind(lib) & test(/^repository::/)"
+          - name: state
+            filter: "kind(lib) & test(/^state::/)"
+          - name: binaries
+            filter: "kind(bin)"
+          - name: integration
+            filter: "kind(test)"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -68,21 +98,21 @@ jobs:
         with:
           name: rust-instrumented-tests
           path: ${{ runner.temp }}
-      - name: Run Rust coverage shard
+      - name: Run Rust coverage namespace
         working-directory: backend
         shell: bash
         env:
-          LLVM_PROFILE_FILE: ${{ runner.temp }}/rust-coverage/shard-${{ matrix.shard }}-%p-%16m.profraw
+          LLVM_PROFILE_FILE: ${{ runner.temp }}/rust-coverage/${{ matrix.name }}-%p-%16m.profraw
         run: |
           mkdir -p "$RUNNER_TEMP/rust-coverage"
           set -o pipefail
           cargo nextest run \
             --archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
-            --partition "count:${{ matrix.shard }}/${{ strategy.job-total }}" \
+            --filterset '${{ matrix.filter }}' \
             --no-fail-fast \
             --status-level all \
             2>&1 | tee "$RUNNER_TEMP/rust-test-output"
-      - name: Write Rust shard report
+      - name: Write Rust namespace report
         if: always()
         shell: bash
         run: |
@@ -100,14 +130,14 @@ jobs:
             ignored="${BASH_REMATCH[1]}"
           fi
           mkdir -p "$RUNNER_TEMP/rust-test-reports"
-          printf 'Shard %s\t%s\t%s\t%s\n' \
-            "${{ matrix.shard }}" "$passed" "$failed" "$ignored" \
-            > "$RUNNER_TEMP/rust-test-reports/shard-${{ matrix.shard }}.tsv"
-      - name: Upload Rust shard results
+          printf '%s tests\t%s\t%s\t%s\n' \
+            "${{ matrix.name }}" "$passed" "$failed" "$ignored" \
+            > "$RUNNER_TEMP/rust-test-reports/${{ matrix.name }}.tsv"
+      - name: Upload Rust namespace results
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: rust-coverage-shard-${{ matrix.shard }}
+          name: rust-coverage-${{ matrix.name }}
           path: |
             ${{ runner.temp }}/rust-coverage
             ${{ runner.temp }}/rust-test-reports
@@ -140,11 +170,11 @@ jobs:
         with:
           name: rust-instrumented-tests
           path: ${{ runner.temp }}
-      - name: Download Rust coverage shards
+      - name: Download Rust coverage namespaces
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v7.0.0
         with:
-          pattern: rust-coverage-shard-*
-          path: ${{ runner.temp }}/rust-shards
+          pattern: rust-coverage-*
+          path: ${{ runner.temp }}/rust-namespaces
           merge-multiple: true
       - name: Write Rust test summary
         if: always()
@@ -157,17 +187,17 @@ jobs:
           {
             echo "## 🦀 Rust tests"
             echo
-            echo "| Test shard | Passed | Failed | Ignored |"
+            echo "| Namespace | Passed | Failed | Ignored |"
             echo "| --- | ---: | ---: | ---: |"
             shopt -s nullglob
-            reports=("$RUNNER_TEMP"/rust-shards/rust-test-reports/*.tsv)
+            reports=("$RUNNER_TEMP"/rust-namespaces/rust-test-reports/*.tsv)
             for report in "${reports[@]}"; do
-              IFS=$'\t' read -r name shard_passed shard_failed shard_ignored < "$report"
+              IFS=$'\t' read -r namespace namespace_passed namespace_failed namespace_ignored < "$report"
               printf '| %s | %s | %s | %s |\n' \
-                "$name" "$shard_passed" "$shard_failed" "$shard_ignored"
-              passed=$((passed + shard_passed))
-              failed=$((failed + shard_failed))
-              ignored=$((ignored + shard_ignored))
+                "$namespace" "$namespace_passed" "$namespace_failed" "$namespace_ignored"
+              passed=$((passed + namespace_passed))
+              failed=$((failed + namespace_failed))
+              ignored=$((ignored + namespace_ignored))
             done
             total=$((passed + failed))
             echo
@@ -176,7 +206,7 @@ jobs:
       - name: Generate merged backend coverage reports
         working-directory: backend
         env:
-          LLVM_PROFILE_FILE: ${{ runner.temp }}/rust-shards/rust-coverage/*.profraw
+          LLVM_PROFILE_FILE: ${{ runner.temp }}/rust-namespaces/rust-coverage/*.profraw
         run: |
           cargo +"$RUST_COVERAGE_TOOLCHAIN" llvm-cov report \
             --nextest-archive-file "$RUNNER_TEMP/rust-tests.tar.zst" \
