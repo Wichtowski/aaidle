@@ -131,7 +131,9 @@ describe("HardcoreSoundtrack", () => {
     fireEvent.play(audio);
     fireEvent.pointerDown(document.body);
     expect(mocks.play).toHaveBeenCalledTimes(2);
-    expect(mocks.updateProgress).toHaveBeenCalledTimes(1);
+    // Existing users receive the default autoplay preference on mount; the play event then
+    // records that the soundtrack has autoplayed.
+    expect(mocks.updateProgress).toHaveBeenCalledTimes(2);
 
     fireEvent.click(screen.getByRole("button", { name: "Mute soundtrack" }));
     expect(screen.getByRole("button", { name: "Unmute soundtrack" })).toHaveAttribute(

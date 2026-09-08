@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeModelSearch } from "../../../src/lib/domain/models/model-normalizer";
-import {
-  timelineCategoryLabel,
-} from "../../../src/lib/domain/games/timeline/timeline-category";
+import { timelineCategoryLabel } from "../../../src/lib/domain/games/timeline/timeline-category";
 import {
   timelineDifficultyLabel,
   timelineLeaderboardPath,
@@ -58,7 +56,9 @@ describe("API request validation", () => {
       guessedModelId: "model-1",
       attemptNumber: 1,
     });
-    expect(emojiGuessRequestSchema.parse({ guessedFamilyId: "family-1", attemptNumber: 2 })).toEqual({
+    expect(
+      emojiGuessRequestSchema.parse({ guessedFamilyId: "family-1", attemptNumber: 2 }),
+    ).toEqual({
       guessedFamilyId: "family-1",
       attemptNumber: 2,
     });
@@ -78,12 +78,18 @@ describe("API request validation", () => {
       method: "POST",
       body: JSON.stringify({ guessedModelId: "model", attemptNumber: 3 }),
     });
-    await expect(parseJson(request)).resolves.toEqual({ guessedModelId: "model", attemptNumber: 3 });
+    await expect(parseJson(request)).resolves.toEqual({
+      guessedModelId: "model",
+      attemptNumber: 3,
+    });
     const emojiRequest = new Request("https://example.test", {
       method: "POST",
       body: JSON.stringify({ guessedFamilyId: "family", attemptNumber: 1 }),
     });
-    await expect(parseEmojiGuess(emojiRequest)).resolves.toEqual({ guessedFamilyId: "family", attemptNumber: 1 });
+    await expect(parseEmojiGuess(emojiRequest)).resolves.toEqual({
+      guessedFamilyId: "family",
+      attemptNumber: 1,
+    });
   });
 
   it("rejects malformed JSON request bodies", async () => {
@@ -102,8 +108,28 @@ describe("API request validation", () => {
       solved: false,
     };
     expect(logoProgressSchema.parse({ ...base, revealProfile: null }).revealProfile).toBeNull();
-    expect(logoProgressSchema.parse({ ...base, revealProfile: "progressive-zoom", focalPoint: { x: 0, y: 512 } })).toMatchObject({ revealProfile: "progressive-zoom" });
-    expect(logoProgressSchema.parse({ ...base, revealProfile: "gaussian-blur", blurStartStrength: 1, blurStepStrength: 2 })).toMatchObject({ revealProfile: "gaussian-blur" });
-    expect(() => logoProgressSchema.parse({ ...base, revealProfile: "gaussian-blur", blurStartStrength: 0, blurStepStrength: 2 })).toThrow();
+    expect(
+      logoProgressSchema.parse({
+        ...base,
+        revealProfile: "progressive-zoom",
+        focalPoint: { x: 0, y: 512 },
+      }),
+    ).toMatchObject({ revealProfile: "progressive-zoom" });
+    expect(
+      logoProgressSchema.parse({
+        ...base,
+        revealProfile: "gaussian-blur",
+        blurStartStrength: 1,
+        blurStepStrength: 2,
+      }),
+    ).toMatchObject({ revealProfile: "gaussian-blur" });
+    expect(() =>
+      logoProgressSchema.parse({
+        ...base,
+        revealProfile: "gaussian-blur",
+        blurStartStrength: 0,
+        blurStepStrength: 2,
+      }),
+    ).toThrow();
   });
 });

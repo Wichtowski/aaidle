@@ -55,7 +55,16 @@ describe("date utilities", () => {
   });
 
   it("creates all distribution buckets initialized to zero", () => {
-    expect(distribution()).toEqual({ "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8+": 0 });
+    expect(distribution()).toEqual({
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8+": 0,
+    });
   });
 });
 
@@ -79,7 +88,11 @@ describe("game preferences", () => {
   it("keeps valid values while replacing invalid nested values", () => {
     storage.setItem(
       gamePreferencesKey,
-      JSON.stringify({ classic: { category: "cv", difficulty: "hardcore" }, emoji: "invalid", timeline: "speedrun" }),
+      JSON.stringify({
+        classic: { category: "cv", difficulty: "hardcore" },
+        emoji: "invalid",
+        timeline: "speedrun",
+      }),
     );
     expect(readGamePreferences()).toEqual({
       classic: { category: "cv", difficulty: "hardcore" },
@@ -114,7 +127,10 @@ describe("how-to-play preferences", () => {
 
   it("ignores malformed and false storage entries", () => {
     const storage = installWindow();
-    storage.setItem("aaidle:how-to-play:v1", JSON.stringify({ "classic:llm:normal": false, "": true }));
+    storage.setItem(
+      "aaidle:how-to-play:v1",
+      JSON.stringify({ "classic:llm:normal": false, "": true }),
+    );
     expect(hasSeenClassicHowToPlay("llm", "normal", false)).toBe(false);
     storage.setItem("aaidle:how-to-play:v1", "{");
     expect(hasSeenClassicHowToPlay("llm", "normal", false)).toBe(false);
@@ -148,7 +164,10 @@ describe("timeline progress storage", () => {
     expect(readSavedTimelineGames()).toEqual([]);
     storage.setItem(
       "aaidle:timeline-progress:v1",
-      JSON.stringify({ version: 1, games: { bad: { challengeId: "other", positions: [], acceptedAttempts: 0 } } }),
+      JSON.stringify({
+        version: 1,
+        games: { bad: { challengeId: "other", positions: [], acceptedAttempts: 0 } },
+      }),
     );
     expect(readSavedTimelineGame("bad")).toBeNull();
     expect(readSavedTimelineGames()).toHaveLength(1);

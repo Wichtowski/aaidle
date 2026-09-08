@@ -2662,14 +2662,14 @@ body.classic-page-transitioning::after {
   background: #000;
   content: "";
   opacity: 0;
-  }
-  body.classic-page-transitioning::after {
+}
+body.classic-page-transitioning::after {
   opacity: 1;
 }
-  body.classic-page-transitioning--fading::after {
+body.classic-page-transitioning--fading::after {
   opacity: 0;
   transition: opacity 550ms ease-in-out;
-  }
+}
 .hardcore-lock {
   max-width: 700px;
   padding: 16vh 0;
@@ -3478,6 +3478,7 @@ body.classic-page-transitioning::after {
 }
 .completed__ritual-notice a {
   color: inherit;
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
@@ -3485,6 +3486,8 @@ body.classic-page-transitioning::after {
   color: var(--ink);
 }
 .completed__ritual-notice--frayed::before {
+  opacity: 0.12;
+  transform: translate(2px, -1px);
 }
 .completed__ritual-notice--corrupted {
   text-shadow:

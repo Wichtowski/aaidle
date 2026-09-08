@@ -41,7 +41,15 @@ describe("classic category and challenge mode helpers", () => {
   });
 
   it("round-trips every challenge mode", () => {
-    for (const category of ["llm", "cv", "nlp", "object-detection", "classical-ml", "filters", "hardcore"] as const) {
+    for (const category of [
+      "llm",
+      "cv",
+      "nlp",
+      "object-detection",
+      "classical-ml",
+      "filters",
+      "hardcore",
+    ] as const) {
       const mode = classicChallengeMode(category, "challenge");
       expect(classicModeFromChallengeMode(mode)).toEqual({ category, difficulty: "challenge" });
       expect(canonicalClassicChallengeMode(mode)).toBe(mode);
