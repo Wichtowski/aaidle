@@ -538,26 +538,6 @@ class ApiClient {
     });
   }
 
-  hardcoreSoundtrackSetting() {
-    return this.request<{ url: string }>("/admin/settings/hardcore-soundtrack", {
-      cache: "no-store",
-    });
-  }
-
-  updateHardcoreSoundtrack(url: string) {
-    return this.request<{ url: string }>("/admin/settings/hardcore-soundtrack", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url }),
-    });
-  }
-
-  publicConfig() {
-    return this.request<{ hardcoreSoundtrackUrl: string | null }>("/public-config", {
-      cache: "no-store",
-    });
-  }
-
   classicGame(category: ClassicCategory, difficulty: ClassicDifficulty, signal?: AbortSignal) {
     const path =
       category === "hardcore"

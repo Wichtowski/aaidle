@@ -35,45 +35,58 @@
   font-size: 13px;
   line-height: 1.5;
 }
-.admin-soundtrack-settings form {
+.admin-soundtrack-settings__current {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
   align-self: center;
+  align-items: center;
+  gap: 2px 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
 }
-.admin-soundtrack-settings label {
-  display: block;
-  margin-bottom: 7px;
+.admin-soundtrack-settings__current > span {
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.admin-soundtrack-settings form > div {
-  display: flex;
-  gap: 8px;
+.admin-soundtrack-settings__current > a {
+  grid-row: 2 / 5;
+  width: 58px;
+  height: 58px;
 }
-.admin-soundtrack-settings input {
-  min-width: 0;
-  flex: 1;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  padding: 10px 11px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
+.admin-soundtrack-settings__current > a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
-.admin-soundtrack-settings input::placeholder {
+.admin-soundtrack-settings__current img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.admin-soundtrack-settings__current strong,
+.admin-soundtrack-settings__current small,
+.admin-soundtrack-settings__current code {
+  grid-column: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-soundtrack-settings__current small,
+.admin-soundtrack-settings__current code {
   color: var(--muted);
 }
-.admin-soundtrack-settings .button {
-  flex: none;
+.admin-soundtrack-settings__current code {
+  font-size: 10px;
 }
-.admin-soundtrack-settings .notice,
-.admin-soundtrack-settings__saved {
-  margin-top: 8px !important;
-  font-size: 12px !important;
-}
-.admin-soundtrack-settings__saved {
-  color: #276552 !important;
+.admin-soundtrack-settings__current > strong:last-child {
+  grid-column: 1 / -1;
 }
 body.hell-mode .admin-soundtrack-settings {
   border-color: #7f3028;
@@ -89,27 +102,15 @@ body.hell-mode .admin-soundtrack-settings h2 {
 body.hell-mode .admin-soundtrack-settings p:not(.eyebrow) {
   color: #d8b9af;
 }
-body.hell-mode .admin-soundtrack-settings label {
-  color: #ffd1c4;
-}
-body.hell-mode .admin-soundtrack-settings input {
+body.hell-mode .admin-soundtrack-settings__current {
   border-color: #7f4a42;
   background: #261116;
   color: #fff2e9;
 }
-body.hell-mode .admin-soundtrack-settings input::placeholder {
+body.hell-mode .admin-soundtrack-settings__current > span,
+body.hell-mode .admin-soundtrack-settings__current small,
+body.hell-mode .admin-soundtrack-settings__current code {
   color: #9f716b;
-}
-body.hell-mode .admin-soundtrack-settings .button {
-  border-color: #a94432;
-  background: #5f211a;
-  color: #fff2e9;
-}
-body.hell-mode .admin-soundtrack-settings .button:hover:not(:disabled) {
-  background: #8a2f22;
-}
-body.hell-mode .admin-soundtrack-settings__saved {
-  color: #9ad4b0 !important;
 }
 body.hell-mode .admin-progress {
   border-color: #69372f;
@@ -816,9 +817,6 @@ body.hell-mode .admin-progress__guess-list li {
   }
   .admin-soundtrack-settings {
     padding: 18px;
-  }
-  .admin-soundtrack-settings form > div {
-    flex-direction: column;
   }
   .admin-facts {
     grid-template-columns: 1fr;

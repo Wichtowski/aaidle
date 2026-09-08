@@ -1,6 +1,7 @@
 import { createLogger, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
+import { hardcoreSoundtracksPlugin } from "./scripts/hardcore-soundtracks-plugin";
 
 const logger = createLogger();
 const logError = logger.error.bind(logger);
@@ -17,7 +18,7 @@ logger.error = (message, options) => {
 
 export default defineConfig({
   customLogger: logger,
-  plugins: [react()],
+  plugins: [hardcoreSoundtracksPlugin(), react()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

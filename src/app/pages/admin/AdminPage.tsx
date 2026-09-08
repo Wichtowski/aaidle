@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./admin.css";
 import { canManageAdministrators, canManageUsers } from "@lib/auth/permissions";
 import { apiClient, type AdminUserDetail, type AdminUserSummary } from "@lib/api/client";
+import { HardcoreSoundtrackStatus } from "@components/admin/HardcoreSoundtrackStatus";
 import { AdminProgressRecord } from "@components/admin/AdminProgressRecord";
 import { useAuth } from "@components/auth/useAuth";
 import { SiteNavbar } from "@components/ui/SiteNavbar";
@@ -274,100 +275,8 @@ export function AdminPage() {
           )}
         </aside>
       </section>
-      {canManageAdministrators(user.permission) && <HardcoreSoundtrackSettings />}
+      <HardcoreSoundtrackStatus />
     </main>
-  );
-}
-
-function HardcoreSoundtrackSettings() {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-
-    void apiClient
-      .hardcoreSoundtrackSetting()
-      .then((response) => {
-        if (active) setUrl(response.url);
-      })
-      .catch((requestError: unknown) => {
-        if (active) {
-          setError(
-            requestError instanceof Error
-              ? requestError.message
-              : "Could not load the soundtrack setting.",
-          );
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const save = (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSaving(true);
-    setSaved(false);
-    setError(null);
-    void apiClient
-      .updateHardcoreSoundtrack(url)
-      .then((response) => {
-        setUrl(response.url);
-        setSaved(true);
-      })
-      .catch((requestError: unknown) => {
-        setError(
-          requestError instanceof Error ? requestError.message : "Could not update the soundtrack.",
-        );
-      })
-      .finally(() => setSaving(false));
-  };
-
-  return (
-    <section className="admin-soundtrack-settings" aria-labelledby="admin-soundtrack-title">
-      <div>
-        <p className="eyebrow">Superadmin setting</p>
-        <h2 id="admin-soundtrack-title">Hardcore soundtrack</h2>
-        <p>Use a public HTTPS SoundCloud track URL. Leave it empty to disable the player.</p>
-      </div>
-      <form
-        onSubmit={save}
-        toolname="saveHardcoreSoundtrack"
-        tooldescription="Save the public SoundCloud URL used for the Hardcore soundtrack."
-      >
-        <label htmlFor="hardcore-soundtrack-url">SoundCloud URL</label>
-        <div>
-          <input
-            disabled={loading || saving}
-            id="hardcore-soundtrack-url"
-            maxLength={2_048}
-            name="url"
-            onChange={(event) => setUrl(event.target.value)}
-            placeholder="https://soundcloud.com/artist/track"
-            type="url"
-            toolparamdescription="A public HTTPS SoundCloud track URL, or empty to disable the player."
-            value={url}
-          />
-          <button className="button" disabled={loading || saving} type="submit">
-            {saving ? "Saving..." : "Save"}
-          </button>
-        </div>
-        {error && (
-          <p className="notice" role="alert">
-            {error}
-          </p>
-        )}
-        {saved && <p className="admin-soundtrack-settings__saved">Soundtrack setting saved.</p>}
-      </form>
-    </section>
   );
 }
 

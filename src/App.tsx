@@ -60,6 +60,11 @@ const TimelinePage = lazy(() =>
 const LogoPage = lazy(() =>
   import("@app/pages/game/LogoPage").then(({ LogoPage }) => ({ default: LogoPage })),
 );
+const ConnectionsPage = lazy(() =>
+  import("@app/pages/game/ConnectionsPage").then(({ ConnectionsPage }) => ({
+    default: ConnectionsPage,
+  })),
+);
 const TimelineLeaderboardPage = lazy(() =>
   import("@app/pages/game/TimelineLeaderboardPage").then(({ TimelineLeaderboardPage }) => ({
     default: TimelineLeaderboardPage,
@@ -103,6 +108,7 @@ function Content() {
           <Route path="/classic/:category" element={<ClassicPage />} />
           <Route path="/emoji" element={<EmojiPage />} />
           <Route path="/logo" element={<LogoPage />} />
+          <Route path="/connections" element={<ConnectionsPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/timeline/leaderboard" element={<TimelineLeaderboardPage />} />
           <Route path="/timeline/leaderboard/:date" element={<TimelineDailyLeaderboardPage />} />
