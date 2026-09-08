@@ -27,7 +27,6 @@ import {
 import type { ClassicComparison } from "@lib/domain/guesses/comparison-types";
 import { ClassicGameControls } from "./controls/ClassicGameControls";
 import { HardcoreAtmosphere } from "./hardcore/HardcoreAtmosphere";
-import { HardcoreSoundtrack } from "./hardcore/HardcoreSoundtrack";
 import { RitualGateDialog } from "./hardcore/RitualGateDialog";
 import { ApiUnavailableState } from "../../ui/ApiUnavailableState";
 import { GameLoadingState } from "../../ui/GameLoadingState";
@@ -504,7 +503,6 @@ export function ClassicGame({
         onDifficultyChange={selectDifficulty}
         onPick={pick}
       />
-      {category === "hardcore" && <HardcoreSoundtrack />}
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
       {!challenge && error !== null && (
         <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />

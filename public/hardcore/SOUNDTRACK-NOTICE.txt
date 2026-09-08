@@ -1,0 +1,18 @@
+aAIdle Hardcore Soundtrack Notice
+=================================
+
+aAIdle is a non-commercial educational project. The application does not earn money from
+including or distributing the music used in the Hardcore soundtrack.
+
+The soundtrack is shared in good faith and solely to support aAIdle's mission: helping people
+learn about artificial intelligence in a fun, accessible, and interactive way.
+
+All music, artwork, names, and related rights remain the property of their respective creators
+and rights holders. Their inclusion does not imply ownership, endorsement, or the grant of any
+license by aAIdle. This notice is not a substitute for permission from the applicable rights
+holders.
+
+If you are a rights holder and would like your work removed, please contact the aAIdle project
+maintainers.
+
+https://github.com/Wichtowski/aaidle/blob/main/README.md

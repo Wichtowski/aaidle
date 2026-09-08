@@ -2,6 +2,7 @@ export { HomePage } from "./home/HomePage";
 export { ClassicPage } from "./game/ClassicPage";
 export { EmojiPage } from "./game/EmojiPage";
 export { LogoPage } from "./game/LogoPage";
+export { ConnectionsPage } from "./game/ConnectionsPage";
 export { TimelinePage } from "./game/TimelinePage";
 export { ProfilePage } from "./profile/ProfilePage";
 export { LoginPage } from "./auth/LoginPage";

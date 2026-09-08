@@ -114,6 +114,13 @@ await Promise.all(
     .map(({ name }) => rm(resolve(site, name), { recursive: true, force: true })),
 );
 
+for (const name of coverageReports.map(({ name }) => name)) {
+  const badgePath = resolve(site, name, "badge.json");
+  if (!(await stat(badgePath)).isFile()) {
+    throw new Error(`Coverage badge was not published: ${badgePath}`);
+  }
+}
+
 await writeFile(resolve(site, ".nojekyll"), "");
 await writeFile(resolve(site, "CNAME"), `${customDomain}\n`);
 await cp(resolve("public/favicon.ico"), resolve(site, "favicon.ico"));
@@ -127,7 +134,9 @@ runGit([
   "user.email",
   "41898282+github-actions[bot]@users.noreply.github.com",
 ]);
-runGit(["-C", site, "add", "--all"]);
+// Coverage badge paths may match a runner-wide ignore rule; publication must never
+// silently omit the files that the README and Shields consume.
+runGit(["-C", site, "add", "--all", "--force"]);
 if (spawnSync("git", ["-C", site, "diff", "--cached", "--quiet"]).status !== 0) {
   runGit(["-C", site, "commit", "-m", `Publish production reports for ${releaseTag}`]);
   runGit(["-C", site, "push", "origin", "HEAD:gh-pages"]);

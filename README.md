@@ -136,6 +136,27 @@ Logo metadata lives in `data/logo.seed.json`; images live in `public/logo-visual
 
 URLs are root-relative public PNG/WebP paths, resolved by the backend against `APP_ORIGIN`. Paths may point to shared images elsewhere in `public/`, such as `/emoji-visual/rtx.png`. Legacy `assetPath`/`asset` fields and bare filenames remain accepted, but new entries should use `assetUrl`. Do not use `sourceUrl` for image downloads; it is optional provenance metadata.
 
+Hardcore soundtrack files are paired by basename. Put OGG and/or MP3 audio in
+`public/hardcore/audio/song-name--artist-name.{ogg,mp3}` and its cover in
+`public/hardcore/cover/song-name--artist-name.webp` (PNG, JPG, JPEG, and AVIF are also
+supported). The exact basename must match and `--` separates the displayed song and artist.
+The frontend chooses one track deterministically per UTC day and reports the selection in the
+admin panel. When both audio formats exist, OGG is preferred and MP3 is its browser fallback.
+A missing or duplicate cover fails the frontend build.
+
+Currently bundled Hardcore audio:
+
+- “Somewhere I Belong” - Linkin Park
+- “Sonne” - Rammstein
+- “The Only Thing They Fear Is You” - Mick Gordon
+
+Each track currently uses a matching MP3 and PNG cover under `public/hardcore/`. aAIdle does
+not claim ownership of the music or artwork; all related rights remain with their respective
+creators and rights holders. The project’s non-commercial educational purpose and removal
+contact are described in the
+[Hardcore Soundtrack Notice](public/hardcore/SOUNDTRACK-NOTICE.txt), which also opens in a new
+browser tab when a user clicks a soundtrack cover.
+
 The API downloads each original once, reuses it for crops, and returns transformed images through the existing Logo image endpoint. Originals expire after 24 hours; expiry invalidates their crops. A new active challenge or backend restart clears both caches. Failed fetches/decodes are retried on the next request. Public source images remain directly accessible. The API Docker image contains catalog JSON but no source images.
 
 For local development, run Vite at `APP_ORIGIN` (default `http://localhost:5173`) as well as the API. In production, `APP_ORIGIN` must be reachable from the API container and serve the public files. Deploy the frontend assets before the backend seed that references them. Downloads time out after `REQUEST_TIMEOUT_SECONDS`, reject redirects, and accept at most 10 MiB per PNG/WebP image.

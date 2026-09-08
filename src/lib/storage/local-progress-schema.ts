@@ -63,6 +63,7 @@ export const localProgressSchema = z
       innerCircleActive: z.boolean().default(false),
       hellMode: z.boolean().default(false),
       hasAutoplayedHardcoreSoundtrack: z.boolean().default(false),
+      autoplayHardcoreSoundtrack: z.boolean().optional(),
     }),
   })
   .transform((progress) => ({

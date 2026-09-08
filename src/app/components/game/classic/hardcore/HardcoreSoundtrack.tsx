@@ -1,174 +1,148 @@
 import { useEffect, useRef, useState } from "react";
-import { FaChevronDown, FaVolumeHigh } from "react-icons/fa6";
+import { FaPause, FaPlay, FaVolumeHigh, FaVolumeXmark } from "react-icons/fa6";
+import { dailyHardcoreSoundtrack } from "@lib/media/hardcore-soundtracks";
 import { readProgress, updateProgress } from "@lib/storage/local-progress-store";
-import { apiClient } from "@lib/api/client";
-
-type SoundCloudWidget = {
-  bind: (event: string, listener: () => void) => void;
-  play: () => void;
-  setVolume: (volume: number) => void;
-};
-
-type SoundCloudWidgetApi = {
-  Widget: ((element: HTMLIFrameElement) => SoundCloudWidget) & {
-    Events: { READY: string; PLAY: string };
-  };
-};
-
-declare global {
-  interface Window {
-    SC?: SoundCloudWidgetApi;
-  }
-}
-
-let widgetApiPromise: Promise<SoundCloudWidgetApi> | null = null;
-
-function loadWidgetApi() {
-  if (window.SC) return Promise.resolve(window.SC);
-  if (widgetApiPromise) return widgetApiPromise;
-
-  widgetApiPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://w.soundcloud.com/player/api.js";
-    script.async = true;
-    script.onload = () =>
-      window.SC ? resolve(window.SC) : reject(new Error("SoundCloud widget did not load."));
-    script.onerror = () => reject(new Error("SoundCloud widget could not load."));
-    document.head.appendChild(script);
-  });
-  return widgetApiPromise;
-}
 
 export function HardcoreSoundtrack() {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [trackUrl, setTrackUrl] = useState<string | null>(null);
-  const [volume, setVolume] = useState(25);
-  const [minimized, setMinimized] = useState(false);
+  const soundtrack = dailyHardcoreSoundtrack();
+  const audioRef = useRef<HTMLAudioElement>(null);
   const hasPlayed = useRef(false);
+  const [volume, setVolume] = useState(5);
+  const [muted, setMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioKey = soundtrack?.audioSources.map(({ url }) => url).join("|");
 
   useEffect(() => {
-    let active = true;
-
-    void apiClient
-      .publicConfig()
-      .then((config) => config.hardcoreSoundtrackUrl)
-      .then((url) => {
-        if (active) setTrackUrl(url);
-      })
-      .catch(() => {
-        if (active) setTrackUrl(null);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!trackUrl || !iframe) return;
-
-    let widget: SoundCloudWidget | null = null;
+    const audio = audioRef.current;
+    if (!audio || !audioKey) return;
+    audio.volume = 0.1;
+    const autoplay = readProgress().preferences.autoplayHardcoreSoundtrack !== false;
+    if (readProgress().preferences.autoplayHardcoreSoundtrack === undefined) {
+      updateProgress((state) => ({
+        ...state,
+        preferences: { ...state.preferences, autoplayHardcoreSoundtrack: true },
+      }));
+    }
     const retryAutoplay = () => {
-      if (!hasPlayed.current) widget?.play();
+      if (autoplay && !hasPlayed.current) void audio.play().catch(() => {});
     };
     const removeAutoplayFallback = () => {
       document.removeEventListener("keydown", retryAutoplay, true);
       document.removeEventListener("pointerdown", retryAutoplay, true);
     };
+    const markAsPlayed = () => {
+      setIsPlaying(true);
+      if (hasPlayed.current) return;
+      hasPlayed.current = true;
+      removeAutoplayFallback();
+      if (!readProgress().preferences.hasAutoplayedHardcoreSoundtrack) {
+        updateProgress((state) => ({
+          ...state,
+          preferences: { ...state.preferences, hasAutoplayedHardcoreSoundtrack: true },
+        }));
+      }
+    };
+
+    const markAsPaused = () => setIsPlaying(false);
+
     hasPlayed.current = false;
-    void loadWidgetApi()
-      .then((api) => {
-        widget = api.Widget(iframe);
-        widget.bind(api.Widget.Events.PLAY, () => {
-          hasPlayed.current = true;
-          removeAutoplayFallback();
-          if (!readProgress().preferences.hasAutoplayedHardcoreSoundtrack) {
-            updateProgress((state) => ({
-              ...state,
-              preferences: { ...state.preferences, hasAutoplayedHardcoreSoundtrack: true },
-            }));
-          }
-        });
-        widget.bind(api.Widget.Events.READY, () => {
-          widget?.setVolume(volume);
-          widget?.play();
-          if (!hasPlayed.current) {
-            document.addEventListener("keydown", retryAutoplay, true);
-            document.addEventListener("pointerdown", retryAutoplay, true);
-          }
-        });
-      })
-      .catch(() => {});
+    setIsPlaying(false);
+    audio.addEventListener("play", markAsPlayed);
+    audio.addEventListener("pause", markAsPaused);
+    document.addEventListener("keydown", retryAutoplay, true);
+    document.addEventListener("pointerdown", retryAutoplay, true);
+    retryAutoplay();
 
     return () => {
       removeAutoplayFallback();
-      widget = null;
+      audio.removeEventListener("play", markAsPlayed);
+      audio.removeEventListener("pause", markAsPaused);
+      audio.pause();
     };
-  }, [trackUrl]);
+  }, [audioKey]);
 
-  if (!trackUrl) return null;
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume / 100;
+  }, [volume]);
 
-  const playerUrl = new URL("https://w.soundcloud.com/player/");
-  playerUrl.searchParams.set("url", trackUrl);
-  playerUrl.searchParams.set("auto_play", "true");
-  playerUrl.searchParams.set("show_artwork", "true");
-  playerUrl.searchParams.set("show_playcount", "false");
-  playerUrl.searchParams.set("show_user", "true");
-  playerUrl.searchParams.set("color", "d85a2d");
+  const togglePlayback = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      updateProgress((state) => ({
+        ...state,
+        preferences: { ...state.preferences, autoplayHardcoreSoundtrack: true },
+      }));
+      void audio.play().catch(() => setIsPlaying(false));
+    } else {
+      updateProgress((state) => ({
+        ...state,
+        preferences: { ...state.preferences, autoplayHardcoreSoundtrack: false },
+      }));
+      audio.pause();
+    }
+  };
+
+  if (!soundtrack) return null;
 
   return (
-    <aside
-      className="hardcore-soundtrack"
-      data-minimized={minimized || undefined}
-      aria-labelledby="hardcore-soundtrack-title"
-    >
-      <div className="hardcore-soundtrack__heading">
-        <FaVolumeHigh aria-hidden="true" />
-        <span id="hardcore-soundtrack-title">Soundtrack</span>
-        <label className="hardcore-soundtrack__volume">
-          <span className="sr-only">Soundtrack volume</span>
-          <input
-            aria-label="Soundtrack volume"
-            max="100"
-            min="0"
-            onChange={(event) => {
-              const nextVolume = Number(event.target.value);
-              setVolume(nextVolume);
-              if (iframeRef.current && window.SC) {
-                window.SC.Widget(iframeRef.current).setVolume(nextVolume);
-              }
-            }}
-            type="range"
-            value={volume}
-          />
-        </label>
-        <button
-          aria-controls="hardcore-soundtrack-player"
-          aria-expanded={!minimized}
-          aria-label={minimized ? "Expand soundtrack player" : "Minimize soundtrack player"}
-          className="hardcore-soundtrack__toggle"
-          onClick={() => setMinimized((current) => !current)}
-          type="button"
-        >
-          <FaChevronDown aria-hidden="true" />
-        </button>
-      </div>
-      <div
-        aria-hidden={minimized}
-        className="hardcore-soundtrack__content"
-        id="hardcore-soundtrack-player"
+    <aside className="hardcore-soundtrack" aria-labelledby="hardcore-soundtrack-title">
+      <a
+        aria-label="Open the aAIdle Hardcore soundtrack notice in a new tab"
+        className="hardcore-soundtrack__cover-link"
+        href="/hardcore/SOUNDTRACK-NOTICE.txt"
+        rel="noopener noreferrer"
+        target="_blank"
+        title="Open the soundtrack notice in a new tab"
       >
-        <iframe
-          allow="autoplay"
-          className="hardcore-soundtrack__player"
-          loading="eager"
-          ref={iframeRef}
-          src={playerUrl.toString()}
-          tabIndex={minimized ? -1 : undefined}
-          title="Hardcore soundtrack from SoundCloud"
-        />
+        <img alt="" className="hardcore-soundtrack__cover" src={soundtrack.coverUrl} />
+      </a>
+      <div className="hardcore-soundtrack__details">
+        <span id="hardcore-soundtrack-title">{soundtrack.title}</span>
+        <small>{soundtrack.artist}</small>
       </div>
+      <label className="hardcore-soundtrack__volume">
+        <span className="sr-only">Soundtrack volume</span>
+        <input
+          aria-label="Soundtrack volume"
+          max="100"
+          min="0"
+          onChange={(event) => setVolume(Number(event.target.value))}
+          type="range"
+          value={volume}
+        />
+      </label>
+      <button
+        aria-label={muted ? "Unmute soundtrack" : "Mute soundtrack"}
+        aria-pressed={muted}
+        className="hardcore-soundtrack__mute"
+        onClick={() => setMuted((current) => !current)}
+        type="button"
+      >
+        {muted ? <FaVolumeXmark aria-hidden="true" /> : <FaVolumeHigh aria-hidden="true" />}
+      </button>
+      <button
+        aria-label={isPlaying ? "Pause soundtrack" : "Play soundtrack"}
+        className="hardcore-soundtrack__playback"
+        onClick={togglePlayback}
+        type="button"
+      >
+        {isPlaying ? <FaPause aria-hidden="true" /> : <FaPlay aria-hidden="true" />}
+      </button>
+      <audio
+        aria-label={`${soundtrack.title} by ${soundtrack.artist} Hardcore soundtrack`}
+        autoPlay={readProgress().preferences.autoplayHardcoreSoundtrack !== false}
+        className="hardcore-soundtrack__audio"
+        loop
+        muted={muted}
+        preload="auto"
+        ref={audioRef}
+      >
+        {soundtrack.audioSources.map((source) => (
+          <source key={source.fileName} src={source.url} type={source.mimeType} />
+        ))}
+      </audio>
     </aside>
   );
 }

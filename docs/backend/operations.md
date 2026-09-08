@@ -89,9 +89,9 @@ The API does not trust forwarded headers.
 The API adds baseline security headers to every response. The static SPA is served by the
 host Caddy instance, so include [`deploy/caddy/aaidle-security.caddy`](../../deploy/caddy/aaidle-security.caddy)
 inside the `aaidle.com` site block and reload Caddy. This enables CSP, HSTS, COOP, clickjacking
-protection, and a restrictive Permissions Policy for the browser-facing site. The CSP permits
-the SoundCloud widget currently used by Hardcore mode; review that allowlist before adding any
-new third-party script, frame, or connection.
+protection, and a restrictive Permissions Policy for the browser-facing site. Hardcore audio
+and cover files are served from the same origin; review the CSP before adding any third-party
+script, frame, connection, or media source.
 
 ## Backup and restore
 

@@ -3,6 +3,7 @@ import { ClassicCategoryNav } from "./ClassicCategoryNav";
 import { GameEyebrow } from "../../common/layout/GameEyebrow";
 import { GameIntro } from "../../common/layout/GameLayout";
 import { DifficultySwitch } from "../../common/layout/DifficultySwitch";
+import { HardcoreSoundtrack } from "../hardcore/HardcoreSoundtrack";
 import { utcDate } from "@lib/utils/dates";
 import {
   classicCategoryDetails,
@@ -107,7 +108,12 @@ export function ClassicGameControls({
           />
         )
       }
-      navigation={<ClassicCategoryNav category={category} />}
+      navigation={
+        <div className={category === "hardcore" ? "classic-category-controls" : undefined}>
+          <ClassicCategoryNav category={category} />
+          {category === "hardcore" && <HardcoreSoundtrack />}
+        </div>
+      }
       reserveInputSlot
       status={
         busy && (
