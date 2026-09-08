@@ -2653,6 +2653,7 @@ body.hell-mode .issue-report__form .button--primary:hover:not(:disabled) {
   animation: hardcore-unlock 1.25s ease-in both;
   content: "";
 }
+body::after,
 body.classic-page-transitioning::after {
   position: fixed;
   z-index: 100;
@@ -2660,8 +2661,15 @@ body.classic-page-transitioning::after {
   pointer-events: none;
   background: #000;
   content: "";
-  animation: classic-page-transition 3s ease-in-out both;
+  opacity: 0;
+  }
+  body.classic-page-transitioning::after {
+  opacity: 1;
 }
+  body.classic-page-transitioning--fading::after {
+  opacity: 0;
+  transition: opacity 550ms ease-in-out;
+  }
 .hardcore-lock {
   max-width: 700px;
   padding: 16vh 0;
@@ -2691,26 +2699,14 @@ body.classic-page-transitioning::after {
     opacity: 1;
   }
 }
-@keyframes classic-page-transition {
-  0%,
-  42% {
-    opacity: 0;
-  }
-  50%,
-  58% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
+
 .hardcore-atmosphere {
   position: fixed;
   z-index: -1;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  background: url("/fire_frame.webp") center / 115% 140% no-repeat;
+  background: url("/fire_frame_optimized.webp") center / 115% 140% no-repeat;
   filter: blur(0.35px);
 }
 .game-intro {
@@ -3359,24 +3355,31 @@ body.classic-page-transitioning::after {
   opacity: 0;
   pointer-events: none;
 }
+.classic-category-controls {
+  min-width: 0;
+}
 .hardcore-soundtrack {
   position: fixed;
   z-index: 12;
-  top: 0;
+  top: 284px;
   right: 0;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto auto;
+  grid-template-columns: 72px minmax(0, 1fr) auto auto;
+  grid-template-rows: 32px 1fr 1fr;
   align-items: center;
-  gap: 9px;
+  gap: 0 9px;
   width: min(390px, 100vw);
+  min-height: 88px;
+  overflow: hidden;
   padding: 7px 9px;
   border: 1px solid #69372f;
   background: #1d1014;
-  box-shadow: 0 16px 36px #0006;
+  box-shadow: 0 8px 20px #0006;
   color: #ffd1c4;
 }
 .hardcore-soundtrack__cover-link {
   display: block;
+  grid-row: 1 / -1;
   border: 1px solid #69372f;
 }
 .hardcore-soundtrack__cover-link:focus-visible {
@@ -3385,14 +3388,17 @@ body.classic-page-transitioning::after {
 }
 .hardcore-soundtrack__cover {
   display: block;
-  width: 40px;
-  height: 40px;
+  width: 72px;
+  height: 72px;
   object-fit: cover;
 }
 .hardcore-soundtrack__details {
   display: flex;
   min-width: 0;
+  grid-column: 2 / -1;
+  grid-row: 2 / -1;
   flex-direction: column;
+  justify-content: center;
 }
 .hardcore-soundtrack__details span,
 .hardcore-soundtrack__details small {
@@ -3410,14 +3416,21 @@ body.classic-page-transitioning::after {
 }
 .hardcore-soundtrack__volume {
   display: flex;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
   align-items: center;
 }
 .hardcore-soundtrack__volume input {
-  width: 70px;
+  width: 100%;
+  min-width: 0;
   accent-color: #e05a38;
 }
-.hardcore-soundtrack__mute {
+.hardcore-soundtrack__mute,
+.hardcore-soundtrack__playback {
   display: grid;
+  grid-column: 3;
+  grid-row: 1;
   width: 26px;
   height: 26px;
   place-items: center;
@@ -3428,29 +3441,43 @@ body.classic-page-transitioning::after {
   color: #ff9a78;
   cursor: pointer;
 }
-.hardcore-soundtrack__mute:hover {
+.hardcore-soundtrack__playback {
+  grid-column: 4;
+}
+.hardcore-soundtrack__mute:hover,
+.hardcore-soundtrack__playback:hover,
+.hardcore-soundtrack__mute:focus-visible,
+.hardcore-soundtrack__playback:focus-visible {
   background: #321215;
   color: #fff2e9;
 }
 .hardcore-soundtrack__audio {
   display: none;
 }
+@media (max-width: 700px) {
+  .classic-category-controls {
+    display: block;
+  }
+  .classic-category-controls .hardcore-soundtrack {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin: -8px 0 18px;
+  }
+}
 @media (max-width: 520px) {
   .hardcore-soundtrack {
-    grid-template-columns: 36px minmax(0, 1fr) auto;
-    width: min(320px, 100vw);
+    grid-template-columns: 48px minmax(0, 1fr) auto auto;
+    width: 100%;
+    min-height: 72px;
   }
   .hardcore-soundtrack__cover {
-    width: 36px;
-    height: 36px;
-  }
-  .hardcore-soundtrack__volume {
-    display: none;
+    width: 48px;
+    height: 48px;
   }
 }
 .completed__ritual-notice a {
   color: inherit;
-  text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
@@ -3458,8 +3485,6 @@ body.classic-page-transitioning::after {
   color: var(--ink);
 }
 .completed__ritual-notice--frayed::before {
-  opacity: 0.12;
-  transform: translate(2px, -1px);
 }
 .completed__ritual-notice--corrupted {
   text-shadow:

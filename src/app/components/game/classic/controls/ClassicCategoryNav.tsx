@@ -38,15 +38,14 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
               }
 
               event.preventDefault();
-              document.body.classList.add("classic-page-transitioning");
-              window.setTimeout(() => {
-                navigate(`/classic/${classicCategoryDetails[item].routeSegment}`, {
-                  replace: true,
-                });
-                window.setTimeout(() => {
-                  document.body.classList.remove("classic-page-transitioning");
-                }, 1450);
-              }, 1550);
+              const isHardcoreTransition = category === "hardcore" || item === "hardcore";
+              const destination = `/classic/${classicCategoryDetails[item].routeSegment}${isHardcoreTransition ? "?transition=classic" : ""}`;
+              if (isHardcoreTransition) {
+                document.body.classList.add("classic-page-transitioning");
+                window.setTimeout(() => navigate(destination, { replace: true }), 450);
+              } else {
+                navigate(destination, { replace: true });
+              }
             }}
             prefetch="intent"
             preventScrollReset
