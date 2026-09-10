@@ -5,3 +5,4 @@ dist/**
 node_modules/**
 tests/reports/**
 tests/results/**
+aaidleLocalEditor/frontend/dist
