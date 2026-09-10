@@ -10,6 +10,8 @@ type JsonFormEditorProps = {
   onChange: (value: JsonObject) => void;
   disabled?: boolean;
   readOnlyKeys?: string[];
+  requiredKeys?: string[];
+  errors?: Record<string, string>;
 };
 
 type ValueEditorProps = {
@@ -18,6 +20,8 @@ type ValueEditorProps = {
   onChange: (value: JsonValue) => void;
   onRemove?: () => void;
   disabled: boolean;
+  required?: boolean;
+  error?: string;
 };
 
 const valueKinds: ValueKind[] = ["string", "number", "boolean", "object", "array", "null"];
@@ -84,11 +88,15 @@ function ObjectEditor({
   onChange,
   disabled,
   readOnlyKeys = [],
+  requiredKeys = [],
+  errors = {},
 }: {
   value: JsonObject;
   onChange: (value: JsonObject) => void;
   disabled: boolean;
   readOnlyKeys?: string[];
+  requiredKeys?: string[];
+  errors?: Record<string, string>;
 }) {
   const [propertyName, setPropertyName] = useState("");
   const [propertyKind, setPropertyKind] = useState<ValueKind>("string");
@@ -109,7 +117,7 @@ function ObjectEditor({
           value={child}
           onChange={(nextValue) => onChange({ ...value, [key]: nextValue })}
           onRemove={
-            readOnlyKeys.includes(key)
+            readOnlyKeys.includes(key) || requiredKeys.includes(key)
               ? undefined
               : () => {
                   const nextValue = { ...value };
@@ -118,6 +126,8 @@ function ObjectEditor({
                 }
           }
           disabled={disabled || readOnlyKeys.includes(key)}
+          required={requiredKeys.includes(key)}
+          error={errors[key]}
         />
       ))}
       <div className="add-property">
@@ -157,7 +167,15 @@ function ObjectEditor({
   );
 }
 
-function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditorProps) {
+function ValueEditor({
+  label,
+  value,
+  onChange,
+  onRemove,
+  disabled,
+  required = false,
+  error,
+}: ValueEditorProps) {
   const kind = kindOf(value);
 
   if (Array.isArray(value)) {
@@ -166,8 +184,10 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
       <fieldset className="json-group">
         <legend>
           {label}
+          {required && <span className="required-mark"> *</span>}
           <span className="value-type">list</span>
         </legend>
+        {error && <p className="field-error">{error}</p>}
         {value.length ? (
           value.map((child, index) => (
             <ValueEditor
@@ -213,8 +233,10 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
       <fieldset className="json-group">
         <legend>
           {label}
+          {required && <span className="required-mark"> *</span>}
           <span className="value-type">object</span>
         </legend>
+        {error && <p className="field-error">{error}</p>}
         <ObjectEditor value={value} onChange={onChange} disabled={disabled} />
         {onRemove && (
           <button type="button" className="remove-group" onClick={onRemove} disabled={disabled}>
@@ -230,6 +252,7 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
       <label>
         <span>
           {label}
+          {required && <span className="required-mark"> *</span>}
           <span className="value-type">{kind}</span>
         </span>
         {kind === "boolean" ? (
@@ -239,12 +262,14 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
             checked={value as boolean}
             onChange={(event) => onChange(event.target.checked)}
             disabled={disabled}
+            aria-invalid={Boolean(error)}
           />
         ) : kind === "null" ? (
           <select
             value="null"
             onChange={(event) => onChange(emptyValue(event.target.value as ValueKind))}
             disabled={disabled}
+            aria-invalid={Boolean(error)}
           >
             {valueKinds.map((entry) => (
               <option key={entry}>{entry}</option>
@@ -258,6 +283,8 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
               if (!Number.isNaN(event.target.valueAsNumber)) onChange(event.target.valueAsNumber);
             }}
             disabled={disabled}
+            required={required}
+            aria-invalid={Boolean(error)}
           />
         ) : String(value).includes("\n") || String(value).length > 100 ? (
           <textarea
@@ -265,6 +292,8 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
             value={value as string}
             onChange={(event) => onChange(event.target.value)}
             disabled={disabled}
+            required={required}
+            aria-invalid={Boolean(error)}
           />
         ) : (
           <input
@@ -272,8 +301,11 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
             value={value as string}
             onChange={(event) => onChange(event.target.value)}
             disabled={disabled}
+            required={required}
+            aria-invalid={Boolean(error)}
           />
         )}
+        {error && <span className="field-error">{error}</span>}
       </label>
       {onRemove && (
         <button
@@ -295,6 +327,8 @@ export function JsonFormEditor({
   onChange,
   disabled = false,
   readOnlyKeys,
+  requiredKeys,
+  errors,
 }: JsonFormEditorProps) {
   return (
     <ObjectEditor
@@ -302,6 +336,8 @@ export function JsonFormEditor({
       onChange={onChange}
       disabled={disabled}
       readOnlyKeys={readOnlyKeys}
+      requiredKeys={requiredKeys}
+      errors={errors}
     />
   );
 }

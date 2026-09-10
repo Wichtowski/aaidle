@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from ai_service import AiService
 from catalog_service import CatalogService, EditorError
 from git_service import GitService
 
@@ -17,6 +18,7 @@ REPO_ROOT = BACKEND_ROOT.parents[1]
 FRONTEND_DIST = BACKEND_ROOT.parent / "frontend" / "dist"
 catalogs = CatalogService(REPO_ROOT)
 git = GitService(REPO_ROOT, catalogs)
+ai = AiService()
 
 
 class EditorHandler(BaseHTTPRequestHandler):
@@ -83,7 +85,9 @@ class EditorHandler(BaseHTTPRequestHandler):
         try:
             parsed = urlparse(self.path)
             body = self._body()
-            if parsed.path == "/api/validate":
+            if parsed.path == "/api/ai/analyse":
+                self._json(HTTPStatus.OK, ai.analyse(body.get("game"), body.get("item")))
+            elif parsed.path == "/api/validate":
                 self._json(HTTPStatus.OK, catalogs.validate())
             elif parsed.path == "/api/merge":
                 self._json(HTTPStatus.OK, catalogs.merge(body.get("game")))

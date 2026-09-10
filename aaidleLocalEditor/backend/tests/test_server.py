@@ -21,6 +21,7 @@ class ServerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.catalogs = Mock()
         self.git = Mock()
+        self.ai = Mock()
         self.catalogs.navigation.return_value = {"games": [], "difficulties": []}
         self.catalogs.list_items.return_value = []
         self.catalogs.get_item.return_value = {"id": "item"}
@@ -35,9 +36,14 @@ class ServerTests(unittest.TestCase):
             "githubAuthenticated": True,
         }
         self.git.publish.return_value = {"branch": "AI/catalog-test", "url": "https://example.test/pr"}
+        self.ai.analyse.return_value = {
+            "summary": "Looks good", "suggestedItem": {"id": "item"}, "model": "test",
+            "usage": {},
+        }
         self.patches = (
             patch.object(server, "catalogs", self.catalogs),
             patch.object(server, "git", self.git),
+            patch.object(server, "ai", self.ai),
         )
         for active_patch in self.patches:
             active_patch.start()
@@ -89,6 +95,15 @@ class ServerTests(unittest.TestCase):
         self.catalogs.update_item.assert_called_once_with(
             "classic", "item", "nlp", {"id": "item"}
         )
+
+    def test_ai_analysis_route_reviews_one_item(self) -> None:
+        status, result = self.request(
+            "/api/ai/analyse",
+            method="POST",
+            body={"game": "emoji", "item": {"id": "item"}},
+        )
+        self.assertEqual((status, result["summary"]), (200, "Looks good"))
+        self.ai.analyse.assert_called_once_with("emoji", {"id": "item"})
 
     def test_validate_and_publish_routes(self) -> None:
         status, result = self.request("/api/validate", method="POST", body={})

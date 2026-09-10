@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { AiReviewPanel, type AiReview } from "./AiReviewPanel";
 import { api, type GitStatus, type ItemSummary, type Navigation } from "./api";
+import { requiredPaths, validateRequiredFields } from "./catalogSchema";
 import { JsonFormEditor, type JsonObject } from "./JsonFormEditor";
 
 type Notice = { kind: "success" | "error" | "info"; text: string } | null;
@@ -19,6 +21,8 @@ export default function App() {
   const [baseline, setBaseline] = useState("");
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);
+  const [analysing, setAnalysing] = useState(false);
+  const [aiReview, setAiReview] = useState<AiReview | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const [gitStatus, setGitStatus] = useState<GitStatus | null>(null);
   const [commitMessage, setCommitMessage] = useState("Update game catalog data");
@@ -29,6 +33,8 @@ export default function App() {
   const hasCategories = Boolean(selectedGame?.categories.length);
   const canMerge = game === "classic" || game === "timeline";
   const dirty = item !== null && pretty(item) !== baseline;
+  const fieldErrors = useMemo(() => (item ? validateRequiredFields(game, item) : {}), [game, item]);
+  const hasFieldErrors = Object.keys(fieldErrors).length > 0;
   const filteredItems = useMemo(() => {
     const needle = search.trim().toLowerCase();
     return needle
@@ -83,6 +89,7 @@ export default function App() {
       else {
         setItem(null);
         setBaseline("");
+        setAiReview(null);
       }
     });
   }
@@ -91,6 +98,7 @@ export default function App() {
     const result = await api.item(nextGame, nextCategory, nextId);
     setItem(result.item as JsonObject);
     setBaseline(pretty(result.item));
+    setAiReview(null);
   }
 
   function selectItem(nextId: string) {
@@ -99,7 +107,34 @@ export default function App() {
     void run(() => loadItem(game, category, nextId));
   }
 
+  function analyseItem() {
+    if (!item) return;
+    setAnalysing(true);
+    setBusy(true);
+    setNotice({ kind: "info", text: "OpenAI is analysing this item…" });
+    void api
+      .analyse(game, item)
+      .then((result) => {
+        setAiReview(result as AiReview);
+        setNotice({ kind: "success", text: "Item analysis is ready." });
+      })
+      .catch((error: unknown) => {
+        setNotice({ kind: "error", text: error instanceof Error ? error.message : String(error) });
+      })
+      .finally(() => {
+        setAnalysing(false);
+        setBusy(false);
+      });
+  }
+
   function save() {
+    if (hasFieldErrors) {
+      setNotice({
+        kind: "error",
+        text: "Complete the required fields marked with * before saving.",
+      });
+      return;
+    }
     void run(async () => {
       if (!item) return;
       const result = await api.save(game, category, itemId, item);
@@ -149,9 +184,28 @@ export default function App() {
           <span className="eyebrow">LOCAL CATALOG WORKBENCH</span>
           <h1>aAIdle Editor</h1>
         </div>
-        <div className="status-pill" aria-label="Git status">
-          <span className={gitStatus?.hasChanges ? "dot changed" : "dot"} />
-          {gitStatus?.branch || "loading branch"}
+        <div className="header-tools">
+          <div className="actions" aria-label="Catalog actions">
+            {canMerge && (
+              <button className="secondary" onClick={mergeSelectedGame} disabled={busy || dirty}>
+                Merge {game === "classic" ? "Classic" : "Timeline"}
+              </button>
+            )}
+            <button className="secondary" onClick={validateAll} disabled={busy}>
+              Verify all data
+            </button>
+            <button
+              className="primary"
+              onClick={save}
+              disabled={!itemId || !dirty || busy || hasFieldErrors}
+            >
+              {busy ? "Working…" : "Save & verify"}
+            </button>
+          </div>
+          <div className="status-pill" aria-label="Git status">
+            <span className={gitStatus?.hasChanges ? "dot changed" : "dot"} />
+            {gitStatus?.branch || "loading branch"}
+          </div>
         </div>
       </header>
 
@@ -231,31 +285,32 @@ export default function App() {
             </div>
             {dirty && <span className="unsaved">Unsaved</span>}
           </div>
-          <div className="editor-label">Record fields</div>
-          <div className="form-editor">
-            {item ? (
-              <JsonFormEditor
-                value={item}
-                onChange={setItem}
-                disabled={busy}
-                readOnlyKeys={[game === "logo" ? "answerId" : "id"]}
-              />
-            ) : (
-              <p className="empty-value">Select an item to edit its fields.</p>
-            )}
-          </div>
-          <div className="actions">
-            {canMerge && (
-              <button className="secondary" onClick={mergeSelectedGame} disabled={busy || dirty}>
-                Merge {game === "classic" ? "Classic" : "Timeline"}
-              </button>
-            )}
-            <button className="secondary" onClick={validateAll} disabled={busy}>
-              Verify all data
-            </button>
-            <button className="primary" onClick={save} disabled={!itemId || !dirty || busy}>
-              {busy ? "Working…" : "Save & verify"}
-            </button>
+          <div className="editor-columns">
+            <div className="record-column">
+              <div className="editor-label">Record fields</div>
+              <div className="form-editor">
+                {item ? (
+                  <JsonFormEditor
+                    value={item}
+                    onChange={setItem}
+                    disabled={busy}
+                    readOnlyKeys={[game === "logo" ? "answerId" : "id"]}
+                    requiredKeys={requiredPaths(game)}
+                    errors={fieldErrors}
+                  />
+                ) : (
+                  <p className="empty-value">Select an item to edit its fields.</p>
+                )}
+              </div>
+            </div>
+            <AiReviewPanel
+              current={item}
+              review={aiReview}
+              analysing={analysing}
+              disabled={busy}
+              onAnalyse={analyseItem}
+              onApply={setItem}
+            />
           </div>
           {notice && (
             <pre className={`notice ${notice.kind}`} role="status">

@@ -17,7 +17,7 @@
 }
 body {
   margin: 0;
-  min-width: 1100px;
+  min-width: 1320px;
   min-height: 100vh;
   background: #111410;
 }
@@ -63,7 +63,14 @@ h2 {
   font-weight: 800;
   letter-spacing: 0.16em;
 }
+.header-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
 .status-pill {
+  flex: 0 0 auto;
   border: 1px solid #353d31;
   border-radius: 999px;
   padding: 9px 13px;
@@ -84,7 +91,7 @@ h2 {
 
 main {
   display: grid;
-  grid-template-columns: 280px minmax(520px, 1fr) 330px;
+  grid-template-columns: 250px minmax(740px, 1fr) 300px;
   height: calc(100vh - 92px);
 }
 .navigator,
@@ -185,6 +192,7 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
   margin-bottom: 18px;
 }
 .unsaved {
@@ -193,6 +201,18 @@ textarea:focus {
   background: #72561f;
   color: #ffe4aa;
   font-size: 11px;
+}
+.editor-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  flex: 1;
+  min-height: 380px;
+}
+.record-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 .editor-label {
   margin-bottom: 7px;
@@ -261,6 +281,19 @@ textarea:focus {
 .json-group > .primitive-field,
 .json-group > .json-group {
   margin-bottom: 12px;
+}
+.required-mark {
+  color: #ef8f84;
+}
+.field-error {
+  display: block;
+  margin: 6px 0 0;
+  color: #ef8f84;
+  font-size: 10px;
+  font-weight: 600;
+}
+.form-editor [aria-invalid="true"] {
+  border-color: #b85d55;
 }
 .empty-value {
   margin: 2px 0 12px;
@@ -336,11 +369,97 @@ button.remove-group {
     grid-column: 1 / -1;
   }
 }
+.ai-review {
+  min-width: 0;
+  margin-top: 23px;
+  min-height: 380px;
+  padding: 18px;
+  overflow: auto;
+  border: 1px solid #3a4235;
+  border-radius: 8px;
+  background: #151914;
+}
+.ai-review-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.ai-review-heading h3 {
+  margin: 4px 0 0;
+  font-size: 16px;
+}
+.ai-review-heading button {
+  flex: 0 0 auto;
+}
+.ai-summary {
+  color: #bbc4b5;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.ai-meta {
+  margin-bottom: 14px;
+  color: #788173;
+  font-size: 10px;
+}
+.diff-list {
+  display: grid;
+  gap: 10px;
+}
+.diff-entry {
+  overflow: hidden;
+  border: 1px solid #303a2c;
+  border-radius: 7px;
+}
+.diff-entry > strong {
+  display: block;
+  padding: 8px 10px;
+  color: #d7ddd2;
+  font-size: 11px;
+  background: #10140f;
+}
+.diff-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.diff-values pre {
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.diff-before {
+  color: #efaaa3;
+  background: #2b1918;
+}
+.diff-after {
+  color: #b9e6b7;
+  background: #172719;
+}
+.no-changes {
+  color: #9dcc9d;
+  font-size: 12px;
+}
+.apply-suggestion {
+  width: 100%;
+  margin-top: 14px;
+  border: 1px solid #7eae5f;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #334d28;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding-top: 14px;
 }
 button.primary,
 button.secondary,
@@ -441,11 +560,24 @@ details ul {
     min-width: 0;
   }
   main {
-    grid-template-columns: 220px minmax(440px, 1fr) 270px;
+    grid-template-columns: 220px minmax(680px, 1fr) 270px;
   }
   .workspace,
   .publish-panel {
     padding: 18px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .workspace-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .editor-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ai-review {
+    margin-top: 0;
   }
 }
 
@@ -454,6 +586,11 @@ details ul {
     height: auto;
     min-height: 82px;
     padding: 15px 18px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .header-tools {
+    flex: 1 1 100%;
   }
   main {
     display: flex;
@@ -488,6 +625,17 @@ details ul {
   .workspace {
     min-height: 620px;
     padding: 14px;
+  }
+  .header-tools {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .header-tools .status-pill {
+    align-self: flex-end;
   }
   .form-editor {
     padding: 12px;

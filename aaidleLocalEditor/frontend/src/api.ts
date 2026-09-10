@@ -45,6 +45,17 @@ export const api = {
         body: JSON.stringify({ item }),
       },
     ),
+  analyse: (game: string, item: Record<string, unknown>) =>
+    request<{
+      summary: string;
+      suggestedItem: Record<string, unknown>;
+      model: string;
+      usage: { input_tokens?: number; output_tokens?: number };
+    }>("/api/ai/analyse", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ game, item }),
+    }),
   validate: () =>
     request<{ valid: true; output: string }>("/api/validate", {
       method: "POST",
