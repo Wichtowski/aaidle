@@ -1,10 +1,12 @@
 PNPM ?= pnpm
+UV ?= uv
 COMPOSE ?= docker compose -f backend/compose.yml
 SCRIPTS := build-timeline-seed validate-emoji-data validate-model-data validate-workflow-action-pins
 
 .DEFAULT_GOAL := help
 
 .PHONY: help install dev build preview lint typecheck test test-watch check format \
+	local-editor \
 	backend-up backend-down backend-logs backend-ps backend-build backend-test \
 	backend-migrate backend-seed backend-fixture-admin up down logs ps migrate seed fixture-admin scripts $(SCRIPTS)
 
@@ -21,6 +23,7 @@ help:
 	@echo "  make test-watch       Watch frontend tests"
 	@echo "  make check            Run the frontend quality suite"
 	@echo "  make format           Format the repository"
+	@echo "  make local-editor     Build and run the local catalog editor with uv"
 	@echo ""
 	@echo "  make up               Start the API, migrate and seed it, then build the frontend"
 	@echo "  make down             Stop the Rust API"
@@ -65,6 +68,9 @@ check:
 
 format:
 	$(PNPM) format
+
+local-editor:
+	$(UV) run --project aaidleLocalEditor python aaidleLocalEditor/run.py
 
 up: backend-up backend-migrate backend-seed build
 

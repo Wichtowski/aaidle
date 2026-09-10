@@ -1,0 +1,4 @@
+frontend/dist/
+.venv/
+__pycache__/
+*.py[cod]
