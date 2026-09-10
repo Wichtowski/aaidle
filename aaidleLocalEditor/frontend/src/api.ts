@@ -45,16 +45,18 @@ export const api = {
         body: JSON.stringify({ item }),
       },
     ),
-  validate: () => request<{ valid: true; output: string }>("/api/validate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: "{}",
-  }),
-  merge: (game: string) => request<{ game: string; output: string }>("/api/merge", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ game }),
-  }),
+  validate: () =>
+    request<{ valid: true; output: string }>("/api/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    }),
+  merge: (game: string) =>
+    request<{ game: string; output: string }>("/api/merge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ game }),
+    }),
   gitStatus: () => request<GitStatus>("/api/git/status"),
   publish: (payload: { message: string; title: string; body: string }) =>
     request<{ branch: string; url: string }>("/api/git/publish", {

@@ -4,12 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prepare": "husky",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "typecheck:local-editor": "tsc -p aaidleLocalEditor/frontend/tsconfig.json --pretty false",
     "test:unit": "vitest run --config=tests/configs/vitest.config.ts",
     "test:unit:coverage": "vitest run --coverage --config=tests/configs/vitest.config.ts",
     "test:install": "pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium firefox",
@@ -38,6 +40,7 @@
     "format": "prettier --write . .github/scripts/**/*.mjs",
     "format:files": "prettier --write",
     "format:check": "prettier --check . .github/scripts/**/*.mjs",
+    "precommit": "lint-staged && pnpm typecheck && pnpm typecheck:local-editor",
     "classic-merge-to-one": "node scripts/classic-merge-to-one.mjs",
     "timeline-merge-to-one": "node scripts/timeline-merge-to-one.mjs",
     "timeline:seed": "pnpm timeline-merge-to-one"
@@ -70,8 +73,10 @@
     "backstopjs": "^6.3.25",
     "eslint": "^10.8.1",
     "get-port": "^7.2.0",
+    "husky": "^9.1.7",
     "jsdom": "^30.0.1",
     "lighthouse": "^13.4.1",
+    "lint-staged": "^17.5.0",
     "playwright": "^1.62.1",
     "playwright-lighthouse": "^4.0.0",
     "prettier": "^3.9.6",
@@ -80,5 +85,8 @@
     "typescript-eslint": "^8.66.0",
     "vite": "^8.2.1",
     "vitest": "^4.1.10"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mts,cts}": "prettier --write"
   }
 }

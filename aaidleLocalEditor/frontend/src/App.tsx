@@ -77,7 +77,7 @@ export default function App() {
       setSearch("");
       const nextId = result.items.some((item) => item.id === itemId)
         ? itemId
-        : result.items[0]?.id ?? "";
+        : (result.items[0]?.id ?? "");
       setItemId(nextId);
       if (nextId) await loadItem(nextGame, nextCategory, nextId);
       else {
@@ -160,28 +160,50 @@ export default function App() {
           <section className="controls" aria-label="Catalog filters">
             <label>
               Game
-              <select value={game} onChange={(event) => setGame(event.target.value)} disabled={busy}>
-                {navigation?.games.map((entry) => <option key={entry.id}>{entry.id}</option>)}
+              <select
+                value={game}
+                onChange={(event) => setGame(event.target.value)}
+                disabled={busy}
+              >
+                {navigation?.games.map((entry) => (
+                  <option key={entry.id}>{entry.id}</option>
+                ))}
               </select>
             </label>
             {hasCategories && (
               <label>
                 Category
-                <select value={category} onChange={(event) => setCategory(event.target.value)} disabled={busy}>
-                  {selectedGame?.categories.map((entry) => <option key={entry}>{entry}</option>)}
+                <select
+                  value={category}
+                  onChange={(event) => setCategory(event.target.value)}
+                  disabled={busy}
+                >
+                  {selectedGame?.categories.map((entry) => (
+                    <option key={entry}>{entry}</option>
+                  ))}
                 </select>
               </label>
             )}
             <label>
               Difficulty
-              <select value={difficulty} onChange={(event) => setDifficulty(event.target.value)} disabled={busy}>
-                {navigation?.difficulties.map((entry) => <option key={entry}>{entry}</option>)}
+              <select
+                value={difficulty}
+                onChange={(event) => setDifficulty(event.target.value)}
+                disabled={busy}
+              >
+                {navigation?.difficulties.map((entry) => (
+                  <option key={entry}>{entry}</option>
+                ))}
               </select>
             </label>
           </section>
           <label className="search">
             <span className="sr-only">Search items</span>
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search items…" />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search items…"
+            />
           </label>
           <div className="item-count">{filteredItems.length} items</div>
           <nav className="items" aria-label="Catalog items">
@@ -193,7 +215,9 @@ export default function App() {
                 disabled={busy}
               >
                 <span>{item.name}</span>
-                <small>{item.id} · pool {item.minPool}</small>
+                <small>
+                  {item.id} · pool {item.minPool}
+                </small>
               </button>
             ))}
           </nav>
@@ -226,21 +250,32 @@ export default function App() {
                 Merge {game === "classic" ? "Classic" : "Timeline"}
               </button>
             )}
-            <button className="secondary" onClick={validateAll} disabled={busy}>Verify all data</button>
+            <button className="secondary" onClick={validateAll} disabled={busy}>
+              Verify all data
+            </button>
             <button className="primary" onClick={save} disabled={!itemId || !dirty || busy}>
               {busy ? "Working…" : "Save & verify"}
             </button>
           </div>
-          {notice && <pre className={`notice ${notice.kind}`} role="status">{notice.text}</pre>}
+          {notice && (
+            <pre className={`notice ${notice.kind}`} role="status">
+              {notice.text}
+            </pre>
+          )}
         </section>
 
         <aside className="publish-panel">
           <span className="eyebrow">SHIP THE CHANGE</span>
           <h2>Open a pull request</h2>
-          <p className="muted">Validation runs again before Git stages, commits, pushes, and opens the PR.</p>
+          <p className="muted">
+            Validation runs again before Git stages, commits, pushes, and opens the PR.
+          </p>
           <label>
             Commit message
-            <input value={commitMessage} onChange={(event) => setCommitMessage(event.target.value)} />
+            <input
+              value={commitMessage}
+              onChange={(event) => setCommitMessage(event.target.value)}
+            />
           </label>
           <label>
             PR title
@@ -251,7 +286,11 @@ export default function App() {
             <textarea rows={7} value={prBody} onChange={(event) => setPrBody(event.target.value)} />
           </label>
           <div className="git-details">
-            <span>{gitStatus?.githubAuthenticated ? "GitHub CLI connected" : "GitHub CLI not authenticated"}</span>
+            <span>
+              {gitStatus?.githubAuthenticated
+                ? "GitHub CLI connected"
+                : "GitHub CLI not authenticated"}
+            </span>
             <span>{gitStatus?.changedPaths.length ?? 0} changed files</span>
           </div>
           {gitStatus?.hasChanges && !gitStatus.canPublish && (
@@ -267,7 +306,11 @@ export default function App() {
           {gitStatus?.changedPaths.length ? (
             <details>
               <summary>Changed paths</summary>
-              <ul>{gitStatus.changedPaths.map((path) => <li key={path}>{path}</li>)}</ul>
+              <ul>
+                {gitStatus.changedPaths.map((path) => (
+                  <li key={path}>{path}</li>
+                ))}
+              </ul>
             </details>
           ) : null}
         </aside>

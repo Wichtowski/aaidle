@@ -68,7 +68,9 @@ function AddValueControl({
         onChange={(event) => setKind(event.target.value as ValueKind)}
         disabled={disabled}
       >
-        {valueKinds.map((entry) => <option key={entry}>{entry}</option>)}
+        {valueKinds.map((entry) => (
+          <option key={entry}>{entry}</option>
+        ))}
       </select>
       <button type="button" className="add-button" onClick={() => onAdd(kind)} disabled={disabled}>
         {label}
@@ -106,11 +108,15 @@ function ObjectEditor({
           label={key}
           value={child}
           onChange={(nextValue) => onChange({ ...value, [key]: nextValue })}
-          onRemove={readOnlyKeys.includes(key) ? undefined : () => {
-            const nextValue = { ...value };
-            delete nextValue[key];
-            onChange(nextValue);
-          }}
+          onRemove={
+            readOnlyKeys.includes(key)
+              ? undefined
+              : () => {
+                  const nextValue = { ...value };
+                  delete nextValue[key];
+                  onChange(nextValue);
+                }
+          }
           disabled={disabled || readOnlyKeys.includes(key)}
         />
       ))}
@@ -134,7 +140,9 @@ function ObjectEditor({
           onChange={(event) => setPropertyKind(event.target.value as ValueKind)}
           disabled={disabled}
         >
-          {valueKinds.map((entry) => <option key={entry}>{entry}</option>)}
+          {valueKinds.map((entry) => (
+            <option key={entry}>{entry}</option>
+          ))}
         </select>
         <button
           type="button"
@@ -156,32 +164,46 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
     const inferredKind = value.length ? kindOf(value[value.length - 1]) : "string";
     return (
       <fieldset className="json-group">
-        <legend>{label}<span className="value-type">list</span></legend>
-        {value.length ? value.map((child, index) => (
-          <ValueEditor
-            key={index}
-            label={`Item ${index + 1}`}
-            value={child}
-            onChange={(nextValue) => onChange(value.map((entry, position) => (
-              position === index ? nextValue : entry
-            )))}
-            onRemove={() => onChange(value.filter((_, position) => position !== index))}
-            disabled={disabled}
-          />
-        )) : <p className="empty-value">No items</p>}
+        <legend>
+          {label}
+          <span className="value-type">list</span>
+        </legend>
+        {value.length ? (
+          value.map((child, index) => (
+            <ValueEditor
+              key={index}
+              label={`Item ${index + 1}`}
+              value={child}
+              onChange={(nextValue) =>
+                onChange(value.map((entry, position) => (position === index ? nextValue : entry)))
+              }
+              onRemove={() => onChange(value.filter((_, position) => position !== index))}
+              disabled={disabled}
+            />
+          ))
+        ) : (
+          <p className="empty-value">No items</p>
+        )}
         <AddValueControl
           key={inferredKind}
           label="Add item"
           initialKind={inferredKind}
           onAdd={(nextKind) => {
             const template = value.at(-1);
-            onChange([...value, template !== undefined && kindOf(template) === nextKind
-              ? emptyLike(template)
-              : emptyValue(nextKind)]);
+            onChange([
+              ...value,
+              template !== undefined && kindOf(template) === nextKind
+                ? emptyLike(template)
+                : emptyValue(nextKind),
+            ]);
           }}
           disabled={disabled}
         />
-        {onRemove && <button type="button" className="remove-group" onClick={onRemove} disabled={disabled}>Remove list</button>}
+        {onRemove && (
+          <button type="button" className="remove-group" onClick={onRemove} disabled={disabled}>
+            Remove list
+          </button>
+        )}
       </fieldset>
     );
   }
@@ -189,9 +211,16 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
   if (value && typeof value === "object") {
     return (
       <fieldset className="json-group">
-        <legend>{label}<span className="value-type">object</span></legend>
+        <legend>
+          {label}
+          <span className="value-type">object</span>
+        </legend>
         <ObjectEditor value={value} onChange={onChange} disabled={disabled} />
-        {onRemove && <button type="button" className="remove-group" onClick={onRemove} disabled={disabled}>Remove object</button>}
+        {onRemove && (
+          <button type="button" className="remove-group" onClick={onRemove} disabled={disabled}>
+            Remove object
+          </button>
+        )}
       </fieldset>
     );
   }
@@ -199,7 +228,10 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
   return (
     <div className="primitive-field">
       <label>
-        <span>{label}<span className="value-type">{kind}</span></span>
+        <span>
+          {label}
+          <span className="value-type">{kind}</span>
+        </span>
         {kind === "boolean" ? (
           <input
             className="boolean-input"
@@ -209,8 +241,14 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
             disabled={disabled}
           />
         ) : kind === "null" ? (
-          <select value="null" onChange={(event) => onChange(emptyValue(event.target.value as ValueKind))} disabled={disabled}>
-            {valueKinds.map((entry) => <option key={entry}>{entry}</option>)}
+          <select
+            value="null"
+            onChange={(event) => onChange(emptyValue(event.target.value as ValueKind))}
+            disabled={disabled}
+          >
+            {valueKinds.map((entry) => (
+              <option key={entry}>{entry}</option>
+            ))}
           </select>
         ) : kind === "number" ? (
           <input
@@ -237,11 +275,33 @@ function ValueEditor({ label, value, onChange, onRemove, disabled }: ValueEditor
           />
         )}
       </label>
-      {onRemove && <button type="button" className="remove-value" onClick={onRemove} disabled={disabled} aria-label={`Remove ${label}`}>Remove</button>}
+      {onRemove && (
+        <button
+          type="button"
+          className="remove-value"
+          onClick={onRemove}
+          disabled={disabled}
+          aria-label={`Remove ${label}`}
+        >
+          Remove
+        </button>
+      )}
     </div>
   );
 }
 
-export function JsonFormEditor({ value, onChange, disabled = false, readOnlyKeys }: JsonFormEditorProps) {
-  return <ObjectEditor value={value} onChange={onChange} disabled={disabled} readOnlyKeys={readOnlyKeys} />;
+export function JsonFormEditor({
+  value,
+  onChange,
+  disabled = false,
+  readOnlyKeys,
+}: JsonFormEditorProps) {
+  return (
+    <ObjectEditor
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      readOnlyKeys={readOnlyKeys}
+    />
+  );
 }
