@@ -2,6 +2,7 @@ import { z } from "zod";
 import { classicColumns } from "../domain/guesses/comparison-types";
 import { columnHintSchema } from "../validation/api";
 import { gameStreaksSchema } from "../validation/streaks";
+import { dailyCompletionSchema, dailyMilestoneSchema } from "../validation/daily-completion";
 const comparison = z.object(
   Object.fromEntries(
     classicColumns.map((column) => [
@@ -16,6 +17,12 @@ export const localProgressSchema = z
     playerId: z.uuid(),
     activeMode: z.literal("classic"),
     streaks: gameStreaksSchema.optional(),
+    dailyCompletion: z
+      .object({
+        summaries: z.record(z.string(), dailyCompletionSchema),
+        milestones: z.record(z.string(), dailyMilestoneSchema),
+      })
+      .optional(),
     games: z.record(
       z.string(),
       z.object({

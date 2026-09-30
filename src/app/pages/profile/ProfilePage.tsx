@@ -7,6 +7,7 @@ import { ProfileDangerZone } from "@components/auth/ProfileDangerZone";
 import { UsernameForm } from "@components/auth/UsernameForm";
 import { DistributionChart } from "@components/ui/DistributionChart";
 import { PageEyebrow } from "@components/ui/PageEyebrow";
+import { DailySummaryButton } from "@components/game/common/completion/DailySummaryButton";
 import { useAuth } from "@components/auth/useAuth";
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import {
@@ -245,6 +246,7 @@ export function ProfilePage() {
       <SiteNavbar hardcore={hellActive} />
       <PageEyebrow>{hellActive ? "The ledger has noticed you" : "Your device record"}</PageEyebrow>
       <h1 data-testid="profile-heading">{hellActive ? "The infernal" : "Profile"}</h1>
+      <DailySummaryButton />
       {user && !user.emailVerified && <ActivationPrompt email={user.email} />}
       {showRitualChallenge && !ritualComplete && (
         <section className="hell-meter" aria-labelledby="hell-meter-title">

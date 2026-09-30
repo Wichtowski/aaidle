@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 pub mod assists;
+pub mod daily_completion;
 pub mod emoji;
 pub mod logo;
 pub mod streaks;

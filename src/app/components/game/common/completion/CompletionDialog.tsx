@@ -36,6 +36,7 @@ export function CompletionDialog({
   const close = () => {
     setOpen(false);
     onClose();
+    window.dispatchEvent(new Event("aaidle:game-celebration-finished"));
   };
 
   return (

@@ -1,4 +1,5 @@
 pub mod comparison;
+pub mod daily_completion;
 pub mod difficulty;
 pub mod emoji;
 pub mod logo;

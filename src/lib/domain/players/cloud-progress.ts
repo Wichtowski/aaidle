@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { localProgressSchema, type LocalProgress } from "../../storage/local-progress-schema";
 import { distribution } from "../../utils/dates";
+import { mergeDailyMilestones } from "../games/daily-completion";
 
 export const serverProgressSchema = z.object({
   version: z.literal(1),
@@ -131,6 +132,29 @@ export function mergeCloudProgress(
     ...incoming,
     playerId: current.playerId,
     games,
+    dailyCompletion:
+      current.dailyCompletion || incoming.dailyCompletion
+        ? {
+            summaries: {
+              ...current.dailyCompletion?.summaries,
+              ...incoming.dailyCompletion?.summaries,
+            },
+            milestones: Object.fromEntries(
+              [
+                ...new Set([
+                  ...Object.keys(current.dailyCompletion?.milestones ?? {}),
+                  ...Object.keys(incoming.dailyCompletion?.milestones ?? {}),
+                ]),
+              ].map((key) => [
+                key,
+                mergeDailyMilestones(
+                  current.dailyCompletion?.milestones[key],
+                  incoming.dailyCompletion?.milestones[key],
+                ),
+              ]),
+            ),
+          }
+        : undefined,
     preferences: {
       ...current.preferences,
       ...incoming.preferences,

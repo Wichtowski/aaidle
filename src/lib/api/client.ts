@@ -20,6 +20,7 @@ import type {
 import type { Difficulty } from "../domain/difficulty";
 import type { LocalProgress } from "../storage/local-progress-schema";
 import { gameStreaksSchema } from "../validation/streaks";
+import { dailyCompletionSchema, type DailyMilestone } from "../validation/daily-completion";
 import {
   classicAssistSchema,
   timelineAssistSchema,
@@ -370,6 +371,15 @@ class ApiClient {
         /^\/games\/[^/]+\/challenges\/[^/]+\/(guesses|attempts)$/.test(path)) ||
         (method === "PUT" && path === "/auth/progress"))
     ) {
+      const completed =
+        payload &&
+        typeof payload === "object" &&
+        (("isCorrect" in payload && payload.isCorrect === true) ||
+          ("placements" in payload &&
+            Array.isArray(payload.placements) &&
+            payload.placements.length > 0 &&
+            payload.placements.every((hit) => hit === 1)));
+      if (completed) window.dispatchEvent(new Event("aaidle:game-celebration-start"));
       window.dispatchEvent(new Event("aaidle:game-progress"));
     }
     return payload as T;
@@ -379,6 +389,21 @@ class ApiClient {
     return this.request<unknown>("/me/streaks", { signal, cache: "no-store" }).then((payload) =>
       gameStreaksSchema.parse(payload),
     );
+  }
+
+  dailyCompletion(date = "today", signal?: AbortSignal) {
+    return this.request<unknown>(`/games/daily-completion/${encodeURIComponent(date)}`, {
+      signal,
+      cache: "no-store",
+    }).then((payload) => dailyCompletionSchema.parse(payload));
+  }
+
+  seeDailyCompletion(date: string, milestone: DailyMilestone) {
+    return this.request<unknown>(`/games/daily-completion/${encodeURIComponent(date)}/seen`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tier: milestone.highestCelebratedTier, goatSeen: milestone.goatSeen }),
+    }).then((payload) => dailyCompletionSchema.parse(payload));
   }
 
   currentUser() {
