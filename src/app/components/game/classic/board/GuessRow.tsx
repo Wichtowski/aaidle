@@ -35,7 +35,6 @@ const countryFlag: Record<string, string> = {
   France: "🇫🇷",
   "France / United States": "🇫🇷 🇺🇸",
   Germany: "🇩🇪",
-  Israel: "🇮🇱",
   Netherlands: "🇳🇱",
   Poland: "🇵🇱",
   Russia: "🇷🇺",

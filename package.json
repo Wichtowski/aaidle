@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "typecheck:local-editor": "tsc -p aaidleLocalEditor/frontend/tsconfig.json --pretty false",
+    "typecheck:local-editor": "tsc -p local_editor/frontend/tsconfig.json --pretty false",
     "test:unit": "vitest run --config=tests/configs/vitest.config.ts",
     "test:unit:coverage": "vitest run --coverage --config=tests/configs/vitest.config.ts",
     "test:install": "pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium firefox",
