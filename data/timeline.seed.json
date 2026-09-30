@@ -1,29 +1,5 @@
 [
   {
-    "id": "naive-bayes",
-    "kind": "model",
-    "name": "Naive Bayes",
-    "minPool": 1,
-    "provider": "Thomas Bayes",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "1763",
-    "yearAnnotation": "Bayes's essay was published in 1763, while the Naive Bayes classification method was formalized and adopted much later; no canonical release year is established."
-  },
-  {
-    "id": "laplacian-operator",
-    "kind": "model",
-    "name": "Laplacian Operator",
-    "minPool": 0,
-    "provider": "Pierre-Simon Laplace",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1782"
-  },
-  {
     "id": "linear-regression",
     "kind": "model",
     "name": "Linear Regression",
@@ -33,18 +9,7 @@
       "classical-ml"
     ],
     "releaseDate": "1805",
-    "yearAnnotation": "Legendre's 1805 publication on least squares is a documented historical foundation for linear regression; only the year is reliably established here."
-  },
-  {
-    "id": "gaussian-blur",
-    "kind": "model",
-    "name": "Gaussian Blur",
-    "minPool": 0,
-    "provider": "Carl Friedrich Gauss",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1809-01-01"
+    "yearAnnotation": "Legendre published the method of least squares in Paris in 1805; this is a historical foundation for fitting linear regression, not a release of a modern software estimator."
   },
   {
     "id": "gaussian-mixture-model",
@@ -55,7 +20,8 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "1894-01-01"
+    "releaseDate": "1894",
+    "yearAnnotation": "Pearson studied fitting mixtures of normal distributions in his 1894 Contributions to the Mathematical Theory of Evolution; only the year is recorded here, without an invented January 1 release day."
   },
   {
     "id": "principal-component-analysis",
@@ -67,7 +33,7 @@
       "classical-ml"
     ],
     "releaseDate": "1901",
-    "yearAnnotation": "Karl Pearson introduced the principal-components method in his 1901 paper, \"On Lines and Planes of Closest Fit to Systems of Points in Space.\""
+    "yearAnnotation": "Pearson published On Lines and Planes of Closest Fit to Systems of Points in Space in November 1901; the year records that publication, not later PCA implementations."
   },
   {
     "id": "linear-discriminant-analysis",
@@ -79,30 +45,19 @@
       "classical-ml"
     ],
     "releaseDate": "1936",
-    "yearAnnotation": "Fisher introduced the method in his 1936 paper, “The Use of Multiple Measurements in Taxonomic Problems,” supporting the year 1936."
+    "yearAnnotation": "Fisher published The Use of Multiple Measurements in Taxonomic Problems in 1936, a foundational linear discriminant formulation."
   },
   {
     "id": "truncated-svd",
     "kind": "model",
     "name": "Truncated SVD",
     "minPool": 1,
-    "provider": "Eckart and Young",
+    "provider": "Carl Eckart, Gale Young",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "1936",
-    "yearAnnotation": "Eckart and Young established the low-rank matrix approximation result underlying truncated SVD in their September 1936 paper \"The Approximation of One Matrix by Another of Lower Rank.\" Golub and Reinsch's 1970 paper \"Singular Value Decomposition and Least Squares Solutions\" provided a practical algorithm for computing the SVD, which is widely used in truncated SVD implementations."
-  },
-  {
-    "id": "gabor-filter",
-    "kind": "model",
-    "name": "Gabor Filter",
-    "minPool": 1,
-    "provider": "Dennis Gabor",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1946-01-01"
+    "yearAnnotation": "Eckart and Young published the low-rank matrix approximation result underlying truncated SVD in September 1936; this dates the approximation theorem, not the invention of the full SVD or a particular software implementation."
   },
   {
     "id": "quadratic-discriminant-analysis",
@@ -114,20 +69,7 @@
       "classical-ml"
     ],
     "releaseDate": "1947",
-    "yearAnnotation": "Cedric A. B. Smith developed the pioneering quadratic discriminant function in work commonly cited to 1947, extending discriminant analysis to cases with unequal covariance matrices."
-  },
-  {
-    "id": "gaussian-process",
-    "kind": "model",
-    "name": "Gaussian Process",
-    "minPool": 2,
-    "provider": "Danie Krige",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "1951",
-    "yearAnnotation": "Danie Krige's 1951 work is commonly credited with introducing kriging, which is closely related to Gaussian-process spatial prediction; the exact day is not historically established."
+    "yearAnnotation": "The year follows the 1947 offprint of Smith's Some Examples of Discrimination catalogued in his UCL papers; Wiley's digital record labels the volume January 1946, so the archival offprint is used rather than silently treating the conflicting metadata as an exact date."
   },
   {
     "id": "knn",
@@ -140,7 +82,7 @@
       "classical-ml"
     ],
     "releaseDate": "1951",
-    "yearAnnotation": "Fix and Hodges' report, “Discriminatory Analysis: Nonparametric Discrimination,” was issued in 1951 and is generally credited as the origin of the k-nearest-neighbors method."
+    "yearAnnotation": "Fix and Hodges issued their nearest-neighbor discrimination report in February 1951 at the University of California, Berkeley; the report is the historical milestone used here, not the introduction of every modern k-NN variant."
   },
   {
     "id": "k-means",
@@ -152,7 +94,7 @@
       "classical-ml"
     ],
     "releaseDate": "1957",
-    "yearAnnotation": "Lloyd's least-squares quantization work underlying K-means dates to 1957; the work was circulated as a Bell Labs technical report and formally published later."
+    "yearAnnotation": "The date records Lloyd's 1957 Bell Laboratories manuscript underlying the standard iterative algorithm; his paper was formally published in 1982, and the name k-means and other formulations have separate histories."
   },
   {
     "id": "perceptron",
@@ -164,7 +106,19 @@
       "classical-ml"
     ],
     "releaseDate": "1957",
-    "yearAnnotation": "Historical accounts generally date the perceptron's introduction to 1957; in 1958 Rosenblatt published further details together with the implementation of an AI machine."
+    "yearAnnotation": "Rosenblatt described the perceptron in his January 1957 Cornell Aeronautical Laboratory report; the 1958 journal paper and later hardware demonstrations are separate milestones."
+  },
+  {
+    "id": "agglomerative-clustering",
+    "kind": "model",
+    "name": "Agglomerative Clustering",
+    "minPool": 1,
+    "provider": "Robert Sokal, Charles Michener",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1958",
+    "yearAnnotation": "The date records Sokal and Michener's 1958 publication of a numerical-taxonomy method using average-linkage clustering; agglomerative clustering comprises multiple linkage methods and has no single release date for the whole family."
   },
   {
     "id": "logistic-regression",
@@ -176,30 +130,7 @@
       "classical-ml"
     ],
     "releaseDate": "1958",
-    "yearAnnotation": "David R. Cox published “The Regression Analysis of Binary Sequences” in the Journal of the Royal Statistical Society, Series B, in 1958, a foundational formulation of logistic regression."
-  },
-  {
-    "id": "multi-layer-perceptron",
-    "kind": "model",
-    "name": "Multi-Layer Perceptron",
-    "minPool": 0,
-    "provider": "David Rumelhart",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1958",
-    "yearAnnotation": "The multi-layer perceptron was proposed by Rosenblatt in the early multilayered perceptron architecture. Then in 1962 Rosenblatt described additional multilayer perceptron variants, including systems with more than one trainable layer, but without the modern general backpropagation algorithm. The hidden/association weights were not generally trained. Rumelhart, Hinton, and Williams published the backpropagation algorithm in 1986, which enabled training of multi-layer perceptrons. The 1958 date is included here to reflect the early conceptualization of the architecture."
-  },
-  {
-    "id": "box-filter",
-    "kind": "model",
-    "name": "Box Filter",
-    "minPool": 1,
-    "provider": "Image processing",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1960-01-01"
+    "yearAnnotation": "Cox published The Regression Analysis of Binary Sequences in 1958; this is a foundational binary-regression formulation, while modern logistic regression also supports multiclass classification."
   },
   {
     "id": "hough-line-transform",
@@ -210,19 +141,7 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1962-01-01"
-  },
-  {
-    "id": "agglomerative-clustering",
-    "kind": "model",
-    "name": "Agglomerative Clustering",
-    "minPool": 1,
-    "provider": "Robert Sokal",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1963",
-    "yearAnnotation": "Sokal and Sneath's Principles of Numerical Taxonomy, which helped establish agglomerative numerical classification methods, was published in 1963."
+    "releaseDate": "1959"
   },
   {
     "id": "roberts-cross",
@@ -233,84 +152,40 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1963-01-01"
-  },
-  {
-    "id": "black-hat",
-    "kind": "model",
-    "name": "Black Hat",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1963"
   },
   {
     "id": "dilation",
     "kind": "model",
     "name": "Dilation",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1964"
   },
   {
     "id": "erosion",
     "kind": "model",
     "name": "Erosion",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1964"
   },
   {
-    "id": "morphological-closing",
+    "id": "difference-of-gaussians",
     "kind": "model",
-    "name": "Morphological Closing",
+    "name": "Difference of Gaussians",
     "minPool": 1,
-    "provider": "Georges Matheron",
+    "provider": "Robert W. Rodieck",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "morphological-gradient",
-    "kind": "model",
-    "name": "Morphological Gradient",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "morphological-opening",
-    "kind": "model",
-    "name": "Morphological Opening",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "top-hat",
-    "kind": "model",
-    "name": "Top Hat",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1965"
   },
   {
     "id": "hidden-markov-model",
@@ -322,18 +197,51 @@
       "classical-ml"
     ],
     "releaseDate": "1966",
-    "yearAnnotation": "Baum and Petrie published foundational work on hidden Markov models in \"Statistical Inference for Probabilistic Functions of Finite State Markov Chains\" in December 1966."
+    "yearAnnotation": "Baum and Petrie published Statistical Inference for Probabilistic Functions of Finite State Markov Chains in December 1966, a foundational HMM inference paper; modern Python HMM implementations are maintained in hmmlearn rather than scikit-learn."
+  },
+  {
+    "id": "morphological-closing",
+    "kind": "model",
+    "name": "Morphological Closing",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1967"
+  },
+  {
+    "id": "morphological-opening",
+    "kind": "model",
+    "name": "Morphological Opening",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1967"
   },
   {
     "id": "sobel-operator",
     "kind": "model",
     "name": "Sobel Operator",
     "minPool": 0,
-    "provider": "Irwin Sobel",
+    "provider": "Irwin Sobel and Gary Feldman",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1968-01-01"
+    "releaseDate": "1968"
+  },
+  {
+    "id": "prewitt-operator",
+    "kind": "model",
+    "name": "Prewitt Operator",
+    "minPool": 1,
+    "provider": "Judith Prewitt",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1970"
   },
   {
     "id": "ridge-regression",
@@ -346,18 +254,7 @@
       "classical-ml"
     ],
     "releaseDate": "1970",
-    "yearAnnotation": "Hoerl and Kennard introduced ridge regression in their paper published in Technometrics in 1970."
-  },
-  {
-    "id": "prewitt-operator",
-    "kind": "model",
-    "name": "Prewitt Operator",
-    "minPool": 1,
-    "provider": "Judith Prewitt",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1970-01-01"
+    "yearAnnotation": "Hoerl and Kennard published Ridge Regression: Biased Estimation for Nonorthogonal Problems in February 1970; this dates their statistical ridge formulation, not all earlier regularization methods."
   },
   {
     "id": "median-filter",
@@ -368,30 +265,74 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1971-01-01"
+    "releaseDate": "1971"
   },
   {
     "id": "hough-circle-transform",
     "kind": "model",
     "name": "Hough Circle Transform",
     "minPool": 1,
-    "provider": "Richard Duda",
+    "provider": "Richard Duda and Peter Hart",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1972-01-01"
+    "releaseDate": "1972"
   },
   {
     "id": "mean-shift",
     "kind": "model",
     "name": "Mean Shift",
     "minPool": 1,
-    "provider": "Keinosuke Fukunaga",
+    "provider": "Keinosuke Fukunaga, Larry Hostetler",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "1975",
-    "yearAnnotation": "Fukunaga and Hostetler introduced the mean-shift procedure in a 1975 paper on density-gradient estimation and pattern recognition."
+    "yearAnnotation": "Fukunaga and Hostetler published the mean-shift density-gradient procedure in January 1975; the work was carried out at Purdue University in the United States."
+  },
+  {
+    "id": "black-hat",
+    "kind": "model",
+    "name": "Black Hat",
+    "minPool": 1,
+    "provider": "Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "morphological-gradient",
+    "kind": "model",
+    "name": "Morphological Gradient",
+    "minPool": 1,
+    "provider": "Serge Beucher and Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "top-hat",
+    "kind": "model",
+    "name": "Top Hat",
+    "minPool": 1,
+    "provider": "Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "laplacian-of-gaussian",
+    "kind": "model",
+    "name": "Laplacian of Gaussian",
+    "minPool": 1,
+    "provider": "David Marr and Ellen Hildreth",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1979"
   },
   {
     "id": "otsu-thresholding",
@@ -402,40 +343,41 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1979-01-01"
+    "releaseDate": "1979"
   },
   {
     "id": "watershed",
     "kind": "model",
     "name": "Watershed",
     "minPool": 1,
-    "provider": "Serge Beucher",
+    "provider": "Serge Beucher and Christian Lantuéjoul",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1979-01-01"
+    "releaseDate": "1979"
   },
   {
-    "id": "difference-of-gaussians",
+    "id": "cnn",
     "kind": "model",
-    "name": "Difference of Gaussians",
+    "name": "Convolutional Neural Network",
     "minPool": 1,
-    "provider": "David Marr",
+    "provider": "Kunihiko Fukushima, Yann LeCun",
     "categories": [
-      "filters"
+      "neural-network",
+      "computer-vision"
     ],
-    "releaseDate": "1980-01-01"
+    "releaseDate": "1980"
   },
   {
-    "id": "laplacian-of-gaussian",
+    "id": "gabor-filter",
     "kind": "model",
-    "name": "Laplacian of Gaussian",
+    "name": "Gabor Filter",
     "minPool": 1,
-    "provider": "David Marr",
+    "provider": "John Daugman",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1980-01-01"
+    "releaseDate": "1980"
   },
   {
     "id": "hopfield-network",
@@ -462,6 +404,19 @@
     "releaseDate": "1982-01-01"
   },
   {
+    "id": "decision-tree",
+    "kind": "model",
+    "name": "Decision Tree",
+    "minPool": 1,
+    "provider": "Leo Breiman, Jerome Friedman, Richard Olshen, Charles Stone",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1984",
+    "yearAnnotation": "The date and authors refer to the CART classification and regression method documented in the 1984 book Classification and Regression Trees, which is the basis of scikit-learn's tree implementation; decision trees as a broader family predate CART."
+  },
+  {
     "id": "boltzmann-machine",
     "kind": "model",
     "name": "Boltzmann Machine",
@@ -474,17 +429,15 @@
     "releaseDate": "1985-01-01"
   },
   {
-    "id": "decision-tree",
+    "id": "canny-edge-detector",
     "kind": "model",
-    "name": "Decision Tree",
-    "minPool": 1,
-    "provider": "Ross Quinlan",
+    "name": "Canny Edge Detector",
+    "minPool": 0,
+    "provider": "John Canny",
     "categories": [
-      "machine-learning",
-      "classical-ml"
+      "filters"
     ],
-    "releaseDate": "1986",
-    "yearAnnotation": "Quinlan's paper introducing ID3, \"Induction of Decision Trees,\" was published in 1986; this supports 1986 for ID3 specifically, not for decision trees as a whole."
+    "releaseDate": "1986"
   },
   {
     "id": "autoencoder",
@@ -495,17 +448,6 @@
     "categories": [
       "neural-network",
       "representation-learning"
-    ],
-    "releaseDate": "1986-01-01"
-  },
-  {
-    "id": "canny-edge-detector",
-    "kind": "model",
-    "name": "Canny Edge Detector",
-    "minPool": 0,
-    "provider": "John Canny",
-    "categories": [
-      "filters"
     ],
     "releaseDate": "1986-01-01"
   },
@@ -526,57 +468,58 @@
     "kind": "model",
     "name": "Harris Corner Detector",
     "minPool": 0,
-    "provider": "Chris Harris",
+    "provider": "Chris Harris and Mike Stephens",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1988-01-01"
-  },
-  {
-    "id": "adaptive-thresholding",
-    "kind": "model",
-    "name": "Adaptive Thresholding",
-    "minPool": 1,
-    "provider": "Image processing",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1989-01-01"
-  },
-  {
-    "id": "cnn",
-    "kind": "model",
-    "name": "Convolutional Neural Network",
-    "minPool": 1,
-    "provider": "Kunihiko Fukushima, Yann LeCun",
-    "categories": [
-      "neural-network",
-      "computer-vision"
-    ],
-    "releaseDate": "1989-12-01"
+    "releaseDate": "1988"
   },
   {
     "id": "independent-component-analysis",
     "kind": "model",
     "name": "Independent Component Analysis",
     "minPool": 1,
-    "provider": "Pierre Comon, Aapo Hyvärinen, and Erkki Oja",
+    "provider": "Pierre Comon",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "1994",
-    "yearAnnotation": "Pierre Comon's foundational paper \"Independent Component Analysis, A New Concept?\" was published in April 1994."
+    "yearAnnotation": "The date records Comon's 1994 paper Independent Component Analysis, A New Concept? from Thomson-Sintra in France; Hyvärinen and Oja's later FastICA work is a separate algorithmic contribution."
+  },
+  {
+    "id": "local-binary-pattern",
+    "kind": "model",
+    "name": "Local Binary Pattern",
+    "minPool": 1,
+    "provider": "Timo Ojala, Matti Pietikäinen and David Harwood",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1994"
   },
   {
     "id": "shi-tomasi-corner-detector",
     "kind": "model",
     "name": "Shi-Tomasi Corner Detector",
     "minPool": 1,
-    "provider": "Jianbo Shi",
+    "provider": "Jianbo Shi and Carlo Tomasi",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1994-01-01"
+    "releaseDate": "1994"
+  },
+  {
+    "id": "adaboost",
+    "kind": "model",
+    "name": "AdaBoost",
+    "minPool": 1,
+    "provider": "Yoav Freund, Robert Schapire",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "1995",
+    "yearAnnotation": "Freund and Schapire introduced AdaBoost in their EuroCOLT 1995 paper; the 1996 experiments paper and the expanded 1997 journal article followed that introduction."
   },
   {
     "id": "svm",
@@ -589,32 +532,31 @@
       "classical-ml"
     ],
     "releaseDate": "1995",
-    "yearAnnotation": "Cortes and Vapnik introduced support-vector networks in a paper published in the journal Machine Learning, volume 20, in 1995."
-  },
-  {
-    "id": "adaboost",
-    "kind": "model",
-    "name": "AdaBoost",
-    "minPool": 1,
-    "provider": "AT&T Bell Laboratories",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "1996",
-    "yearAnnotation": "AdaBoost was presented in the 1996 ICML paper “Experiments with a New Boosting Algorithm,” supporting 1996 as its release year."
+    "yearAnnotation": "Cortes and Vapnik published the soft-margin support-vector network in September 1995 while both were affiliated with AT&T Bell Laboratories in the United States; earlier support-vector formulations predate this paper."
   },
   {
     "id": "dbscan",
     "kind": "model",
     "name": "DBSCAN",
     "minPool": 0,
-    "provider": "Martin Ester",
+    "provider": "Martin Ester, Hans-Peter Kriegel, Jörg Sander, Xiaowei Xu",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "1996",
-    "yearAnnotation": "The DBSCAN method was first published in the 1996 proceedings of the ACM SIGKDD conference."
+    "yearAnnotation": "Ester, Kriegel, Sander and Xu introduced DBSCAN in the KDD 1996 proceedings published by AAAI; all four authors were affiliated with the University of Munich, Germany."
+  },
+  {
+    "id": "kernel-pca",
+    "kind": "model",
+    "name": "Kernel PCA",
+    "minPool": 1,
+    "provider": "Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1996",
+    "yearAnnotation": "Schölkopf, Smola and Müller described kernel PCA in the 1996 Max Planck technical report Nonlinear Component Analysis as a Kernel Eigenvalue Problem; the ICANN 1997 paper and 1998 journal article followed it."
   },
   {
     "id": "lasso",
@@ -627,18 +569,7 @@
       "classical-ml"
     ],
     "releaseDate": "1996",
-    "yearAnnotation": "Robert Tibshirani's paper introducing the Lasso, \"Regression Shrinkage and Selection via the Lasso,\" was published in 1996."
-  },
-  {
-    "id": "local-binary-pattern",
-    "kind": "model",
-    "name": "Local Binary Pattern",
-    "minPool": 1,
-    "provider": "Timo Ojala",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1996-01-01"
+    "yearAnnotation": "Tibshirani published Regression Shrinkage and Selection via the Lasso in 1996 while affiliated with the University of Toronto, Canada."
   },
   {
     "id": "lstm",
@@ -653,27 +584,15 @@
     "releaseDate": "1997-01-01"
   },
   {
-    "id": "kernel-pca",
-    "kind": "model",
-    "name": "Kernel PCA",
-    "minPool": 1,
-    "provider": "Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1997-09-29",
-    "yearAnnotation": "Schölkopf, Smola, and Müller introduced Kernel PCA in their ICANN 1997 paper \"Kernel Principal Component Analysis,\" published in the conference proceedings on September 29, 1997."
-  },
-  {
     "id": "bilateral-filter",
     "kind": "model",
     "name": "Bilateral Filter",
     "minPool": 1,
-    "provider": "Carlo Tomasi",
+    "provider": "Carlo Tomasi and Roberto Manduchi",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1998-01-01"
+    "releaseDate": "1998"
   },
   {
     "id": "lenet-5",
@@ -686,7 +605,7 @@
       "image-classification",
       "neural-network"
     ],
-    "releaseDate": "1998-11-01"
+    "releaseDate": "1998"
   },
   {
     "id": "one-class-svm",
@@ -698,7 +617,19 @@
       "classical-ml"
     ],
     "releaseDate": "1999",
-    "yearAnnotation": "Schölkopf, Williamson, Smola, Shawe-Taylor, and Platt introduced the One-Class SVM approach in their NIPS 1999 paper \"Support Vector Method for Novelty Detection.\""
+    "yearAnnotation": "Schölkopf, Williamson, Smola, Shawe-Taylor and Platt introduced this unlabeled-data novelty-detection method at NIPS 1999 with affiliations in the United Kingdom, Australia and the United States."
+  },
+  {
+    "id": "optics",
+    "kind": "model",
+    "name": "OPTICS",
+    "minPool": 1,
+    "provider": "Mihael Ankerst, Markus Breunig, Hans-Peter Kriegel, Jörg Sander",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "1999",
+    "yearAnnotation": "Ankerst, Breunig, Kriegel and Sander introduced OPTICS in the SIGMOD 1999 proceedings; the conference start does not independently establish a first-publication day."
   },
   {
     "id": "sift",
@@ -709,19 +640,7 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1999-01-01"
-  },
-  {
-    "id": "optics",
-    "kind": "model",
-    "name": "OPTICS",
-    "minPool": 1,
-    "provider": "Mihael Ankerst",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "1999-06-01",
-    "yearAnnotation": "Ankerst, Breunig, Kriegel, and Sander introduced OPTICS in their ACM SIGMOD paper published on June 1, 1999."
+    "releaseDate": "1999"
   },
   {
     "id": "non-negative-matrix-factorization",
@@ -733,18 +652,7 @@
       "classical-ml"
     ],
     "releaseDate": "1999-10-21",
-    "yearAnnotation": "Lee and Seung's foundational paper \"Learning the Parts of Objects by Non-Negative Matrix Factorization\" was published in Nature on October 21, 1999."
-  },
-  {
-    "id": "scharr-operator",
-    "kind": "model",
-    "name": "Scharr Operator",
-    "minPool": 1,
-    "provider": "H. Scharr",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "2000-01-01"
+    "yearAnnotation": "The date records Lee and Seung's October 21, 1999 Nature paper on learning parts-based representations; earlier non-negative factorization work, including Paatero and Tapper's 1994 positive matrix factorization, predates this milestone."
   },
   {
     "id": "local-outlier-factor",
@@ -755,20 +663,31 @@
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2000-05-16",
-    "yearAnnotation": "Breunig, Kriegel, Ng, and Sander introduced Local Outlier Factor in their SIGMOD 2000 paper \"LOF: Identifying Density-Based Local Outliers,\" published on May 16, 2000."
+    "releaseDate": "2000",
+    "yearAnnotation": "Breunig, Kriegel, Ng and Sander introduced LOF in the SIGMOD 2000 proceedings with affiliations in Germany and Canada; the conference start is not used as a first-publication day."
+  },
+  {
+    "id": "scharr-operator",
+    "kind": "model",
+    "name": "Scharr Operator",
+    "minPool": 1,
+    "provider": "Hanno Scharr",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2000"
   },
   {
     "id": "conditional-random-field",
     "kind": "model",
     "name": "Conditional Random Field",
     "minPool": 1,
-    "provider": "John Lafferty",
+    "provider": "John Lafferty, Andrew McCallum, Fernando Pereira",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "2001",
-    "yearAnnotation": "Lafferty, McCallum, and Pereira introduced Conditional Random Fields in their ICML 2001 paper \"Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data.\""
+    "yearAnnotation": "Lafferty, McCallum and Pereira introduced Conditional Random Fields in their ICML 2001 paper; sklearn-crfsuite provides a scikit-learn-compatible estimator, but CRFs are not implemented in scikit-learn itself."
   },
   {
     "id": "gradient-boosting",
@@ -781,19 +700,32 @@
       "classical-ml"
     ],
     "releaseDate": "2001",
-    "yearAnnotation": "Jerome Friedman's foundational paper on gradient boosting, “Greedy Function Approximation: A Gradient Boosting Machine,” was published in 2001."
+    "yearAnnotation": "The date records the October 2001 journal publication of Friedman's Greedy Function Approximation: A Gradient Boosting Machine; the paper originated as a 1999 lecture and manuscript, so 2001 is a publication milestone rather than the first conception of gradient boosting."
+  },
+  {
+    "id": "random-forest",
+    "kind": "model",
+    "name": "Random Forest",
+    "minPool": 1,
+    "provider": "Leo Breiman",
+    "categories": [
+      "machine-learning",
+      "classical-ml"
+    ],
+    "releaseDate": "2001",
+    "yearAnnotation": "Breiman published Random Forests in the October 2001 issue of Machine Learning; the publisher establishes the month and year, not a release day."
   },
   {
     "id": "spectral-clustering",
     "kind": "model",
     "name": "Spectral Clustering",
     "minPool": 1,
-    "provider": "Ng, Jordan, and Weiss",
+    "provider": "Andrew Ng, Michael Jordan, Yair Weiss",
     "categories": [
       "classical-ml"
     ],
     "releaseDate": "2001",
-    "yearAnnotation": "Ng, Jordan, and Weiss published their influential spectral clustering paper in 2001; the specific day and month are not reliably established."
+    "yearAnnotation": "The date records Ng, Jordan and Weiss's NIPS 2001 spectral-clustering paper, with affiliations in the United States; spectral graph methods and normalized cuts predate this particular algorithm."
   },
   {
     "id": "echo-state-network",
@@ -808,28 +740,15 @@
     "releaseDate": "2001-01-01"
   },
   {
-    "id": "random-forest",
-    "kind": "model",
-    "name": "Random Forest",
-    "minPool": 1,
-    "provider": "Leo Breiman",
-    "categories": [
-      "machine-learning",
-      "classical-ml"
-    ],
-    "releaseDate": "2001-10-01",
-    "yearAnnotation": "The seminal Random Forests paper was published in the October 2001 issue of Machine Learning."
-  },
-  {
     "id": "grabcut",
     "kind": "model",
     "name": "GrabCut",
     "minPool": 1,
-    "provider": "Carsten Rother",
+    "provider": "Carsten Rother, Vladimir Kolmogorov and Andrew Blake",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2004-01-01"
+    "releaseDate": "2004"
   },
   {
     "id": "elastic-net",
@@ -842,98 +761,98 @@
       "classical-ml"
     ],
     "releaseDate": "2005",
-    "yearAnnotation": "The foundational paper introducing Elastic Net, “Regularization and Variable Selection via the Elastic Net,” was published in 2005."
-  },
-  {
-    "id": "hog",
-    "kind": "model",
-    "name": "HOG",
-    "minPool": 0,
-    "provider": "Navneet Dalal",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "2005-06-01"
+    "yearAnnotation": "Zou and Hastie introduced the elastic net in their 2005 paper Regularization and Variable Selection via the Elastic Net while affiliated with Stanford University in the United States."
   },
   {
     "id": "fast-corner-detector",
     "kind": "model",
     "name": "FAST Corner Detector",
     "minPool": 1,
-    "provider": "Edward Rosten",
+    "provider": "Edward Rosten and Tom Drummond",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2006-01-01"
+    "releaseDate": "2005"
+  },
+  {
+    "id": "hog",
+    "kind": "model",
+    "name": "HOG",
+    "minPool": 0,
+    "provider": "Navneet Dalal and Bill Triggs",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2005"
   },
   {
     "id": "surf",
     "kind": "model",
     "name": "SURF",
     "minPool": 1,
-    "provider": "Herbert Bay",
+    "provider": "Herbert Bay, Tinne Tuytelaars and Luc Van Gool",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2006-01-01"
+    "releaseDate": "2006"
   },
   {
     "id": "affinity-propagation",
     "kind": "model",
     "name": "Affinity Propagation",
     "minPool": 1,
-    "provider": "Brendan Frey",
+    "provider": "Brendan Frey, Delbert Dueck",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2007-02-01",
-    "yearAnnotation": "The method's seminal Science publication appeared in 2007, with online-first publication preceding the February 16 print issue."
-  },
-  {
-    "id": "t-sne",
-    "kind": "model",
-    "name": "t-SNE",
-    "minPool": 1,
-    "provider": "Laurens van der Maaten",
-    "categories": [
-      "classical-ml"
-    ],
-    "releaseDate": "2008",
-    "yearAnnotation": "Van der Maaten and Hinton introduced t-SNE in their paper \"Visualizing Data using t-SNE,\" published in November 2008."
+    "releaseDate": "2007-01-11",
+    "yearAnnotation": "Frey and Dueck's Clustering by Passing Messages Between Data Points was published online on January 11, 2007, before the February 16 Science print issue."
   },
   {
     "id": "isolation-forest",
     "kind": "model",
     "name": "Isolation Forest",
     "minPool": 0,
-    "provider": "Fei Tony Liu",
+    "provider": "Fei Tony Liu, Kai Ming Ting, Zhi-Hua Zhou",
     "categories": [
       "classical-ml"
     ],
-    "releaseDate": "2008-12-15",
-    "yearAnnotation": "Fei Tony Liu, Kai Ming Ting and Zhi-Hua Zhou introduced Isolation Forest in their 2008 IEEE International Conference on Data Mining paper \"Isolation Forest\" around 2008-12-15 to 2008-12-19 (conference date; no agenda found)."
+    "releaseDate": "2008",
+    "yearAnnotation": "Liu, Ting and Zhou introduced Isolation Forest in the ICDM 2008 proceedings with affiliations at Monash University, Australia, and Nanjing University, China; the conference ran December 15-19, which does not establish the paper's release day."
+  },
+  {
+    "id": "t-sne",
+    "kind": "model",
+    "name": "t-SNE",
+    "minPool": 1,
+    "provider": "Laurens van der Maaten, Geoffrey Hinton",
+    "categories": [
+      "classical-ml"
+    ],
+    "releaseDate": "2008",
+    "yearAnnotation": "Van der Maaten and Hinton introduced t-SNE in November 2008 with affiliations at Tilburg University, Netherlands, and the University of Toronto, Canada."
   },
   {
     "id": "brief",
     "kind": "model",
     "name": "BRIEF",
     "minPool": 1,
-    "provider": "Michael Calonder",
+    "provider": "Michael Calonder, Vincent Lepetit, Christoph Strecha and Pascal Fua",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2010-01-01"
+    "releaseDate": "2010"
   },
   {
     "id": "orb",
     "kind": "model",
     "name": "ORB",
     "minPool": 1,
-    "provider": "Ethan Rublee",
+    "provider": "Ethan Rublee, Vincent Rabaud, Kurt Konolige and Gary Bradski",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2011-01-01"
+    "releaseDate": "2011"
   },
   {
     "id": "alexnet",
@@ -946,7 +865,7 @@
       "image-classification",
       "neural-network"
     ],
-    "releaseDate": "2012-12-03"
+    "releaseDate": "2012"
   },
   {
     "id": "rcnn",
@@ -971,6 +890,20 @@
       "generative-model"
     ],
     "releaseDate": "2013-12-20"
+  },
+  {
+    "id": "xgboost",
+    "kind": "model",
+    "name": "XGBoost",
+    "minPool": 1,
+    "provider": "XGBoost Project",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2014-03-26",
+    "yearAnnotation": "The project's own release history dates its initial v0.1 release to March 26, 2014; the 2016 research paper and later package releases are not its initial release."
   },
   {
     "id": "gru",
@@ -1088,7 +1021,7 @@
     "kind": "model",
     "name": "DCGAN",
     "minPool": 1,
-    "provider": "indico Research",
+    "provider": "indico Research / Meta",
     "categories": [
       "neural-network",
       "generative-model",
@@ -1112,21 +1045,22 @@
   {
     "id": "openai-founded",
     "kind": "event",
-    "name": "OpenAI founded",
+    "name": "OpenAI, Inc. incorporated",
     "minPool": 0,
     "provider": "OpenAI",
     "categories": [
       "language-model"
     ],
     "releaseDate": "2015-12-08",
-    "sourceUrl": "https://openai.com/index/introducing-openai/"
+    "yearAnnotation": "Legal incorporation in Delaware; OpenAI was publicly announced on December 11, 2015",
+    "sourceUrl": "https://s.wsj.net/public/resources/documents/musk-suit-openai-altman-march-2024.pdf#page=37"
   },
   {
     "id": "ssd",
     "kind": "model",
     "name": "SSD",
     "minPool": 1,
-    "provider": "Google",
+    "provider": "UNC Chapel Hill / Google / Zoox / University of Michigan",
     "categories": [
       "computer-vision",
       "object-detection"
@@ -1173,31 +1107,31 @@
     "releaseDate": "2015-12-10"
   },
   {
+    "id": "lightgbm",
+    "kind": "model",
+    "name": "LightGBM",
+    "minPool": 2,
+    "provider": "Microsoft",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2016",
+    "yearAnnotation": "Microsoft Research dates the LightGBM project to October 2016; its NeurIPS paper appeared in 2017, and a 2017 tagged release is not the project's origin."
+  },
+  {
     "id": "squeezenet",
     "kind": "model",
     "name": "SqueezeNet",
     "minPool": 2,
-    "provider": "DeepScale / UC Berkeley",
+    "provider": "DeepScale / UC Berkeley / Stanford University",
     "categories": [
       "computer-vision",
       "image-classification",
       "neural-network"
     ],
     "releaseDate": "2016-02-24"
-  },
-  {
-    "id": "xgboost",
-    "kind": "model",
-    "name": "XGBoost",
-    "minPool": 1,
-    "provider": "XGBoost Project",
-    "categories": [
-      "machine-learning",
-      "classical-ml",
-      "gradient-boosting"
-    ],
-    "releaseDate": "2016-03-09",
-    "yearAnnotation": "Public XGBoost release records date version 0.4 to March 9, 2016."
   },
   {
     "id": "wide-resnet",
@@ -1217,7 +1151,7 @@
     "kind": "model",
     "name": "DenseNet-121",
     "minPool": 1,
-    "provider": "Cornell University",
+    "provider": "Cornell University / Tsinghua University / Meta",
     "categories": [
       "computer-vision",
       "image-classification",
@@ -1243,7 +1177,7 @@
     "kind": "model",
     "name": "ResNeXt",
     "minPool": 2,
-    "provider": "Meta AI",
+    "provider": "UC San Diego / Meta",
     "categories": [
       "computer-vision",
       "image-classification",
@@ -1252,25 +1186,11 @@
     "releaseDate": "2016-11-16"
   },
   {
-    "id": "lightgbm",
-    "kind": "model",
-    "name": "LightGBM",
-    "minPool": 2,
-    "provider": "Microsoft",
-    "categories": [
-      "machine-learning",
-      "classical-ml",
-      "gradient-boosting"
-    ],
-    "releaseDate": "2017",
-    "yearAnnotation": "LightGBM was introduced by Microsoft in paper “LightGBM: A Highly Efficient Gradient Boosting Decision Tree” and published in the NeurIPS 2017 proceedings. Github release records support the April 24, 2017 in https://github.com/lightgbm-org/LightGBM/releases?page=4"
-  },
-  {
     "id": "keypoint-rcnn",
     "kind": "model",
     "name": "Keypoint R-CNN",
     "minPool": 2,
-    "provider": "PyTorch",
+    "provider": "Meta",
     "categories": [
       "computer-vision",
       "keypoint-detection",
@@ -1317,20 +1237,6 @@
     "releaseDate": "2017-06-17"
   },
   {
-    "id": "catboost",
-    "kind": "model",
-    "name": "CatBoost",
-    "minPool": 2,
-    "provider": "Yandex",
-    "categories": [
-      "machine-learning",
-      "classical-ml",
-      "gradient-boosting"
-    ],
-    "releaseDate": "2017-06-28",
-    "yearAnnotation": "CatBoost was introduced by Yandex and publicly documented in 2017, including its 2017 research publication. Wikipedia states release as July 18, 2017, but Github's first release is recorded on Sep 14, 2017; this date is documented in https://github.com/catboost/catboost/releases?page=10"
-  },
-  {
     "id": "shufflenet",
     "kind": "model",
     "name": "ShuffleNet",
@@ -1342,6 +1248,20 @@
       "neural-network"
     ],
     "releaseDate": "2017-07-04"
+  },
+  {
+    "id": "catboost",
+    "kind": "model",
+    "name": "CatBoost",
+    "minPool": 2,
+    "provider": "Yandex",
+    "categories": [
+      "machine-learning",
+      "classical-ml",
+      "gradient-boosting"
+    ],
+    "releaseDate": "2017-07-18",
+    "yearAnnotation": "Yandex publicly announced and open-sourced the CatBoost library on July 18, 2017; the June 28 research preprint and subsequent GitHub tags describe different milestones."
   },
   {
     "id": "retinanet",
@@ -1427,7 +1347,7 @@
       "nlp",
       "language-model"
     ],
-    "releaseDate": "2018-10-11"
+    "releaseDate": "2018-11-02"
   },
   {
     "id": "bert-large-uncased",
@@ -1439,7 +1359,7 @@
       "nlp",
       "language-model"
     ],
-    "releaseDate": "2018-10-11"
+    "releaseDate": "2018-11-02"
   },
   {
     "id": "mbert",
@@ -1452,7 +1372,55 @@
       "nlp",
       "multilingual"
     ],
-    "releaseDate": "2018-10-11"
+    "releaseDate": "2018-11-03"
+  },
+  {
+    "id": "bart-large",
+    "kind": "model",
+    "name": "BART Large",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019"
+  },
+  {
+    "id": "distilbert-base-uncased",
+    "kind": "model",
+    "name": "DistilBERT Base Uncased",
+    "minPool": 1,
+    "provider": "Hugging Face",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019"
+  },
+  {
+    "id": "distilgpt2",
+    "kind": "model",
+    "name": "DistilGPT-2",
+    "minPool": 2,
+    "provider": "Hugging Face",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2019"
+  },
+  {
+    "id": "t5-base",
+    "kind": "model",
+    "name": "T5 Base",
+    "minPool": 1,
+    "provider": "Google",
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "releaseDate": "2019"
   },
   {
     "id": "gpt-2",
@@ -1578,47 +1546,11 @@
     "releaseDate": "2019-09-26"
   },
   {
-    "id": "distilgpt2",
-    "kind": "model",
-    "name": "DistilGPT-2",
-    "minPool": 2,
-    "provider": "Hugging Face",
-    "categories": [
-      "language-model",
-      "nlp"
-    ],
-    "releaseDate": "2019-10-01"
-  },
-  {
-    "id": "distilbert-base-uncased",
-    "kind": "model",
-    "name": "DistilBERT Base Uncased",
-    "minPool": 1,
-    "provider": "Hugging Face",
-    "categories": [
-      "nlp",
-      "language-model"
-    ],
-    "releaseDate": "2019-10-02"
-  },
-  {
-    "id": "bart-large",
-    "kind": "model",
-    "name": "BART Large",
-    "minPool": 1,
-    "provider": "Meta",
-    "categories": [
-      "nlp",
-      "language-model"
-    ],
-    "releaseDate": "2019-10-29"
-  },
-  {
     "id": "xlm-roberta",
     "kind": "model",
     "name": "XLM-RoBERTa",
     "minPool": 1,
-    "provider": "Meta AI",
+    "provider": "Meta",
     "categories": [
       "language-model",
       "nlp",
@@ -1662,16 +1594,16 @@
     "releaseDate": "2019-12-18"
   },
   {
-    "id": "t5-base",
+    "id": "herbert-base-cased",
     "kind": "model",
-    "name": "T5 Base",
+    "name": "HerBERT Base Cased",
     "minPool": 1,
-    "provider": "Google",
+    "provider": "Allegro / Polish Academy of Sciences",
     "categories": [
       "nlp",
       "language-model"
     ],
-    "releaseDate": "2020-02-11"
+    "releaseDate": "2020"
   },
   {
     "id": "electra",
@@ -1683,7 +1615,7 @@
       "language-model",
       "nlp"
     ],
-    "releaseDate": "2020-03-23"
+    "releaseDate": "2020-03-10"
   },
   {
     "id": "longformer",
@@ -1696,18 +1628,6 @@
       "nlp"
     ],
     "releaseDate": "2020-04-10"
-  },
-  {
-    "id": "herbert-base-cased",
-    "kind": "model",
-    "name": "HerBERT Base Cased",
-    "minPool": 1,
-    "provider": "Allegro",
-    "categories": [
-      "nlp",
-      "language-model"
-    ],
-    "releaseDate": "2020-05-01"
   },
   {
     "id": "facebook-detr-resnet-50",
@@ -1731,7 +1651,7 @@
       "computer-vision",
       "object-detection"
     ],
-    "releaseDate": "2020-06-26"
+    "releaseDate": "2020-05-27"
   },
   {
     "id": "bigbird",
@@ -1768,6 +1688,18 @@
       "image-classification"
     ],
     "releaseDate": "2020-10-22"
+  },
+  {
+    "id": "mask2former-swin-small-ade-semantic",
+    "kind": "model",
+    "name": "Mask2Former Swin Small",
+    "minPool": 1,
+    "provider": "Meta",
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "releaseDate": "2021"
   },
   {
     "id": "clip-vit-large-patch14",
@@ -1833,16 +1765,41 @@
     "releaseDate": "2021-06-01"
   },
   {
+    "id": "paraphrase-multilingual-minilm-l12-v2",
+    "kind": "model",
+    "name": "paraphrase-multilingual-MiniLM-L12-v2",
+    "minPool": 1,
+    "provider": "Sentence Transformers",
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "releaseDate": "2021-06-02"
+  },
+  {
+    "id": "plt5-base",
+    "kind": "model",
+    "name": "plT5 Base",
+    "minPool": 1,
+    "provider": "Allegro / Polish Academy of Sciences",
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "releaseDate": "2021-08-19"
+  },
+  {
     "id": "all-minilm-l6-v2",
     "kind": "model",
-    "name": "All-MiniLM-L6-v2",
+    "name": "all-MiniLM-L6-v2",
     "minPool": 2,
-    "provider": "Hugging Face",
+    "provider": "Sentence Transformers",
     "categories": [
       "nlp",
       "embedding"
     ],
-    "releaseDate": "2021-08-20"
+    "releaseDate": "2021-08-30"
   },
   {
     "id": "all-mpnet-base-v2",
@@ -1857,30 +1814,6 @@
     "releaseDate": "2021-08-30"
   },
   {
-    "id": "mdeberta-v3-base",
-    "kind": "model",
-    "name": "mDeBERTa v3 Base",
-    "minPool": 1,
-    "provider": "Microsoft",
-    "categories": [
-      "nlp",
-      "multilingual"
-    ],
-    "releaseDate": "2021-10-27"
-  },
-  {
-    "id": "mask2former-swin-small-ade-semantic",
-    "kind": "model",
-    "name": "Mask2Former Swin Small",
-    "minPool": 1,
-    "provider": "Meta",
-    "categories": [
-      "computer-vision",
-      "segmentation"
-    ],
-    "releaseDate": "2021-12-02"
-  },
-  {
     "id": "deberta-v3-base",
     "kind": "model",
     "name": "DeBERTa v3 Base",
@@ -1890,7 +1823,19 @@
       "nlp",
       "language-model"
     ],
-    "releaseDate": "2021-12-17"
+    "releaseDate": "2021-11-16"
+  },
+  {
+    "id": "mdeberta-v3-base",
+    "kind": "model",
+    "name": "mDeBERTa v3 Base",
+    "minPool": 1,
+    "provider": "Microsoft",
+    "categories": [
+      "nlp",
+      "multilingual"
+    ],
+    "releaseDate": "2021-11-16"
   },
   {
     "id": "clipseg-rd64-refined",
@@ -1903,7 +1848,7 @@
       "segmentation",
       "multimodal"
     ],
-    "releaseDate": "2021-12-18"
+    "releaseDate": "2022"
   },
   {
     "id": "convnext-base",
@@ -1920,7 +1865,7 @@
   {
     "id": "table-transformer-detection",
     "kind": "model",
-    "name": "Table Transformer",
+    "name": "Table Transformer Detection",
     "minPool": 1,
     "provider": "Microsoft",
     "categories": [
@@ -1940,7 +1885,7 @@
       "image-classification",
       "transformer"
     ],
-    "releaseDate": "2022-04-22"
+    "releaseDate": "2022-04-04"
   },
   {
     "id": "owl-vit",
@@ -1956,21 +1901,9 @@
     "releaseDate": "2022-05-12"
   },
   {
-    "id": "plt5-base",
-    "kind": "model",
-    "name": "plT5 Base",
-    "minPool": 1,
-    "provider": "Allegro",
-    "categories": [
-      "language-model",
-      "nlp"
-    ],
-    "releaseDate": "2022-05-18"
-  },
-  {
     "id": "nllb-200-600m",
     "kind": "model",
-    "name": "NLLB-200 600M",
+    "name": "NLLB-200 Distilled 600M",
     "minPool": 2,
     "provider": "Meta",
     "categories": [
@@ -2001,7 +1934,22 @@
       "nlp",
       "language-model"
     ],
-    "releaseDate": "2022-10-20"
+    "releaseDate": "2022-10-21"
+  },
+  {
+    "id": "yolov8",
+    "kind": "model",
+    "name": "YOLOv8",
+    "minPool": 0,
+    "provider": "Ultralytics",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "segmentation",
+      "image-classification",
+      "keypoint-detection"
+    ],
+    "releaseDate": "2023-01-10"
   },
   {
     "id": "gpt-3-5-turbo",
@@ -2013,20 +1961,7 @@
       "language-model",
       "coding"
     ],
-    "releaseDate": "2022-11-30"
-  },
-  {
-    "id": "yolov8",
-    "kind": "model",
-    "name": "YOLOv8",
-    "minPool": 0,
-    "provider": "Ultralytics",
-    "categories": [
-      "computer-vision",
-      "object-detection",
-      "segmentation"
-    ],
-    "releaseDate": "2023-01-10"
+    "releaseDate": "2023-03-01"
   },
   {
     "id": "gpt-4",
@@ -2041,19 +1976,6 @@
     "releaseDate": "2023-03-14"
   },
   {
-    "id": "grounding-dino-base",
-    "kind": "model",
-    "name": "Grounding DINO Base",
-    "minPool": 1,
-    "provider": "IDEA Research",
-    "categories": [
-      "computer-vision",
-      "object-detection",
-      "multimodal"
-    ],
-    "releaseDate": "2023-03-20"
-  },
-  {
     "id": "sam",
     "kind": "model",
     "name": "Segment Anything Model",
@@ -2066,6 +1988,19 @@
     "releaseDate": "2023-04-05"
   },
   {
+    "id": "grounding-dino-base",
+    "kind": "model",
+    "name": "Grounding DINO Base",
+    "minPool": 1,
+    "provider": "IDEA Research",
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "multimodal"
+    ],
+    "releaseDate": "2023-04-07"
+  },
+  {
     "id": "dinov2-base",
     "kind": "model",
     "name": "DINOv2 Base",
@@ -2076,19 +2011,19 @@
       "image-classification",
       "embedding"
     ],
-    "releaseDate": "2023-04-14"
+    "releaseDate": "2023-04-17"
   },
   {
-    "id": "yolo-nas",
+    "id": "rtdetr-r50",
     "kind": "model",
-    "name": "YOLO-NAS",
-    "minPool": 2,
-    "provider": "Deci AI",
+    "name": "RT-DETR R50",
+    "minPool": 1,
+    "provider": "Baidu",
     "categories": [
       "computer-vision",
       "object-detection"
     ],
-    "releaseDate": "2023-05-03"
+    "releaseDate": "2023-04-17"
   },
   {
     "id": "e5-large-v2",
@@ -2100,7 +2035,7 @@
       "nlp",
       "embedding"
     ],
-    "releaseDate": "2023-05-25"
+    "releaseDate": "2023-05-19"
   },
   {
     "id": "llama-2-70b-chat",
@@ -2114,18 +2049,6 @@
     "releaseDate": "2023-07-18"
   },
   {
-    "id": "rtdetr-r50",
-    "kind": "model",
-    "name": "RT-DETR R50",
-    "minPool": 1,
-    "provider": "Baidu",
-    "categories": [
-      "computer-vision",
-      "object-detection"
-    ],
-    "releaseDate": "2023-09-01"
-  },
-  {
     "id": "bge-large-en-v1-5",
     "kind": "model",
     "name": "BGE Large EN v1.5",
@@ -2135,30 +2058,7 @@
       "nlp",
       "embedding"
     ],
-    "releaseDate": "2023-09-15"
-  },
-  {
-    "id": "command-light",
-    "kind": "model",
-    "name": "Command Light",
-    "minPool": 2,
-    "provider": "Cohere",
-    "categories": [
-      "language-model"
-    ],
-    "releaseDate": "2023-09-27"
-  },
-  {
-    "id": "deepseek-math-7b",
-    "kind": "model",
-    "name": "DeepSeekMath 7B",
-    "minPool": 2,
-    "provider": "DeepSeek",
-    "categories": [
-      "language-model",
-      "reasoning"
-    ],
-    "releaseDate": "2023-11-02"
+    "releaseDate": "2023-09-12"
   },
   {
     "id": "grok-1",
@@ -2169,7 +2069,7 @@
     "categories": [
       "language-model"
     ],
-    "releaseDate": "2023-11-04"
+    "releaseDate": "2023-11-03"
   },
   {
     "id": "gpt-4-turbo",
@@ -2205,7 +2105,7 @@
       "language-model",
       "coding"
     ],
-    "releaseDate": "2023-12-08"
+    "releaseDate": "2023-12-11"
   },
   {
     "id": "gemini-1-0-pro",
@@ -2229,6 +2129,31 @@
       "embedding"
     ],
     "releaseDate": "2024-01-25"
+  },
+  {
+    "id": "bge-m3",
+    "kind": "model",
+    "name": "BGE-M3",
+    "minPool": 1,
+    "provider": "BAAI",
+    "categories": [
+      "nlp",
+      "embedding",
+      "multilingual"
+    ],
+    "releaseDate": "2024-01-30"
+  },
+  {
+    "id": "deepseek-math-7b",
+    "kind": "model",
+    "name": "DeepSeekMath 7B",
+    "minPool": 2,
+    "provider": "DeepSeek",
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "releaseDate": "2024-02-05"
   },
   {
     "id": "nomic-embed-text-v1-5",
@@ -2309,8 +2234,7 @@
     "minPool": 1,
     "provider": "Cohere",
     "categories": [
-      "language-model",
-      "reranking"
+      "language-model"
     ],
     "releaseDate": "2024-04-04"
   },
@@ -2351,16 +2275,16 @@
     "releaseDate": "2024-04-18"
   },
   {
-    "id": "mistral-7b-instruct-v0-3",
+    "id": "phi-3-mini-128k-instruct",
     "kind": "model",
-    "name": "Mistral 7B Instruct v0.3",
-    "minPool": 1,
-    "provider": "Mistral AI",
+    "name": "Phi-3 Mini 128K Instruct",
+    "minPool": 2,
+    "provider": "Microsoft",
     "categories": [
       "language-model",
       "coding"
     ],
-    "releaseDate": "2024-05-07"
+    "releaseDate": "2024-04-23"
   },
   {
     "id": "gpt-4o",
@@ -2399,6 +2323,18 @@
     "releaseDate": "2024-05-21"
   },
   {
+    "id": "mistral-7b-instruct-v0-3",
+    "kind": "model",
+    "name": "Mistral 7B Instruct v0.3",
+    "minPool": 1,
+    "provider": "Mistral AI",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-05-22"
+  },
+  {
     "id": "aya-23-35b",
     "kind": "model",
     "name": "Aya 23 35B",
@@ -2434,16 +2370,17 @@
     "releaseDate": "2024-06-07"
   },
   {
-    "id": "phi-3-mini-128k-instruct",
+    "id": "florence-2-large",
     "kind": "model",
-    "name": "Phi-3 Mini 128K Instruct",
-    "minPool": 2,
+    "name": "Florence-2 Large",
+    "minPool": 1,
     "provider": "Microsoft",
     "categories": [
-      "language-model",
-      "coding"
+      "computer-vision",
+      "multimodal",
+      "object-detection"
     ],
-    "releaseDate": "2024-06-12"
+    "releaseDate": "2024-06-15"
   },
   {
     "id": "deepseek-coder-v2",
@@ -2454,19 +2391,6 @@
     "categories": [
       "language-model",
       "coding"
-    ],
-    "releaseDate": "2024-06-17"
-  },
-  {
-    "id": "florence-2-large",
-    "kind": "model",
-    "name": "Florence-2 Large",
-    "minPool": 1,
-    "provider": "Microsoft",
-    "categories": [
-      "computer-vision",
-      "multimodal",
-      "object-detection"
     ],
     "releaseDate": "2024-06-17"
   },
@@ -2575,8 +2499,7 @@
     "minPool": 0,
     "provider": "xAI",
     "categories": [
-      "language-model",
-      "multimodal"
+      "language-model"
     ],
     "releaseDate": "2024-08-13"
   },
@@ -2617,19 +2540,6 @@
     "releaseDate": "2024-09-05"
   },
   {
-    "id": "yolo11",
-    "kind": "model",
-    "name": "YOLO11",
-    "minPool": 0,
-    "provider": "Ultralytics",
-    "categories": [
-      "computer-vision",
-      "object-detection",
-      "segmentation"
-    ],
-    "releaseDate": "2024-09-10"
-  },
-  {
     "id": "qwen2-5-14b-instruct",
     "kind": "model",
     "name": "Qwen2.5 14B Instruct",
@@ -2657,6 +2567,18 @@
     "id": "qwen2-5-7b-instruct",
     "kind": "model",
     "name": "Qwen2.5 7B Instruct",
+    "minPool": 2,
+    "provider": "Alibaba",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-09-19"
+  },
+  {
+    "id": "qwen2-5-coder-7b",
+    "kind": "model",
+    "name": "Qwen2.5-Coder 7B",
     "minPool": 2,
     "provider": "Alibaba",
     "categories": [
@@ -2713,16 +2635,19 @@
     "releaseDate": "2024-09-25"
   },
   {
-    "id": "granite-3-1-8b-instruct",
+    "id": "yolo11",
     "kind": "model",
-    "name": "Granite 3.1 8B Instruct",
-    "minPool": 2,
-    "provider": "IBM",
+    "name": "YOLO11",
+    "minPool": 0,
+    "provider": "Ultralytics",
     "categories": [
-      "language-model",
-      "coding"
+      "computer-vision",
+      "object-detection",
+      "segmentation",
+      "image-classification",
+      "keypoint-detection"
     ],
-    "releaseDate": "2024-10-21"
+    "releaseDate": "2024-09-27"
   },
   {
     "id": "claude-3-5-haiku",
@@ -2737,22 +2662,21 @@
     "releaseDate": "2024-10-22"
   },
   {
+    "id": "aya-expanse-32b",
+    "kind": "model",
+    "name": "Aya Expanse 32B",
+    "minPool": 2,
+    "provider": "Cohere",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2024-10-24"
+  },
+  {
     "id": "qwen2-5-coder-32b",
     "kind": "model",
     "name": "Qwen2.5-Coder 32B",
     "minPool": 1,
-    "provider": "Alibaba",
-    "categories": [
-      "language-model",
-      "coding"
-    ],
-    "releaseDate": "2024-11-12"
-  },
-  {
-    "id": "qwen2-5-coder-7b",
-    "kind": "model",
-    "name": "Qwen2.5-Coder 7B",
-    "minPool": 2,
     "provider": "Alibaba",
     "categories": [
       "language-model",
@@ -2807,17 +2731,6 @@
     "releaseDate": "2024-12-03"
   },
   {
-    "id": "aya-expanse-32b",
-    "kind": "model",
-    "name": "Aya Expanse 32B",
-    "minPool": 2,
-    "provider": "Cohere",
-    "categories": [
-      "language-model"
-    ],
-    "releaseDate": "2024-12-03"
-  },
-  {
     "id": "o1",
     "kind": "model",
     "name": "o1",
@@ -2867,6 +2780,18 @@
     "releaseDate": "2024-12-12"
   },
   {
+    "id": "granite-3-1-8b-instruct",
+    "kind": "model",
+    "name": "Granite 3.1 8B Instruct",
+    "minPool": 2,
+    "provider": "IBM",
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "releaseDate": "2024-12-18"
+  },
+  {
     "id": "modernbert",
     "kind": "model",
     "name": "ModernBERT",
@@ -2891,6 +2816,30 @@
       "coding"
     ],
     "releaseDate": "2024-12-26"
+  },
+  {
+    "id": "bielik-11b-v3-0-instruct",
+    "kind": "model",
+    "name": "Bielik 11B v3.0 Instruct",
+    "minPool": 0,
+    "provider": "SpeakLeash / ACK Cyfronet AGH",
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "releaseDate": "2025"
+  },
+  {
+    "id": "grok-3",
+    "kind": "model",
+    "name": "Grok 3",
+    "minPool": 0,
+    "provider": "xAI",
+    "categories": [
+      "language-model"
+    ],
+    "releaseDate": "2025"
   },
   {
     "id": "codestral-25-01",
@@ -2940,19 +2889,7 @@
       "language-model",
       "coding"
     ],
-    "releaseDate": "2025-01-29"
-  },
-  {
-    "id": "grok-3",
-    "kind": "model",
-    "name": "Grok 3",
-    "minPool": 0,
-    "provider": "xAI",
-    "categories": [
-      "language-model",
-      "reasoning"
-    ],
-    "releaseDate": "2025-02-17"
+    "releaseDate": "2025-01-28"
   },
   {
     "id": "claude-3-7-sonnet",
@@ -3208,12 +3145,27 @@
     "kind": "model",
     "name": "PLLuM 12B NC",
     "minPool": 1,
-    "provider": "PLLuM",
+    "provider": "HIVE AI",
     "categories": [
       "language-model",
-      "nlp"
+      "nlp",
+      "multilingual"
     ],
-    "releaseDate": "2025-07-15"
+    "releaseDate": "2025-07-16"
+  },
+  {
+    "id": "claude-opus-4-1",
+    "kind": "model",
+    "name": "Claude Opus 4.1",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2025-08-05"
   },
   {
     "id": "gpt-oss-120b",
@@ -3346,16 +3298,18 @@
     "releaseDate": "2025-11-06"
   },
   {
-    "id": "bielik-11b-v3-0-instruct",
+    "id": "claude-opus-4-5",
     "kind": "model",
-    "name": "Bielik 11B v3.0 Instruct",
+    "name": "Claude Opus 4.5",
     "minPool": 0,
-    "provider": "SpeakLeash",
+    "provider": "Anthropic",
     "categories": [
       "language-model",
-      "nlp"
+      "multimodal",
+      "reasoning",
+      "coding"
     ],
-    "releaseDate": "2025-12-31"
+    "releaseDate": "2025-11-24"
   },
   {
     "id": "kimi-k2-5",
@@ -3384,6 +3338,20 @@
       "coding"
     ],
     "releaseDate": "2026-02-05"
+  },
+  {
+    "id": "claude-sonnet-4-6",
+    "kind": "model",
+    "name": "Claude Sonnet 4.6",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-02-17"
   },
   {
     "id": "gpt-5-4",
@@ -3420,6 +3388,20 @@
       "coding"
     ],
     "releaseDate": "2026-03-17"
+  },
+  {
+    "id": "claude-opus-4-7",
+    "kind": "model",
+    "name": "Claude Opus 4.7",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-04-16"
   },
   {
     "id": "kimi-k2-6",
@@ -3474,6 +3456,20 @@
     "releaseDate": "2026-05-28"
   },
   {
+    "id": "claude-fable-5",
+    "kind": "model",
+    "name": "Claude Fable 5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-06-09"
+  },
+  {
     "id": "kimi-k2-7-code",
     "kind": "model",
     "name": "Kimi K2.7 Code",
@@ -3509,6 +3505,8 @@
     "provider": "OpenAI",
     "categories": [
       "language-model",
+      "multimodal",
+      "reasoning",
       "coding"
     ],
     "releaseDate": "2026-07-09"
@@ -3521,6 +3519,8 @@
     "provider": "OpenAI",
     "categories": [
       "language-model",
+      "multimodal",
+      "reasoning",
       "coding"
     ],
     "releaseDate": "2026-07-09"
@@ -3533,6 +3533,8 @@
     "provider": "OpenAI",
     "categories": [
       "language-model",
+      "multimodal",
+      "reasoning",
       "coding"
     ],
     "releaseDate": "2026-07-09"
@@ -3552,9 +3554,23 @@
     "releaseDate": "2026-07-16"
   },
   {
+    "id": "claude-opus-5",
+    "kind": "model",
+    "name": "Claude Opus 5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-07-24"
+  },
+  {
     "id": "deepseek-v4-flash-0731",
     "kind": "model",
-    "name": "DeepSeek-V4-Flash",
+    "name": "DeepSeek-V4-Flash-0731",
     "minPool": 1,
     "provider": "DeepSeek",
     "categories": [
@@ -3563,5 +3579,117 @@
       "coding"
     ],
     "releaseDate": "2026-07-31"
+  },
+  {
+    "id": "gpt-5-6-cyber",
+    "kind": "model",
+    "name": "GPT-5.6 Cyber",
+    "minPool": 2,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-08-07"
+  },
+  {
+    "id": "claude-fable-5-1",
+    "kind": "model",
+    "name": "Claude Fable 5.1",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-01"
+  },
+  {
+    "id": "gpt-6-astra",
+    "kind": "model",
+    "name": "GPT-6 Astra",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-03"
+  },
+  {
+    "id": "claude-opus-5-5",
+    "kind": "model",
+    "name": "Claude Opus 5.5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-22"
+  },
+  {
+    "id": "gpt-6-luna",
+    "kind": "model",
+    "name": "GPT-6 Luna",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-22"
+  },
+  {
+    "id": "gpt-6-sol",
+    "kind": "model",
+    "name": "GPT-6 Sol",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-22"
+  },
+  {
+    "id": "claude-sonnet-5-5",
+    "kind": "model",
+    "name": "Claude Sonnet 5.5",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-28"
+  },
+  {
+    "id": "gpt-6-1-sol",
+    "kind": "model",
+    "name": "GPT-6.1 Sol",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "releaseDate": "2026-09-29"
   }
 ]

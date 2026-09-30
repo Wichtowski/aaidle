@@ -16,8 +16,8 @@ deployable service. Python and the local virtual environment are managed by
 [uv](https://docs.astral.sh/uv/).
 
 For frontend development, start
-`uv run --project aaidleLocalEditor python aaidleLocalEditor/backend/server.py`, then run
-`pnpm exec vite --config aaidleLocalEditor/frontend/vite.config.ts` in another terminal and open
+`uv run --project local_editor python local_editor/backend/server.py`, then run
+`pnpm exec vite --config local_editor/frontend/vite.config.ts` in another terminal and open
 <http://127.0.0.1:5174>.
 
 ## Workflow
@@ -52,5 +52,5 @@ explicitly before saving.
 Run tests with:
 
 ```bash
-uv run --project aaidleLocalEditor python -m unittest discover -s aaidleLocalEditor/backend/tests -v
+uv run --project local_editor python -m unittest discover -s local_editor/backend/tests -v
 ```

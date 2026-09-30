@@ -22,7 +22,7 @@ ai = AiService()
 
 
 class EditorHandler(BaseHTTPRequestHandler):
-    server_version = "aAIdleLocalEditor/1.0"
+    server_version = "local_editor/1.0"
 
     def do_GET(self) -> None:  # noqa: N802
         try:
@@ -131,7 +131,7 @@ class EditorHandler(BaseHTTPRequestHandler):
             candidate = FRONTEND_DIST / "index.html"
         if not candidate.is_file():
             raise EditorError(
-                "Frontend is not built. Run pnpm --dir aaidleLocalEditor/frontend build.", status=503
+                "Frontend is not built. Run pnpm --dir local_editor/frontend build.", status=503
             )
         content = candidate.read_bytes()
         self.send_response(HTTPStatus.OK)

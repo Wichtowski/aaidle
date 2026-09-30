@@ -6,23 +6,45 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "4", "o"],
-    "aliases": ["GPT 4o", "4o", "ChatGPT 4o"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "audio"],
-    "outputModalities": ["text", "audio"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "GPT",
+      "4",
+      "o"
+    ],
+    "aliases": [
+      "GPT 4o",
+      "4o",
+      "ChatGPT 4o"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-05-13",
-    "reasoningSupport": "optional",
+    "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -33,23 +55,42 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "4.1"],
-    "aliases": ["GPT 4 1"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "GPT",
+      "4.1"
+    ],
+    "aliases": [
+      "GPT 4 1"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-04-14",
     "reasoningSupport": "no",
-    "contextWindowTokens": 1000000,
+    "contextWindowTokens": 1047576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -60,12 +101,31 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "o", "3"],
-    "aliases": ["OpenAI o3"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["mathematics", "coding", "research"],
+    "family": [
+      "GPT",
+      "o",
+      "3"
+    ],
+    "aliases": [
+      "OpenAI o3"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "mathematics",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-04-16",
@@ -73,8 +133,8 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -86,12 +146,31 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "3.7", "Sonnet"],
-    "aliases": ["Claude Sonnet 3.7"],
-    "categories": ["language-model", "multimodal", "reasoning"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Claude",
+      "3.7",
+      "Sonnet"
+    ],
+    "aliases": [
+      "Claude Sonnet 3.7"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-02-24",
@@ -99,7 +178,7 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -112,20 +191,39 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Sonnet", "4"],
-    "aliases": ["Sonnet 4"],
-    "categories": ["language-model", "multimodal", "reasoning"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Claude",
+      "Sonnet",
+      "4"
+    ],
+    "aliases": [
+      "Sonnet 4"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-05-22",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -138,20 +236,39 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Opus", "4"],
-    "aliases": ["Opus 4"],
-    "categories": ["language-model", "multimodal", "reasoning"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["coding", "research", "general"],
+    "family": [
+      "Claude",
+      "Opus",
+      "4"
+    ],
+    "aliases": [
+      "Opus 4"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "research",
+      "general"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-05-22",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -164,20 +281,42 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Google",
-    "family": ["Gemini", "2.5", "Pro"],
-    "aliases": ["Gemini Pro 2.5"],
-    "categories": ["language-model", "multimodal", "reasoning"],
-    "inputModalities": ["text", "image", "audio", "video", "files"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Gemini",
+      "2.5",
+      "Pro"
+    ],
+    "aliases": [
+      "Gemini Pro 2.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio",
+      "video",
+      "files"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-03-25",
     "reasoningSupport": "native",
-    "contextWindowTokens": 1000000,
+    "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -190,20 +329,42 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Google",
-    "family": ["Gemini", "2.5", "Flash"],
-    "aliases": ["Gemini Flash 2.5"],
-    "categories": ["language-model", "multimodal", "reasoning"],
-    "inputModalities": ["text", "image", "audio", "video", "files"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Gemini",
+      "2.5",
+      "Flash"
+    ],
+    "aliases": [
+      "Gemini Flash 2.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio",
+      "video",
+      "files"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-04-17",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 1000000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -216,12 +377,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["Gemma", "3", "27B"],
-    "aliases": ["Gemma3 27B"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Gemma",
+      "3",
+      "27B"
+    ],
+    "aliases": [
+      "Gemma3 27B"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-03-12",
@@ -229,7 +407,7 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": true
       }
@@ -242,12 +420,30 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Meta",
-    "family": ["Llama", "4", "Maverick"],
-    "aliases": ["Llama4 Maverick"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Llama",
+      "4",
+      "Maverick"
+    ],
+    "aliases": [
+      "Llama4 Maverick"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2025-04-05",
@@ -255,7 +451,20 @@
     "contextWindowTokens": 1000000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "arabic",
+          "english",
+          "french",
+          "german",
+          "hindi",
+          "indonesian",
+          "italian",
+          "portuguese",
+          "spanish",
+          "tagalog",
+          "thai",
+          "vietnamese"
+        ],
         "toolUse": null,
         "multimodal": true
       }
@@ -268,12 +477,29 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Meta",
-    "family": ["Llama", "3.3", "70B", "Instruct"],
-    "aliases": ["Llama 3.3 70B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Llama",
+      "3.3",
+      "70B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.3 70B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-12-06",
@@ -281,8 +507,17 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -294,20 +529,51 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Mistral AI",
-    "family": ["Mistral", "Large", "2"],
-    "aliases": ["Mistral Large"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "closed",
+    "family": [
+      "Mistral",
+      "Large",
+      "2"
+    ],
+    "aliases": [
+      "Mistral Large"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "restricted",
     "country": "France",
     "releaseDate": "2024-07-24",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "french",
+          "german",
+          "spanish",
+          "italian",
+          "portuguese",
+          "chinese",
+          "japanese",
+          "korean",
+          "dutch",
+          "polish",
+          "arabic",
+          "hindi",
+          "russian"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -320,20 +586,39 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Mistral AI",
-    "family": ["Mistral", "Small", "3.1"],
-    "aliases": ["Mistral Small 3.1"],
-    "categories": ["language-model", "multimodal", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Mistral",
+      "Small",
+      "3.1"
+    ],
+    "aliases": [
+      "Mistral Small 3.1"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2025-03-17",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -346,12 +631,29 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "V3"],
-    "aliases": ["DeepSeek V3"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "DeepSeek",
+      "V3"
+    ],
+    "aliases": [
+      "DeepSeek V3"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-12-26",
@@ -359,7 +661,10 @@
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -372,20 +677,40 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "R1"],
-    "aliases": ["DeepSeek R1"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["mathematics", "coding", "research"],
-    "weightAvailability": "restricted",
+    "family": [
+      "DeepSeek",
+      "R1"
+    ],
+    "aliases": [
+      "DeepSeek R1"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "mathematics",
+      "coding",
+      "research"
+    ],
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-01-20",
     "reasoningSupport": "native",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -394,26 +719,40 @@
   {
     "id": "grok-3",
     "name": "Grok 3",
-    "modelClass": "multimodal",
+    "modelClass": "decoder_llm",
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "xAI",
-    "family": ["Grok", "3"],
-    "aliases": ["Grok3"],
-    "categories": ["language-model", "reasoning"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Grok",
+      "3"
+    ],
+    "aliases": [
+      "Grok3"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2025-02-17",
-    "reasoningSupport": "native",
+    "releaseDate": "2025",
+    "reasoningSupport": "no",
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
-        "multimodal": true
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
       }
     }
   },
@@ -424,20 +763,37 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "Max"],
-    "aliases": ["Qwen 2.5 Max"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
-    "weightAvailability": "open",
+    "family": [
+      "Qwen",
+      "2.5",
+      "Max"
+    ],
+    "aliases": [
+      "Qwen 2.5 Max"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
+    "weightAvailability": "closed",
     "country": "China",
-    "releaseDate": "2025-01-29",
+    "releaseDate": "2025-01-28",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": false
       }
@@ -450,21 +806,46 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Alibaba",
-    "family": ["Qwen", "3", "32B"],
-    "aliases": ["Qwen 3 32B"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Qwen",
+      "3",
+      "32B"
+    ],
+    "aliases": [
+      "Qwen 3 32B"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-04-29",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -476,12 +857,28 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Cohere",
-    "family": ["Command", "A"],
-    "aliases": ["Cohere Command A"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Command",
+      "A"
+    ],
+    "aliases": [
+      "Cohere Command A"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "restricted",
     "country": "Canada",
     "releaseDate": "2025-03-13",
@@ -526,21 +923,47 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Cohere",
-    "family": ["Command", "R+"],
-    "aliases": ["Command R Plus"],
-    "categories": ["language-model", "reranking"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "search", "research"],
-    "weightAvailability": "open",
+    "family": [
+      "Command",
+      "R+"
+    ],
+    "aliases": [
+      "Command R Plus"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "search",
+      "research"
+    ],
+    "weightAvailability": "restricted",
     "country": "Canada",
     "releaseDate": "2024-04-04",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "french",
+          "spanish",
+          "italian",
+          "german",
+          "portuguese",
+          "japanese",
+          "korean",
+          "arabic",
+          "chinese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -552,12 +975,28 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Microsoft",
-    "family": ["Phi", "4"],
-    "aliases": ["Phi 4"],
-    "categories": ["language-model", "reasoning"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "mathematics", "coding"],
+    "family": [
+      "Phi",
+      "4"
+    ],
+    "aliases": [
+      "Phi 4"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "mathematics",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-12-12",
@@ -565,7 +1004,9 @@
     "contextWindowTokens": 16384,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -578,20 +1019,64 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Microsoft",
-    "family": ["Phi", "4", "multimodal", "instruct"],
-    "aliases": ["Phi 4 multimodal"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "audio"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision", "speech-to-text"],
+    "family": [
+      "Phi",
+      "4",
+      "multimodal",
+      "instruct"
+    ],
+    "aliases": [
+      "Phi 4 multimodal"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "speech-to-text"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-02-26",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "arabic",
+          "chinese",
+          "czech",
+          "danish",
+          "dutch",
+          "english",
+          "finnish",
+          "french",
+          "german",
+          "hebrew",
+          "hungarian",
+          "italian",
+          "japanese",
+          "korean",
+          "norwegian",
+          "polish",
+          "portuguese",
+          "russian",
+          "spanish",
+          "swedish",
+          "thai",
+          "turkish",
+          "ukrainian"
+        ],
         "toolUse": null,
         "multimodal": true
       }
@@ -604,12 +1089,30 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Amazon",
-    "family": ["Nova", "Pro"],
-    "aliases": ["Nova Pro"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Nova",
+      "Pro"
+    ],
+    "aliases": [
+      "Nova Pro"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-12-03",
@@ -617,8 +1120,18 @@
     "contextWindowTokens": 300000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "spanish",
+          "italian",
+          "portuguese",
+          "japanese",
+          "hindi",
+          "arabic"
+        ],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -630,21 +1143,48 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Amazon",
-    "family": ["Nova", "Lite"],
-    "aliases": ["Nova Lite"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "Nova",
+      "Lite"
+    ],
+    "aliases": [
+      "Nova Lite"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-12-03",
     "reasoningSupport": "no",
     "contextWindowTokens": 300000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "spanish",
+          "italian",
+          "portuguese",
+          "japanese",
+          "hindi",
+          "arabic"
+        ],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -656,21 +1196,51 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "IBM",
-    "family": ["Granite", "3.3", "8B", "Instruct"],
-    "aliases": ["Granite 3.3"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Granite",
+      "3.3",
+      "8B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Granite 3.3"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-04-16",
-    "reasoningSupport": "no",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "spanish",
+          "french",
+          "japanese",
+          "portuguese",
+          "arabic",
+          "czech",
+          "italian",
+          "korean",
+          "dutch",
+          "chinese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -682,17 +1252,32 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Cohere",
-    "family": ["Aya", "Expanse", "32B"],
-    "aliases": ["Aya 32B"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "creative-writing"],
+    "family": [
+      "Aya",
+      "Expanse",
+      "32B"
+    ],
+    "aliases": [
+      "Aya 32B"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "creative-writing"
+    ],
     "weightAvailability": "restricted",
     "country": "Canada",
-    "releaseDate": "2024-12-03",
+    "releaseDate": "2024-10-24",
     "reasoningSupport": "no",
-    "contextWindowTokens": 8192,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
         "supportedLanguages": [
@@ -732,23 +1317,43 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "4o", "mini"],
-    "aliases": ["GPT 4o mini"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "GPT",
+      "4o",
+      "mini"
+    ],
+    "aliases": [
+      "GPT 4o mini"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-07-18",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -759,20 +1364,40 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Google",
-    "family": ["Gemini", "2.0", "Flash"],
-    "aliases": ["Gemini Flash 2"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "audio", "video"],
-    "outputModalities": ["text", "audio"],
-    "useCases": ["general", "vision", "speech-to-text"],
+    "family": [
+      "Gemini",
+      "2.0",
+      "Flash"
+    ],
+    "aliases": [
+      "Gemini Flash 2"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "speech-to-text"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-12-11",
     "reasoningSupport": "no",
-    "contextWindowTokens": 1000000,
+    "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -785,20 +1410,47 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Mistral AI",
-    "family": ["Mistral", "Nemo"],
-    "aliases": ["Mistral-Nemo"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Mistral",
+      "Nemo"
+    ],
+    "aliases": [
+      "Mistral-Nemo"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2024-07-18",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "french",
+          "german",
+          "spanish",
+          "italian",
+          "portuguese",
+          "chinese",
+          "japanese",
+          "korean",
+          "arabic",
+          "hindi"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -811,12 +1463,31 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["Llama", "3.2", "11B", "Vision", "Instruct"],
-    "aliases": ["Llama 3.2 Vision"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision"],
+    "family": [
+      "Llama",
+      "3.2",
+      "11B",
+      "Vision",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.2 Vision"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-09-25",
@@ -824,7 +1495,16 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
         "toolUse": null,
         "multimodal": true
       }
@@ -837,12 +1517,31 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "3.5", "Sonnet"],
-    "aliases": ["Claude Sonnet 3.5"],
-    "categories": ["language-model", "multimodal", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Claude",
+      "3.5",
+      "Sonnet"
+    ],
+    "aliases": [
+      "Claude Sonnet 3.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-06-20",
@@ -850,7 +1549,7 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -863,20 +1562,41 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Google",
-    "family": ["Gemini", "1.5", "Pro"],
-    "aliases": ["Gemini Pro 1.5"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "audio", "video", "files"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
+    "family": [
+      "Gemini",
+      "1.5",
+      "Pro"
+    ],
+    "aliases": [
+      "Gemini Pro 1.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio",
+      "video",
+      "files"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-02-15",
     "reasoningSupport": "no",
-    "contextWindowTokens": 2000000,
+    "contextWindowTokens": 2097152,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -889,12 +1609,30 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Meta",
-    "family": ["Llama", "3.1", "405B", "Instruct"],
-    "aliases": ["Llama 3.1 405B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Llama",
+      "3.1",
+      "405B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.1 405B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-07-23",
@@ -902,8 +1640,17 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -915,12 +1662,28 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Mistral AI",
-    "family": ["Mixtral", "8x22B", "Instruct"],
-    "aliases": ["Mixtral 8x22B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Mixtral",
+      "8x22B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Mixtral 8x22B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "France",
     "releaseDate": "2024-04-17",
@@ -928,7 +1691,13 @@
     "contextWindowTokens": 65536,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "french",
+          "italian",
+          "german",
+          "spanish"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -941,20 +1710,37 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Mistral AI",
-    "family": ["Mistral", "7B", "Instruct", "v0.3"],
-    "aliases": ["Mistral 7B v0.3"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Mistral",
+      "7B",
+      "Instruct",
+      "v0.3"
+    ],
+    "aliases": [
+      "Mistral 7B v0.3"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2024-05-07",
+    "releaseDate": "2024-05-22",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false
       }
@@ -967,21 +1753,40 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "V2.5"],
-    "aliases": ["DeepSeek V2.5"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
-    "weightAvailability": "open",
+    "family": [
+      "DeepSeek",
+      "V2.5"
+    ],
+    "aliases": [
+      "DeepSeek V2.5"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
+    "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-09-05",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -993,12 +1798,30 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "72B", "Instruct"],
-    "aliases": ["Qwen 2.5 72B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Qwen",
+      "2.5",
+      "72B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Qwen 2.5 72B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-09-19",
@@ -1006,7 +1829,21 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "chinese",
+          "english",
+          "french",
+          "spanish",
+          "portuguese",
+          "german",
+          "italian",
+          "russian",
+          "japanese",
+          "korean",
+          "vietnamese",
+          "thai",
+          "arabic"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1019,21 +1856,48 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Cohere",
-    "family": ["Command", "R"],
-    "aliases": ["Cohere Command R"],
-    "categories": ["language-model", "reranking"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "search", "research"],
-    "weightAvailability": "open",
+    "family": [
+      "Command",
+      "R"
+    ],
+    "aliases": [
+      "Cohere Command R"
+    ],
+    "categories": [
+      "language-model",
+      "reranking"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "search",
+      "research"
+    ],
+    "weightAvailability": "restricted",
     "country": "Canada",
     "releaseDate": "2024-03-11",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "french",
+          "spanish",
+          "italian",
+          "german",
+          "portuguese",
+          "japanese",
+          "korean",
+          "arabic",
+          "chinese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -1045,20 +1909,41 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Microsoft",
-    "family": ["Phi", "3", "Medium", "128K", "Instruct"],
-    "aliases": ["Phi 3 Medium"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Phi",
+      "3",
+      "Medium",
+      "128K",
+      "Instruct"
+    ],
+    "aliases": [
+      "Phi 3 Medium"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-05-21",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1071,12 +1956,25 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Amazon",
-    "family": ["Nova", "Micro"],
-    "aliases": ["Nova Micro"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
+    "family": [
+      "Nova",
+      "Micro"
+    ],
+    "aliases": [
+      "Nova Micro"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-12-03",
@@ -1084,8 +1982,18 @@
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "spanish",
+          "italian",
+          "portuguese",
+          "japanese",
+          "hindi",
+          "arabic"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -1097,12 +2005,30 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "4", "Turbo"],
-    "aliases": ["GPT 4 Turbo"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "GPT",
+      "4",
+      "Turbo"
+    ],
+    "aliases": [
+      "GPT 4 Turbo"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2023-11-06",
@@ -1110,10 +2036,12 @@
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1124,12 +2052,28 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "4"],
-    "aliases": ["GPT 4"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "GPT",
+      "4"
+    ],
+    "aliases": [
+      "GPT 4"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2023-03-14",
@@ -1137,10 +2081,12 @@
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": false,
         "multimodal": false,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1151,23 +2097,41 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "3.5", "Turbo"],
-    "aliases": ["GPT 3.5"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "GPT",
+      "3.5",
+      "Turbo"
+    ],
+    "aliases": [
+      "GPT 3.5"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
-    "releaseDate": "2022-11-30",
+    "releaseDate": "2023-03-01",
     "reasoningSupport": "no",
     "contextWindowTokens": 16385,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": false,
         "multimodal": false,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1178,12 +2142,30 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["o-series", "o1"],
-    "aliases": ["OpenAI o1"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["mathematics", "coding", "research"],
+    "family": [
+      "o-series",
+      "o1"
+    ],
+    "aliases": [
+      "OpenAI o1"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "mathematics",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-12-05",
@@ -1191,8 +2173,8 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -1204,12 +2186,31 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["o-series", "o4", "mini"],
-    "aliases": ["OpenAI o4 mini"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["mathematics", "coding", "research"],
+    "family": [
+      "o-series",
+      "o4",
+      "mini"
+    ],
+    "aliases": [
+      "OpenAI o4 mini"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "mathematics",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-04-16",
@@ -1217,8 +2218,8 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -1230,12 +2231,30 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Anthropic",
-    "family": ["Claude", "3", "Opus"],
-    "aliases": ["Claude Opus 3"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Claude",
+      "3",
+      "Opus"
+    ],
+    "aliases": [
+      "Claude Opus 3"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-03-04",
@@ -1243,7 +2262,12 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "spanish",
+          "japanese",
+          "french"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -1256,12 +2280,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Anthropic",
-    "family": ["Claude", "3", "Sonnet"],
-    "aliases": ["Claude Sonnet 3"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Claude",
+      "3",
+      "Sonnet"
+    ],
+    "aliases": [
+      "Claude Sonnet 3"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-03-04",
@@ -1269,7 +2310,12 @@
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "spanish",
+          "japanese",
+          "french"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -1282,20 +2328,41 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Anthropic",
-    "family": ["Claude", "3", "Haiku"],
-    "aliases": ["Claude Haiku 3"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
-    "weightAvailability": "open",
+    "family": [
+      "Claude",
+      "3",
+      "Haiku"
+    ],
+    "aliases": [
+      "Claude Haiku 3"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-03-13",
     "reasoningSupport": "no",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "spanish",
+          "japanese",
+          "french"
+        ],
         "toolUse": true,
         "multimodal": true
       }
@@ -1308,20 +2375,37 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Anthropic",
-    "family": ["Claude", "3.5", "Haiku"],
-    "aliases": ["Claude Haiku 3.5"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Claude",
+      "3.5",
+      "Haiku"
+    ],
+    "aliases": [
+      "Claude Haiku 3.5"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-10-22",
     "reasoningSupport": "no",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -1334,20 +2418,41 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Google",
-    "family": ["Gemini", "1.5", "Flash"],
-    "aliases": ["Gemini Flash 1.5"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "audio", "video", "files"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "Gemini",
+      "1.5",
+      "Flash"
+    ],
+    "aliases": [
+      "Gemini Flash 1.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "audio",
+      "video",
+      "files"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2024-05-14",
     "reasoningSupport": "no",
-    "contextWindowTokens": 1000000,
+    "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -1360,20 +2465,34 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["Gemini", "1.0", "Pro"],
-    "aliases": ["Gemini Pro"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Gemini",
+      "1.0",
+      "Pro"
+    ],
+    "aliases": [
+      "Gemini Pro"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2023-12-13",
     "reasoningSupport": "no",
-    "contextWindowTokens": 32760,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false
       }
@@ -1386,12 +2505,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["Gemma", "2", "27B", "IT"],
-    "aliases": ["Gemma 2 27B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Gemma",
+      "2",
+      "27B",
+      "IT"
+    ],
+    "aliases": [
+      "Gemma 2 27B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-06-27",
@@ -1399,7 +2535,9 @@
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1412,12 +2550,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Llama", "3", "70B", "Instruct"],
-    "aliases": ["Llama 3 70B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Llama",
+      "3",
+      "70B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3 70B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-04-18",
@@ -1425,7 +2580,9 @@
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1438,12 +2595,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Llama", "3", "8B", "Instruct"],
-    "aliases": ["Llama 3 8B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Llama",
+      "3",
+      "8B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3 8B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-04-18",
@@ -1451,7 +2625,9 @@
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1464,12 +2640,27 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Llama", "2", "70B", "Chat"],
-    "aliases": ["Llama 2 70B"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
+    "family": [
+      "Llama",
+      "2",
+      "70B",
+      "Chat"
+    ],
+    "aliases": [
+      "Llama 2 70B"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2023-07-18",
@@ -1477,7 +2668,9 @@
     "contextWindowTokens": 4096,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1490,21 +2683,43 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Mistral AI",
-    "family": ["Mixtral", "8x7B", "Instruct"],
-    "aliases": ["Mixtral 8x7B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Mixtral",
+      "8x7B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Mixtral 8x7B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "France",
-    "releaseDate": "2023-12-08",
+    "releaseDate": "2023-12-11",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": true,
+        "supportedLanguages": [
+          "english",
+          "french",
+          "italian",
+          "german",
+          "spanish"
+        ],
+        "toolUse": null,
         "multimodal": false
       }
     }
@@ -1516,20 +2731,38 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Mistral AI",
-    "family": ["Mistral", "Medium", "3"],
-    "aliases": ["Mistral Medium"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "Mistral",
+      "Medium",
+      "3"
+    ],
+    "aliases": [
+      "Mistral Medium"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "vision"
+    ],
+    "weightAvailability": "closed",
     "country": "France",
     "releaseDate": "2025-05-07",
     "reasoningSupport": "no",
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -1542,20 +2775,34 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Mistral AI",
-    "family": ["Codestral", "25.01"],
-    "aliases": ["Codestral"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Codestral",
+      "25.01"
+    ],
+    "aliases": [
+      "Codestral"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "France",
     "releaseDate": "2025-01-13",
     "reasoningSupport": "no",
     "contextWindowTokens": 256000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": false
       }
@@ -1568,12 +2815,27 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "Coder", "V2"],
-    "aliases": ["DeepSeek Coder V2"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding"],
+    "family": [
+      "DeepSeek",
+      "Coder",
+      "V2"
+    ],
+    "aliases": [
+      "DeepSeek Coder V2"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-06-17",
@@ -1581,7 +2843,10 @@
     "contextWindowTokens": 128000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1594,20 +2859,38 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "Math", "7B"],
-    "aliases": ["DeepSeek Math"],
-    "categories": ["language-model", "reasoning"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["mathematics"],
+    "family": [
+      "DeepSeek",
+      "Math",
+      "7B"
+    ],
+    "aliases": [
+      "DeepSeek Math"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "mathematics"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
-    "releaseDate": "2023-11-02",
+    "releaseDate": "2024-02-05",
     "reasoningSupport": "no",
     "contextWindowTokens": 4096,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1616,26 +2899,40 @@
   {
     "id": "grok-2",
     "name": "Grok 2",
-    "modelClass": "multimodal",
+    "modelClass": "decoder_llm",
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "xAI",
-    "family": ["Grok", "2"],
-    "aliases": ["Grok-2"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "Grok",
+      "2"
+    ],
+    "aliases": [
+      "Grok-2"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-08-13",
     "reasoningSupport": "no",
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
-        "multimodal": true
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": false
       }
     }
   },
@@ -1646,20 +2943,33 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "xAI",
-    "family": ["Grok", "1"],
-    "aliases": ["Grok 1"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
+    "family": [
+      "Grok",
+      "1"
+    ],
+    "aliases": [
+      "Grok 1"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-11-04",
+    "releaseDate": "2023-11-03",
     "reasoningSupport": "no",
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": false
       }
@@ -1672,12 +2982,32 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Alibaba",
-    "family": ["Qwen", "2", "VL", "72B", "Instruct"],
-    "aliases": ["Qwen2 VL 72B"],
-    "categories": ["language-model", "multimodal"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision"],
+    "family": [
+      "Qwen",
+      "2",
+      "VL",
+      "72B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Qwen2 VL 72B"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-08-29",
@@ -1685,7 +3015,14 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "japanese",
+          "korean",
+          "arabic",
+          "vietnamese"
+        ],
         "toolUse": null,
         "multimodal": true
       }
@@ -1698,12 +3035,29 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2", "72B", "Instruct"],
-    "aliases": ["Qwen 2 72B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Qwen",
+      "2",
+      "72B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Qwen 2 72B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2024-06-07",
@@ -1711,7 +3065,14 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1724,20 +3085,35 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Cohere",
-    "family": ["Command", "Light"],
-    "aliases": ["Cohere Command Light"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
-    "weightAvailability": "open",
+    "family": [
+      "Command",
+      "Light"
+    ],
+    "aliases": [
+      "Cohere Command Light"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
+    "weightAvailability": "closed",
     "country": "Canada",
-    "releaseDate": "2023-09-27",
+    "releaseDate": null,
     "reasoningSupport": "no",
     "contextWindowTokens": 4096,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1750,12 +3126,27 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Cohere",
-    "family": ["Aya", "23", "35B"],
-    "aliases": ["Aya 23"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "creative-writing"],
+    "family": [
+      "Aya",
+      "23",
+      "35B"
+    ],
+    "aliases": [
+      "Aya 23"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "creative-writing"
+    ],
     "weightAvailability": "restricted",
     "country": "Canada",
     "releaseDate": "2024-05-23",
@@ -1763,7 +3154,31 @@
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "french",
+          "spanish",
+          "italian",
+          "german",
+          "portuguese",
+          "japanese",
+          "korean",
+          "chinese",
+          "arabic",
+          "russian",
+          "polish",
+          "turkish",
+          "vietnamese",
+          "dutch",
+          "czech",
+          "indonesian",
+          "ukrainian",
+          "romanian",
+          "greek",
+          "hindi",
+          "hebrew",
+          "persian"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1776,20 +3191,41 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Microsoft",
-    "family": ["Phi", "3", "Mini", "128K", "Instruct"],
-    "aliases": ["Phi 3 Mini"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Phi",
+      "3",
+      "Mini",
+      "128K",
+      "Instruct"
+    ],
+    "aliases": [
+      "Phi 3 Mini"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-06-12",
+    "releaseDate": "2024-04-23",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1802,20 +3238,61 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Microsoft",
-    "family": ["Phi", "3.5", "Mini", "Instruct"],
-    "aliases": ["Phi 3.5 Mini"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Phi",
+      "3.5",
+      "Mini",
+      "Instruct"
+    ],
+    "aliases": [
+      "Phi 3.5 Mini"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-08-20",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "arabic",
+          "chinese",
+          "czech",
+          "danish",
+          "dutch",
+          "english",
+          "finnish",
+          "french",
+          "german",
+          "hebrew",
+          "hungarian",
+          "italian",
+          "japanese",
+          "korean",
+          "norwegian",
+          "polish",
+          "portuguese",
+          "russian",
+          "spanish",
+          "swedish",
+          "thai",
+          "turkish",
+          "ukrainian"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -1828,21 +3305,51 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "IBM",
-    "family": ["Granite", "3.1", "8B", "Instruct"],
-    "aliases": ["Granite 3.1"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Granite",
+      "3.1",
+      "8B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Granite 3.1"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-10-21",
+    "releaseDate": "2024-12-18",
     "reasoningSupport": "no",
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "spanish",
+          "french",
+          "japanese",
+          "portuguese",
+          "arabic",
+          "czech",
+          "italian",
+          "korean",
+          "dutch",
+          "chinese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -1854,22 +3361,44 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5"],
-    "aliases": ["GPT-5"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "mathematics"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5"
+    ],
+    "aliases": [
+      "GPT-5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "mathematics"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "architecture": ["generative-pre-trained-transformer"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ],
+        "toolUse": true,
         "multimodal": true
       }
     }
@@ -1881,23 +3410,42 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5", "mini"],
-    "aliases": ["GPT 5 mini"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5",
+      "mini"
+    ],
+    "aliases": [
+      "GPT 5 mini"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1908,23 +3456,43 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "OpenAI",
-    "family": ["GPT", "5", "nano"],
-    "aliases": ["GPT 5 nano"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding", "classification", "general"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5",
+      "nano"
+    ],
+    "aliases": [
+      "GPT 5 nano"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "classification",
+      "general"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1935,23 +3503,42 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5", "Pro"],
-    "aliases": ["GPT 5 Pro"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5",
+      "Pro"
+    ],
+    "aliases": [
+      "GPT 5 Pro"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-08-07",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1962,23 +3549,41 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.4"],
-    "aliases": ["GPT-5.4"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.4"
+    ],
+    "aliases": [
+      "GPT-5.4"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-03-05",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 400000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -1989,23 +3594,41 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.4", "mini"],
-    "aliases": ["GPT-5.4 mini"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.4",
+      "mini"
+    ],
+    "aliases": [
+      "GPT-5.4 mini"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2016,23 +3639,42 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "OpenAI",
-    "family": ["GPT", "5.4", "nano"],
-    "aliases": ["GPT-5.4 nano"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding", "classification", "general"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.4",
+      "nano"
+    ],
+    "aliases": [
+      "GPT-5.4 nano"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "classification",
+      "general"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-03-17",
     "reasoningSupport": "native",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2043,23 +3685,40 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.5"],
-    "aliases": ["GPT-5.5"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.5"
+    ],
+    "aliases": [
+      "GPT-5.5"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-04-23",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 400000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2070,23 +3729,46 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.6", "Sol"],
-    "aliases": ["GPT-5.6 Sol"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.6",
+      "Sol"
+    ],
+    "aliases": [
+      "GPT-5.6 Sol",
+      "GPT-5.6",
+      "GPT 5.6"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-07-09",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 400000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2097,23 +3779,44 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.6", "Terra"],
-    "aliases": ["GPT-5.6 Terra"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.6",
+      "Terra"
+    ],
+    "aliases": [
+      "GPT-5.6 Terra"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-07-09",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 400000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2124,23 +3827,285 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "OpenAI",
-    "family": ["GPT", "5.6", "Luna"],
-    "aliases": ["GPT-5.6 Luna"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding", "classification", "general"],
-    "weightAvailability": "restricted",
+    "family": [
+      "GPT",
+      "5.6",
+      "Luna"
+    ],
+    "aliases": [
+      "GPT-5.6 Luna"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "classification",
+      "general"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-07-09",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gpt-5-6-cyber",
+    "name": "GPT-5.6 Cyber",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 2,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "5.6",
+      "Cyber"
+    ],
+    "aliases": [
+      "GPT 5.6 Cyber"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "cybersecurity",
+      "coding",
+      "research"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-08-07",
     "contextWindowTokens": 400000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [],
+        "toolUse": true,
         "multimodal": true,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gpt-6-astra",
+    "name": "GPT-6 Astra",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "6",
+      "Astra"
+    ],
+    "aliases": [
+      "GPT 6 Astra"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-03",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1050000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gpt-6-sol",
+    "name": "GPT-6 Sol",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "6",
+      "Sol"
+    ],
+    "aliases": [
+      "GPT 6 Sol"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-22",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gpt-6-luna",
+    "name": "GPT-6 Luna",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "6",
+      "Luna"
+    ],
+    "aliases": [
+      "GPT 6 Luna"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-22",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1050000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
+      }
+    }
+  },
+  {
+    "id": "gpt-6-1-sol",
+    "name": "GPT-6.1 Sol",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "OpenAI",
+    "family": [
+      "GPT",
+      "6.1",
+      "Sol"
+    ],
+    "aliases": [
+      "GPT 6.1 Sol"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-29",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1050000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true,
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2151,20 +4116,40 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Opus", "4.6"],
-    "aliases": ["Claude Opus 4.6"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research"],
+    "family": [
+      "Claude",
+      "Opus",
+      "4.6"
+    ],
+    "aliases": [
+      "Claude Opus 4.6"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-02-05",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 200000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2177,20 +4162,39 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Sonnet", "4.5"],
-    "aliases": ["Claude Sonnet 4.5"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Claude",
+      "Sonnet",
+      "4.5"
+    ],
+    "aliases": [
+      "Claude Sonnet 4.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-09-29",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2203,20 +4207,39 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Anthropic",
-    "family": ["Claude", "Haiku", "4.5"],
-    "aliases": ["Claude Haiku 4.5"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Claude",
+      "Haiku",
+      "4.5"
+    ],
+    "aliases": [
+      "Claude Haiku 4.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2025-10-15",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2229,20 +4252,39 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Opus", "4.8"],
-    "aliases": ["Claude Opus 4.8"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
-    "weightAvailability": "open",
+    "family": [
+      "Claude",
+      "Opus",
+      "4.8"
+    ],
+    "aliases": [
+      "Claude Opus 4.8"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-05-28",
-    "reasoningSupport": "native",
-    "contextWindowTokens": 200000,
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2255,20 +4297,444 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Anthropic",
-    "family": ["Claude", "Sonnet", "5"],
-    "aliases": ["Claude Sonnet 5"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Claude",
+      "Sonnet",
+      "5"
+    ],
+    "aliases": [
+      "Claude Sonnet 5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "closed",
     "country": "United States",
     "releaseDate": "2026-06-30",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-opus-4-1",
+    "name": "Claude Opus 4.1",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Opus",
+      "4.1"
+    ],
+    "aliases": [
+      "Claude Opus 4.1"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2025-08-05",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 200000,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-opus-4-5",
+    "name": "Claude Opus 4.5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Opus",
+      "4.5"
+    ],
+    "aliases": [
+      "Claude Opus 4.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2025-11-24",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 200000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-sonnet-4-6",
+    "name": "Claude Sonnet 4.6",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Sonnet",
+      "4.6"
+    ],
+    "aliases": [
+      "Claude Sonnet 4.6"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-02-17",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-opus-4-7",
+    "name": "Claude Opus 4.7",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Opus",
+      "4.7"
+    ],
+    "aliases": [
+      "Claude Opus 4.7"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-04-16",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-fable-5",
+    "name": "Claude Fable 5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Fable",
+      "5"
+    ],
+    "aliases": [
+      "Claude Fable 5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-06-09",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-opus-5",
+    "name": "Claude Opus 5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Opus",
+      "5"
+    ],
+    "aliases": [
+      "Claude Opus 5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-07-24",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-fable-5-1",
+    "name": "Claude Fable 5.1",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Fable",
+      "5.1"
+    ],
+    "aliases": [
+      "Claude Fable 5.1"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-01",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-opus-5-5",
+    "name": "Claude Opus 5.5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Opus",
+      "5.5"
+    ],
+    "aliases": [
+      "Claude Opus 5.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-22",
+    "reasoningSupport": "native",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
+        "toolUse": true,
+        "multimodal": true
+      }
+    }
+  },
+  {
+    "id": "claude-sonnet-5-5",
+    "name": "Claude Sonnet 5.5",
+    "modelClass": "multimodal",
+    "entityType": "trained_model",
+    "minPool": 0,
+    "provider": "Anthropic",
+    "family": [
+      "Claude",
+      "Sonnet",
+      "5.5"
+    ],
+    "aliases": [
+      "Claude Sonnet 5.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
+    "weightAvailability": "closed",
+    "country": "United States",
+    "releaseDate": "2026-09-28",
+    "reasoningSupport": "optional",
+    "contextWindowTokens": 1000000,
+    "categoryDetails": {
+      "language-model": {
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2281,12 +4747,29 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "7B", "Instruct"],
-    "aliases": ["Qwen 2.5 7B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Qwen",
+      "2.5",
+      "7B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Qwen 2.5 7B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2024-09-19",
@@ -2294,7 +4777,21 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "chinese",
+          "english",
+          "french",
+          "spanish",
+          "portuguese",
+          "german",
+          "italian",
+          "russian",
+          "japanese",
+          "korean",
+          "vietnamese",
+          "thai",
+          "arabic"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2307,12 +4804,29 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "14B", "Instruct"],
-    "aliases": ["Qwen 2.5 14B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Qwen",
+      "2.5",
+      "14B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Qwen 2.5 14B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2024-09-19",
@@ -2320,7 +4834,21 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "chinese",
+          "english",
+          "french",
+          "spanish",
+          "portuguese",
+          "german",
+          "italian",
+          "russian",
+          "japanese",
+          "korean",
+          "vietnamese",
+          "thai",
+          "arabic"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2333,20 +4861,36 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "Coder", "7B"],
-    "aliases": ["Qwen 2.5 Coder 7B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding"],
+    "family": [
+      "Qwen",
+      "2.5",
+      "Coder",
+      "7B"
+    ],
+    "aliases": [
+      "Qwen 2.5 Coder 7B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2024-11-12",
+    "releaseDate": "2024-09-19",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": false
       }
@@ -2359,12 +4903,28 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "Coder", "32B"],
-    "aliases": ["Qwen 2.5 Coder 32B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["coding"],
+    "family": [
+      "Qwen",
+      "2.5",
+      "Coder",
+      "32B"
+    ],
+    "aliases": [
+      "Qwen 2.5 Coder 32B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2024-11-12",
@@ -2372,7 +4932,7 @@
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": null,
         "multimodal": false
       }
@@ -2385,21 +4945,45 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Alibaba",
-    "family": ["Qwen", "3", "8B"],
-    "aliases": ["Qwen3 8B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Qwen",
+      "3",
+      "8B"
+    ],
+    "aliases": [
+      "Qwen3 8B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-04-29",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -2411,21 +4995,46 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "3", "30B", "A3B"],
-    "aliases": ["Qwen3 30B-A3B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "mathematics"],
+    "family": [
+      "Qwen",
+      "3",
+      "30B",
+      "A3B"
+    ],
+    "aliases": [
+      "Qwen3 30B-A3B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "mathematics"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-04-29",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "chinese",
+          "spanish",
+          "french",
+          "german",
+          "japanese"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -2437,20 +5046,41 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "VL", "7B"],
-    "aliases": ["Qwen 2.5 VL 7B"],
-    "categories": ["language-model", "multimodal", "computer-vision"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision", "document-understanding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "Qwen",
+      "2.5",
+      "VL",
+      "7B"
+    ],
+    "aliases": [
+      "Qwen 2.5 VL 7B"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "document-understanding"
+    ],
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-01-26",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -2463,12 +5093,27 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["Llama", "3.2", "1B", "Instruct"],
-    "aliases": ["Llama 3.2 1B"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
+    "family": [
+      "Llama",
+      "3.2",
+      "1B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.2 1B"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-09-25",
@@ -2476,7 +5121,16 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2489,12 +5143,27 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["Llama", "3.2", "3B", "Instruct"],
-    "aliases": ["Llama 3.2 3B"],
-    "categories": ["language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general"],
+    "family": [
+      "Llama",
+      "3.2",
+      "3B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.2 3B"
+    ],
+    "categories": [
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-09-25",
@@ -2502,7 +5171,16 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2515,12 +5193,33 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Llama", "3.2", "90B", "Vision", "Instruct"],
-    "aliases": ["Llama 3.2 90B Vision"],
-    "categories": ["language-model", "multimodal", "computer-vision"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision", "coding"],
+    "family": [
+      "Llama",
+      "3.2",
+      "90B",
+      "Vision",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.2 90B Vision"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-09-25",
@@ -2528,7 +5227,16 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
         "toolUse": null,
         "multimodal": true
       }
@@ -2541,12 +5249,29 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["Llama", "3.1", "8B", "Instruct"],
-    "aliases": ["Llama 3.1 8B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding"],
+    "family": [
+      "Llama",
+      "3.1",
+      "8B",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.1 8B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-07-23",
@@ -2554,8 +5279,17 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
-        "toolUse": null,
+        "supportedLanguages": [
+          "english",
+          "german",
+          "french",
+          "italian",
+          "portuguese",
+          "hindi",
+          "spanish",
+          "thai"
+        ],
+        "toolUse": true,
         "multimodal": false
       }
     }
@@ -2567,19 +5301,36 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["RoBERTa", "Base"],
-    "aliases": ["Facebook RoBERTa"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings"],
+    "family": [
+      "RoBERTa",
+      "Base"
+    ],
+    "aliases": [
+      "Facebook RoBERTa"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-07-26",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2593,19 +5344,37 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["BART", "Large"],
-    "aliases": ["facebook/bart-large"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["summarization", "translation", "general"],
+    "family": [
+      "BART",
+      "Large"
+    ],
+    "aliases": [
+      "facebook/bart-large"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "general"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2019-10-29",
+    "releaseDate": "2019",
     "contextWindowTokens": 1024,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2614,24 +5383,42 @@
   },
   {
     "id": "nllb-200-600m",
-    "name": "NLLB-200 600M",
+    "name": "NLLB-200 Distilled 600M",
     "modelClass": "encoder_decoder",
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["NLLB", "200", "600M"],
-    "aliases": ["facebook/nllb-200-distilled-600M"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["translation"],
+    "family": [
+      "NLLB",
+      "200",
+      "Distilled",
+      "600M"
+    ],
+    "aliases": [
+      "facebook/nllb-200-distilled-600M"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "translation"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2022-07-06",
-    "contextWindowTokens": 512,
+    "contextWindowTokens": 1024,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["multilingual"],
+        "supportedLanguages": [
+          "multilingual"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2645,19 +5432,39 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["BERT", "Base", "Uncased"],
-    "aliases": ["bert-base-uncased", "BERT Base"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings", "question-answering"],
+    "family": [
+      "BERT",
+      "Base",
+      "Uncased"
+    ],
+    "aliases": [
+      "bert-base-uncased",
+      "BERT Base"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2018-10-11",
+    "releaseDate": "2018-11-02",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2671,19 +5478,39 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Google",
-    "family": ["BERT", "Large", "Uncased"],
-    "aliases": ["bert-large-uncased", "BERT Large"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings", "question-answering"],
+    "family": [
+      "BERT",
+      "Large",
+      "Uncased"
+    ],
+    "aliases": [
+      "bert-large-uncased",
+      "BERT Large"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2018-10-11",
+    "releaseDate": "2018-11-02",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2697,19 +5524,37 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Hugging Face",
-    "family": ["DistilBERT", "Base", "Uncased"],
-    "aliases": ["distilbert-base-uncased"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings"],
+    "family": [
+      "DistilBERT",
+      "Base",
+      "Uncased"
+    ],
+    "aliases": [
+      "distilbert-base-uncased"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2019-10-02",
+    "releaseDate": "2019",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2723,19 +5568,38 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Microsoft",
-    "family": ["DeBERTa", "v3", "Base"],
-    "aliases": ["DeBERTa"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings", "question-answering"],
+    "family": [
+      "DeBERTa",
+      "v3",
+      "Base"
+    ],
+    "aliases": [
+      "DeBERTa"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2021-12-17",
+    "releaseDate": "2021-11-16",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2749,19 +5613,40 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["T5", "Base"],
-    "aliases": ["Text-to-Text Transfer Transformer"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["summarization", "translation", "question-answering"],
+    "family": [
+      "T5",
+      "Base"
+    ],
+    "aliases": [
+      "Text-to-Text Transfer Transformer"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2020-02-11",
+    "releaseDate": "2019",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english",
+          "french",
+          "romanian",
+          "german"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2775,19 +5660,97 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Google",
-    "family": ["T5", "XL"],
-    "aliases": ["Flan T5 XL"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["summarization", "translation", "question-answering"],
+    "family": [
+      "FLAN-T5",
+      "T5",
+      "XL"
+    ],
+    "aliases": [
+      "Flan T5 XL"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2022-10-20",
-    "contextWindowTokens": 2048,
+    "releaseDate": "2022-10-21",
+    "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english",
+          "spanish",
+          "japanese",
+          "persian",
+          "hindi",
+          "french",
+          "chinese",
+          "bengali",
+          "gujarati",
+          "german",
+          "telugu",
+          "italian",
+          "arabic",
+          "polish",
+          "tamil",
+          "marathi",
+          "malayalam",
+          "oriya",
+          "panjabi",
+          "portuguese",
+          "urdu",
+          "galician",
+          "hebrew",
+          "korean",
+          "catalan",
+          "thai",
+          "dutch",
+          "indonesian",
+          "vietnamese",
+          "bulgarian",
+          "filipino",
+          "central-khmer",
+          "lao",
+          "turkish",
+          "russian",
+          "croatian",
+          "swedish",
+          "yoruba",
+          "kurdish",
+          "burmese",
+          "malay",
+          "czech",
+          "finnish",
+          "somali",
+          "tagalog",
+          "swahili",
+          "sinhala",
+          "kannada",
+          "zhuang",
+          "igbo",
+          "xhosa",
+          "romanian",
+          "haitian",
+          "estonian",
+          "slovak",
+          "lithuanian",
+          "greek",
+          "nepali",
+          "assamese",
+          "norwegian"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2800,21 +5763,75 @@
     "modelClass": "decoder_llm",
     "entityType": "trained_model",
     "minPool": 0,
-    "provider": "SpeakLeash",
-    "family": ["Bielik", "11B", "v3.0", "Instruct"],
-    "aliases": ["Bielik AI", "Bielik 11B", "Bielik v3"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "question-answering", "summarization"],
-    "weightAvailability": "restricted",
+    "provider": "SpeakLeash / ACK Cyfronet AGH",
+    "family": [
+      "Bielik",
+      "11B",
+      "v3.0",
+      "Instruct"
+    ],
+    "aliases": [
+      "Bielik AI",
+      "Bielik 11B",
+      "Bielik v3"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "question-answering",
+      "summarization"
+    ],
+    "weightAvailability": "open",
     "country": "Poland",
-    "releaseDate": "2025-12-31",
+    "releaseDate": "2025",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["polish"],
+        "supportedLanguages": [
+          "polish",
+          "english",
+          "albanian",
+          "belarusian",
+          "bosnian",
+          "bulgarian",
+          "croatian",
+          "czech",
+          "danish",
+          "estonian",
+          "finnish",
+          "french",
+          "greek",
+          "spanish",
+          "icelandic",
+          "lithuanian",
+          "dutch",
+          "german",
+          "norwegian",
+          "portuguese",
+          "russian",
+          "romanian",
+          "serbian",
+          "serbo-croatian",
+          "swedish",
+          "slovak",
+          "slovenian",
+          "turkish",
+          "ukrainian",
+          "hungarian",
+          "italian",
+          "latvian"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2824,23 +5841,45 @@
     "id": "pllum-12b-nc-250715",
     "name": "PLLuM 12B NC",
     "modelClass": "decoder_llm",
-    "entityType": "trained_model",
+    "entityType": "model_family",
     "minPool": 1,
-    "provider": "PLLuM",
-    "family": ["PLLuM", "12B", "NC"],
-    "aliases": ["PLLuM", "PLLuM 12B", "PLLuM 12B NC"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "question-answering", "summarization"],
+    "provider": "HIVE AI",
+    "family": [
+      "PLLuM",
+      "12B",
+      "NC"
+    ],
+    "aliases": [
+      "PLLuM",
+      "PLLuM 12B",
+      "PLLuM 12B NC"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "question-answering",
+      "summarization"
+    ],
     "weightAvailability": "restricted",
     "country": "Poland",
-    "releaseDate": "2025-07-15",
+    "releaseDate": "2025-07-16",
     "reasoningSupport": "no",
-    "contextWindowTokens": 32768,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["polish"],
+        "supportedLanguages": [
+          "polish",
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -2852,20 +5891,41 @@
     "modelClass": "encoder",
     "entityType": "trained_model",
     "minPool": 1,
-    "provider": "Allegro",
-    "family": ["HerBERT", "Base", "Cased"],
-    "aliases": ["HerBERT", "Allegro HerBERT", "HerBERT Base"],
-    "categories": ["nlp", "language-model"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["classification", "embeddings", "question-answering"],
+    "provider": "Allegro / Polish Academy of Sciences",
+    "family": [
+      "HerBERT",
+      "Base",
+      "Cased"
+    ],
+    "aliases": [
+      "HerBERT",
+      "Allegro HerBERT",
+      "HerBERT Base"
+    ],
+    "categories": [
+      "nlp",
+      "language-model"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "Poland",
-    "releaseDate": "2020-05-01",
+    "releaseDate": "2020",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["polish"],
+        "supportedLanguages": [
+          "polish"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2878,20 +5938,39 @@
     "modelClass": "encoder_decoder",
     "entityType": "trained_model",
     "minPool": 1,
-    "provider": "Allegro",
-    "family": ["plT5", "Base"],
-    "aliases": ["plT5", "Allegro plT5", "plT5 Base"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["translation", "summarization", "question-answering"],
+    "provider": "Allegro / Polish Academy of Sciences",
+    "family": [
+      "plT5",
+      "Base"
+    ],
+    "aliases": [
+      "plT5",
+      "Allegro plT5",
+      "plT5 Base"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "translation",
+      "question-answering"
+    ],
     "weightAvailability": "open",
     "country": "Poland",
-    "releaseDate": "2022-05-18",
-    "contextWindowTokens": 512,
+    "releaseDate": "2021-08-19",
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["polish"],
+        "supportedLanguages": [
+          "polish"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2905,12 +5984,29 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "OpenAI",
-    "family": ["GPT", "2"],
-    "aliases": ["GPT2", "GPT 2"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["text-generation", "general", "zero-shot-learning"],
+    "family": [
+      "GPT",
+      "2"
+    ],
+    "aliases": [
+      "GPT2",
+      "GPT 2"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "text-generation",
+      "general",
+      "zero-shot-learning"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-02-14",
@@ -2918,10 +6014,14 @@
     "contextWindowTokens": 1024,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -2932,19 +6032,38 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Google",
-    "family": ["ALBERT"],
-    "aliases": ["A Lite BERT", "ALBERT"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "question-answering", "embeddings"],
-    "weightAvailability": "closed",
+    "family": [
+      "ALBERT"
+    ],
+    "aliases": [
+      "A Lite BERT",
+      "ALBERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-09-26",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2958,19 +6077,36 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Google",
-    "family": ["ELECTRA"],
-    "aliases": ["Efficiently Learning an Encoder that Classifies Token Replacements Accurately"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "question-answering", "embeddings"],
-    "weightAvailability": "closed",
+    "family": [
+      "ELECTRA"
+    ],
+    "aliases": [
+      "Efficiently Learning an Encoder that Classifies Token Replacements Accurately"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2020-03-23",
+    "releaseDate": "2020-03-10",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -2984,19 +6120,35 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Google / Carnegie Mellon University",
-    "family": ["XLNet"],
-    "aliases": ["XL Net"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "question-answering", "language-modeling"],
-    "weightAvailability": "closed",
+    "family": [
+      "XLNet"
+    ],
+    "aliases": [
+      "XL Net"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "language-modeling"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-06-19",
-    "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3010,19 +6162,37 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Answer.AI / LightOn",
-    "family": ["ModernBERT"],
-    "aliases": ["Modern BERT"],
-    "categories": ["language-model", "nlp", "embedding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["retrieval", "text-classification", "embeddings"],
-    "weightAvailability": "closed",
+    "family": [
+      "ModernBERT"
+    ],
+    "aliases": [
+      "Modern BERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "embedding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "retrieval",
+      "text-classification",
+      "embeddings"
+    ],
+    "weightAvailability": "open",
     "country": "France / United States",
     "releaseDate": "2024-12-19",
     "contextWindowTokens": 8192,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3035,20 +6205,42 @@
     "modelClass": "encoder",
     "entityType": "model_family",
     "minPool": 1,
-    "provider": "Meta AI",
-    "family": ["XLM-RoBERTa", "XLM", "RoBERTa"],
-    "aliases": ["XLM-R", "XLM RoBERTa", "XLMR"],
-    "categories": ["language-model", "nlp", "multilingual"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "embeddings", "multilingual-nlp"],
-    "weightAvailability": "closed",
+    "provider": "Meta",
+    "family": [
+      "XLM-RoBERTa",
+      "XLM",
+      "RoBERTa"
+    ],
+    "aliases": [
+      "XLM-R",
+      "XLM RoBERTa",
+      "XLMR"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "embeddings",
+      "multilingual-nlp"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-11-05",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["multilingual"],
+        "supportedLanguages": [
+          "multilingual"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3062,20 +6254,39 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Hugging Face",
-    "family": ["GPT", "DistilGPT", "2"],
-    "aliases": ["DistilGPT2", "Distilled GPT-2"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["text-generation", "general"],
-    "weightAvailability": "closed",
+    "family": [
+      "GPT",
+      "DistilGPT",
+      "2"
+    ],
+    "aliases": [
+      "DistilGPT2",
+      "Distilled GPT-2"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "text-generation",
+      "general"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2019-10-01",
+    "releaseDate": "2019",
     "reasoningSupport": "no",
     "contextWindowTokens": 1024,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": null,
         "multimodal": false
       }
@@ -3088,19 +6299,38 @@
     "entityType": "model_family",
     "minPool": 2,
     "provider": "Google",
-    "family": ["BERT"],
-    "aliases": ["mBERT", "Multilingual BERT"],
-    "categories": ["language-model", "nlp", "multilingual"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["text-classification", "question-answering", "multilingual-nlp"],
-    "weightAvailability": "closed",
+    "family": [
+      "BERT"
+    ],
+    "aliases": [
+      "mBERT",
+      "Multilingual BERT"
+    ],
+    "categories": [
+      "language-model",
+      "nlp",
+      "multilingual"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "text-classification",
+      "question-answering",
+      "multilingual-nlp"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2018-10-11",
+    "releaseDate": "2018-11-03",
     "contextWindowTokens": 512,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["multilingual"],
+        "supportedLanguages": [
+          "multilingual"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3114,19 +6344,35 @@
     "entityType": "model_family",
     "minPool": 2,
     "provider": "Google",
-    "family": ["PEGASUS"],
-    "aliases": ["Pegasus"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["summarization", "text-generation"],
-    "weightAvailability": "closed",
+    "family": [
+      "PEGASUS"
+    ],
+    "aliases": [
+      "Pegasus"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "summarization",
+      "text-generation"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-12-18",
     "contextWindowTokens": 1024,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3140,19 +6386,36 @@
     "entityType": "model_family",
     "minPool": 2,
     "provider": "Allen Institute for AI",
-    "family": ["Longformer"],
-    "aliases": ["Long Former"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["long-document-understanding", "text-classification", "question-answering"],
-    "weightAvailability": "closed",
+    "family": [
+      "Longformer"
+    ],
+    "aliases": [
+      "Long Former"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "long-document-understanding",
+      "text-classification",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-04-10",
     "contextWindowTokens": 4096,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3166,19 +6429,36 @@
     "entityType": "model_family",
     "minPool": 2,
     "provider": "Google",
-    "family": ["BigBird"],
-    "aliases": ["Big Bird"],
-    "categories": ["language-model", "nlp"],
-    "inputModalities": ["text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["long-document-understanding", "text-classification", "question-answering"],
-    "weightAvailability": "closed",
+    "family": [
+      "BigBird"
+    ],
+    "aliases": [
+      "Big Bird"
+    ],
+    "categories": [
+      "language-model",
+      "nlp"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "long-document-understanding",
+      "text-classification",
+      "question-answering"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-07-28",
     "contextWindowTokens": 4096,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english"
+        ],
         "toolUse": false,
         "multimodal": false
       }
@@ -3192,20 +6472,40 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K2"],
-    "aliases": ["Kimi K2", "Kimi-K2", "Kimi K2 Instruct", "Kimi-K2-Instruct"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "Kimi",
+      "K2"
+    ],
+    "aliases": [
+      "Kimi K2",
+      "Kimi-K2",
+      "Kimi K2 Instruct",
+      "Kimi-K2-Instruct"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2025-07-11",
     "reasoningSupport": "no",
-    "contextWindowTokens": 128000,
+    "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false
       }
@@ -3218,20 +6518,40 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K2", "Thinking"],
-    "aliases": ["K2 Thinking", "Kimi-K2-Thinking"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "Kimi",
+      "K2",
+      "Thinking"
+    ],
+    "aliases": [
+      "K2 Thinking",
+      "Kimi-K2-Thinking"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2025-11-06",
     "reasoningSupport": "native",
-    "contextWindowTokens": 256000,
+    "contextWindowTokens": 262144,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false
       }
@@ -3244,20 +6564,44 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K2.5"],
-    "aliases": ["Kimi K2.5", "Kimi-K2.5", "K2.5"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "vision", "tool-use"],
+    "family": [
+      "Kimi",
+      "K2.5"
+    ],
+    "aliases": [
+      "Kimi K2.5",
+      "Kimi-K2.5",
+      "K2.5"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2026-01-27",
     "reasoningSupport": "optional",
-    "contextWindowTokens": 256000,
+    "contextWindowTokens": 262144,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -3270,20 +6614,44 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K2.6"],
-    "aliases": ["Kimi K2.6", "Kimi-K2.6", "K2.6"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "vision", "tool-use"],
+    "family": [
+      "Kimi",
+      "K2.6"
+    ],
+    "aliases": [
+      "Kimi K2.6",
+      "Kimi-K2.6",
+      "K2.6"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2026-04-20",
     "reasoningSupport": "optional",
-    "contextWindowTokens": 256000,
+    "contextWindowTokens": 262144,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -3296,20 +6664,44 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K2.7", "Code"],
-    "aliases": ["Kimi K2.7", "Kimi-K2.7-Code", "K2.7 Code"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["coding", "software-engineering", "tool-use", "vision"],
+    "family": [
+      "Kimi",
+      "K2.7",
+      "Code"
+    ],
+    "aliases": [
+      "Kimi K2.7",
+      "Kimi-K2.7-Code",
+      "K2.7 Code"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "coding",
+      "software-engineering",
+      "tool-use",
+      "vision"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2026-06-12",
     "reasoningSupport": "native",
-    "contextWindowTokens": 256000,
+    "contextWindowTokens": 262144,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -3322,12 +6714,35 @@
     "entityType": "trained_model",
     "minPool": 0,
     "provider": "Moonshot AI",
-    "family": ["Kimi", "K3"],
-    "aliases": ["Kimi-K3", "K3"],
-    "categories": ["language-model", "multimodal", "reasoning", "coding"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "vision", "tool-use"],
+    "family": [
+      "Kimi",
+      "K3"
+    ],
+    "aliases": [
+      "Kimi-K3",
+      "K3"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "vision",
+      "tool-use"
+    ],
     "weightAvailability": "restricted",
     "country": "China",
     "releaseDate": "2026-07-16",
@@ -3335,7 +6750,7 @@
     "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": true
       }
@@ -3348,12 +6763,33 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "OpenAI",
-    "family": ["GPT-OSS", "GPT", "OSS", "20B"],
-    "aliases": ["gpt-oss-20b", "GPT OSS 20B"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "GPT-OSS",
+      "GPT",
+      "OSS",
+      "20B"
+    ],
+    "aliases": [
+      "gpt-oss-20b",
+      "GPT OSS 20B"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-05",
@@ -3361,10 +6797,12 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
@@ -3375,12 +6813,33 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "OpenAI",
-    "family": ["GPT-OSS", "GPT", "OSS", "120B"],
-    "aliases": ["gpt-oss-120b", "GPT OSS 120B"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "GPT-OSS",
+      "GPT",
+      "OSS",
+      "120B"
+    ],
+    "aliases": [
+      "gpt-oss-120b",
+      "GPT OSS 120B"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-08-05",
@@ -3388,34 +6847,59 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [],
         "toolUse": true,
         "multimodal": false,
-        "architecture": ["generative-pre-trained-transformer"]
+        "architecture": [
+          "generative-pre-trained-transformer"
+        ]
       }
     }
   },
   {
     "id": "deepseek-v4-flash-0731",
-    "name": "DeepSeek-V4-Flash",
+    "name": "DeepSeek-V4-Flash-0731",
     "modelClass": "decoder_llm",
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "DeepSeek",
-    "family": ["DeepSeek", "V4", "Flash"],
-    "aliases": ["DeepSeek V4 Flash", "DeepSeek-V4-Flash-0731"],
-    "categories": ["language-model", "reasoning", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "DeepSeek",
+      "V4",
+      "Flash"
+    ],
+    "aliases": [
+      "DeepSeek V4 Flash",
+      "DeepSeek-V4-Flash-0731"
+    ],
+    "categories": [
+      "language-model",
+      "reasoning",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2026-07-31",
-    "reasoningSupport": "native",
+    "reasoningSupport": "optional",
     "contextWindowTokens": 1048576,
     "categoryDetails": {
       "language-model": {
-        "supportedLanguages": ["english", "chinese", "spanish", "french", "german", "japanese"],
+        "supportedLanguages": [
+          "english",
+          "chinese"
+        ],
         "toolUse": true,
         "multimodal": false
       }
@@ -3428,12 +6912,31 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "IBM",
-    "family": ["Granite", "4.1", "8B"],
-    "aliases": ["IBM Granite 4.1 8B", "Granite-4.1-8B"],
-    "categories": ["language-model", "coding"],
-    "inputModalities": ["text"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "coding", "research", "tool-use"],
+    "family": [
+      "Granite",
+      "4.1",
+      "8B"
+    ],
+    "aliases": [
+      "IBM Granite 4.1 8B",
+      "Granite-4.1-8B"
+    ],
+    "categories": [
+      "language-model",
+      "coding"
+    ],
+    "inputModalities": [
+      "text"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "coding",
+      "research",
+      "tool-use"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2026-04-29",

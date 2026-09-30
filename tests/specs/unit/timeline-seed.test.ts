@@ -16,6 +16,7 @@ describe("Timeline seed synchronization", () => {
     temporaryDirectories.push(directory);
     const classicPath = join(directory, "classic.seed.json");
     const timelinePath = join(directory, "timeline.seed.json");
+    const eventsPath = join(directory, "events.seed.json");
     writeFileSync(
       classicPath,
       JSON.stringify([
@@ -60,7 +61,7 @@ describe("Timeline seed synchronization", () => {
       ]),
     );
 
-    expect(syncTimelineSeed({ classicPath, timelinePath })).toBe(3);
+    expect(syncTimelineSeed({ classicPath, timelinePath, eventsPath })).toBe(3);
     const firstOutput = readFileSync(timelinePath, "utf8");
     expect(JSON.parse(firstOutput)).toEqual([
       expect.objectContaining({ id: "custom-event", sourceUrl: "https://example.com/source" }),
@@ -68,7 +69,7 @@ describe("Timeline seed synchronization", () => {
       expect.objectContaining({ id: "dated-model", kind: "model", minPool: 1 }),
     ]);
 
-    syncTimelineSeed({ classicPath, timelinePath });
+    syncTimelineSeed({ classicPath, timelinePath, eventsPath });
     expect(readFileSync(timelinePath, "utf8")).toBe(firstOutput);
   });
 });
