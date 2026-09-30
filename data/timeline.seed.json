@@ -13,17 +13,6 @@
     "yearAnnotation": "Bayes's essay was published in 1763, while the Naive Bayes classification method was formalized and adopted much later; no canonical release year is established."
   },
   {
-    "id": "laplacian-operator",
-    "kind": "model",
-    "name": "Laplacian Operator",
-    "minPool": 0,
-    "provider": "Pierre-Simon Laplace",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1782"
-  },
-  {
     "id": "linear-regression",
     "kind": "model",
     "name": "Linear Regression",
@@ -34,17 +23,6 @@
     ],
     "releaseDate": "1805",
     "yearAnnotation": "Legendre's 1805 publication on least squares is a documented historical foundation for linear regression; only the year is reliably established here."
-  },
-  {
-    "id": "gaussian-blur",
-    "kind": "model",
-    "name": "Gaussian Blur",
-    "minPool": 0,
-    "provider": "Carl Friedrich Gauss",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1809-01-01"
   },
   {
     "id": "gaussian-mixture-model",
@@ -92,17 +70,6 @@
     ],
     "releaseDate": "1936",
     "yearAnnotation": "Eckart and Young established the low-rank matrix approximation result underlying truncated SVD in their September 1936 paper \"The Approximation of One Matrix by Another of Lower Rank.\" Golub and Reinsch's 1970 paper \"Singular Value Decomposition and Least Squares Solutions\" provided a practical algorithm for computing the SVD, which is widely used in truncated SVD implementations."
-  },
-  {
-    "id": "gabor-filter",
-    "kind": "model",
-    "name": "Gabor Filter",
-    "minPool": 1,
-    "provider": "Dennis Gabor",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1946-01-01"
   },
   {
     "id": "quadratic-discriminant-analysis",
@@ -191,17 +158,6 @@
     "yearAnnotation": "The multi-layer perceptron was proposed by Rosenblatt in the early multilayered perceptron architecture. Then in 1962 Rosenblatt described additional multilayer perceptron variants, including systems with more than one trainable layer, but without the modern general backpropagation algorithm. The hidden/association weights were not generally trained. Rumelhart, Hinton, and Williams published the backpropagation algorithm in 1986, which enabled training of multi-layer perceptrons. The 1958 date is included here to reflect the early conceptualization of the architecture."
   },
   {
-    "id": "box-filter",
-    "kind": "model",
-    "name": "Box Filter",
-    "minPool": 1,
-    "provider": "Image processing",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1960-01-01"
-  },
-  {
     "id": "hough-line-transform",
     "kind": "model",
     "name": "Hough Line Transform",
@@ -210,7 +166,7 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1962-01-01"
+    "releaseDate": "1959"
   },
   {
     "id": "agglomerative-clustering",
@@ -233,84 +189,40 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1963-01-01"
-  },
-  {
-    "id": "black-hat",
-    "kind": "model",
-    "name": "Black Hat",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1963"
   },
   {
     "id": "dilation",
     "kind": "model",
     "name": "Dilation",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1964"
   },
   {
     "id": "erosion",
     "kind": "model",
     "name": "Erosion",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1964"
   },
   {
-    "id": "morphological-closing",
+    "id": "difference-of-gaussians",
     "kind": "model",
-    "name": "Morphological Closing",
+    "name": "Difference of Gaussians",
     "minPool": 1,
-    "provider": "Georges Matheron",
+    "provider": "Robert W. Rodieck",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "morphological-gradient",
-    "kind": "model",
-    "name": "Morphological Gradient",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "morphological-opening",
-    "kind": "model",
-    "name": "Morphological Opening",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
-  },
-  {
-    "id": "top-hat",
-    "kind": "model",
-    "name": "Top Hat",
-    "minPool": 1,
-    "provider": "Georges Matheron",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1964-01-01"
+    "releaseDate": "1965"
   },
   {
     "id": "hidden-markov-model",
@@ -325,15 +237,48 @@
     "yearAnnotation": "Baum and Petrie published foundational work on hidden Markov models in \"Statistical Inference for Probabilistic Functions of Finite State Markov Chains\" in December 1966."
   },
   {
+    "id": "morphological-closing",
+    "kind": "model",
+    "name": "Morphological Closing",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1967"
+  },
+  {
+    "id": "morphological-opening",
+    "kind": "model",
+    "name": "Morphological Opening",
+    "minPool": 1,
+    "provider": "Georges Matheron",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1967"
+  },
+  {
     "id": "sobel-operator",
     "kind": "model",
     "name": "Sobel Operator",
     "minPool": 0,
-    "provider": "Irwin Sobel",
+    "provider": "Irwin Sobel and Gary Feldman",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1968-01-01"
+    "releaseDate": "1968"
+  },
+  {
+    "id": "prewitt-operator",
+    "kind": "model",
+    "name": "Prewitt Operator",
+    "minPool": 1,
+    "provider": "Judith Prewitt",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1970"
   },
   {
     "id": "ridge-regression",
@@ -349,17 +294,6 @@
     "yearAnnotation": "Hoerl and Kennard introduced ridge regression in their paper published in Technometrics in 1970."
   },
   {
-    "id": "prewitt-operator",
-    "kind": "model",
-    "name": "Prewitt Operator",
-    "minPool": 1,
-    "provider": "Judith Prewitt",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1970-01-01"
-  },
-  {
     "id": "median-filter",
     "kind": "model",
     "name": "Median Filter",
@@ -368,18 +302,18 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1971-01-01"
+    "releaseDate": "1971"
   },
   {
     "id": "hough-circle-transform",
     "kind": "model",
     "name": "Hough Circle Transform",
     "minPool": 1,
-    "provider": "Richard Duda",
+    "provider": "Richard Duda and Peter Hart",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1972-01-01"
+    "releaseDate": "1972"
   },
   {
     "id": "mean-shift",
@@ -394,6 +328,50 @@
     "yearAnnotation": "Fukunaga and Hostetler introduced the mean-shift procedure in a 1975 paper on density-gradient estimation and pattern recognition."
   },
   {
+    "id": "black-hat",
+    "kind": "model",
+    "name": "Black Hat",
+    "minPool": 1,
+    "provider": "Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "morphological-gradient",
+    "kind": "model",
+    "name": "Morphological Gradient",
+    "minPool": 1,
+    "provider": "Serge Beucher and Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "top-hat",
+    "kind": "model",
+    "name": "Top Hat",
+    "minPool": 1,
+    "provider": "Fernand Meyer",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1977"
+  },
+  {
+    "id": "laplacian-of-gaussian",
+    "kind": "model",
+    "name": "Laplacian of Gaussian",
+    "minPool": 1,
+    "provider": "David Marr and Ellen Hildreth",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1979"
+  },
+  {
     "id": "otsu-thresholding",
     "kind": "model",
     "name": "Otsu Thresholding",
@@ -402,40 +380,29 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1979-01-01"
+    "releaseDate": "1979"
   },
   {
     "id": "watershed",
     "kind": "model",
     "name": "Watershed",
     "minPool": 1,
-    "provider": "Serge Beucher",
+    "provider": "Serge Beucher and Christian Lantuéjoul",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1979-01-01"
+    "releaseDate": "1979"
   },
   {
-    "id": "difference-of-gaussians",
+    "id": "gabor-filter",
     "kind": "model",
-    "name": "Difference of Gaussians",
+    "name": "Gabor Filter",
     "minPool": 1,
-    "provider": "David Marr",
+    "provider": "John Daugman",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1980-01-01"
-  },
-  {
-    "id": "laplacian-of-gaussian",
-    "kind": "model",
-    "name": "Laplacian of Gaussian",
-    "minPool": 1,
-    "provider": "David Marr",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1980-01-01"
+    "releaseDate": "1980"
   },
   {
     "id": "hopfield-network",
@@ -474,6 +441,17 @@
     "releaseDate": "1985-01-01"
   },
   {
+    "id": "canny-edge-detector",
+    "kind": "model",
+    "name": "Canny Edge Detector",
+    "minPool": 0,
+    "provider": "John Canny",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1986"
+  },
+  {
     "id": "decision-tree",
     "kind": "model",
     "name": "Decision Tree",
@@ -499,17 +477,6 @@
     "releaseDate": "1986-01-01"
   },
   {
-    "id": "canny-edge-detector",
-    "kind": "model",
-    "name": "Canny Edge Detector",
-    "minPool": 0,
-    "provider": "John Canny",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1986-01-01"
-  },
-  {
     "id": "rbm",
     "kind": "model",
     "name": "Restricted Boltzmann Machine",
@@ -526,22 +493,11 @@
     "kind": "model",
     "name": "Harris Corner Detector",
     "minPool": 0,
-    "provider": "Chris Harris",
+    "provider": "Chris Harris and Mike Stephens",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1988-01-01"
-  },
-  {
-    "id": "adaptive-thresholding",
-    "kind": "model",
-    "name": "Adaptive Thresholding",
-    "minPool": 1,
-    "provider": "Image processing",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1989-01-01"
+    "releaseDate": "1988"
   },
   {
     "id": "cnn",
@@ -568,15 +524,26 @@
     "yearAnnotation": "Pierre Comon's foundational paper \"Independent Component Analysis, A New Concept?\" was published in April 1994."
   },
   {
+    "id": "local-binary-pattern",
+    "kind": "model",
+    "name": "Local Binary Pattern",
+    "minPool": 1,
+    "provider": "Timo Ojala, Matti Pietikäinen and David Harwood",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "1994"
+  },
+  {
     "id": "shi-tomasi-corner-detector",
     "kind": "model",
     "name": "Shi-Tomasi Corner Detector",
     "minPool": 1,
-    "provider": "Jianbo Shi",
+    "provider": "Jianbo Shi and Carlo Tomasi",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1994-01-01"
+    "releaseDate": "1994"
   },
   {
     "id": "svm",
@@ -630,17 +597,6 @@
     "yearAnnotation": "Robert Tibshirani's paper introducing the Lasso, \"Regression Shrinkage and Selection via the Lasso,\" was published in 1996."
   },
   {
-    "id": "local-binary-pattern",
-    "kind": "model",
-    "name": "Local Binary Pattern",
-    "minPool": 1,
-    "provider": "Timo Ojala",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "1996-01-01"
-  },
-  {
     "id": "lstm",
     "kind": "model",
     "name": "LSTM",
@@ -669,11 +625,11 @@
     "kind": "model",
     "name": "Bilateral Filter",
     "minPool": 1,
-    "provider": "Carlo Tomasi",
+    "provider": "Carlo Tomasi and Roberto Manduchi",
     "categories": [
       "filters"
     ],
-    "releaseDate": "1998-01-01"
+    "releaseDate": "1998"
   },
   {
     "id": "lenet-5",
@@ -709,7 +665,7 @@
     "categories": [
       "filters"
     ],
-    "releaseDate": "1999-01-01"
+    "releaseDate": "1999"
   },
   {
     "id": "optics",
@@ -740,11 +696,11 @@
     "kind": "model",
     "name": "Scharr Operator",
     "minPool": 1,
-    "provider": "H. Scharr",
+    "provider": "Hanno Scharr",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2000-01-01"
+    "releaseDate": "2000"
   },
   {
     "id": "local-outlier-factor",
@@ -825,11 +781,11 @@
     "kind": "model",
     "name": "GrabCut",
     "minPool": 1,
-    "provider": "Carsten Rother",
+    "provider": "Carsten Rother, Vladimir Kolmogorov and Andrew Blake",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2004-01-01"
+    "releaseDate": "2004"
   },
   {
     "id": "elastic-net",
@@ -845,37 +801,37 @@
     "yearAnnotation": "The foundational paper introducing Elastic Net, “Regularization and Variable Selection via the Elastic Net,” was published in 2005."
   },
   {
-    "id": "hog",
-    "kind": "model",
-    "name": "HOG",
-    "minPool": 0,
-    "provider": "Navneet Dalal",
-    "categories": [
-      "filters"
-    ],
-    "releaseDate": "2005-06-01"
-  },
-  {
     "id": "fast-corner-detector",
     "kind": "model",
     "name": "FAST Corner Detector",
     "minPool": 1,
-    "provider": "Edward Rosten",
+    "provider": "Edward Rosten and Tom Drummond",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2006-01-01"
+    "releaseDate": "2005"
+  },
+  {
+    "id": "hog",
+    "kind": "model",
+    "name": "HOG",
+    "minPool": 0,
+    "provider": "Navneet Dalal and Bill Triggs",
+    "categories": [
+      "filters"
+    ],
+    "releaseDate": "2005"
   },
   {
     "id": "surf",
     "kind": "model",
     "name": "SURF",
     "minPool": 1,
-    "provider": "Herbert Bay",
+    "provider": "Herbert Bay, Tinne Tuytelaars and Luc Van Gool",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2006-01-01"
+    "releaseDate": "2006"
   },
   {
     "id": "affinity-propagation",
@@ -918,22 +874,22 @@
     "kind": "model",
     "name": "BRIEF",
     "minPool": 1,
-    "provider": "Michael Calonder",
+    "provider": "Michael Calonder, Vincent Lepetit, Christoph Strecha and Pascal Fua",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2010-01-01"
+    "releaseDate": "2010"
   },
   {
     "id": "orb",
     "kind": "model",
     "name": "ORB",
     "minPool": 1,
-    "provider": "Ethan Rublee",
+    "provider": "Ethan Rublee, Vincent Rabaud, Kurt Konolige and Gary Bradski",
     "categories": [
       "filters"
     ],
-    "releaseDate": "2011-01-01"
+    "releaseDate": "2011"
   },
   {
     "id": "alexnet",

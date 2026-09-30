@@ -13898,14 +13898,15 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Irwin Sobel",
+    "provider": "Irwin Sobel and Gary Feldman",
     "family": [
       "Edge detection",
       "Sobel",
       "Operator"
     ],
     "aliases": [
-      "Sobel filter"
+      "Sobel filter",
+      "Sobel-Feldman operator"
     ],
     "categories": [
       "filters"
@@ -13914,8 +13915,7 @@
       "image"
     ],
     "outputModalities": [
-      "gradient-image",
-      "edges"
+      "gradient-image"
     ],
     "useCases": [
       "edge-detection",
@@ -13923,7 +13923,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1968-01-01",
+    "releaseDate": "1968",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -13937,8 +13937,7 @@
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "gradient-image",
-          "edges"
+          "gradient-image"
         ],
         "frameworks": [
           "opencv",
@@ -13978,7 +13977,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1986-01-01",
+    "releaseDate": "1986",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -13998,7 +13997,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14009,7 +14008,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Carl Friedrich Gauss",
+    "provider": null,
     "family": [
       "Smoothing",
       "Gaussian",
@@ -14032,8 +14031,8 @@
       "denoising"
     ],
     "weightAvailability": "not-applicable",
-    "country": "Germany",
-    "releaseDate": "1809-01-01",
+    "country": null,
+    "releaseDate": null,
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14088,7 +14087,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1971-01-01",
+    "releaseDate": "1971",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14119,7 +14118,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Pierre-Simon Laplace",
+    "provider": null,
     "family": [
       "Edge detection",
       "Laplacian",
@@ -14135,21 +14134,18 @@
       "image"
     ],
     "outputModalities": [
-      "gradient-image",
-      "edges"
+      "filter-response"
     ],
     "useCases": [
-      "edge-detection",
-      "gradient"
+      "edge-detection"
     ],
     "weightAvailability": "not-applicable",
-    "country": "France",
-    "releaseDate": "1782",
+    "country": null,
+    "releaseDate": null,
     "categoryDetails": {
       "filters": {
         "operationTypes": [
-          "edge-detection",
-          "gradient"
+          "edge-detection"
         ],
         "kernelBased": true,
         "kernelSizes": [
@@ -14159,8 +14155,7 @@
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "gradient-image",
-          "edges"
+          "filter-response"
         ],
         "frameworks": [
           "opencv",
@@ -14175,7 +14170,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "family": [
       "Mathematical morphology",
       "Erosion"
@@ -14190,14 +14185,15 @@
       "image"
     ],
     "outputModalities": [
-      "binary-mask"
+      "binary-mask",
+      "filtered-image"
     ],
     "useCases": [
       "morphology"
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1964",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14213,7 +14209,8 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "binary-mask"
+          "binary-mask",
+          "filtered-image"
         ],
         "frameworks": [
           "opencv",
@@ -14228,7 +14225,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Georges Matheron",
+    "provider": "Georges Matheron and Jean Serra",
     "family": [
       "Mathematical morphology",
       "Dilation"
@@ -14243,14 +14240,15 @@
       "image"
     ],
     "outputModalities": [
-      "binary-mask"
+      "binary-mask",
+      "filtered-image"
     ],
     "useCases": [
       "morphology"
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1964",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14266,7 +14264,8 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "binary-mask"
+          "binary-mask",
+          "filtered-image"
         ],
         "frameworks": [
           "opencv",
@@ -14304,7 +14303,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Japan",
-    "releaseDate": "1979-01-01",
+    "releaseDate": "1979",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14321,7 +14320,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14332,7 +14331,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Chris Harris",
+    "provider": "Chris Harris and Mike Stephens",
     "family": [
       "Feature detection",
       "Harris",
@@ -14358,7 +14357,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "1988-01-01",
+    "releaseDate": "1988",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14378,7 +14377,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14413,7 +14412,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Canada",
-    "releaseDate": "1999-01-01",
+    "releaseDate": "1999",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14421,10 +14420,7 @@
           "feature-description"
         ],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
@@ -14433,7 +14429,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14444,7 +14440,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 0,
-    "provider": "Navneet Dalal",
+    "provider": "Navneet Dalal and Bill Triggs",
     "family": [
       "Feature description",
       "HOG"
@@ -14467,7 +14463,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "2005-06-01",
+    "releaseDate": "2005",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14476,7 +14472,8 @@
         ],
         "kernelBased": true,
         "kernelSizes": [
-          "8x8"
+          "1x3",
+          "3x1"
         ],
         "linearity": "non-linear",
         "requiresTraining": false,
@@ -14485,7 +14482,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14496,7 +14493,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "H. Scharr",
+    "provider": "Hanno Scharr",
     "family": [
       "Edge detection",
       "Scharr",
@@ -14512,8 +14509,7 @@
       "image"
     ],
     "outputModalities": [
-      "gradient-image",
-      "edges"
+      "gradient-image"
     ],
     "useCases": [
       "edge-detection",
@@ -14521,7 +14517,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Germany",
-    "releaseDate": "2000-01-01",
+    "releaseDate": "2000",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14535,12 +14531,11 @@
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "gradient-image",
-          "edges"
+          "gradient-image"
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14567,8 +14562,7 @@
       "image"
     ],
     "outputModalities": [
-      "gradient-image",
-      "edges"
+      "gradient-image"
     ],
     "useCases": [
       "edge-detection",
@@ -14576,7 +14570,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1970-01-01",
+    "releaseDate": "1970",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14590,12 +14584,11 @@
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "gradient-image",
-          "edges"
+          "gradient-image"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "scipy",
+          "scikit-image"
         ]
       }
     }
@@ -14622,8 +14615,7 @@
       "image"
     ],
     "outputModalities": [
-      "gradient-image",
-      "edges"
+      "gradient-image"
     ],
     "useCases": [
       "edge-detection",
@@ -14631,7 +14623,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1963-01-01",
+    "releaseDate": "1963",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14645,12 +14637,10 @@
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "gradient-image",
-          "edges"
+          "gradient-image"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14661,7 +14651,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "David Marr",
+    "provider": "David Marr and Ellen Hildreth",
     "family": [
       "Edge detection",
       "Laplacian",
@@ -14678,15 +14668,15 @@
       "image"
     ],
     "outputModalities": [
-      "edges"
+      "filter-response"
     ],
     "useCases": [
       "edge-detection",
       "smoothing"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1980-01-01",
+    "country": "United States",
+    "releaseDate": "1979",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14694,18 +14684,13 @@
           "smoothing"
         ],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": [],
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "edges"
+          "filter-response"
         ],
         "frameworks": [
-          "opencv",
           "scipy"
         ]
       }
@@ -14717,7 +14702,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "David Marr",
+    "provider": "Robert W. Rodieck",
     "family": [
       "Feature detection",
       "Difference",
@@ -14734,16 +14719,15 @@
       "image"
     ],
     "outputModalities": [
-      "edges",
-      "keypoints"
+      "filter-response"
     ],
     "useCases": [
       "edge-detection",
       "feature-detection"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1980-01-01",
+    "country": null,
+    "releaseDate": "1965",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14751,20 +14735,14 @@
           "feature-detection"
         ],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5",
-          "7x7"
-        ],
+        "kernelSizes": [],
         "linearity": "linear",
         "requiresTraining": false,
         "outputTypes": [
-          "edges",
-          "keypoints"
+          "filter-response"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14775,7 +14753,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Carlo Tomasi",
+    "provider": "Carlo Tomasi and Roberto Manduchi",
     "family": [
       "Edge-preserving smoothing",
       "Bilateral",
@@ -14799,7 +14777,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1998-01-01",
+    "releaseDate": "1998",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14819,7 +14797,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14830,7 +14808,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Image processing",
+    "provider": null,
     "family": [
       "Smoothing",
       "Box",
@@ -14852,8 +14830,8 @@
       "smoothing"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1960-01-01",
+    "country": null,
+    "releaseDate": null,
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14883,7 +14861,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Dennis Gabor",
+    "provider": "John Daugman",
     "family": [
       "Texture analysis",
       "Gabor",
@@ -14906,8 +14884,8 @@
       "texture-analysis"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United Kingdom",
-    "releaseDate": "1946-01-01",
+    "country": "United States",
+    "releaseDate": "1980",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14927,7 +14905,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -14954,7 +14932,8 @@
       "image"
     ],
     "outputModalities": [
-      "binary-mask"
+      "binary-mask",
+      "filtered-image"
     ],
     "useCases": [
       "morphology",
@@ -14962,7 +14941,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1967",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -14978,7 +14957,8 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "binary-mask"
+          "binary-mask",
+          "filtered-image"
         ],
         "frameworks": [
           "opencv",
@@ -15009,7 +14989,8 @@
       "image"
     ],
     "outputModalities": [
-      "binary-mask"
+      "binary-mask",
+      "filtered-image"
     ],
     "useCases": [
       "morphology",
@@ -15017,7 +14998,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1967",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15033,7 +15014,8 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "binary-mask"
+          "binary-mask",
+          "filtered-image"
         ],
         "frameworks": [
           "opencv",
@@ -15048,7 +15030,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Georges Matheron",
+    "provider": "Serge Beucher and Fernand Meyer",
     "family": [
       "Mathematical morphology",
       "Morphological",
@@ -15064,7 +15046,7 @@
       "image"
     ],
     "outputModalities": [
-      "edges"
+      "filter-response"
     ],
     "useCases": [
       "morphology",
@@ -15072,7 +15054,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1977",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15088,7 +15070,7 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "edges"
+          "filter-response"
         ],
         "frameworks": [
           "opencv",
@@ -15103,7 +15085,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Georges Matheron",
+    "provider": "Fernand Meyer",
     "family": [
       "Mathematical morphology",
       "Top",
@@ -15127,7 +15109,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1977",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15159,7 +15141,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Georges Matheron",
+    "provider": "Fernand Meyer",
     "family": [
       "Mathematical morphology",
       "Black",
@@ -15183,7 +15165,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1964-01-01",
+    "releaseDate": "1977",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15215,7 +15197,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Image processing",
+    "provider": null,
     "family": [
       "Thresholding"
     ],
@@ -15236,8 +15218,8 @@
       "segmentation"
     ],
     "weightAvailability": "not-applicable",
-    "country": "United States",
-    "releaseDate": "1989-01-01",
+    "country": null,
+    "releaseDate": null,
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15257,7 +15239,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15268,7 +15250,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Jianbo Shi",
+    "provider": "Jianbo Shi and Carlo Tomasi",
     "family": [
       "Feature detection",
       "Shi",
@@ -15295,7 +15277,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1994-01-01",
+    "releaseDate": "1994",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15315,7 +15297,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15326,7 +15308,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Herbert Bay",
+    "provider": "Herbert Bay, Tinne Tuytelaars and Luc Van Gool",
     "family": [
       "Feature detection",
       "SURF"
@@ -15350,7 +15332,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Switzerland",
-    "releaseDate": "2006-01-01",
+    "releaseDate": "2006",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15369,8 +15351,7 @@
           "descriptors"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "opencv"
         ]
       }
     }
@@ -15381,7 +15362,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Ethan Rublee",
+    "provider": "Ethan Rublee, Vincent Rabaud, Kurt Konolige and Gary Bradski",
     "family": [
       "Feature detection",
       "ORB"
@@ -15405,7 +15386,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "2011-01-01",
+    "releaseDate": "2011",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15413,10 +15394,7 @@
           "feature-description"
         ],
         "kernelBased": true,
-        "kernelSizes": [
-          "3x3",
-          "5x5"
-        ],
+        "kernelSizes": [],
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
@@ -15425,7 +15403,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15436,7 +15414,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Edward Rosten",
+    "provider": "Edward Rosten and Tom Drummond",
     "family": [
       "Feature detection",
       "FAST",
@@ -15462,7 +15440,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "2006-01-01",
+    "releaseDate": "2005",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15479,7 +15457,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15490,7 +15468,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Michael Calonder",
+    "provider": "Michael Calonder, Vincent Lepetit, Christoph Strecha and Pascal Fua",
     "family": [
       "Feature description",
       "BRIEF"
@@ -15502,7 +15480,8 @@
       "filters"
     ],
     "inputModalities": [
-      "image"
+      "image",
+      "keypoints"
     ],
     "outputModalities": [
       "descriptors"
@@ -15512,14 +15491,16 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Switzerland",
-    "releaseDate": "2010-01-01",
+    "releaseDate": "2010",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
           "feature-description"
         ],
-        "kernelBased": false,
-        "kernelSizes": [],
+        "kernelBased": true,
+        "kernelSizes": [
+          "9x9"
+        ],
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
@@ -15527,7 +15508,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15538,7 +15519,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Timo Ojala",
+    "provider": "Timo Ojala, Matti Pietikäinen and David Harwood",
     "family": [
       "Texture analysis",
       "Local",
@@ -15555,7 +15536,7 @@
       "image"
     ],
     "outputModalities": [
-      "feature-vector"
+      "filtered-image"
     ],
     "useCases": [
       "feature-extraction",
@@ -15563,7 +15544,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "Finland",
-    "releaseDate": "1996-01-01",
+    "releaseDate": "1994",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15577,11 +15558,10 @@
         "linearity": "non-linear",
         "requiresTraining": false,
         "outputTypes": [
-          "feature-vector"
+          "filtered-image"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15617,7 +15597,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1962-01-01",
+    "releaseDate": "1959",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15633,7 +15613,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15644,7 +15624,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Richard Duda",
+    "provider": "Richard Duda and Peter Hart",
     "family": [
       "Shape detection",
       "Hough",
@@ -15669,7 +15649,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1972-01-01",
+    "releaseDate": "1972",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15685,7 +15665,7 @@
         ],
         "frameworks": [
           "opencv",
-          "scipy"
+          "scikit-image"
         ]
       }
     }
@@ -15696,7 +15676,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Serge Beucher",
+    "provider": "Serge Beucher and Christian Lantuéjoul",
     "family": [
       "Segmentation",
       "Watershed"
@@ -15718,7 +15698,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "France",
-    "releaseDate": "1979-01-01",
+    "releaseDate": "1979",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15744,7 +15724,7 @@
     "modelClass": "image_processing",
     "entityType": "algorithm",
     "minPool": 1,
-    "provider": "Carsten Rother",
+    "provider": "Carsten Rother, Vladimir Kolmogorov and Andrew Blake",
     "family": [
       "Segmentation",
       "GrabCut"
@@ -15767,7 +15747,7 @@
     ],
     "weightAvailability": "not-applicable",
     "country": "United Kingdom",
-    "releaseDate": "2004-01-01",
+    "releaseDate": "2004",
     "categoryDetails": {
       "filters": {
         "operationTypes": [
@@ -15777,13 +15757,12 @@
         "kernelBased": false,
         "kernelSizes": [],
         "linearity": "non-linear",
-        "requiresTraining": false,
+        "requiresTraining": true,
         "outputTypes": [
           "segmentation-mask"
         ],
         "frameworks": [
-          "opencv",
-          "scipy"
+          "opencv"
         ]
       }
     }
