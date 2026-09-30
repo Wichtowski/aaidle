@@ -6,22 +6,53 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Alibaba",
-    "family": ["Qwen", "2.5", "VL", "7B"],
-    "aliases": ["Qwen 2.5 VL 7B"],
-    "categories": ["language-model", "multimodal", "computer-vision"],
-    "inputModalities": ["text", "image", "video"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision", "document-understanding"],
-    "weightAvailability": "restricted",
+    "family": [
+      "Qwen",
+      "2.5",
+      "VL",
+      "7B"
+    ],
+    "aliases": [
+      "Qwen 2.5 VL 7B"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "text",
+      "image",
+      "video"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "document-understanding"
+    ],
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2025-01-26",
     "reasoningSupport": "no",
     "contextWindowTokens": 32768,
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["document-understanding"],
-        "architecture": ["qwen"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "document-understanding",
+          "visual-question-answering",
+          "object-detection",
+          "video-understanding"
+        ],
+        "architecture": [
+          "qwen",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -33,12 +64,34 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Llama", "3.2", "90B", "Vision", "Instruct"],
-    "aliases": ["Llama 3.2 90B Vision"],
-    "categories": ["language-model", "multimodal", "computer-vision"],
-    "inputModalities": ["text", "image"],
-    "outputModalities": ["text"],
-    "useCases": ["general", "vision", "coding"],
+    "family": [
+      "Llama",
+      "3.2",
+      "90B",
+      "Vision",
+      "Instruct"
+    ],
+    "aliases": [
+      "Llama 3.2 90B Vision"
+    ],
+    "categories": [
+      "language-model",
+      "multimodal",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "outputModalities": [
+      "text"
+    ],
+    "useCases": [
+      "general",
+      "vision",
+      "image-captioning",
+      "visual-question-answering"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2024-09-25",
@@ -46,9 +99,18 @@
     "contextWindowTokens": 131072,
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["unknown"],
-        "architecture": ["llama"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "image-captioning",
+          "visual-question-answering",
+          "image-understanding"
+        ],
+        "architecture": [
+          "llama",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "undisclosed"
+        ],
         "license": "llama-3-2-community-license"
       }
     }
@@ -60,20 +122,45 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["SAM", "Segment", "Anything", "Model"],
-    "aliases": ["SAM"],
-    "categories": ["computer-vision", "segmentation"],
-    "inputModalities": ["image", "points", "boxes"],
-    "outputModalities": ["segmentation-mask"],
-    "useCases": ["vision", "segmentation"],
+    "family": [
+      "SAM",
+      "Segment",
+      "Anything",
+      "Model"
+    ],
+    "aliases": [
+      "SAM"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image",
+      "points",
+      "boxes"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "vision",
+      "segmentation"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-04-05",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["sa-1b"],
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "sa-1b"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -85,20 +172,51 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["SAM", "Segment", "Anything", "2"],
-    "aliases": ["SAM 2"],
-    "categories": ["computer-vision", "segmentation", "video"],
-    "inputModalities": ["image", "video", "points", "boxes"],
-    "outputModalities": ["segmentation-mask"],
-    "useCases": ["vision", "segmentation"],
+    "family": [
+      "SAM",
+      "Segment",
+      "Anything",
+      "2"
+    ],
+    "aliases": [
+      "SAM 2"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation",
+      "video"
+    ],
+    "inputModalities": [
+      "image",
+      "video",
+      "points",
+      "boxes"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "vision",
+      "segmentation"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2024-07-29",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["sa-v"],
+        "visionTasks": [
+          "image-segmentation",
+          "video-segmentation"
+        ],
+        "architecture": [
+          "hiera",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "sa-1b",
+          "sa-v",
+          "internal-video"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -110,20 +228,45 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["DINO", "v2", "Base"],
-    "aliases": ["DINOv2"],
-    "categories": ["computer-vision", "image-classification", "embedding"],
-    "inputModalities": ["image"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["vision", "classification", "embeddings"],
+    "family": [
+      "DINO",
+      "v2",
+      "Base"
+    ],
+    "aliases": [
+      "DINOv2"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "embedding"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "vision",
+      "classification",
+      "embeddings"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2023-04-14",
+    "releaseDate": "2023-04-17",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "image-embedding"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["lvd-142m"],
+        "visionTasks": [
+          "image-classification",
+          "image-embedding"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "lvd-142m"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -135,20 +278,46 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["DETR", "ResNet", "50"],
-    "aliases": ["facebook/detr-resnet-50", "DETR"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
+    "family": [
+      "DETR",
+      "ResNet",
+      "50"
+    ],
+    "aliases": [
+      "facebook/detr-resnet-50",
+      "DETR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-05-26",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["detr"],
-        "trainingDatasets": ["coco"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "detr",
+          "resnet-50"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco-2017"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -160,20 +329,41 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Meta",
-    "family": ["ConvNeXt", "Base"],
-    "aliases": ["facebook/convnext-base-224"],
-    "categories": ["computer-vision", "image-classification"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["classification", "vision"],
+    "family": [
+      "ConvNeXt",
+      "Base"
+    ],
+    "aliases": [
+      "facebook/convnext-base-224"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "classification",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-01-10",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["convnet"],
-        "trainingDatasets": ["imagenet-1k"],
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
         "license": "mit"
       }
     }
@@ -182,23 +372,59 @@
     "id": "yolov8",
     "name": "YOLOv8",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "model_family",
     "minPool": 0,
     "provider": "Ultralytics",
-    "family": ["YOLO", "v8"],
-    "aliases": ["YOLO 8"],
-    "categories": ["computer-vision", "object-detection", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
-    "useCases": ["object-detection", "vision", "segmentation"],
+    "family": [
+      "YOLO",
+      "v8"
+    ],
+    "aliases": [
+      "YOLO 8"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "segmentation",
+      "image-classification",
+      "keypoint-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels",
+      "segmentation-mask",
+      "keypoints"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "segmentation",
+      "classification",
+      "pose-estimation"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-01-10",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "image-segmentation"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["coco"],
+        "visionTasks": [
+          "object-detection",
+          "instance-segmentation",
+          "image-classification",
+          "pose-estimation",
+          "oriented-object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco",
+          "imagenet-1k",
+          "dota-v1"
+        ],
         "license": "agpl-3.0"
       }
     }
@@ -207,23 +433,59 @@
     "id": "yolo11",
     "name": "YOLO11",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "model_family",
     "minPool": 0,
     "provider": "Ultralytics",
-    "family": ["YOLO", "11"],
-    "aliases": ["YOLO 11"],
-    "categories": ["computer-vision", "object-detection", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
-    "useCases": ["object-detection", "vision", "segmentation"],
+    "family": [
+      "YOLO",
+      "11"
+    ],
+    "aliases": [
+      "YOLO 11"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "segmentation",
+      "image-classification",
+      "keypoint-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels",
+      "segmentation-mask",
+      "keypoints"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "segmentation",
+      "classification",
+      "pose-estimation"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-09-10",
+    "releaseDate": "2024-09-27",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "image-segmentation"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["coco"],
+        "visionTasks": [
+          "object-detection",
+          "instance-segmentation",
+          "image-classification",
+          "pose-estimation",
+          "oriented-object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco",
+          "imagenet-1k",
+          "dota-v1"
+        ],
         "license": "agpl-3.0"
       }
     }
@@ -235,20 +497,53 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "IDEA Research",
-    "family": ["Grounding DINO", "Grounding", "DINO", "Base"],
-    "aliases": ["GroundingDINO"],
-    "categories": ["computer-vision", "object-detection", "multimodal"],
-    "inputModalities": ["image", "text"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
+    "family": [
+      "Grounding DINO",
+      "Grounding",
+      "DINO",
+      "Base"
+    ],
+    "aliases": [
+      "GroundingDINO"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2023-03-20",
+    "releaseDate": "2023-04-07",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["grounding-dino"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "grounding-dino",
+          "swin-transformer"
+        ],
+        "trainingDatasets": [
+          "coco",
+          "objects365",
+          "goldg",
+          "cap4m",
+          "open-images",
+          "odinw-35",
+          "refcoco"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -260,20 +555,45 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Baidu",
-    "family": ["RT-DETR", "RT", "DETR", "R50"],
-    "aliases": ["RT DETR"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
+    "family": [
+      "RT-DETR",
+      "RT",
+      "DETR",
+      "R50"
+    ],
+    "aliases": [
+      "RT DETR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2023-09-01",
+    "releaseDate": "2023-04-17",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["rt-detr"],
-        "trainingDatasets": ["coco"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rt-detr",
+          "resnet-50"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -285,20 +605,45 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Google",
-    "family": ["ViT", "Base", "Patch16", "224"],
-    "aliases": ["google/vit-base-patch16-224", "Vision Transformer"],
-    "categories": ["computer-vision", "image-classification"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["classification", "vision"],
+    "family": [
+      "ViT",
+      "Base",
+      "Patch16",
+      "224"
+    ],
+    "aliases": [
+      "google/vit-base-patch16-224",
+      "Vision Transformer"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "classification",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2020-10-22",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["imagenet-21k", "imagenet-1k"],
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-21k",
+          "imagenet-1k"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -310,20 +655,46 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "OpenAI",
-    "family": ["CLIP", "ViT", "L/14"],
-    "aliases": ["CLIP"],
-    "categories": ["computer-vision", "multimodal", "embedding"],
-    "inputModalities": ["image", "text"],
-    "outputModalities": ["embeddings"],
-    "useCases": ["vision", "embeddings", "classification"],
+    "family": [
+      "CLIP",
+      "ViT",
+      "L/14"
+    ],
+    "aliases": [
+      "CLIP"
+    ],
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "embedding"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "embeddings"
+    ],
+    "useCases": [
+      "vision",
+      "embeddings",
+      "classification"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2021-01-05",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-embedding", "image-classification"],
-        "architecture": ["dual-encoder"],
-        "trainingDatasets": ["web-image-text", "yfcc100m"],
+        "visionTasks": [
+          "image-embedding",
+          "image-classification"
+        ],
+        "architecture": [
+          "dual-encoder"
+        ],
+        "trainingDatasets": [
+          "web-image-text"
+        ],
         "license": "mit"
       }
     }
@@ -335,20 +706,53 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Microsoft",
-    "family": ["Florence", "2", "Large"],
-    "aliases": ["Florence 2"],
-    "categories": ["computer-vision", "multimodal", "object-detection"],
-    "inputModalities": ["image", "text"],
-    "outputModalities": ["text", "bounding-boxes", "labels"],
-    "useCases": ["vision", "object-detection", "image-captioning"],
+    "family": [
+      "Florence",
+      "2",
+      "Large"
+    ],
+    "aliases": [
+      "Florence 2"
+    ],
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "text",
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "vision",
+      "object-detection",
+      "image-captioning",
+      "document-understanding",
+      "segmentation"
+    ],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-06-17",
+    "releaseDate": "2024-06-15",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "image-captioning"],
-        "architecture": ["encoder-decoder"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection",
+          "image-captioning",
+          "ocr",
+          "visual-grounding",
+          "image-segmentation"
+        ],
+        "architecture": [
+          "encoder-decoder"
+        ],
+        "trainingDatasets": [
+          "fld-5b"
+        ],
         "license": "mit"
       }
     }
@@ -360,21 +764,48 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "UC Berkeley",
-    "family": ["R-CNN", "R", "CNN"],
-    "aliases": ["Regions with CNN features", "R-CNN"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "R-CNN",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Regions with CNN features",
+      "R-CNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2013-11-11",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-2-clause"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "pascal-voc-2007",
+          "pascal-voc-2012",
+          "ilsvrc-2013"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -385,21 +816,48 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Microsoft Research",
-    "family": ["R-CNN", "Fast", "R", "CNN"],
-    "aliases": ["Fast RCNN", "Fast Region-based CNN"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "R-CNN",
+      "Fast",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Fast RCNN",
+      "Fast Region-based CNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-04-30",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-2-clause"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "pascal-voc-2007",
+          "pascal-voc-2012"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -410,21 +868,49 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Microsoft Research",
-    "family": ["R-CNN", "Faster", "R", "CNN"],
-    "aliases": ["Faster RCNN", "Faster Region-based CNN"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "R-CNN",
+      "Faster",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Faster RCNN",
+      "Faster Region-based CNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-06-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-2-clause"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "pascal-voc-2007",
+          "pascal-voc-2012",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -435,21 +921,50 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Meta AI",
-    "family": ["R-CNN", "Mask", "R", "CNN"],
-    "aliases": ["Mask RCNN"],
-    "categories": ["computer-vision", "object-detection", "instance-segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
-    "useCases": ["object-detection", "instance-segmentation", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "R-CNN",
+      "Mask",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Mask RCNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "instance-segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels",
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "object-detection",
+      "instance-segmentation",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "instance-segmentation"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "object-detection",
+          "instance-segmentation"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -460,21 +975,43 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Meta AI",
-    "family": ["RetinaNet"],
-    "aliases": ["Retina Net"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "RetinaNet"
+    ],
+    "aliases": [
+      "Retina Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-08-07",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["retinanet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "retinanet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -484,22 +1021,48 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": "Google",
-    "family": ["SSD"],
-    "aliases": ["Single Shot MultiBox Detector", "Single Shot Detector"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "provider": "UNC Chapel Hill / Google / Zoox / University of Michigan",
+    "family": [
+      "SSD"
+    ],
+    "aliases": [
+      "Single Shot MultiBox Detector",
+      "Single Shot Detector"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-08",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["ssd"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "pascal-voc-2007",
+          "pascal-voc-2012",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -510,21 +1073,44 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "University of Adelaide",
-    "family": ["FCOS"],
-    "aliases": ["Fully Convolutional One-Stage Object Detection"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "anchor-free-detection"],
-    "weightAvailability": "closed",
+    "family": [
+      "FCOS"
+    ],
+    "aliases": [
+      "Fully Convolutional One-Stage Object Detection"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "anchor-free-detection"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "Australia",
     "releaseDate": "2019-04-02",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["fcos"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "fcos"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -535,21 +1121,46 @@
     "entityType": "model_family",
     "minPool": 0,
     "provider": "University of Washington",
-    "family": ["YOLO", "v3"],
-    "aliases": ["YOLO v3", "YOLOv3"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "family": [
+      "YOLO",
+      "v3"
+    ],
+    "aliases": [
+      "YOLO v3",
+      "YOLOv3"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2018-04-08",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "agpl-3.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "public-domain"
       }
     }
   },
@@ -560,20 +1171,44 @@
     "entityType": "model_family",
     "minPool": 0,
     "provider": "Ultralytics",
-    "family": ["YOLO", "v5"],
-    "aliases": ["YOLO v5", "YOLOv5"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "family": [
+      "YOLO",
+      "v5"
+    ],
+    "aliases": [
+      "YOLO v5",
+      "YOLOv5"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2020-06-26",
+    "releaseDate": "2020-05-27",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["coco"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
         "license": "agpl-3.0"
       }
     }
@@ -585,20 +1220,44 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Academia Sinica",
-    "family": ["YOLO", "v7"],
-    "aliases": ["YOLO v7", "YOLOv7"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "family": [
+      "YOLO",
+      "v7"
+    ],
+    "aliases": [
+      "YOLO v7",
+      "YOLOv7"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "open",
     "country": "Taiwan",
     "releaseDate": "2022-07-06",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
         "license": "gpl-3.0"
       }
     }
@@ -610,20 +1269,44 @@
     "entityType": "model_family",
     "minPool": 1,
     "provider": "Tsinghua University",
-    "family": ["YOLO", "v10"],
-    "aliases": ["YOLO v10", "YOLOv10"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "family": [
+      "YOLO",
+      "v10"
+    ],
+    "aliases": [
+      "YOLO v10",
+      "YOLOv10"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2024-05-23",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "yolo"
+        ],
+        "trainingDatasets": [
+          "coco"
+        ],
         "license": "agpl-3.0"
       }
     }
@@ -632,23 +1315,45 @@
     "id": "efficientdet",
     "name": "EfficientDet",
     "modelClass": "vision",
-    "entityType": "architecture",
+    "entityType": "model_family",
     "minPool": 1,
     "provider": "Google",
-    "family": ["EfficientDet"],
-    "aliases": ["Efficient Det"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "EfficientDet"
+    ],
+    "aliases": [
+      "Efficient Det"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-11-20",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["efficientdet"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "efficientdet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -660,21 +1365,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Google",
-    "family": ["DeepLab", "V3"],
-    "aliases": ["DeepLab v3", "DeepLabV3"],
-    "categories": ["computer-vision", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["segmentation-mask", "labels"],
-    "useCases": ["semantic-segmentation", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "DeepLab",
+      "V3"
+    ],
+    "aliases": [
+      "DeepLab v3",
+      "DeepLabV3"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask",
+      "labels"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-06-17",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation"],
-        "architecture": ["deeplab"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "deeplab"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "pascal-voc-2012",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -685,21 +1415,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "University of Freiburg",
-    "family": ["U-Net", "U", "Net"],
-    "aliases": ["UNet", "U Net"],
-    "categories": ["computer-vision", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["segmentation-mask"],
-    "useCases": ["semantic-segmentation", "medical-imaging", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "U-Net",
+      "U",
+      "Net"
+    ],
+    "aliases": [
+      "UNet",
+      "U Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "medical-imaging",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "Germany",
     "releaseDate": "2015-05-18",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation"],
-        "architecture": ["u-net"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-segmentation"
+        ],
+        "architecture": [
+          "u-net"
+        ],
+        "trainingDatasets": [
+          "isbi-2012",
+          "isbi-cell-tracking-2015"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -710,21 +1465,45 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "AT&T Bell Laboratories",
-    "family": ["LeNet", "5"],
-    "aliases": ["LeNet 5", "LeNet-5"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "handwriting-recognition", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "LeNet",
+      "5"
+    ],
+    "aliases": [
+      "LeNet 5",
+      "LeNet-5"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "handwriting-recognition",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "1998-11-01",
+    "releaseDate": "1998",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["lenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "lenet"
+        ],
+        "trainingDatasets": [
+          "mnist"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -735,21 +1514,44 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "University of Toronto",
-    "family": ["AlexNet"],
-    "aliases": ["Alex Net"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "AlexNet"
+    ],
+    "aliases": [
+      "Alex Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "Canada",
-    "releaseDate": "2012-12-03",
+    "releaseDate": "2012",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["alexnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "alexnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -760,21 +1562,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "University of Oxford",
-    "family": ["VGG", "16"],
-    "aliases": ["VGG-16", "VGG 16"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "VGG",
+      "16"
+    ],
+    "aliases": [
+      "VGG-16",
+      "VGG 16"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "2014-09-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["convnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "cc-by-4.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -785,21 +1612,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Microsoft Research",
-    "family": ["ResNet", "50"],
-    "aliases": ["ResNet50", "ResNet 50"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "ResNet",
+      "50"
+    ],
+    "aliases": [
+      "ResNet50",
+      "ResNet 50"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["resnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -810,21 +1662,47 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Google",
-    "family": ["Inception", "GoogLeNet"],
-    "aliases": ["GoogleNet", "Inception v1", "Inception-v1"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "Inception",
+      "GoogLeNet"
+    ],
+    "aliases": [
+      "GoogleNet",
+      "Inception v1",
+      "Inception-v1"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2014-09-17",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "object-detection"],
-        "architecture": ["inception"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "object-detection"
+        ],
+        "architecture": [
+          "inception"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -835,21 +1713,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Google",
-    "family": ["Inception", "V3"],
-    "aliases": ["Inception v3", "InceptionV3"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "Inception",
+      "V3"
+    ],
+    "aliases": [
+      "Inception v3",
+      "InceptionV3"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-02",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["inception"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "inception"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -859,22 +1762,47 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": "Cornell University",
-    "family": ["DenseNet", "121"],
-    "aliases": ["DenseNet121", "DenseNet 121"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
-    "country": "United States",
+    "provider": "Cornell University / Tsinghua University / Meta",
+    "family": [
+      "DenseNet",
+      "121"
+    ],
+    "aliases": [
+      "DenseNet121",
+      "DenseNet 121"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "United States / China",
     "releaseDate": "2016-08-25",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["densenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "densenet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -885,21 +1813,45 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Google",
-    "family": ["MobileNet", "V2"],
-    "aliases": ["MobileNet v2", "MobileNetV2"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "mobile-inference", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "MobileNet",
+      "V2"
+    ],
+    "aliases": [
+      "MobileNet v2",
+      "MobileNetV2"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "mobile-inference",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2018-01-13",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["mobilenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mobilenet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -910,21 +1862,46 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Google",
-    "family": ["EfficientNet", "B0"],
-    "aliases": ["EfficientNet B0", "EfficientNet-B0"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "EfficientNet",
+      "B0"
+    ],
+    "aliases": [
+      "EfficientNet B0",
+      "EfficientNet-B0"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2019-05-28",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["efficientnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -935,21 +1912,53 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Microsoft Research",
-    "family": ["Swin Transformer", "Swin", "Transformer"],
-    "aliases": ["Swin", "Swin Transformer"],
-    "categories": ["computer-vision", "image-classification", "transformer"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels", "embeddings"],
-    "useCases": ["image-classification", "object-detection", "segmentation", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "Swin Transformer",
+      "Swin",
+      "Transformer"
+    ],
+    "aliases": [
+      "Swin",
+      "Swin Transformer"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "transformer"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels",
+      "embeddings"
+    ],
+    "useCases": [
+      "image-classification",
+      "object-detection",
+      "segmentation",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2021-03-25",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "object-detection", "image-segmentation"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-classification",
+          "object-detection",
+          "image-segmentation"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "imagenet-21k",
+          "coco",
+          "ade20k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -960,20 +1969,47 @@
     "entityType": "architecture",
     "minPool": 1,
     "provider": "Kunihiko Fukushima, Yann LeCun",
-    "family": ["CNN", "Convolutional", "Neural", "Network"],
-    "aliases": ["CNN", "ConvNet", "Convolutional Network"],
-    "categories": ["neural-network", "computer-vision"],
-    "inputModalities": ["image", "tensor"],
-    "outputModalities": ["features", "labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
-    "country": "Japan / France",
-    "releaseDate": "1989-12-01",
+    "family": [
+      "CNN",
+      "Convolutional",
+      "Neural",
+      "Network"
+    ],
+    "aliases": [
+      "CNN",
+      "ConvNet",
+      "Convolutional Network"
+    ],
+    "categories": [
+      "neural-network",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "image",
+      "tensor"
+    ],
+    "outputModalities": [
+      "features",
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
+    "country": "Japan / United States",
+    "releaseDate": "1980",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "cnn"
+        ],
+        "trainingDatasets": [],
         "license": "not-applicable"
       }
     }
@@ -984,22 +2020,48 @@
     "modelClass": "neural_network",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": "indico Research",
-    "family": ["GAN", "DCGAN"],
-    "aliases": ["Deep Convolutional GAN", "DC-GAN"],
-    "categories": ["neural-network", "generative-model", "computer-vision"],
-    "inputModalities": ["noise"],
-    "outputModalities": ["image"],
-    "useCases": ["image-generation", "generative-modeling"],
-    "weightAvailability": "closed",
+    "provider": "indico Research / Meta",
+    "family": [
+      "GAN",
+      "DCGAN"
+    ],
+    "aliases": [
+      "Deep Convolutional GAN",
+      "DC-GAN"
+    ],
+    "categories": [
+      "neural-network",
+      "generative-model",
+      "computer-vision"
+    ],
+    "inputModalities": [
+      "noise"
+    ],
+    "outputModalities": [
+      "image"
+    ],
+    "useCases": [
+      "image-generation",
+      "generative-modeling"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-11-19",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["unknown"],
-        "architecture": ["gan"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-generation",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "gan"
+        ],
+        "trainingDatasets": [
+          "lsun",
+          "imagenet-1k",
+          "custom-faces"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1009,22 +2071,52 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 2,
-    "provider": "PyTorch",
-    "family": ["R-CNN", "Keypoint", "R", "CNN"],
-    "aliases": ["Keypoint RCNN"],
-    "categories": ["computer-vision", "keypoint-detection", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["keypoints", "bounding-boxes", "labels"],
-    "useCases": ["keypoint-detection", "pose-estimation", "vision"],
-    "weightAvailability": "closed",
+    "provider": "Meta",
+    "family": [
+      "R-CNN",
+      "Keypoint",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Keypoint RCNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "keypoint-detection",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "keypoints",
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "keypoint-detection",
+      "pose-estimation",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["keypoint-detection", "object-detection", "pose-estimation"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "keypoint-detection",
+          "object-detection",
+          "pose-estimation"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1035,21 +2127,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["SSD", "Lite"],
-    "aliases": ["SSD Lite", "SSDLite"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "mobile-inference"],
-    "weightAvailability": "closed",
+    "family": [
+      "SSD",
+      "Lite"
+    ],
+    "aliases": [
+      "SSD Lite",
+      "SSDLite"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "mobile-inference"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2018-01-13",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["ssd"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "ssd"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1060,21 +2177,50 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "University of Texas at Austin",
-    "family": ["CenterNet"],
-    "aliases": ["Objects as Points", "Center Net"],
-    "categories": ["computer-vision", "object-detection", "keypoint-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "keypoints"],
-    "useCases": ["object-detection", "vision", "pose-estimation"],
-    "weightAvailability": "closed",
+    "family": [
+      "CenterNet"
+    ],
+    "aliases": [
+      "Objects as Points",
+      "Center Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection",
+      "keypoint-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels",
+      "keypoints"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "pose-estimation"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2019-04-16",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "keypoint-detection", "pose-estimation"],
-        "architecture": ["centernet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "object-detection",
+          "keypoint-detection",
+          "pose-estimation"
+        ],
+        "architecture": [
+          "centernet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco",
+          "kitti"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1085,21 +2231,49 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "UC San Diego",
-    "family": ["R-CNN", "Cascade", "R", "CNN"],
-    "aliases": ["Cascade RCNN", "Cascade R-CNN"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "R-CNN",
+      "Cascade",
+      "R",
+      "CNN"
+    ],
+    "aliases": [
+      "Cascade RCNN",
+      "Cascade R-CNN"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-12-03",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "r-cnn"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco",
+          "pascal-voc-2007",
+          "pascal-voc-2012"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1110,45 +2284,50 @@
     "entityType": "model_family",
     "minPool": 2,
     "provider": "Google",
-    "family": ["OWL-ViT", "OWL", "ViT"],
-    "aliases": ["OWL ViT", "Open-World Localization ViT"],
-    "categories": ["computer-vision", "multimodal", "object-detection"],
-    "inputModalities": ["image", "text"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["open-vocabulary-detection", "zero-shot-detection", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "OWL-ViT",
+      "OWL",
+      "ViT"
+    ],
+    "aliases": [
+      "OWL ViT",
+      "Open-World Localization ViT"
+    ],
+    "categories": [
+      "computer-vision",
+      "multimodal",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "open-vocabulary-detection",
+      "zero-shot-detection",
+      "vision"
+    ],
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-05-12",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
-      }
-    }
-  },
-  {
-    "id": "yolo-nas",
-    "name": "YOLO-NAS",
-    "modelClass": "vision",
-    "entityType": "model_family",
-    "minPool": 2,
-    "provider": "Deci AI",
-    "family": ["YOLO", "NAS"],
-    "aliases": ["YOLO NAS", "YOLONAS"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
-    "country": "Israel",
-    "releaseDate": "2023-05-03",
-    "categoryDetails": {
-      "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "web-image-text",
+          "open-images-v4",
+          "objects365",
+          "visual-genome"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -1160,21 +2339,45 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["Xception"],
-    "aliases": ["Extreme Inception"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "Xception"
+    ],
+    "aliases": [
+      "Extreme Inception"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2016-10-07",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["xception"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "xception"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "jft"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1185,21 +2388,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Microsoft Research",
-    "family": ["ResNet", "101"],
-    "aliases": ["ResNet101", "ResNet 101"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "ResNet",
+      "101"
+    ],
+    "aliases": [
+      "ResNet101",
+      "ResNet 101"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["resnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1210,21 +2438,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Microsoft Research",
-    "family": ["ResNet", "152"],
-    "aliases": ["ResNet152", "ResNet 152"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "ResNet",
+      "152"
+    ],
+    "aliases": [
+      "ResNet152",
+      "ResNet 152"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-10",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["resnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1235,21 +2488,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "University of Oxford",
-    "family": ["VGG", "19"],
-    "aliases": ["VGG-19", "VGG 19"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "VGG",
+      "19"
+    ],
+    "aliases": [
+      "VGG-19",
+      "VGG 19"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United Kingdom",
     "releaseDate": "2014-09-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["convnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "cc-by-4.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "convnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1260,21 +2538,45 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["MobileNet", "V3"],
-    "aliases": ["MobileNet v3", "MobileNetV3"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "mobile-inference", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "MobileNet",
+      "V3"
+    ],
+    "aliases": [
+      "MobileNet v3",
+      "MobileNetV3"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "mobile-inference",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2019-05-06",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["mobilenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mobilenet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1285,21 +2587,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["EfficientNet", "B7"],
-    "aliases": ["EfficientNet B7", "EfficientNet-B7"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "EfficientNet",
+      "B7"
+    ],
+    "aliases": [
+      "EfficientNet B7",
+      "EfficientNet-B7"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2019-05-28",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["efficientnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1310,21 +2637,47 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["EfficientNet", "V2"],
-    "aliases": ["EfficientNet V2", "EfficientNetV2"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "EfficientNet",
+      "V2"
+    ],
+    "aliases": [
+      "EfficientNet V2",
+      "EfficientNetV2"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2021-04-01",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["efficientnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "efficientnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "imagenet-21k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1334,22 +2687,47 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 2,
-    "provider": "Meta AI",
-    "family": ["ResNeXt"],
-    "aliases": ["ResNeXt"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "feature-extraction", "vision"],
-    "weightAvailability": "closed",
+    "provider": "UC San Diego / Meta",
+    "family": [
+      "ResNeXt"
+    ],
+    "aliases": [
+      "ResNeXt"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "feature-extraction",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2016-11-16",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification", "feature-extraction"],
-        "architecture": ["resnext"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-classification",
+          "feature-extraction"
+        ],
+        "architecture": [
+          "resnext"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "cifar-10",
+          "cifar-100"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1360,21 +2738,46 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Université Paris-Est",
-    "family": ["ResNet"],
-    "aliases": ["WideResNet", "WRN"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "ResNet"
+    ],
+    "aliases": [
+      "WideResNet",
+      "WRN"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "France",
     "releaseDate": "2016-05-23",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["resnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "mit"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "resnet"
+        ],
+        "trainingDatasets": [
+          "cifar-10",
+          "cifar-100",
+          "svhn",
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1385,21 +2788,44 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Megvii",
-    "family": ["ShuffleNet"],
-    "aliases": ["Shuffle Net"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "mobile-inference", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "ShuffleNet"
+    ],
+    "aliases": [
+      "Shuffle Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "mobile-inference",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "China",
     "releaseDate": "2017-07-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["shufflenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-3-clause"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "shufflenet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1409,22 +2835,44 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 2,
-    "provider": "DeepScale / UC Berkeley",
-    "family": ["SqueezeNet"],
-    "aliases": ["Squeeze Net"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "efficient-inference", "vision"],
-    "weightAvailability": "closed",
+    "provider": "DeepScale / UC Berkeley / Stanford University",
+    "family": [
+      "SqueezeNet"
+    ],
+    "aliases": [
+      "Squeeze Net"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "efficient-inference",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2016-02-24",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["squeezenet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "bsd-2-clause"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "squeezenet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1435,21 +2883,45 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["MNASNet"],
-    "aliases": ["MnasNet", "MnasNet-A1"],
-    "categories": ["computer-vision", "image-classification", "neural-network"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels"],
-    "useCases": ["image-classification", "mobile-inference", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "MNASNet"
+    ],
+    "aliases": [
+      "MnasNet",
+      "MnasNet-A1"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "neural-network"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels"
+    ],
+    "useCases": [
+      "image-classification",
+      "mobile-inference",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2018-07-31",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["mnasnet"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "mnasnet"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1460,45 +2932,98 @@
     "entityType": "architecture",
     "minPool": 2,
     "provider": "Google",
-    "family": ["MaxViT"],
-    "aliases": ["Max ViT", "Multi-Axis Vision Transformer"],
-    "categories": ["computer-vision", "image-classification", "transformer"],
-    "inputModalities": ["image"],
-    "outputModalities": ["labels", "embeddings"],
-    "useCases": ["image-classification", "vision"],
-    "weightAvailability": "closed",
+    "family": [
+      "MaxViT"
+    ],
+    "aliases": [
+      "Max ViT",
+      "Multi-Axis Vision Transformer"
+    ],
+    "categories": [
+      "computer-vision",
+      "image-classification",
+      "transformer"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "labels",
+      "embeddings"
+    ],
+    "useCases": [
+      "image-classification",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "United States",
-    "releaseDate": "2022-04-22",
+    "releaseDate": "2022-04-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-classification"],
-        "architecture": ["vision-transformer"],
-        "trainingDatasets": ["undisclosed"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "image-classification"
+        ],
+        "architecture": [
+          "convnet",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "imagenet-21k",
+          "jft-300m",
+          "coco"
+        ],
+        "license": "not-applicable"
       }
     }
   },
   {
     "id": "table-transformer-detection",
-    "name": "Table Transformer",
+    "name": "Table Transformer Detection",
     "modelClass": "vision",
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Microsoft",
-    "family": ["Table Transformer", "Table", "Transformer"],
-    "aliases": ["Table Transformer Detection", "TATR"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["table-detection", "document-understanding", "object-detection"],
+    "family": [
+      "Table Transformer",
+      "Table",
+      "Transformer"
+    ],
+    "aliases": [
+      "Table Transformer Detection",
+      "TATR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "table-detection",
+      "document-understanding",
+      "object-detection"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-03-04",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection", "table-detection"],
-        "architecture": ["detr"],
-        "trainingDatasets": ["pubtables-1m"],
+        "visionTasks": [
+          "object-detection",
+          "table-detection"
+        ],
+        "architecture": [
+          "detr"
+        ],
+        "trainingDatasets": [
+          "pubtables-1m"
+        ],
         "license": "mit"
       }
     }
@@ -1510,20 +3035,44 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "HUST Vision Lab",
-    "family": ["YOLOS", "Small"],
-    "aliases": ["YOLOS", "YOLOS-Small"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
+    "family": [
+      "YOLOS",
+      "Small"
+    ],
+    "aliases": [
+      "YOLOS",
+      "YOLOS-Small"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
     "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2021-06-01",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["vision-transformer", "detr"],
-        "trainingDatasets": ["imagenet-1k", "coco-2017"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "coco-2017"
+        ],
         "license": "apache-2.0"
       }
     }
@@ -1535,20 +3084,47 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "University of Göttingen",
-    "family": ["CLIPSeg"],
-    "aliases": ["CLIPSeg RD64 Refined", "CLIPSeg rd64-refined"],
-    "categories": ["computer-vision", "segmentation", "multimodal"],
-    "inputModalities": ["image", "text"],
-    "outputModalities": ["segmentation-mask"],
-    "useCases": ["semantic-segmentation", "referring-image-segmentation", "zero-shot-segmentation"],
-    "weightAvailability": "closed",
+    "family": [
+      "CLIPSeg"
+    ],
+    "aliases": [
+      "CLIPSeg RD64 Refined",
+      "CLIPSeg rd64-refined"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation",
+      "multimodal"
+    ],
+    "inputModalities": [
+      "image",
+      "text"
+    ],
+    "outputModalities": [
+      "segmentation-mask"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "referring-image-segmentation",
+      "zero-shot-segmentation"
+    ],
+    "weightAvailability": "unknown",
     "country": "Germany",
-    "releaseDate": "2021-12-18",
+    "releaseDate": "2022",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation", "zero-shot-segmentation"],
-        "architecture": ["clip", "vision-transformer", "transformer-decoder"],
-        "trainingDatasets": ["phrasecut"],
+        "visionTasks": [
+          "image-segmentation",
+          "zero-shot-segmentation"
+        ],
+        "architecture": [
+          "clip",
+          "vision-transformer",
+          "transformer-decoder"
+        ],
+        "trainingDatasets": [
+          "phrasecut"
+        ],
         "license": null
       }
     }
@@ -1560,21 +3136,47 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "Meta",
-    "family": ["Mask2Former", "Swin", "Small"],
-    "aliases": ["Mask2Former", "Mask2Former Swin Small ADE20K"],
-    "categories": ["computer-vision", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["segmentation-mask", "labels"],
-    "useCases": ["semantic-segmentation", "vision"],
-    "weightAvailability": "restricted",
+    "family": [
+      "Mask2Former",
+      "Swin",
+      "Small"
+    ],
+    "aliases": [
+      "Mask2Former",
+      "Mask2Former Swin Small ADE20K"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask",
+      "labels"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "vision"
+    ],
+    "weightAvailability": "unknown",
     "country": "United States",
-    "releaseDate": "2021-12-02",
+    "releaseDate": "2021",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation", "semantic-segmentation"],
-        "architecture": ["mask2former", "swin-transformer"],
-        "trainingDatasets": ["ade20k"],
-        "license": "cc-by-nc-4.0"
+        "visionTasks": [
+          "image-segmentation",
+          "semantic-segmentation"
+        ],
+        "architecture": [
+          "mask2former",
+          "swin-transformer"
+        ],
+        "trainingDatasets": [
+          "ade20k"
+        ],
+        "license": null
       }
     }
   },
@@ -1585,20 +3187,46 @@
     "entityType": "trained_model",
     "minPool": 1,
     "provider": "NVIDIA",
-    "family": ["SegFormer", "B0"],
-    "aliases": ["SegFormer", "SegFormer B0 ADE20K"],
-    "categories": ["computer-vision", "segmentation"],
-    "inputModalities": ["image"],
-    "outputModalities": ["segmentation-mask", "labels"],
-    "useCases": ["semantic-segmentation", "vision"],
+    "family": [
+      "SegFormer",
+      "B0"
+    ],
+    "aliases": [
+      "SegFormer",
+      "SegFormer B0 ADE20K"
+    ],
+    "categories": [
+      "computer-vision",
+      "segmentation"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "segmentation-mask",
+      "labels"
+    ],
+    "useCases": [
+      "semantic-segmentation",
+      "vision"
+    ],
     "weightAvailability": "restricted",
     "country": "United States",
     "releaseDate": "2021-05-31",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["image-segmentation", "semantic-segmentation"],
-        "architecture": ["segformer", "vision-transformer"],
-        "trainingDatasets": ["imagenet-1k", "ade20k"],
+        "visionTasks": [
+          "image-segmentation",
+          "semantic-segmentation"
+        ],
+        "architecture": [
+          "segformer",
+          "vision-transformer"
+        ],
+        "trainingDatasets": [
+          "imagenet-1k",
+          "ade20k"
+        ],
         "license": "nvidia-source-code-license"
       }
     }
@@ -1607,24 +3235,45 @@
     "id": "deformable-detr",
     "name": "Deformable DETR",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "architecture",
     "minPool": 2,
     "provider": "SenseTime",
-    "family": ["DETR"],
-    "aliases": ["Deformable-DETR"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision"],
-    "weightAvailability": "open",
+    "family": [
+      "DETR"
+    ],
+    "aliases": [
+      "Deformable-DETR"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision"
+    ],
+    "weightAvailability": "not-applicable",
     "country": "China",
     "releaseDate": "2020-10-08",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["deformable-detr", "resnet-50"],
-        "trainingDatasets": ["coco-2017"],
-        "license": "apache-2.0"
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "deformable-detr"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
+        "license": "not-applicable"
       }
     }
   },
@@ -1635,20 +3284,48 @@
     "entityType": "trained_model",
     "minPool": 2,
     "provider": "Roboflow",
-    "family": ["RF-DETR", "RF", "DETR", "Base"],
-    "aliases": ["RF-DETR", "RF DETR Base"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
+    "family": [
+      "RF-DETR",
+      "RF",
+      "DETR",
+      "Base"
+    ],
+    "aliases": [
+      "RF-DETR",
+      "RF DETR Base"
+    ],
+    "categories": [
+      "computer-vision",
+      "object-detection"
+    ],
+    "inputModalities": [
+      "image"
+    ],
+    "outputModalities": [
+      "bounding-boxes",
+      "labels"
+    ],
+    "useCases": [
+      "object-detection",
+      "vision",
+      "real-time-inference"
+    ],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2025-03-20",
     "categoryDetails": {
       "computer-vision": {
-        "visionTasks": ["object-detection"],
-        "architecture": ["rf-detr", "dinov2", "deformable-detr"],
-        "trainingDatasets": ["coco-2017"],
+        "visionTasks": [
+          "object-detection"
+        ],
+        "architecture": [
+          "rf-detr",
+          "dinov2",
+          "deformable-detr"
+        ],
+        "trainingDatasets": [
+          "coco-2017"
+        ],
         "license": "apache-2.0"
       }
     }

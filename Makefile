@@ -70,7 +70,7 @@ format:
 	$(PNPM) format
 
 local-editor:
-	$(UV) run --project aaidleLocalEditor python aaidleLocalEditor/run.py
+	$(UV) run --project local_editor python local_editor/run.py
 
 up: backend-up backend-migrate backend-seed build
 

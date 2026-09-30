@@ -28,21 +28,21 @@
     "id": "yolov8",
     "name": "YOLOv8",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "model_family",
     "minPool": 0,
     "provider": "Ultralytics",
     "family": ["YOLO", "v8"],
     "aliases": ["YOLO 8"],
-    "categories": ["computer-vision", "object-detection", "segmentation"],
+    "categories": ["computer-vision", "object-detection", "segmentation", "image-classification", "keypoint-detection"],
     "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
-    "useCases": ["object-detection", "vision", "segmentation"],
+    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask", "keypoints"],
+    "useCases": ["object-detection", "vision", "segmentation", "classification", "pose-estimation"],
     "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2023-01-10",
     "categoryDetails": {
       "object-detection": {
-        "detectionTypes": ["object-detection", "segmentation"],
+        "detectionTypes": ["object-detection", "segmentation", "keypoint-detection"],
         "architecture": ["yolo"],
         "trainingDatasets": ["coco"],
         "realTimeCapable": true
@@ -53,21 +53,21 @@
     "id": "yolo11",
     "name": "YOLO11",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "model_family",
     "minPool": 0,
     "provider": "Ultralytics",
     "family": ["YOLO", "11"],
     "aliases": ["YOLO 11"],
-    "categories": ["computer-vision", "object-detection", "segmentation"],
+    "categories": ["computer-vision", "object-detection", "segmentation", "image-classification", "keypoint-detection"],
     "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
-    "useCases": ["object-detection", "vision", "segmentation"],
+    "outputModalities": ["bounding-boxes", "labels", "segmentation-mask", "keypoints"],
+    "useCases": ["object-detection", "vision", "segmentation", "classification", "pose-estimation"],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-09-10",
+    "releaseDate": "2024-09-27",
     "categoryDetails": {
       "object-detection": {
-        "detectionTypes": ["object-detection", "segmentation"],
+        "detectionTypes": ["object-detection", "segmentation", "keypoint-detection"],
         "architecture": ["yolo"],
         "trainingDatasets": ["coco"],
         "realTimeCapable": true
@@ -89,12 +89,12 @@
     "useCases": ["object-detection", "vision"],
     "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2023-03-20",
+    "releaseDate": "2023-04-07",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["grounding-dino"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["objects365", "goldg", "cap4m", "coco", "open-images", "odinw-35", "refcoco"],
         "realTimeCapable": null
       }
     }
@@ -114,7 +114,7 @@
     "useCases": ["object-detection", "vision"],
     "weightAvailability": "open",
     "country": "China",
-    "releaseDate": "2023-09-01",
+    "releaseDate": "2023-04-17",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
@@ -136,15 +136,15 @@
     "categories": ["computer-vision", "multimodal", "object-detection"],
     "inputModalities": ["image", "text"],
     "outputModalities": ["text", "bounding-boxes", "labels"],
-    "useCases": ["vision", "object-detection", "image-captioning"],
+    "useCases": ["vision", "object-detection", "image-captioning", "document-understanding", "segmentation"],
     "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2024-06-17",
+    "releaseDate": "2024-06-15",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["encoder-decoder"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["fld-5b"],
         "realTimeCapable": null
       }
     }
@@ -162,14 +162,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2013-11-11",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "pascal-voc-2007", "pascal-voc-2012", "ilsvrc-2013"],
         "realTimeCapable": null
       }
     }
@@ -187,14 +187,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-04-30",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "pascal-voc-2007", "pascal-voc-2012"],
         "realTimeCapable": null
       }
     }
@@ -212,14 +212,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-06-04",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "pascal-voc-2007", "pascal-voc-2012", "coco"],
         "realTimeCapable": null
       }
     }
@@ -237,14 +237,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels", "segmentation-mask"],
     "useCases": ["object-detection", "instance-segmentation", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection", "instance-segmentation"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "coco"],
         "realTimeCapable": null
       }
     }
@@ -262,14 +262,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-08-07",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["retinanet"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "coco"],
         "realTimeCapable": null
       }
     }
@@ -280,21 +280,21 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 1,
-    "provider": "Google",
+    "provider": "UNC Chapel Hill / Google / Zoox / University of Michigan",
     "family": ["SSD"],
     "aliases": ["Single Shot MultiBox Detector", "Single Shot Detector"],
     "categories": ["computer-vision", "object-detection"],
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2015-12-08",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["ssd"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "pascal-voc-2007", "pascal-voc-2012", "coco"],
         "realTimeCapable": true
       }
     }
@@ -312,15 +312,15 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "anchor-free-detection"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "Australia",
     "releaseDate": "2019-04-02",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["fcos"],
-        "trainingDatasets": ["undisclosed"],
-        "realTimeCapable": null
+        "trainingDatasets": ["imagenet-1k", "coco"],
+        "realTimeCapable": true
       }
     }
   },
@@ -337,14 +337,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2018-04-08",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "coco"],
         "realTimeCapable": true
       }
     }
@@ -362,9 +362,9 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
-    "releaseDate": "2020-06-26",
+    "releaseDate": "2020-05-27",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
@@ -387,14 +387,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "Taiwan",
     "releaseDate": "2022-07-06",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["coco"],
         "realTimeCapable": true
       }
     }
@@ -412,14 +412,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "China",
     "releaseDate": "2024-05-23",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["coco"],
         "realTimeCapable": true
       }
     }
@@ -428,7 +428,7 @@
     "id": "efficientdet",
     "name": "EfficientDet",
     "modelClass": "vision",
-    "entityType": "architecture",
+    "entityType": "model_family",
     "minPool": 1,
     "provider": "Google",
     "family": ["EfficientDet"],
@@ -437,15 +437,15 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2019-11-20",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["efficientdet"],
-        "trainingDatasets": ["undisclosed"],
-        "realTimeCapable": null
+        "trainingDatasets": ["imagenet-1k", "coco"],
+        "realTimeCapable": true
       }
     }
   },
@@ -455,21 +455,21 @@
     "modelClass": "vision",
     "entityType": "architecture",
     "minPool": 2,
-    "provider": "PyTorch",
+    "provider": "Meta",
     "family": ["R-CNN", "Keypoint", "R", "CNN"],
     "aliases": ["Keypoint RCNN"],
     "categories": ["computer-vision", "keypoint-detection", "object-detection"],
     "inputModalities": ["image"],
     "outputModalities": ["keypoints", "bounding-boxes", "labels"],
     "useCases": ["keypoint-detection", "pose-estimation", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-03-20",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection", "keypoint-detection"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "coco"],
         "realTimeCapable": null
       }
     }
@@ -487,15 +487,15 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision", "mobile-inference"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2018-01-13",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["ssd"],
-        "trainingDatasets": ["undisclosed"],
-        "realTimeCapable": null
+        "trainingDatasets": ["imagenet-1k", "coco"],
+        "realTimeCapable": true
       }
     }
   },
@@ -512,15 +512,15 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels", "keypoints"],
     "useCases": ["object-detection", "vision", "pose-estimation"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2019-04-16",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection", "keypoint-detection"],
         "architecture": ["centernet"],
-        "trainingDatasets": ["undisclosed"],
-        "realTimeCapable": null
+        "trainingDatasets": ["imagenet-1k", "coco", "kitti"],
+        "realTimeCapable": true
       }
     }
   },
@@ -537,14 +537,14 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "not-applicable",
     "country": "United States",
     "releaseDate": "2017-12-03",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["r-cnn"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["imagenet-1k", "coco", "pascal-voc-2007", "pascal-voc-2012"],
         "realTimeCapable": null
       }
     }
@@ -562,46 +562,21 @@
     "inputModalities": ["image", "text"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["open-vocabulary-detection", "zero-shot-detection", "vision"],
-    "weightAvailability": "closed",
+    "weightAvailability": "open",
     "country": "United States",
     "releaseDate": "2022-05-12",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
         "architecture": ["vision-transformer"],
-        "trainingDatasets": ["undisclosed"],
+        "trainingDatasets": ["open-images-v4", "objects365", "visual-genome"],
         "realTimeCapable": null
       }
     }
   },
   {
-    "id": "yolo-nas",
-    "name": "YOLO-NAS",
-    "modelClass": "vision",
-    "entityType": "model_family",
-    "minPool": 2,
-    "provider": "Deci AI",
-    "family": ["YOLO", "NAS"],
-    "aliases": ["YOLO NAS", "YOLONAS"],
-    "categories": ["computer-vision", "object-detection"],
-    "inputModalities": ["image"],
-    "outputModalities": ["bounding-boxes", "labels"],
-    "useCases": ["object-detection", "vision", "real-time-inference"],
-    "weightAvailability": "closed",
-    "country": "Israel",
-    "releaseDate": "2023-05-03",
-    "categoryDetails": {
-      "object-detection": {
-        "detectionTypes": ["object-detection"],
-        "architecture": ["yolo"],
-        "trainingDatasets": ["undisclosed"],
-        "realTimeCapable": true
-      }
-    }
-  },
-  {
     "id": "table-transformer-detection",
-    "name": "Table Transformer",
+    "name": "Table Transformer Detection",
     "modelClass": "vision",
     "entityType": "trained_model",
     "minPool": 1,
@@ -643,7 +618,7 @@
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
-        "architecture": ["vision-transformer", "detr"],
+        "architecture": ["vision-transformer"],
         "trainingDatasets": ["imagenet-1k", "coco-2017"],
         "realTimeCapable": null
       }
@@ -653,7 +628,7 @@
     "id": "deformable-detr",
     "name": "Deformable DETR",
     "modelClass": "vision",
-    "entityType": "trained_model",
+    "entityType": "architecture",
     "minPool": 2,
     "provider": "SenseTime",
     "family": ["DETR"],
@@ -662,13 +637,13 @@
     "inputModalities": ["image"],
     "outputModalities": ["bounding-boxes", "labels"],
     "useCases": ["object-detection", "vision"],
-    "weightAvailability": "open",
+    "weightAvailability": "not-applicable",
     "country": "China",
     "releaseDate": "2020-10-08",
     "categoryDetails": {
       "object-detection": {
         "detectionTypes": ["object-detection"],
-        "architecture": ["deformable-detr", "resnet-50"],
+        "architecture": ["deformable-detr"],
         "trainingDatasets": ["coco-2017"],
         "realTimeCapable": null
       }
