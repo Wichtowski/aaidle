@@ -7,6 +7,29 @@ pub struct PlayerStreak {
     pub last_solved_date: Option<Date>,
 }
 
+/// Reconstruct a family streak from qualifying server completion days, never counters.
+pub fn derive_streak(dates: impl IntoIterator<Item = Date>, today: Date) -> PlayerStreak {
+    let dates = dates
+        .into_iter()
+        .filter(|date| *date <= today)
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut streak = PlayerStreak {
+        current_streak: 0,
+        best_streak: 0,
+        last_solved_date: None,
+    };
+    for date in dates {
+        streak = update_streak(&streak, date);
+    }
+    if streak
+        .last_solved_date
+        .is_some_and(|last| last < today.previous_day().unwrap_or(today))
+    {
+        streak.current_streak = 0;
+    }
+    streak
+}
+
 pub fn update_streak(previous: &PlayerStreak, challenge_date: Date) -> PlayerStreak {
     let Some(last_solved_date) = previous.last_solved_date else {
         return PlayerStreak {

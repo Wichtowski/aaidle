@@ -28,7 +28,7 @@ pub(super) struct TimelineAutoPlaceRequest {
     card_id: String,
 }
 
-async fn player(
+pub(super) async fn player(
     state: &AppState,
     headers: &HeaderMap,
     anonymous: Uuid,

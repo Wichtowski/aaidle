@@ -48,6 +48,7 @@ mod emoji;
 mod issues;
 mod logo;
 mod progress;
+mod streaks;
 mod timeline;
 
 pub fn router(state: AppState) -> Router {
@@ -95,6 +96,7 @@ pub fn router(state: AppState) -> Router {
         .route("/auth/oauth/{provider}", get(auth::oauth_start))
         .route("/auth/oauth/{provider}/callback", get(auth::oauth_callback))
         .route("/auth/me", get(auth::me))
+        .route("/me/streaks", get(streaks::get))
         .route("/auth/hardcore-status", get(auth::hardcore_status))
         .route("/auth/logout", post(auth::logout))
         .route("/issues", post(issues::create))
@@ -214,7 +216,7 @@ async fn anonymous_player_identity(
     next: Next,
 ) -> Response {
     let path = request.uri().path();
-    if !path.starts_with("/games/") && path != "/auth/progress" {
+    if !path.starts_with("/games/") && path != "/auth/progress" && path != "/me/streaks" {
         return next.run(request).await;
     }
     let now = now_millis();

@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 pub mod assists;
 pub mod emoji;
 pub mod logo;
+pub mod streaks;
 pub mod timeline;
 
 use sqlx::{FromRow, SqliteConnection, SqlitePool};

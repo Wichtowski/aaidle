@@ -124,6 +124,14 @@ Before the Speedrun start endpoint is called, movable card names and metadata ar
 
 Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 requests per minute for a player and challenge, 1,700 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
+## Game-family daily streaks
+
+`GET /api/v1/me/streaks` is available to guests and signed-in players. Signed-in requests use the canonical account player; disabled accounts are rejected. There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
+
+The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects. Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), `securedToday`, and sorted `qualifyingDates`. Modes and categories share one streak within each family. A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
+
+SQLite records qualifying days transactionally from accepted successful game events only when the challenge date equals the UTC date of the server-recorded completion timestamp. Historical and future-day completions cannot qualify. Migration backfills only qualifying existing events. Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency. Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically across day rotation.
+
 ## Progressive assistance
 
 `GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only. Each unsuccessful accepted guess earns one hint credit. `availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column. A solved board has no available columns or credits.

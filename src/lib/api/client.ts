@@ -19,6 +19,7 @@ import type {
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
 import type { LocalProgress } from "../storage/local-progress-schema";
+import { gameStreaksSchema } from "../validation/streaks";
 import {
   classicAssistSchema,
   timelineAssistSchema,
@@ -361,7 +362,21 @@ class ApiClient {
         retryAfter,
       );
     }
+    if (
+      typeof window !== "undefined" &&
+      ((method === "POST" &&
+        /^\/games\/[^/]+\/challenges\/[^/]+\/(guesses|attempts)$/.test(path)) ||
+        (method === "PUT" && path === "/auth/progress"))
+    ) {
+      window.dispatchEvent(new Event("aaidle:game-progress"));
+    }
     return payload as T;
+  }
+
+  gameStreaks(signal?: AbortSignal) {
+    return this.request<unknown>("/me/streaks", { signal, cache: "no-store" }).then((payload) =>
+      gameStreaksSchema.parse(payload),
+    );
   }
 
   currentUser() {

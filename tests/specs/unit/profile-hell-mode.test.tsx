@@ -28,6 +28,7 @@ vi.mock("../../../src/lib/storage/local-progress-store", () => ({
 
 vi.mock("../../../src/lib/api/client", () => ({
   apiClient: {
+    gameStreaks: vi.fn(() => Promise.reject(new Error("unavailable"))),
     progressHistory: vi.fn(() => new Promise(() => undefined)),
   },
 }));
