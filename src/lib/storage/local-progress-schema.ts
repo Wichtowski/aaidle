@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { classicColumns } from "../domain/guesses/comparison-types";
+import { columnHintSchema } from "../validation/api";
 const comparison = z.object(
   Object.fromEntries(
     classicColumns.map((column) => [
@@ -41,6 +42,7 @@ export const localProgressSchema = z
         ),
         startedAt: z.string(),
         completedAt: z.string().nullable(),
+        hints: z.array(columnHintSchema).optional(),
       }),
     ),
     stats: z.object({

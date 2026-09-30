@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+pub mod assists;
 pub mod emoji;
 pub mod logo;
 pub mod timeline;

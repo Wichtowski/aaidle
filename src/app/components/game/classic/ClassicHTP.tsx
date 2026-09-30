@@ -73,6 +73,12 @@ export function ClassicHTP({
         {hardcore ? "Rules of the pit" : "Useful details"}
       </h3>
       <ul className="how-to-play-modal__details">
+        {!hardcore && (
+          <li>
+            In Normal, each unsuccessful guess earns an optional hint. Choose an unmatched property
+            to reveal; hints remain available after reloading. Challenge has no hints.
+          </li>
+        )}
         <li>
           {hardcore
             ? "Categories show the guessed model's real values, but only exact matches are blessed."

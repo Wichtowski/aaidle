@@ -122,6 +122,11 @@ export function TimelineGame() {
   const progress = useLocalProgress();
   const { hardcoreUnlocked, setAuthenticatedUser, user } = useAuth();
   const {
+    assistance,
+    assistBusy,
+    assistError,
+    autoPlace,
+    retryAssistance,
     acceptedAttempts,
     attemptsRemaining,
     difficulty,
@@ -956,6 +961,10 @@ export function TimelineGame() {
               const modelId = positions[position];
               const item = modelId ? itemById.get(modelId) : null;
               const placement = placements?.[position];
+              const autoPlaced =
+                assistance?.autoPlacements.some(
+                  (assist) => assist.position === position && assist.cardId === modelId,
+                ) ?? false;
               const feedback =
                 placement === 1
                   ? "correct"
@@ -1080,7 +1089,7 @@ export function TimelineGame() {
                                   {feedback === "correct" ? (
                                     <>
                                       <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                                      Correct position
+                                      {autoPlaced ? "Auto-placed · Locked" : "Correct position"}
                                     </>
                                   ) : feedback === "same-year" ? (
                                     <>
@@ -1223,11 +1232,56 @@ export function TimelineGame() {
           )}
 
           <div className="timeline-submit">
+            {!solved && (difficulty === "normal" || difficulty === "challenge") && (
+              <section
+                className="game-assists"
+                aria-label="Timeline Auto-place"
+                aria-busy={assistBusy}
+              >
+                {assistance && (
+                  <>
+                    <p>
+                      {assistance.incorrectSubmissions % assistance.unlockEvery} /{" "}
+                      {assistance.unlockEvery} incorrect submissions toward the next Auto-place.
+                    </p>
+                    {assistance.autoPlacements.length > 0 && (
+                      <p>
+                        {assistance.autoPlacements.length} cards automatically placed and locked.
+                      </p>
+                    )}
+                    {assistance.remainingAutoPlacements > 0 && (
+                      <>
+                        <p>Auto-place available. Select a card to place correctly.</p>
+                        <div className="game-assists__choices">
+                          {assistance.availableCardIds.map((id) => (
+                            <Button
+                              key={id}
+                              disabled={busy || assistBusy}
+                              onClick={() => void autoPlace(id)}
+                            >
+                              Auto-place{" "}
+                              {game.movableModels.find((model) => model.id === id)?.name ?? id}
+                            </Button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+                {assistError && (
+                  <p role="alert">
+                    {assistError} <Button onClick={retryAssistance}>Retry Auto-place</Button>
+                  </p>
+                )}
+              </section>
+            )}
             {!solved && !speedrunUnfinished && (
               <Button
                 variant="primary"
                 color="black"
-                disabled={!complete || busy || solved || exhausted || submissionCoolingDown}
+                disabled={
+                  !complete || busy || assistBusy || solved || exhausted || submissionCoolingDown
+                }
                 onClick={() => void submit()}
                 type="button"
               >

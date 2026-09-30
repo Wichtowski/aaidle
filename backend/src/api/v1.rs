@@ -41,6 +41,7 @@ pub(super) const CLASSIC_CHALLENGE_COMPLETION_CATEGORIES: [&str; 6] =
 pub(super) struct AnonymousPlayerId(pub Uuid);
 
 mod admin;
+mod assists;
 mod auth;
 mod classic;
 mod emoji;
@@ -116,6 +117,14 @@ pub fn router(state: AppState) -> Router {
         .route("/models", get(models))
         .route("/games/classic/{category}/{difficulty}", get(classic::game))
         .route("/games/classic/hardcore", get(classic::hardcore_game))
+        .route(
+            "/games/classic/challenges/{challenge_id}/hints",
+            get(assists::classic_state).post(assists::classic_hint),
+        )
+        .route(
+            "/games/timeline/challenges/{challenge_id}/auto-place",
+            get(assists::timeline_state).post(assists::timeline_auto_place),
+        )
         .route(
             "/games/classic/hardcore/access",
             post(classic::hardcore_access),

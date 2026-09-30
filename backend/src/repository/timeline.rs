@@ -24,7 +24,7 @@ struct TimelineCandidateRow {
 }
 
 #[derive(Clone, Debug, FromRow)]
-struct TimelineChallengeRow {
+pub(super) struct TimelineChallengeRow {
     id: String,
     challenge_date: String,
     difficulty: String,
@@ -544,6 +544,24 @@ async fn process_timeline_attempt_once(
         ));
     }
     validate_model_order(&challenge, &input.model_order)?;
+    let auto_placements = sqlx::query_scalar::<_, String>(
+        "SELECT card_id FROM player_timeline_auto_placements WHERE challenge_id = ? AND player_id = ?",
+    )
+    .bind(input.challenge_id.to_string())
+    .bind(input.player_id.to_string())
+    .fetch_all(&mut *connection)
+    .await?;
+    if auto_placements.iter().any(|card| {
+        challenge
+            .model_order
+            .iter()
+            .position(|model| model.id == *card)
+            .is_some_and(|position| input.model_order.get(position) != Some(card))
+    }) {
+        return Err(AppError::validation(
+            "modelOrder must preserve auto-placed cards.",
+        ));
+    }
 
     if sqlx::query_scalar::<_, i64>(
         "SELECT EXISTS(SELECT 1 FROM timeline_attempts \
@@ -775,7 +793,7 @@ async fn find_timeline_challenge_by_date(
     .await?)
 }
 
-async fn find_timeline_challenge(
+pub(super) async fn find_timeline_challenge(
     connection: &mut SqliteConnection,
     challenge_id: Uuid,
 ) -> AppResult<Option<TimelineChallengeRow>> {
@@ -817,7 +835,7 @@ async fn timeline_attempt_count(
         .map_err(|_| AppError::Unavailable("Timeline attempt count is invalid.".to_owned()))
 }
 
-fn parse_challenge(row: TimelineChallengeRow) -> AppResult<TimelineChallenge> {
+pub(super) fn parse_challenge(row: TimelineChallengeRow) -> AppResult<TimelineChallenge> {
     Ok(TimelineChallenge {
         id: Uuid::parse_str(&row.id)
             .map_err(|_| AppError::Unavailable("Stored Timeline ID is invalid.".to_owned()))?,

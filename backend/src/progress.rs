@@ -261,6 +261,12 @@ pub async fn synchronize(
         .await?;
     let merged_player = player_id != primary_player_id;
     if merged_player {
+        crate::repository::assists::merge_player_assists(
+            &mut transaction,
+            &player_id,
+            &primary_player_id,
+        )
+        .await?;
         sqlx::query(
             "DELETE FROM guess_events WHERE player_id = ? AND EXISTS (\
                SELECT 1 FROM guess_events canonical WHERE canonical.player_id = ? \

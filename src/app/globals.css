@@ -6176,3 +6176,14 @@ body.hell-mode .completed--timeline {
     transform: none;
   }
 }
+/* Progressive assistance shares the existing compact game controls. */
+.game-assists {
+  width: min(100%, 72rem);
+  margin: 1rem auto;
+  padding: 0.75rem;
+}
+.game-assists__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

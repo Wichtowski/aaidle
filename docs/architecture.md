@@ -78,6 +78,8 @@ The following invariants are security and correctness boundaries:
 
 ## API surface
 
+Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance. Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them. Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions. Auto-placed cards remain locked in subsequent server-validated arrangements.
+
 The public contract is documented in [API v1](backend/api-v1.md). Major route groups are:
 
 - `/api/v1/games/classic/*` — Classic categories, guesses, stats, trajectory, and Hardcore access.

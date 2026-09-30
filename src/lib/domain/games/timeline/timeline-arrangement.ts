@@ -2,6 +2,17 @@ import type { TimelineGamePayload } from "./timeline-types";
 
 export const TIMELINE_DESKTOP_COLUMNS = 6;
 
+export function applyTimelineAutoPlacements(
+  positions: Array<string | null>,
+  autoPlacements: Array<{ cardId: string; position: number }>,
+) {
+  return autoPlacements.reduce(
+    (current, placement) =>
+      moveTimelineModel(current, new Set(), placement.cardId, placement.position),
+    positions,
+  );
+}
+
 export function timelineVisualPosition(
   position: number,
   columns: number,

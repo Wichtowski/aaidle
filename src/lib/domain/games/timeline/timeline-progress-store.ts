@@ -1,4 +1,5 @@
 import type { TimelineDifficulty } from "./timeline-types";
+import type { TimelineAssistState } from "../../../validation/api";
 
 const timelineProgressKey = "aaidle:timeline-progress:v1";
 
@@ -13,6 +14,7 @@ export type SavedTimelineGame = {
   solved: boolean;
   updatedAt: string;
   speedrunStartedAt?: number;
+  assistance?: TimelineAssistState;
 };
 
 type TimelineProgress = {
