@@ -124,6 +124,24 @@ Before the Speedrun start endpoint is called, movable card names and metadata ar
 
 Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 requests per minute for a player and challenge, 1,700 per player per hour, 600 per client IP per minute, and 5,000 per client IP per hour. IPv6 addresses are grouped by `/64`, and all subjects are HMAC-hashed before storage. Exact request replays and duplicate answers cannot add another guess event, but every HTTP submission is still subject to request-rate limits.
 
+## Authenticated historical daily games
+
+Today's existing game routes remain unchanged and guest-accessible according to their existing mode restrictions. Authenticated players can append a real calendar `YYYYMMDD` date to these retrieval routes:
+
+- `GET /api/v1/games/classic/:category/:difficulty/:date`
+- `GET /api/v1/games/classic/hardcore/:date`
+- `GET /api/v1/games/timeline/:difficulty/:date`
+- `GET /api/v1/games/emoji/:difficulty/:date`
+- `GET /api/v1/games/logo/:difficulty/:date`
+
+Malformed dates return `400`; dates before `20260811` or after the server's canonical UTC day return `404`, without generating a challenge or revealing future selections. Valid dated requests require authentication (`401` for guests); disabled accounts are forbidden. A dated request for today selects the same challenge as the clean route. Existing difficulty/Hardcore access restrictions still apply. Stored challenges are reused; first-time historical generation uses the requested date and the existing server selection/version semantics.
+
+Historical authorization is also enforced on challenge-ID gameplay reads and writes, including guesses, retry requests, hints, auto-placement, trajectory and Logo images. Send challenge UUIDs directly, not percent-encoded spellings. Account history reads use the canonical player even when the anonymous cookie differs. Existing public Timeline leaderboard views remain unchanged.
+
+Historical completions retain their original challenge date and actual server completion timestamp, restore by challenge ID, and remain idempotent. They contribute to lifetime history and distributions, but never to qualifying daily streak days. Older mode-stat updates/rebuilds now distinguish actual on-day wins; authenticated progress/history streak fields return the family-wide verified streak instead of deriving one from historical challenge dates.
+
+Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoji/:date`, and `/logo/:date`. Guests enter the existing sign-in flow. Signed-in eyebrow arrows navigate one UTC calendar day, hide at launch/today, and return to the clean route when reaching today. Direct dated URLs for today canonicalize after the server day is available. Date changes remount game state before fetching, keeping previous solutions out of the loading view. Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
+
 ## Game-family daily streaks
 
 `GET /api/v1/me/streaks` is available to guests and signed-in players. Signed-in requests use the canonical account player; disabled accounts are rejected. There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.

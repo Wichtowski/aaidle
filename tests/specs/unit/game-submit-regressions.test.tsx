@@ -123,6 +123,42 @@ describe("game submit regressions", () => {
     window.localStorage.clear();
   });
 
+  it("does not trust cached Timeline completion or attempt counters over the server", async () => {
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue(timelineGame);
+    window.localStorage.setItem(
+      "aaidle:timeline-progress:v1",
+      JSON.stringify({
+        version: 1,
+        games: {
+          [timelineGame.challenge.id]: {
+            challengeId: timelineGame.challenge.id,
+            challengeDate: timelineGame.challenge.date,
+            difficulty: "normal",
+            positions: ["anchor-old", "model-a", "model-b", "anchor-new"],
+            placements: [1, 1, 1, 1],
+            acceptedAttempts: 999,
+            attemptsRemaining: null,
+            solved: true,
+            updatedAt: Date.now(),
+          },
+        },
+      }),
+    );
+    render(
+      <MemoryRouter>
+        <TimelineGame />
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByRole("button", { name: "Submit complete timeline" }),
+    ).not.toBeDisabled();
+    await waitFor(() => {
+      const saved = JSON.parse(window.localStorage.getItem("aaidle:timeline-progress:v1")!);
+      expect(saved.games[timelineGame.challenge.id].solved).toBe(false);
+      expect(saved.games[timelineGame.challenge.id].acceptedAttempts).toBe(0);
+    });
+  });
+
   it("submits a complete Timeline arrangement", async () => {
     vi.spyOn(apiClient, "timelineGame").mockResolvedValue(timelineGame);
     const submit = vi.spyOn(apiClient, "submitTimelineAttempt").mockResolvedValue({

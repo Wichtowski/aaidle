@@ -1,5 +1,7 @@
 import { TimelineGame } from "@components/game";
+import { useParams } from "react-router-dom";
 
 export function TimelinePage() {
-  return <TimelineGame />;
+  const { date } = useParams();
+  return <TimelineGame key={date ?? "today"} requestedDate={date} />;
 }

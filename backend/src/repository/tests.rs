@@ -631,7 +631,7 @@ async fn replay_rejects_missing_models_challenges_and_malformed_statistics() {
 async fn completions_streaks_and_rebuild_statistics_cover_multiple_games() {
     let pool = pool().await;
     let player = Uuid::new_v4();
-    for (date, expected_streak) in [("2026-08-01", 1), ("2026-08-02", 2)] {
+    for (date, expected_streak) in [("2026-08-01", 0), ("2026-08-02", 0)] {
         let challenge = ensure_daily_challenge(&pool, date, "classic", "secret", 1)
             .await
             .unwrap();
@@ -656,7 +656,7 @@ async fn completions_streaks_and_rebuild_statistics_cover_multiple_games() {
         .unwrap();
     let stats = player_stats(&pool, player).await.unwrap().pop().unwrap();
     assert_eq!((stats.games_played, stats.games_won), (2, 2));
-    assert_eq!((stats.current_streak, stats.best_streak), (2, 2));
+    assert_eq!((stats.current_streak, stats.best_streak), (0, 0));
     assert_eq!(stats.guess_distribution.get("1"), Some(&2));
 
     let challenge = ensure_daily_challenge(&pool, "2026-08-03", "classic", "secret", 1)

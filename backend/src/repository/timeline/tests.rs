@@ -386,7 +386,7 @@ async fn generates_reuses_and_replaces_timeline_challenges() {
     );
 
     let stale = insert_challenge(&pool, TimelineDifficulty::Challenge).await;
-    let replacement = ensure_timeline_challenge(
+    let historical = ensure_timeline_challenge(
         &pool,
         &stale.challenge_date,
         TimelineDifficulty::Challenge,
@@ -394,6 +394,21 @@ async fn generates_reuses_and_replaces_timeline_challenges() {
     )
     .await
     .unwrap();
+    assert_eq!(historical.id, stale.id);
+    let today = time::OffsetDateTime::now_utc()
+        .date()
+        .format(time::macros::format_description!("[year]-[month]-[day]"))
+        .unwrap();
+    sqlx::query("UPDATE timeline_challenges SET challenge_date=? WHERE id=?")
+        .bind(&today)
+        .bind(stale.id.to_string())
+        .execute(&pool)
+        .await
+        .unwrap();
+    let replacement =
+        ensure_timeline_challenge(&pool, &today, TimelineDifficulty::Challenge, "secret")
+            .await
+            .unwrap();
     assert_ne!(replacement.id, stale.id);
     assert_eq!(replacement.model_order.len(), 12);
     assert_eq!(replacement.anchor_positions.len(), 4);

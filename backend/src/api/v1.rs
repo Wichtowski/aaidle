@@ -45,6 +45,7 @@ mod assists;
 mod auth;
 mod classic;
 mod emoji;
+mod history;
 mod issues;
 mod logo;
 mod progress;
@@ -118,7 +119,15 @@ pub fn router(state: AppState) -> Router {
         .route("/public-config", get(admin::public_config))
         .route("/models", get(models))
         .route("/games/classic/{category}/{difficulty}", get(classic::game))
+        .route(
+            "/games/classic/{category}/{difficulty}/{date}",
+            get(classic::dated_game),
+        )
         .route("/games/classic/hardcore", get(classic::hardcore_game))
+        .route(
+            "/games/classic/hardcore/{date}",
+            get(classic::dated_hardcore_game),
+        )
         .route(
             "/games/classic/challenges/{challenge_id}/hints",
             get(assists::classic_state).post(assists::classic_hint),
@@ -144,8 +153,17 @@ pub fn router(state: AppState) -> Router {
             post(classic::trajectory),
         )
         .route("/games/emoji/{difficulty}", get(emoji::game))
+        .route("/games/emoji/{difficulty}/{date}", get(emoji::dated_game))
         .route("/games/logo/{difficulty}", get(logo::game_route))
+        .route(
+            "/games/logo/{difficulty}/{date}",
+            get(logo::dated_game_route),
+        )
         .route("/games/timeline/{difficulty}", get(timeline::game_route))
+        .route(
+            "/games/timeline/{difficulty}/{date}",
+            get(timeline::dated_game_route),
+        )
         .route(
             "/games/timeline/challenges/{challenge_id}/attempts",
             post(timeline::attempt_route),
@@ -216,6 +234,10 @@ async fn anonymous_player_identity(
     next: Next,
 ) -> Response {
     let path = request.uri().path();
+    if let Err(error) = history::authorize_challenge_request(&state, request.headers(), path).await
+    {
+        return error.into_response();
+    }
     if !path.starts_with("/games/") && path != "/auth/progress" && path != "/me/streaks" {
         return next.run(request).await;
     }
@@ -241,6 +263,16 @@ async fn anonymous_player_identity(
     request
         .extensions_mut()
         .insert(AnonymousPlayerId(player_id));
+    if request.method() == axum::http::Method::GET && request.uri().path().contains("/challenges/")
+    {
+        let canonical = match assists::player(&state, request.headers(), player_id, false).await {
+            Ok(player) => player,
+            Err(error) => return error.into_response(),
+        };
+        request
+            .extensions_mut()
+            .insert(AnonymousPlayerId(canonical));
+    }
     let mut response = next.run(request).await;
     if issue_cookie {
         let token = match crate::auth::create_anonymous_player_token(

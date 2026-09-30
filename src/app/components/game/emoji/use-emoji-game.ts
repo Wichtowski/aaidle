@@ -10,7 +10,7 @@ import { useLocalProgress } from "@lib/storage/use-local-progress";
 export type EmojiGuess = { id: string; name: string; isCorrect: boolean };
 type CachedGame = { game: EmojiGamePayload; guesses: EmojiGuess[]; query: string };
 
-export function useEmojiGame(difficulty: EmojiDifficulty) {
+export function useEmojiGame(difficulty: EmojiDifficulty, requestedDate?: string) {
   const progress = useLocalProgress();
   const [game, setGame] = useState<EmojiGamePayload | null>(null);
   const [guesses, setGuesses] = useState<EmojiGuess[]>([]);
@@ -82,7 +82,7 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
     setError(null);
     setIsLoadingGame(true);
     void apiClient
-      .emojiGame(difficulty, controller.signal)
+      .emojiGame(difficulty, controller.signal, requestedDate)
       .then((nextGame) => {
         if (!active) return;
         loadFailureCount.current = 0;
@@ -109,7 +109,7 @@ export function useEmojiGame(difficulty: EmojiDifficulty) {
       active = false;
       controller.abort();
     };
-  }, [difficulty, hardcore?.unlocked, loadAttempt]);
+  }, [difficulty, hardcore?.unlocked, loadAttempt, requestedDate]);
 
   useEffect(() => {
     if (!game) return;

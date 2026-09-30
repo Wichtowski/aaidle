@@ -18,8 +18,8 @@ use crate::{
 };
 
 use super::{
-    AnonymousPlayerId, authenticated_user, current_utc_date, format_next_midnight, is_model_id,
-    parse_json_payload, parse_uuid,
+    AnonymousPlayerId, authenticated_user, format_next_midnight, is_model_id, parse_json_payload,
+    parse_uuid,
 };
 
 pub(super) async fn game(
@@ -27,6 +27,24 @@ pub(super) async fn game(
     headers: HeaderMap,
     Path(difficulty): Path<String>,
 ) -> AppResult<Json<EmojiDifficultyGameResponse>> {
+    game_for_date(state, headers, difficulty, None).await
+}
+
+pub(super) async fn dated_game(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path((difficulty, date)): Path<(String, String)>,
+) -> AppResult<Json<EmojiDifficultyGameResponse>> {
+    game_for_date(state, headers, difficulty, Some(&date)).await
+}
+
+async fn game_for_date(
+    state: AppState,
+    headers: HeaderMap,
+    difficulty: String,
+    requested: Option<&str>,
+) -> AppResult<Json<EmojiDifficultyGameResponse>> {
+    let date = super::history::requested_date(&state, &headers, requested).await?;
     if repository::emoji::difficulty_pool(&difficulty).is_none() {
         return Err(AppError::validation("Unknown Emoji difficulty."));
     }
@@ -41,7 +59,7 @@ pub(super) async fn game(
     let game = repository::emoji::game(
         &state.db,
         &state.emoji,
-        &current_utc_date()?,
+        &date,
         &difficulty,
         &state.config.daily_selection_secret,
     )

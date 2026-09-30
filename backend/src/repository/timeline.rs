@@ -469,8 +469,13 @@ pub async fn ensure_timeline_challenge(
     if let Some(challenge) = find_timeline_challenge_by_date(pool, date, difficulty).await? {
         let parsed = parse_challenge(challenge)?;
         let config = difficulty.config();
-        if parsed.model_order.len() == config.total_model_count
-            && parsed.anchor_positions.len() == config.locked_anchor_count
+        let today = time::OffsetDateTime::now_utc()
+            .date()
+            .format(time::macros::format_description!("[year]-[month]-[day]"))
+            .map_err(|_| AppError::Unavailable("Current game date is invalid.".to_owned()))?;
+        if parsed.challenge_date < today
+            || (parsed.model_order.len() == config.total_model_count
+                && parsed.anchor_positions.len() == config.locked_anchor_count)
         {
             return Ok(parsed);
         }

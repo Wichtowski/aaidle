@@ -14,7 +14,7 @@ import {
 } from "@lib/storage/game-preferences";
 
 export function ClassicPage() {
-  const { category: routeCategory } = useParams();
+  const { category: routeCategory, date } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const savedPreferences = readGamePreferences();
@@ -93,7 +93,8 @@ export function ClassicPage() {
   }
   return (
     <ClassicGame
-      key={category === "hardcore" ? "hardcore" : "classic"}
+      key={`${date ?? "today"}:${category === "hardcore" ? "hardcore" : "classic"}`}
+      requestedDate={date}
       category={category}
       difficulty={difficulty}
       hasHardcoreAccess={category !== "hardcore" || hasHardcoreAccess}

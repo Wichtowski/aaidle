@@ -2221,8 +2221,9 @@ async fn classic_attempts_are_sequential_and_bounded_by_the_eligible_pool() {
         .await
         .expect("second LLM metadata");
     let challenge_id = Uuid::new_v4();
-    sqlx::query("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, '2026-08-23', 'classic:llm:normal', 'model-3', 1, 0, 'test')")
+    sqlx::query("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, ?, 'classic:llm:normal', 'model-3', 1, 0, 'test')")
         .bind(challenge_id.to_string())
+        .bind(time::OffsetDateTime::now_utc().date().to_string())
         .execute(&pool)
         .await
         .expect("classic challenge");

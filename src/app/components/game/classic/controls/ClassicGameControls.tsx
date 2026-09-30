@@ -5,6 +5,7 @@ import { GameIntro } from "../../common/layout/GameLayout";
 import { DifficultySwitch } from "../../common/layout/DifficultySwitch";
 import { HardcoreSoundtrack } from "../hardcore/HardcoreSoundtrack";
 import { utcDate } from "@lib/utils/dates";
+import { parseGameRouteDate } from "@lib/domain/challenges/historical-dates";
 import {
   classicCategoryDetails,
   type ClassicCategory,
@@ -50,6 +51,7 @@ export function ClassicGameControls({
   guessed,
   onDifficultyChange,
   onPick,
+  requestedDate,
 }: {
   category: ClassicCategory;
   date: string | null;
@@ -63,6 +65,7 @@ export function ClassicGameControls({
   guessed: Set<string>;
   onDifficultyChange: (difficulty: ClassicDifficulty) => void;
   onPick: (model: PublicModelIndex) => void;
+  requestedDate?: string;
 }) {
   const choices = (
     category === "hardcore" ? ["hardcore"] : ["normal", "challenge"]
@@ -91,8 +94,9 @@ export function ClassicGameControls({
       expiresAt={expiresAt}
       eyebrow={
         <GameEyebrow
-          date={date ?? utcDate()}
+          date={date ?? (requestedDate ? parseGameRouteDate(requestedDate) : null) ?? utcDate()}
           game="Classic"
+          historyPath={`/classic/${category}`}
           variant={resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
         />
       }
@@ -110,7 +114,7 @@ export function ClassicGameControls({
       }
       navigation={
         <div className={category === "hardcore" ? "classic-category-controls" : undefined}>
-          <ClassicCategoryNav category={category} />
+          <ClassicCategoryNav category={category} requestedDate={requestedDate} />
           {category === "hardcore" && <HardcoreSoundtrack />}
         </div>
       }
@@ -123,7 +127,11 @@ export function ClassicGameControls({
         )
       }
       title={
-        category === "hardcore" ? "Pray you guess today’s AI model." : "Guess today’s AI model"
+        requestedDate
+          ? "Guess this day’s AI model"
+          : category === "hardcore"
+            ? "Pray you guess today’s AI model."
+            : "Guess today’s AI model"
       }
     />
   );

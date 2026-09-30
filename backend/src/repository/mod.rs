@@ -96,6 +96,7 @@ struct RebuildPlayerGameRow {
     challenge_date: String,
     guess_count: i64,
     solved: i64,
+    streak_eligible: i64,
 }
 
 #[derive(FromRow)]
@@ -857,17 +858,20 @@ async fn rebuild_player_stats(
 ) -> AppResult<()> {
     let query = match event_table {
         PlayerEventTable::Classic => {
-            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved, \
+             MAX(CASE WHEN g.is_correct = 1 AND d.challenge_date = strftime('%Y-%m-%d', g.created_at / 1000.0, 'unixepoch') THEN 1 ELSE 0 END) AS streak_eligible \
              FROM guess_events g JOIN daily_challenges d ON d.id = g.challenge_id \
              WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
         }
         PlayerEventTable::VisualClues => {
-            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved, \
+             MAX(CASE WHEN g.is_correct = 1 AND d.challenge_date = strftime('%Y-%m-%d', g.created_at / 1000.0, 'unixepoch') THEN 1 ELSE 0 END) AS streak_eligible \
              FROM visual_clue_guess_events g JOIN visual_clue_challenges d ON d.id = g.challenge_id \
              WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
         }
         PlayerEventTable::Logo => {
-            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved \
+            "SELECT d.challenge_date, COUNT(*) AS guess_count, MAX(g.is_correct) AS solved, \
+             MAX(CASE WHEN g.is_correct = 1 AND d.challenge_date = strftime('%Y-%m-%d', g.created_at / 1000.0, 'unixepoch') THEN 1 ELSE 0 END) AS streak_eligible \
              FROM logo_guess_events g JOIN logo_challenges d ON d.id = g.challenge_id \
              WHERE g.player_id = ? AND d.mode = ? GROUP BY d.id, d.challenge_date ORDER BY d.challenge_date"
         }
@@ -892,7 +896,9 @@ async fn rebuild_player_stats(
     };
     let mut distribution: BTreeMap<String, i64> = BTreeMap::new();
     for row in rows.iter().filter(|row| row.solved != 0) {
-        streak = update_streak(&streak, parse_date(&row.challenge_date)?);
+        if row.streak_eligible != 0 {
+            streak = update_streak(&streak, parse_date(&row.challenge_date)?);
+        }
         *distribution.entry(row.guess_count.to_string()).or_default() += 1;
     }
     let games_won = rows.iter().filter(|row| row.solved != 0).count() as i64;
@@ -1345,21 +1351,28 @@ async fn update_player_stats(
     let mut last_solved_date = previous.last_solved_date.clone();
     if is_correct {
         let challenge_date = parse_date(&challenge.challenge_date)?;
-        let streak = update_streak(
-            &PlayerStreak {
-                current_streak,
-                best_streak,
-                last_solved_date: previous
-                    .last_solved_date
-                    .as_deref()
-                    .map(parse_date)
-                    .transpose()?,
-            },
-            challenge_date,
-        );
-        current_streak = streak.current_streak;
-        best_streak = streak.best_streak;
-        last_solved_date = streak.last_solved_date.map(format_date).transpose()?;
+        let previous_solved_date = previous
+            .last_solved_date
+            .as_deref()
+            .map(parse_date)
+            .transpose()?;
+        let completion_date =
+            OffsetDateTime::from_unix_timestamp_nanos(i128::from(now) * 1_000_000)
+                .map_err(|_| AppError::Unavailable("Completion timestamp is invalid.".to_owned()))?
+                .date();
+        if challenge_date == completion_date {
+            let streak = update_streak(
+                &PlayerStreak {
+                    current_streak,
+                    best_streak,
+                    last_solved_date: previous_solved_date,
+                },
+                challenge_date,
+            );
+            current_streak = streak.current_streak;
+            best_streak = streak.best_streak;
+            last_solved_date = streak.last_solved_date.map(format_date).transpose()?;
+        }
         *distribution.entry(attempt_number.to_string()).or_default() += 1;
     }
     let last_played_date = match &previous.last_played_date {

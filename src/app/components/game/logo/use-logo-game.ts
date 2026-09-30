@@ -4,7 +4,7 @@ import { useLocalProgress } from "@lib/storage/use-local-progress";
 
 export type LogoGuess = { model: LogoModel; isCorrect: boolean; attemptNumber: number };
 
-export function useLogoGame() {
+export function useLogoGame(requestedDate?: string) {
   const localProgress = useLocalProgress();
   const [game, setGame] = useState<LogoGamePayload | null>(null);
   const [guesses, setGuesses] = useState<LogoGuess[]>([]);
@@ -31,7 +31,7 @@ export function useLogoGame() {
     setLoading(true);
     setError(null);
     void apiClient
-      .logoGame(localProgress.playerId, controller.signal)
+      .logoGame(localProgress.playerId, controller.signal, requestedDate)
       .then(async (nextGame) => {
         if (!active) return;
         setGame(nextGame);
@@ -60,7 +60,7 @@ export function useLogoGame() {
       active = false;
       controller.abort();
     };
-  }, [loadAttempt, localProgress.playerId]);
+  }, [loadAttempt, localProgress.playerId, requestedDate]);
 
   const available = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("en-US");

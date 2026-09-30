@@ -13,6 +13,7 @@ import { GameLoadingState } from "../../ui/GameLoadingState";
 import { Toast } from "../../ui/Toast";
 import { GameGuessAutocomplete } from "../common";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
+import { parseGameRouteDate } from "@lib/domain/challenges/historical-dates";
 import { GameIntro } from "../common/layout/GameLayout";
 import { LogoHTP } from "./LogoHTP";
 import { LogoCompletedDialog } from "./LogoCompletedDialog";
@@ -84,7 +85,7 @@ function ProgressiveImage({ progress }: { progress: LogoProgress }) {
   );
 }
 
-export function LogoGame() {
+export function LogoGame({ requestedDate }: { requestedDate?: string } = {}) {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const {
     available,
@@ -102,7 +103,7 @@ export function LogoGame() {
     showCompletion,
     solved,
     toast,
-  } = useLogoGame();
+  } = useLogoGame(requestedDate);
   const { playerId } = useLocalProgress();
   const { user } = useAuth();
   const clueScope = user?.id ?? playerId;
@@ -124,11 +125,19 @@ export function LogoGame() {
         }
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
-          <GameEyebrow date={game?.challenge.date ?? utcDate()} game="Logo" variant="Normal" />
+          <GameEyebrow
+            date={
+              game?.challenge.date ??
+              (requestedDate ? parseGameRouteDate(requestedDate) : null) ??
+              utcDate()
+            }
+            game="Logo"
+            variant="Normal"
+          />
         }
         title={
           <>
-            What is hiding in today’s <em>image</em>?
+            What is hiding in {requestedDate ? "this day’s" : "today’s"} <em>image</em>?
           </>
         }
         titleId="logo-title"

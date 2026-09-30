@@ -78,6 +78,10 @@ The following invariants are security and correctness boundaries:
 
 ## API surface
 
+Authenticated historical games append `YYYYMMDD` to existing game routes and always select by the requested server-validated date (`2026-08-11` through canonical UTC today). Shared challenge-ID authorization guards gameplay reads, images, assistance and writes against historical guest access and future/pre-launch games. Date changes key/remount browser game state; server progress restores completion independently of draft caches. Existing public leaderboard browsing is not a historical gameplay entitlement.
+
+Previously stored historical Timeline puzzles retain their original card/anchor configuration and challenge identity; current configuration changes must not regenerate them or cascade-delete their attempts.
+
 Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history. SQLite completion triggers admit only challenge dates matching the actual server completion's UTC day; one family/day counts once regardless of mode or category. Account reconciliation merges qualifying dates before deduplicating attempts. The `/me/streaks` response and versioned local cache expose all four supported families; historical completions never repair streak gaps.
 
 Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance. Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them. Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions. Auto-placed cards remain locked in subsequent server-validated arrangements.
