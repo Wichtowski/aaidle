@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CategoryDetails {
@@ -250,16 +251,12 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
             answer.context_window_tokens,
         ),
         supported_languages: compare_sets(
-            language(guessed_details)
-                .map(|value| &value.supported_languages)
-                .or_else(|| nlp(guessed_details).map(|value| &value.supported_languages)),
-            language(answer_details)
-                .map(|value| &value.supported_languages)
-                .or_else(|| nlp(answer_details).map(|value| &value.supported_languages)),
+            supported_languages(guessed_details),
+            supported_languages(answer_details),
         ),
-        tool_use: compare_tool_use(
-            language(guessed_details).and_then(|value| value.tool_use),
-            language(answer_details).and_then(|value| value.tool_use),
+        tool_use: compare_boolean(
+            Some(tool_use(guessed_details)),
+            Some(tool_use(answer_details)),
         ),
         multimodal: compare_boolean(
             language(guessed_details).and_then(|value| value.multimodal),
@@ -269,27 +266,10 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
             vision(guessed_details).map(|value| &value.vision_tasks),
             vision(answer_details).map(|value| &value.vision_tasks),
         ),
-        architecture: compare_sets(
-            language(guessed_details)
-                .map(|value| &value.architecture)
-                .or_else(|| vision(guessed_details).map(|value| &value.architecture))
-                .or_else(|| nlp(guessed_details).map(|value| &value.architecture))
-                .or_else(|| detection(guessed_details).map(|value| &value.architecture)),
-            language(answer_details)
-                .map(|value| &value.architecture)
-                .or_else(|| vision(answer_details).map(|value| &value.architecture))
-                .or_else(|| nlp(answer_details).map(|value| &value.architecture))
-                .or_else(|| detection(answer_details).map(|value| &value.architecture)),
-        ),
+        architecture: compare_sets(architecture(guessed_details), architecture(answer_details)),
         training_datasets: compare_sets(
-            vision(guessed_details)
-                .map(|value| &value.training_datasets)
-                .or_else(|| nlp(guessed_details).map(|value| &value.training_datasets))
-                .or_else(|| detection(guessed_details).map(|value| &value.training_datasets)),
-            vision(answer_details)
-                .map(|value| &value.training_datasets)
-                .or_else(|| nlp(answer_details).map(|value| &value.training_datasets))
-                .or_else(|| detection(answer_details).map(|value| &value.training_datasets)),
+            training_datasets(guessed_details),
+            training_datasets(answer_details),
         ),
         license: compare_scalar(
             vision(guessed_details).and_then(|value| value.license.as_deref()),
@@ -323,14 +303,7 @@ pub fn compare_models(guessed: &ComparableModel, answer: &ComparableModel) -> Cl
             classical(guessed_details).map(|value| &value.feature_types),
             classical(answer_details).map(|value| &value.feature_types),
         ),
-        frameworks: compare_sets(
-            classical(guessed_details)
-                .map(|value| &value.frameworks)
-                .or_else(|| filters(guessed_details).map(|value| &value.frameworks)),
-            classical(answer_details)
-                .map(|value| &value.frameworks)
-                .or_else(|| filters(answer_details).map(|value| &value.frameworks)),
-        ),
+        frameworks: compare_sets(frameworks(guessed_details), frameworks(answer_details)),
         operation_types: compare_sets(
             filters(guessed_details).map(|value| &value.operation_types),
             filters(answer_details).map(|value| &value.operation_types),
@@ -400,6 +373,75 @@ fn filters(details: &CategoryDetails) -> Option<&FilterDetails> {
     details.filters.as_ref()
 }
 
+// Columns shared by several categories resolve through one fallback chain, so the
+// comparison and the revealed hint can never disagree about which value a column shows
+fn supported_languages(details: &CategoryDetails) -> Option<&Vec<String>> {
+    language(details)
+        .map(|value| &value.supported_languages)
+        .or_else(|| nlp(details).map(|value| &value.supported_languages))
+}
+
+fn tool_use(details: &CategoryDetails) -> bool {
+    language(details)
+        .and_then(|value| value.tool_use)
+        .unwrap_or(false)
+}
+
+fn architecture(details: &CategoryDetails) -> Option<&Vec<String>> {
+    language(details)
+        .map(|value| &value.architecture)
+        .or_else(|| vision(details).map(|value| &value.architecture))
+        .or_else(|| nlp(details).map(|value| &value.architecture))
+        .or_else(|| detection(details).map(|value| &value.architecture))
+}
+
+fn training_datasets(details: &CategoryDetails) -> Option<&Vec<String>> {
+    vision(details)
+        .map(|value| &value.training_datasets)
+        .or_else(|| nlp(details).map(|value| &value.training_datasets))
+        .or_else(|| detection(details).map(|value| &value.training_datasets))
+}
+
+fn frameworks(details: &CategoryDetails) -> Option<&Vec<String>> {
+    classical(details)
+        .map(|value| &value.frameworks)
+        .or_else(|| filters(details).map(|value| &value.frameworks))
+}
+
+/// Returns the value `compare_models` reads for a category-specific column, or `None`
+/// when the column is not category-specific
+pub fn category_detail_value(details: &CategoryDetails, column: &str) -> Option<Value> {
+    let list = |values: Option<&Vec<String>>| {
+        values.map_or(Value::Null, |values| Value::from(values.clone()))
+    };
+    let flag = |value: Option<bool>| value.map_or(Value::Null, Value::Bool);
+    let text = |value: Option<&str>| value.map_or(Value::Null, Value::from);
+    Some(match column {
+        "supportedLanguages" => list(supported_languages(details)),
+        "toolUse" => Value::Bool(tool_use(details)),
+        "multimodal" => flag(language(details).and_then(|value| value.multimodal)),
+        "visionTasks" => list(vision(details).map(|value| &value.vision_tasks)),
+        "architecture" => list(architecture(details)),
+        "trainingDatasets" => list(training_datasets(details)),
+        "license" => text(vision(details).and_then(|value| value.license.as_deref())),
+        "nlpTasks" => list(nlp(details).map(|value| &value.nlp_tasks)),
+        "detectionTypes" => list(detection(details).map(|value| &value.detection_types)),
+        "realTimeCapable" => flag(detection(details).and_then(|value| value.real_time_capable)),
+        "algorithmTypes" => list(classical(details).map(|value| &value.algorithm_types)),
+        "learningParadigms" => list(classical(details).map(|value| &value.learning_paradigms)),
+        "objectives" => list(classical(details).map(|value| &value.objectives)),
+        "featureTypes" => list(classical(details).map(|value| &value.feature_types)),
+        "frameworks" => list(frameworks(details)),
+        "operationTypes" => list(filters(details).map(|value| &value.operation_types)),
+        "kernelBased" => flag(filters(details).and_then(|value| value.kernel_based)),
+        "kernelSizes" => list(filters(details).map(|value| &value.kernel_sizes)),
+        "linearity" => text(filters(details).and_then(|value| value.linearity.as_deref())),
+        "requiresTraining" => flag(filters(details).and_then(|value| value.requires_training)),
+        "outputTypes" => list(filters(details).map(|value| &value.output_types)),
+        _ => return None,
+    })
+}
+
 fn is_unknown(value: &str) -> bool {
     normalized(value) == "unknown"
 }
@@ -428,14 +470,6 @@ fn compare_boolean(guessed: Option<bool>, answer: Option<bool>) -> ComparisonRes
         (Some(left), Some(right)) if left == right => ComparisonResult::Correct,
         (Some(_), Some(_)) => ComparisonResult::Incorrect,
         _ => ComparisonResult::Unknown,
-    }
-}
-
-fn compare_tool_use(guessed: Option<bool>, answer: Option<bool>) -> ComparisonResult {
-    if guessed.unwrap_or(false) == answer.unwrap_or(false) {
-        ComparisonResult::Correct
-    } else {
-        ComparisonResult::Incorrect
     }
 }
 

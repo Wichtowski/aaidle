@@ -376,7 +376,27 @@ async fn password_login_token_me_username_and_logout_flow() {
 
     let (logout_headers, status) = logout(State(state.clone()), headers).await.unwrap();
     assert_eq!(status, StatusCode::NO_CONTENT);
-    assert_eq!(logout_headers.get_all(header::SET_COOKIE).iter().count(), 2);
+    let cookies = logout_headers
+        .get_all(header::SET_COOKIE)
+        .iter()
+        .map(|value| value.to_str().unwrap().to_owned())
+        .collect::<Vec<_>>();
+    assert_eq!(cookies.len(), 3);
+    // Signing out replaces the guest identity, so the browser stops acting as the account
+    let player_cookie = cookies
+        .iter()
+        .find(|cookie| cookie.starts_with("aaidle_player="))
+        .unwrap();
+    assert!(player_cookie.contains("HttpOnly") && player_cookie.contains("SameSite=Strict"));
+    let token = player_cookie["aaidle_player=".len()..]
+        .split(';')
+        .next()
+        .unwrap();
+    assert!(
+        crate::auth::verify_anonymous_player_token(&state.config.auth_secret, token, now_millis())
+            .unwrap()
+            .is_some()
+    );
     assert!(
         crate::auth::user_for_session(&state.db, Some(&session_cookie), now_millis())
             .await

@@ -265,7 +265,7 @@ async fn anonymous_player_identity(
         .insert(AnonymousPlayerId(player_id));
     if request.method() == axum::http::Method::GET && request.uri().path().contains("/challenges/")
     {
-        let canonical = match assists::player(&state, request.headers(), player_id, false).await {
+        let canonical = match request_player(&state, request.headers(), player_id, false).await {
             Ok(player) => player,
             Err(error) => return error.into_response(),
         };
@@ -414,6 +414,34 @@ pub(super) fn auth_user_response(user: crate::auth::SessionUser) -> AuthUserResp
     }
 }
 
+/// Resolves the player a game request acts for: the signed-in account's canonical player,
+/// or the cookie-owned guest. Mutations additionally enforce the origin and CSRF checks
+pub(super) async fn request_player(
+    state: &AppState,
+    headers: &HeaderMap,
+    anonymous: Uuid,
+    mutation: bool,
+) -> AppResult<Uuid> {
+    let user = optional_authenticated_user(state, headers).await?;
+    if user.as_ref().is_some_and(|user| user.disabled) {
+        return Err(AppError::Forbidden(
+            "This account has been disabled.".to_owned(),
+        ));
+    }
+    if mutation {
+        assert_same_origin_or_bearer(state, headers)?;
+        if user.is_some() {
+            assert_csrf_or_bearer(headers)?;
+        }
+    }
+    match user {
+        Some(user) => {
+            crate::progress::canonical_player_id(&state.db, &user.id, anonymous, now_millis()).await
+        }
+        None => Ok(anonymous),
+    }
+}
+
 pub(super) async fn optional_authenticated_user(
     state: &AppState,
     headers: &HeaderMap,
@@ -513,6 +541,17 @@ pub(super) fn no_store_with_cookie(state: &AppState, token: String) -> AppResult
 
 pub(super) fn cookie_header(state: &AppState, token: &str, max_age: i64) -> AppResult<HeaderValue> {
     named_cookie_header(state, "aaidle_session", token, max_age)
+}
+
+/// A cookie for a brand new guest player. Signing out must not leave the browser acting
+/// as the account's own player, which would keep exposing and extending its progress
+pub(super) fn fresh_anonymous_player_cookie(state: &AppState) -> AppResult<HeaderValue> {
+    let token = crate::auth::create_anonymous_player_token(
+        &state.config.auth_secret,
+        Uuid::new_v4(),
+        now_millis(),
+    )?;
+    anonymous_player_cookie_header(state, &token)
 }
 
 fn anonymous_player_cookie_header(state: &AppState, token: &str) -> AppResult<HeaderValue> {

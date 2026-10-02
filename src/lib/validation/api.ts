@@ -18,7 +18,7 @@ export const autoPlacementSchema = z.object({
 export const timelineAssistSchema = z.object({
   autoPlacements: z.array(autoPlacementSchema),
   incorrectSubmissions: z.number().int().nonnegative(),
-  unlockEvery: z.union([z.literal(3), z.literal(5)]),
+  unlockEvery: z.number().int().positive(),
   remainingAutoPlacements: z.number().int().nonnegative(),
   availableCardIds: z.array(z.string().min(1)),
 });

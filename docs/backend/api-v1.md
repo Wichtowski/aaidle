@@ -144,23 +144,63 @@ Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoj
 
 ## Game-family daily streaks
 
-`GET /api/v1/me/streaks` is available to guests and signed-in players. Signed-in requests use the canonical account player; disabled accounts are rejected. There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
+`GET /api/v1/me/streaks` is available to guests and signed-in players and is served with `Cache-Control: no-store`.
+Signed-in requests use the canonical account player; disabled accounts are rejected.
+There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
 
-The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects. Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), `securedToday`, and sorted `qualifyingDates`. Modes and categories share one streak within each family. A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
+The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects.
+Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), and `securedToday`.
+The list of qualifying days is not exposed.
+Modes and categories share one streak within each family.
+A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
 
-SQLite records qualifying days transactionally from accepted successful game events only when the challenge date equals the UTC date of the server-recorded completion timestamp. Historical and future-day completions cannot qualify. Migration backfills only qualifying existing events. Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency. Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically across day rotation.
+A completion secures the challenge's own UTC day when the server accepts it on that day.
+A game the player already started on its own day may be finished up to one hour after 00:00 UTC and still counts for that day; it never secures the following day.
+Any other completion of a past challenge is stored but has no streak effect.
+
+The completion paths record qualifying days in Rust, inside the transaction that stores the accepted winning event; there are no database triggers.
+Migration `0025` backfills only existing on-day completions.
+Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency.
+Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically while the tab is visible.
+A cached response from an earlier day is never presented as secured or still running until the server confirms it.
 
 ## Progressive assistance
 
-`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only. Each unsuccessful accepted guess earns one hint credit. `availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column. A solved board has no available columns or credits.
+`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only.
+Each unsuccessful accepted guess earns one hint credit.
+`availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column.
+A solved board has no available columns or credits.
 
-`POST` to the same route accepts only `{ "column": "provider" }`. The player explicitly selects a displayed column. Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year. Only requested and previously persisted hints are returned. Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`. An already revealed column replays its persisted hint without consuming another credit, including after completion. Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
+`POST` to the same route accepts only `{ "column": "provider" }`.
+The player explicitly selects a displayed column.
+Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year.
+A category-specific column such as `architecture` or `trainingDatasets` reveals exactly the value the guess comparison and the board read for that column, including the shared fallback order across category details.
+`toolUse` reveals `false` when the answer has no tool-calling metadata.
+Only requested and previously persisted hints are returned.
+Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`.
+An already revealed column replays its persisted hint without consuming another credit, including after completion.
+Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
 
-`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`). Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss. `autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously. Available card IDs use the public shuffled tray order, never solution order. Anchors and previously exact or auto-placed cards cannot be selected. A completed board offers no further assistance.
+`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`).
+Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss.
+`autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously.
+Available card IDs use the public shuffled tray order, never solution order.
+Anchors and previously exact or auto-placed cards cannot be selected.
+A completed board offers no further assistance.
 
-`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit. Repeated requests for that card replay without further consumption. Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`. Speedrun and Hardcore return `403`. Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
+`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit.
+Repeated requests for that card replay without further consumption.
+Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`.
+Speedrun and Hardcore return `403`.
+Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
 
-Both assistance families use the cookie-owned player or the signed-in account's canonical player. Browser mutations enforce exact Origin and authenticated CSRF. Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache. Neither route reveals future hint values, unresolved card positions, or hidden answer IDs. Emoji has no additional assistance routes.
+Both assistance families use the cookie-owned player or the signed-in account's canonical player.
+Browser mutations enforce exact Origin and authenticated CSRF.
+Both `POST` routes consume the same per-IP and per-player rate limits as guess submissions and return `429 RATE_LIMITED` when exhausted.
+Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache.
+The first authenticated request from a browser whose guest player is not linked to any account links and merges that player, so guest assistance and attempts follow the account even when the browser never uploads its local progress.
+Neither route reveals future hint values, unresolved card positions, or hidden answer IDs.
+Emoji has no additional assistance routes.
 
 ## Session routes
 
@@ -178,6 +218,7 @@ In non-production without `RESEND_API_KEY`, the response includes `activationUrl
 `POST /api/v1/auth/password` rotates any existing browser session and creates new `aaidle_session` and CSRF cookies after password verification. It does not return a bearer token.
 `GET /api/v1/auth/me` returns the session account or `null`.
 `POST /api/v1/auth/logout` deletes the session and clears both authentication cookies.
+It also replaces the `aaidle_player` cookie with a new guest player, so the signed-out browser stops acting as the account's player.
 
 External API clients can exchange password credentials at `POST /api/v1/auth/token`. This endpoint returns a short-lived, 15-minute bearer JWT and does not create a browser session or refresh token. Browser code does not call this endpoint or store JWTs.
 

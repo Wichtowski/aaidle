@@ -941,15 +941,35 @@ pub async fn canonical_player_id(
         },
         active_games: Vec::new(),
     };
-    if sqlx::query_scalar::<_, i64>(
+    let has_profile = sqlx::query_scalar::<_, i64>(
         "SELECT EXISTS(SELECT 1 FROM user_progress_profiles WHERE user_id = ?)",
     )
     .bind(user_id)
     .fetch_one(pool)
     .await?
-        == 0
-    {
-        synchronize(pool, user_id, &fallback, now).await?;
+        != 0;
+    // A browser that played as a guest and then signed in may never send its progress,
+    // so the first authenticated request adopts the still unlinked guest player. A player
+    // already linked to any account is left alone
+    let is_unlinked_guest = sqlx::query_scalar::<_, i64>(
+        "SELECT NOT EXISTS(SELECT 1 FROM user_player_links WHERE player_id = ?)",
+    )
+    .bind(requested_player_id.to_string())
+    .fetch_one(pool)
+    .await?
+        != 0;
+    if !has_profile || is_unlinked_guest {
+        for attempt in 0..12 {
+            match synchronize(pool, user_id, &fallback, now).await {
+                Err(error) if crate::repository::is_sqlite_busy(&error) && attempt < 11 => {
+                    tokio::time::sleep(std::time::Duration::from_millis(10_u64 << attempt)).await;
+                }
+                result => {
+                    result?;
+                    break;
+                }
+            }
+        }
     }
     let player_id = sqlx::query_scalar::<_, String>(
         "SELECT primary_player_id FROM user_progress_profiles WHERE user_id = ?",

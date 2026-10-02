@@ -250,6 +250,15 @@ async fn process_guess_once(
     )
     .await?;
     let completion_count = if is_correct {
+        super::streaks::record_completion(
+            &mut *connection,
+            super::streaks::GameFamily::Emoji,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_visual_completion_count(&mut *connection, &challenge.id).await?
     } else {
         completion_count(&mut *connection, &challenge.id).await?
@@ -375,4 +384,4 @@ async fn increment_visual_completion_count(
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

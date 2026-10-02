@@ -1,4 +1,8 @@
-use time::Date;
+use time::{Date, Duration, OffsetDateTime, UtcOffset};
+
+/// How long after 00:00 UTC a game that was started on its own day may still be finished
+/// and count for that day
+pub const ROLLOVER_GRACE: Duration = Duration::hours(1);
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PlayerStreak {
@@ -28,6 +32,35 @@ pub fn derive_streak(dates: impl IntoIterator<Item = Date>, today: Date) -> Play
         streak.current_streak = 0;
     }
     streak
+}
+
+/// Decides whether a server-accepted completion secures the streak day of its challenge.
+///
+/// A completion on the challenge's own UTC day always counts. A completion shortly after
+/// midnight counts only when the player already played that challenge on its own day,
+/// which `started_at`, the earliest server-recorded event, proves. Opening a past game
+/// later therefore never repairs or extends a streak
+pub fn completion_qualifies(
+    challenge_date: Date,
+    completed_at: OffsetDateTime,
+    started_at: Option<OffsetDateTime>,
+) -> bool {
+    let completed_at = completed_at.to_offset(UtcOffset::UTC);
+    if completed_at.date() == challenge_date {
+        return true;
+    }
+    let Some(rollover) = rollover(challenge_date) else {
+        return false;
+    };
+    completed_at >= rollover
+        && completed_at < rollover + ROLLOVER_GRACE
+        && started_at
+            .is_some_and(|started| started.to_offset(UtcOffset::UTC).date() == challenge_date)
+}
+
+/// The instant a challenge date ends
+pub fn rollover(challenge_date: Date) -> Option<OffsetDateTime> {
+    Some(challenge_date.next_day()?.midnight().assume_utc())
 }
 
 pub fn update_streak(previous: &PlayerStreak, challenge_date: Date) -> PlayerStreak {

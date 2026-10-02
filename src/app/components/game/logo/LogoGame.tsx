@@ -131,6 +131,7 @@ export function LogoGame({ requestedDate }: { requestedDate?: string } = {}) {
               (requestedDate ? parseGameRouteDate(requestedDate) : null) ??
               utcDate()
             }
+            family="logo"
             game="Logo"
             variant="Normal"
           />

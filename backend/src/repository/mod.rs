@@ -741,6 +741,15 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
     )
     .await?;
     let completion_count = if is_correct {
+        streaks::record_completion(
+            connection,
+            streaks::GameFamily::Classic,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_completion_count(connection, &challenge.id).await?
     } else {
         completion_count(connection, &challenge.id).await?
@@ -942,7 +951,7 @@ async fn find_challenge_by_date_and_mode(
     .await?)
 }
 
-pub(super) fn is_sqlite_busy(error: &AppError) -> bool {
+pub(crate) fn is_sqlite_busy(error: &AppError) -> bool {
     match error {
         AppError::Database(sqlx::Error::Database(database_error)) => {
             matches!(
