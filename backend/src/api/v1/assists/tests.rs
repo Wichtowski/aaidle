@@ -1,7 +1,8 @@
 use super::*;
 use crate::{
-    api::v1::{router, test_support},
+    api::v1::{now_millis, router, test_support},
     domain::timeline::TimelineDifficulty,
+    error::AppError,
     repository::assists::tests::{fixture, miss, timeline_fixture, timeline_miss},
 };
 use axum::{
@@ -9,6 +10,7 @@ use axum::{
     http::{Request, StatusCode, header},
 };
 use tower::ServiceExt;
+use uuid::Uuid;
 
 fn peer() -> ConnectInfo<SocketAddr> {
     ConnectInfo("127.0.0.1:1234".parse().unwrap())

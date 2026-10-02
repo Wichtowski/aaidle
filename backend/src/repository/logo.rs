@@ -287,6 +287,15 @@ async fn process_guess_once(
     )
     .await?;
     let completion_count = if is_correct {
+        super::streaks::record_completion(
+            &mut *connection,
+            super::streaks::GameFamily::Logo,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_completion_count(&mut *connection, &challenge.id).await?
     } else {
         completion_count(&mut *connection, &challenge.id).await?
@@ -489,4 +498,4 @@ pub async fn rebuild_player_stats(
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

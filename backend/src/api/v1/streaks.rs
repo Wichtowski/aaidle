@@ -2,24 +2,22 @@ use axum::{
     Json,
     extract::{Extension, State},
     http::HeaderMap,
+    response::IntoResponse,
 };
 use time::OffsetDateTime;
 
-use super::{AnonymousPlayerId, assists};
-use crate::{
-    error::AppResult,
-    repository::streaks::{GameStreaks, game_streaks},
-    state::AppState,
-};
+use super::{AnonymousPlayerId, request_player};
+use crate::{error::AppResult, repository::streaks::game_streaks, state::AppState};
 
 pub(super) async fn get(
     State(state): State<AppState>,
     Extension(AnonymousPlayerId(anonymous)): Extension<AnonymousPlayerId>,
     headers: HeaderMap,
-) -> AppResult<Json<GameStreaks>> {
-    let player = assists::player(&state, &headers, anonymous, false).await?;
-    Ok(Json(
-        game_streaks(&state.db, player, OffsetDateTime::now_utc().date()).await?,
+) -> AppResult<impl IntoResponse> {
+    let player = request_player(&state, &headers, anonymous, false).await?;
+    Ok((
+        [("cache-control", "no-store")],
+        Json(game_streaks(&state.db, player, OffsetDateTime::now_utc().date()).await?),
     ))
 }
 

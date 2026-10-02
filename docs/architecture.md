@@ -78,7 +78,15 @@ The following invariants are security and correctness boundaries:
 
 ## API surface
 
-Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history. SQLite completion triggers admit only challenge dates matching the actual server completion's UTC day; one family/day counts once regardless of mode or category. Account reconciliation merges qualifying dates before deduplicating attempts. The `/me/streaks` response and versioned local cache expose all four supported families; historical completions never repair streak gaps.
+Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history.
+The rule lives in Rust: `domain::streak::completion_qualifies` decides, and every completion path calls `repository::streaks::record_completion` inside the transaction that stores the winning event.
+There are no SQLite triggers; migration `0025` only creates the table and backfills on-day completions.
+A completion counts when the server-recorded completion time falls on the challenge's own UTC day.
+A completion within one hour after 00:00 UTC also counts for the challenge's day, but only when the player already has a server-recorded event for that challenge on its own day.
+One family/day counts once regardless of mode or category, and a past game opened later never secures, extends, or repairs a streak.
+Deleting a winning Classic guess through administration revokes the day unless another completion earned it.
+Account reconciliation merges qualifying dates before deduplicating attempts.
+Signing out issues a new guest player cookie, so a signed-out browser neither reads nor extends the account's streak.
 
 Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance.
 Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them.

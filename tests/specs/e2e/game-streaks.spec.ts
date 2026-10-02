@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 test("guest family streaks refresh after a win and survive browser reload", async ({ page }) => {
   const id = "2c8d3858-8e24-4ad0-b1d3-7d231af19a58";
   let completed = false;
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.parse(today) - 86_400_000).toISOString().slice(0, 10);
   const model = {
     id: "example",
     name: "Example model",
@@ -46,22 +48,15 @@ test("guest family streaks refresh after a win and survive browser reload", asyn
         longestStreak: 0,
         lastStreakDate: null,
         securedToday: false,
-        qualifyingDates: [],
       };
       await route.fulfill({
         json: {
-          currentGameDate: "2026-09-30",
+          currentGameDate: today,
           classic: {
             currentStreak: completed ? 4 : 3,
             longestStreak: 5,
-            lastStreakDate: completed ? "2026-09-30" : "2026-09-29",
+            lastStreakDate: completed ? today : yesterday,
             securedToday: completed,
-            qualifyingDates: [
-              "2026-09-27",
-              "2026-09-28",
-              "2026-09-29",
-              ...(completed ? ["2026-09-30"] : []),
-            ],
           },
           timeline: empty,
           emoji: empty,
@@ -73,7 +68,7 @@ test("guest family streaks refresh after a win and survive browser reload", asyn
         json: {
           challenge: {
             id,
-            date: "2026-09-30",
+            date: today,
             mode: "classic:llm:normal",
             difficulty: "normal",
             expiresAt: "2099-10-01T00:00:00Z",
@@ -123,10 +118,10 @@ test("guest family streaks refresh after a win and survive browser reload", asyn
     .poll(() =>
       page.evaluate(
         () =>
-          JSON.parse(localStorage.getItem("aaidle:progress:v1")!).streaks?.classic.qualifyingDates,
+          JSON.parse(localStorage.getItem("aaidle:progress:v1")!).streaks?.classic.lastStreakDate,
       ),
     )
-    .toContain("2026-09-30");
+    .toBe(today);
   await page.reload();
   await expect(streak).toContainText("4 day Classic streak");
   await expect(streak).toContainText("Streak secured for today");

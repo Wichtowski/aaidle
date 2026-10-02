@@ -126,11 +126,25 @@ Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 reques
 
 ## Game-family daily streaks
 
-`GET /api/v1/me/streaks` is available to guests and signed-in players. Signed-in requests use the canonical account player; disabled accounts are rejected. There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
+`GET /api/v1/me/streaks` is available to guests and signed-in players and is served with `Cache-Control: no-store`.
+Signed-in requests use the canonical account player; disabled accounts are rejected.
+There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
 
-The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects. Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), `securedToday`, and sorted `qualifyingDates`. Modes and categories share one streak within each family. A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
+The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects.
+Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), and `securedToday`.
+The list of qualifying days is not exposed.
+Modes and categories share one streak within each family.
+A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
 
-SQLite records qualifying days transactionally from accepted successful game events only when the challenge date equals the UTC date of the server-recorded completion timestamp. Historical and future-day completions cannot qualify. Migration backfills only qualifying existing events. Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency. Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically across day rotation.
+A completion secures the challenge's own UTC day when the server accepts it on that day.
+A game the player already started on its own day may be finished up to one hour after 00:00 UTC and still counts for that day; it never secures the following day.
+Any other completion of a past challenge is stored but has no streak effect.
+
+The completion paths record qualifying days in Rust, inside the transaction that stores the accepted winning event; there are no database triggers.
+Migration `0025` backfills only existing on-day completions.
+Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency.
+Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically while the tab is visible.
+A cached response from an earlier day is never presented as secured or still running until the server confirms it.
 
 ## Progressive assistance
 
@@ -186,6 +200,7 @@ In non-production without `RESEND_API_KEY`, the response includes `activationUrl
 `POST /api/v1/auth/password` rotates any existing browser session and creates new `aaidle_session` and CSRF cookies after password verification. It does not return a bearer token.
 `GET /api/v1/auth/me` returns the session account or `null`.
 `POST /api/v1/auth/logout` deletes the session and clears both authentication cookies.
+It also replaces the `aaidle_player` cookie with a new guest player, so the signed-out browser stops acting as the account's player.
 
 External API clients can exchange password credentials at `POST /api/v1/auth/token`. This endpoint returns a short-lived, 15-minute bearer JWT and does not create a browser session or refresh token. Browser code does not call this endpoint or store JWTs.
 

@@ -871,6 +871,7 @@ export function TimelineGame() {
         eyebrow={
           <GameEyebrow
             date={game?.challenge.date ?? utcDate()}
+            family="timeline"
             game="Timeline"
             variant={timelineDifficultyLabel(difficulty)}
           />

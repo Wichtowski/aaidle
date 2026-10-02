@@ -124,7 +124,12 @@ export function LogoGame() {
         }
         expiresAt={game?.challenge.expiresAt ?? null}
         eyebrow={
-          <GameEyebrow date={game?.challenge.date ?? utcDate()} game="Logo" variant="Normal" />
+          <GameEyebrow
+            date={game?.challenge.date ?? utcDate()}
+            family="logo"
+            game="Logo"
+            variant="Normal"
+          />
         }
         title={
           <>

@@ -1,4 +1,4 @@
-use time::macros::date;
+use time::macros::{date, datetime};
 
 use super::*;
 
@@ -96,4 +96,76 @@ fn older_solution_dates_are_idempotent() {
     };
 
     assert_eq!(update_streak(&previous, date!(2026 - 08 - 13)), previous);
+}
+
+#[test]
+fn completions_qualify_on_their_day_or_shortly_after_when_started_on_it() {
+    let day = date!(2026 - 09 - 30);
+    let started = Some(datetime!(2026-09-30 23:55 UTC));
+    // On the challenge's own day, with or without earlier activity
+    assert!(completion_qualifies(
+        day,
+        datetime!(2026-09-30 00:00 UTC),
+        None
+    ));
+    assert!(completion_qualifies(
+        day,
+        datetime!(2026-09-30 23:59:59.999 UTC),
+        None
+    ));
+    assert!(completion_qualifies(
+        day,
+        datetime!(2026-10-01 01:30 +2),
+        None
+    ));
+    // Just after midnight only a game already in progress on its own day counts
+    assert!(completion_qualifies(
+        day,
+        datetime!(2026-10-01 00:00 UTC),
+        started
+    ));
+    assert!(completion_qualifies(
+        day,
+        datetime!(2026-10-01 00:59:59.999 UTC),
+        started
+    ));
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-10-01 00:00 UTC),
+        None
+    ));
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-10-01 00:01 UTC),
+        Some(datetime!(2026-10-01 00:00 UTC))
+    ));
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-10-01 00:01 UTC),
+        Some(datetime!(2026-09-29 23:59 UTC))
+    ));
+    // The grace window is closed at exactly one hour
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-10-01 01:00 UTC),
+        started
+    ));
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-10-02 00:30 UTC),
+        started
+    ));
+    // A completion before the challenge day never counts
+    assert!(!completion_qualifies(
+        day,
+        datetime!(2026-09-29 23:59 UTC),
+        started
+    ));
+    assert!(!completion_qualifies(
+        Date::MAX,
+        datetime!(2026-10-01 00:00 UTC),
+        started
+    ));
+    assert_eq!(rollover(day), Some(datetime!(2026-10-01 00:00 UTC)));
+    assert_eq!(rollover(Date::MAX), None);
 }

@@ -224,8 +224,8 @@ pub(super) async fn delete_guess(
         return Err(AppError::validation("gameKey is invalid"));
     }
     let mut transaction = state.db.begin().await?;
-    let removed = sqlx::query_as::<_, (String, String, String, String)>(
-        "SELECT g.challenge_id, g.player_id, g.guessed_model_id, d.mode \
+    let removed = sqlx::query_as::<_, (String, String, String, String, String)>(
+        "SELECT g.challenge_id, g.player_id, g.guessed_model_id, d.mode, d.challenge_date \
          FROM guess_events g JOIN daily_challenges d ON d.id = g.challenge_id \
          WHERE g.request_id = ? AND g.user_id = ?",
     )
@@ -239,6 +239,12 @@ pub(super) async fn delete_guess(
         .bind(&user_id)
         .execute(&mut *transaction)
         .await?;
+    crate::repository::streaks::revoke_unearned_classic_day(
+        &mut transaction,
+        &removed.1,
+        &removed.4,
+    )
+    .await?;
     sqlx::query("DELETE FROM challenge_guess_stats WHERE challenge_id = ?")
         .bind(&removed.0)
         .execute(&mut *transaction)
