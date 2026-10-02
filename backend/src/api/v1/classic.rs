@@ -198,12 +198,15 @@ pub(super) async fn dated_hardcore_game(
     headers: HeaderMap,
     Path(date): Path<String>,
 ) -> AppResult<Json<ClassicGameResponse>> {
+    // This route also captures the older `/games/classic/hardcore/hardcore` spelling of
+    // today's Hardcore game, which must keep working
+    let date = (date != repository::ClassicDifficulty::Hardcore.as_str()).then_some(date);
     classic_game_response(
         &state,
         &headers,
         repository::ClassicCategory::Hardcore,
         repository::ClassicDifficulty::Hardcore,
-        Some(&date),
+        date.as_deref(),
     )
     .await
 }

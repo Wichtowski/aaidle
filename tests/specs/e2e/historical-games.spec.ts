@@ -103,7 +103,6 @@ async function mockGames(page: Page, signedIn = true) {
         longestStreak: 0,
         lastStreakDate: null,
         securedToday: false,
-        qualifyingDates: [],
       };
       return route.fulfill({
         json: {
@@ -300,6 +299,20 @@ test("authenticated day arrows preserve routes, browser history and date boundar
   await expect(page.getByRole("link", { name: "Next daily game" })).toBeVisible();
   await page.goto("/classic/llm/20260930");
   await expect(page).toHaveURL(/\/classic\/llm$/);
+});
+
+test("history arrows keep the category's own route segment", async ({ page }) => {
+  await mockGames(page);
+  // Object Detection is the category whose route segment differs from its key
+  await page.goto("/classic/od");
+  await page.getByRole("button", { name: "Got it", exact: true }).click();
+  await page.getByRole("link", { name: "Previous daily game" }).click();
+  await expect(page).toHaveURL(/\/classic\/od\/20260929$/);
+  await page.reload();
+  await expect(page).toHaveURL(/\/classic\/od\/20260929$/);
+  await expect(page.locator(".game-date-navigation")).toContainText("2026-09-29 · History");
+  await page.getByRole("link", { name: "Next daily game" }).click();
+  await expect(page).toHaveURL(/\/classic\/od$/);
 });
 
 for (const path of ["/classic/llm", "/timeline", "/emoji", "/logo"]) {

@@ -27,7 +27,7 @@ export function GameDateNavigation({ date, basePath }: { date: string; basePath:
   }, [auth?.user, basePath, date, location.pathname, navigate, today]);
   if (!auth?.user || !today || date < firstGameDate || date > today) return <>{date}</>;
   return (
-    <span className="game-date-navigation" aria-label="Daily game dates">
+    <span className="game-date-navigation" role="group" aria-label="Daily game dates">
       {date > firstGameDate && (
         <Link
           aria-label="Previous daily game"

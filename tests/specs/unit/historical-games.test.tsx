@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter, useLocation } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GameDateNavigation } from "../../../src/app/components/game/common/layout/GameDateNavigation";
 import { AuthContext, type AuthContextValue } from "../../../src/app/components/auth/auth-context";
@@ -10,6 +10,9 @@ import {
   dailyGamePath,
   parseGameRouteDate,
 } from "../../../src/lib/domain/challenges/historical-dates";
+import { AuthenticatedRoute } from "../../../src/app/components/auth/AuthenticatedRoute";
+import { HistoricalGameGuard } from "../../../src/app/components/game/common/HistoricalGameGuard";
+import { rememberReturnPath, takeReturnPath } from "../../../src/lib/storage/return-path";
 import type { GameStreaks } from "../../../src/lib/validation/streaks";
 
 const empty = {
@@ -17,7 +20,6 @@ const empty = {
   longestStreak: 0,
   lastStreakDate: null,
   securedToday: false,
-  qualifyingDates: [],
 };
 const streaks: GameStreaks = {
   currentGameDate: "2026-09-30",
@@ -77,5 +79,64 @@ describe("historical daily dates", () => {
   it("canonicalizes a direct dated URL for today using the server day", async () => {
     view("2026-09-30", "/classic/llm/20260930");
     expect(await screen.findByText("/classic/llm")).toBeTruthy();
+  });
+  it("returns to the dated game that required signing in, and only to in-app paths", () => {
+    render(
+      <MemoryRouter initialEntries={["/classic/od/20260820?from=share"]}>
+        <AuthContext.Provider value={{ ...auth, user: null, loading: false }}>
+          <Routes>
+            <Route element={<AuthenticatedRoute />}>
+              <Route path="/classic/:category/:date" element={<p>Game</p>} />
+            </Route>
+            <Route path="/login" element={<Path />} />
+          </Routes>
+        </AuthContext.Provider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("/login")).toBeTruthy();
+    expect(takeReturnPath()).toBe("/classic/od/20260820?from=share");
+    // The target is used once
+    expect(takeReturnPath()).toBeNull();
+    for (const unsafe of ["https://evil.example", "//evil.example", "/\\evil.example", "profile"]) {
+      rememberReturnPath(unsafe);
+      expect(takeReturnPath()).toBeNull();
+    }
+  });
+  it("does not reject a valid day because the cached game day is stale", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const compact = (date: string) => date.replaceAll("-", "");
+    const guard = (date: string, cachedDay: string) => {
+      replaceProgress({ ...freshProgress(), streaks: { ...streaks, currentGameDate: cachedDay } });
+      return render(
+        <MemoryRouter initialEntries={[`/timeline/${date}`]}>
+          <AuthContext.Provider value={auth}>
+            <Routes>
+              <Route
+                path="/timeline/:date"
+                element={
+                  <HistoricalGameGuard>
+                    <p>Game</p>
+                  </HistoricalGameGuard>
+                }
+              />
+            </Routes>
+          </AuthContext.Provider>
+        </MemoryRouter>,
+      );
+    };
+    // The cache says an earlier day; the requested day is still not in the future
+    guard(compact(today), "2026-08-15").unmount();
+    guard(compact(adjacentGameDate(today, -1)), "2026-08-15");
+    expect(screen.getByText("Game")).toBeTruthy();
+    cleanup();
+    for (const invalid of [compact(adjacentGameDate(today, 1)), "20260810", "20260230", "abc"]) {
+      guard(invalid, today);
+      expect(screen.getByText("Daily game unavailable")).toBeTruthy();
+      cleanup();
+    }
+    // A fresh server day ahead of a lagging client clock is honoured
+    const tomorrow = adjacentGameDate(today, 1);
+    guard(compact(tomorrow), tomorrow);
+    expect(screen.getByText("Game")).toBeTruthy();
   });
 });

@@ -487,7 +487,7 @@ export function ClassicGame({
         requestedDate={requestedDate}
         category={category}
         date={challenge?.date ?? null}
-        expiresAt={challenge?.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (challenge?.expiresAt ?? null)}
         models={models}
         difficulty={selectedDifficulty}
         loading={isLoadingGame}

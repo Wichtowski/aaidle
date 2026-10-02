@@ -126,7 +126,8 @@ Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 reques
 
 ## Authenticated historical daily games
 
-Today's existing game routes remain unchanged and guest-accessible according to their existing mode restrictions. Authenticated players can append a real calendar `YYYYMMDD` date to these retrieval routes:
+Today's existing game routes remain unchanged and guest-accessible according to their existing mode restrictions.
+Authenticated players can append a real calendar `YYYYMMDD` date to these retrieval routes:
 
 - `GET /api/v1/games/classic/:category/:difficulty/:date`
 - `GET /api/v1/games/classic/hardcore/:date`
@@ -134,13 +135,35 @@ Today's existing game routes remain unchanged and guest-accessible according to 
 - `GET /api/v1/games/emoji/:difficulty/:date`
 - `GET /api/v1/games/logo/:difficulty/:date`
 
-Malformed dates return `400`; dates before `20260811` or after the server's canonical UTC day return `404`, without generating a challenge or revealing future selections. Valid dated requests require authentication (`401` for guests); disabled accounts are forbidden. A dated request for today selects the same challenge as the clean route. Existing difficulty/Hardcore access restrictions still apply. Stored challenges are reused; first-time historical generation uses the requested date and the existing server selection/version semantics.
+Malformed dates return `400`; dates before `20260811` or after the server's canonical UTC day return `404`, without generating a challenge or revealing future selections.
+Valid dated requests require authentication (`401` for guests); disabled accounts are forbidden.
+A dated request for today selects the same challenge as the clean route.
+Existing difficulty/Hardcore access restrictions still apply.
+Stored challenges are reused; first-time historical generation uses the requested date and the existing server selection/version semantics, with the Classic repeat cooldown measured against the days before the requested date.
+A day that nobody opened before is therefore selected from the catalog as it is when first requested, and stays fixed from then on.
+A stored day keeps its answer: when that answer has since left the catalog or the pool, the dated route returns `503` instead of rewriting the day or serving a game that cannot be won.
+Only today's Logo game is repaired when its answer leaves the catalog.
+`GET /api/v1/games/classic/hardcore/hardcore` remains an alias of today's Hardcore game.
 
-Historical authorization is also enforced on challenge-ID gameplay reads and writes, including guesses, retry requests, hints, auto-placement, trajectory and Logo images. Send challenge UUIDs directly, not percent-encoded spellings. Account history reads use the canonical player even when the anonymous cookie differs. Existing public Timeline leaderboard views remain unchanged.
+Historical authorization is also enforced on challenge-ID gameplay reads and writes, including guesses, retry requests, hints, auto-placement, trajectory and Logo images.
+Send challenge UUIDs directly, not percent-encoded spellings.
+Account history reads use the canonical player even when the anonymous cookie differs.
+The check applies to every path below `/games/{family}/challenges/{challengeId}`, whatever follows the ID, and an unknown game family returns `404`.
+Only `GET /games/timeline/challenges/{challengeId}/leaderboard` is public by design.
+Yesterday's challenge ID stays playable without an account for one hour after 00:00 UTC, so a game started before midnight can be finished; later it requires signing in like any past day.
 
-Historical completions retain their original challenge date and actual server completion timestamp, restore by challenge ID, and remain idempotent. They contribute to lifetime history and distributions, but never to qualifying daily streak days. Older mode-stat updates/rebuilds now distinguish actual on-day wins; authenticated progress/history streak fields return the family-wide verified streak instead of deriving one from historical challenge dates.
+Historical completions retain their original challenge date and actual server completion timestamp, restore by challenge ID, and remain idempotent.
+They contribute to lifetime history and distributions, but never to qualifying daily streak days.
+A historical Speedrun can be played, but daily and global Speedrun leaderboards only rank runs that were started on their challenge's own UTC day.
+Older mode-stat updates/rebuilds now distinguish actual on-day wins; authenticated progress/history streak fields return the family-wide verified streak instead of deriving one from historical challenge dates.
 
-Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoji/:date`, and `/logo/:date`. Guests enter the existing sign-in flow. Signed-in eyebrow arrows navigate one UTC calendar day, hide at launch/today, and return to the clean route when reaching today. Direct dated URLs for today canonicalize after the server day is available. Date changes remount game state before fetching, keeping previous solutions out of the loading view. Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
+Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoji/:date`, and `/logo/:date`.
+Guests enter the existing sign-in flow and return to the dated page after a password sign-in.
+A past day shows no next-game countdown.
+Signed-in eyebrow arrows navigate one UTC calendar day, hide at launch/today, and return to the clean route when reaching today.
+Direct dated URLs for today canonicalize after the server day is available.
+Date changes remount game state before fetching, keeping previous solutions out of the loading view.
+Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
 
 ## Game-family daily streaks
 

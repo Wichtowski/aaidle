@@ -323,6 +323,13 @@ async fn ensure_challenge(
         if catalog.entry(&challenge.answer_model_id).is_some() {
             return Ok(challenge);
         }
+        // Only today's game may be repaired. A past day keeps the answer it was played
+        // with, so it becomes unavailable instead of silently changing
+        if date != super::format_date(time::OffsetDateTime::now_utc().date())? {
+            return Err(AppError::Unavailable(
+                "This daily Logo game is no longer available.".to_owned(),
+            ));
+        }
         let entry = catalog
             .eligible(0)
             .next()

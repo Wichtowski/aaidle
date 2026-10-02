@@ -115,13 +115,6 @@ struct HistoryRow {
     solved: i64,
 }
 
-#[derive(FromRow)]
-struct PlayerStatsSummaryRow {
-    current_streak: i64,
-    best_streak: i64,
-    games_won: i64,
-}
-
 struct PlayerStatsSummary {
     current_streak: i64,
     best_streak: i64,
@@ -1146,26 +1139,24 @@ fn history_stats_from_rows(
 }
 
 async fn player_stats_summary(pool: &SqlitePool, player_id: &str) -> AppResult<PlayerStatsSummary> {
-    let rows = sqlx::query_as::<_, PlayerStatsSummaryRow>(
-        "SELECT current_streak, best_streak, games_won FROM player_mode_stats \
+    let games_played = sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE(SUM(games_won), 0) FROM player_mode_stats \
          WHERE player_id = ? AND mode LIKE 'classic:%'",
     )
     .bind(player_id)
-    .fetch_all(pool)
+    .fetch_one(pool)
     .await?;
-    let mut summary = PlayerStatsSummary {
-        current_streak: rows.iter().map(|row| row.current_streak).max().unwrap_or(0),
-        best_streak: rows.iter().map(|row| row.best_streak).max().unwrap_or(0),
-        games_played: rows.iter().map(|row| row.games_won).sum(),
-    };
+    // Streaks come from the qualifying game days, never from the per-mode statistics
     let player = Uuid::parse_str(player_id)
         .map_err(|_| AppError::Unavailable("Stored player ID is invalid.".to_owned()))?;
     let streaks =
         crate::repository::streaks::game_streaks(pool, player, OffsetDateTime::now_utc().date())
             .await?;
-    summary.current_streak = streaks.classic.current_streak;
-    summary.best_streak = streaks.classic.longest_streak;
-    Ok(summary)
+    Ok(PlayerStatsSummary {
+        current_streak: streaks.classic.current_streak,
+        best_streak: streaks.classic.longest_streak,
+        games_played,
+    })
 }
 
 fn default_distribution() -> BTreeMap<String, i64> {

@@ -303,7 +303,27 @@ async fn logo_repository_helpers_repairs_and_error_branches_are_covered() {
         .execute(&pool)
         .await
         .unwrap();
-    let repaired = game(&pool, &catalog, date, "normal", "secret", player_id)
+    // A past day keeps the answer it was played with and becomes unavailable
+    assert!(matches!(
+        game(&pool, &catalog, date, "normal", "secret", player_id).await,
+        Err(AppError::Unavailable(_))
+    ));
+    let unchanged: String =
+        sqlx::query_scalar("SELECT answer_model_id FROM logo_challenges WHERE id = ?")
+            .bind(&data.challenge.id)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(unchanged, "removed-answer");
+    // Only today's game is repaired
+    let today = crate::repository::format_date(time::OffsetDateTime::now_utc().date()).unwrap();
+    sqlx::query("UPDATE logo_challenges SET challenge_date = ? WHERE id = ?")
+        .bind(&today)
+        .bind(&data.challenge.id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    let repaired = game(&pool, &catalog, &today, "normal", "secret", player_id)
         .await
         .unwrap();
     assert!(catalog.entry(&repaired.challenge.answer_model_id).is_some());

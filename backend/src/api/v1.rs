@@ -263,7 +263,10 @@ async fn anonymous_player_identity(
     request
         .extensions_mut()
         .insert(AnonymousPlayerId(player_id));
-    if request.method() == axum::http::Method::GET && request.uri().path().contains("/challenges/")
+    // Reads of a guarded game resolve to the account's canonical player. Public routes,
+    // such as the Speedrun leaderboard, are left untouched
+    if request.method() == axum::http::Method::GET
+        && history::guarded_challenge(request.uri().path()).is_some()
     {
         let canonical = match request_player(&state, request.headers(), player_id, false).await {
             Ok(player) => player,

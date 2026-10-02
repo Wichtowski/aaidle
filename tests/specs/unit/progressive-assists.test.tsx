@@ -8,6 +8,7 @@ import {
   applyTimelineAssistance,
   applyTimelineAutoPlacements,
 } from "../../../src/lib/domain/games/timeline/timeline-arrangement";
+import { saveTimelineGame } from "../../../src/lib/domain/games/timeline/timeline-progress-store";
 import type { TimelineGamePayload } from "../../../src/lib/domain/games/timeline/timeline-types";
 import { formatHintValue } from "../../../src/lib/domain/guesses/value-format";
 import { localProgressSchema } from "../../../src/lib/storage/local-progress-schema";
@@ -200,6 +201,69 @@ describe("progressive assists", () => {
     await waitFor(() => expect(result.current.positions).toEqual(["old", "a", "b", "new"]));
     expect(result.current.placements).toEqual([1, 1, null, 1]);
     expect(result.current.assistance?.autoPlacements).toHaveLength(1);
+  });
+
+  it("drops submitted feedback for cards moved in a restored draft", async () => {
+    const anchor = (id: string, releaseDate: string) => ({
+      id,
+      name: id,
+      itemKind: "model" as const,
+      releaseDate,
+    });
+    const today = new Date().toISOString().slice(0, 10);
+    const game = {
+      challenge: {
+        id: "draft",
+        date: today,
+        difficulty: "normal",
+        expiresAt: "2099-01-01T00:00:00Z",
+      },
+      slots: [
+        { position: 0, anchor: anchor("old", "2019-01-01") },
+        { position: 1, anchor: null },
+        { position: 2, anchor: null },
+        { position: 3, anchor: anchor("new", "2024-01-01") },
+      ],
+      movableModels: [
+        { id: "b", name: "B", itemKind: "model", categories: [] },
+        { id: "a", name: "A", itemKind: "model", categories: [] },
+      ],
+      progress: {
+        solved: false,
+        attemptsRemaining: null,
+        latestAttempt: {
+          attemptNumber: 3,
+          modelOrder: ["old", "b", "a", "new"],
+          placements: [1, 0, 0, 1],
+        },
+      },
+    } as unknown as TimelineGamePayload;
+    // The player swapped the two cards after the last submission, then reloaded
+    saveTimelineGame({
+      challengeId: "draft",
+      challengeDate: today,
+      difficulty: "normal",
+      positions: ["old", "a", "b", "new"],
+      placements: [1, 0, 0, 1],
+      acceptedAttempts: 3,
+      attemptsRemaining: null,
+      solved: false,
+      updatedAt: new Date().toISOString(),
+    });
+    vi.spyOn(apiClient, "timelineGame").mockResolvedValue(game);
+    vi.spyOn(apiClient, "timelineAssists").mockResolvedValue({
+      autoPlacements: [],
+      incorrectSubmissions: 3,
+      unlockEvery: 3,
+      remainingAutoPlacements: 1,
+      availableCardIds: ["b", "a"],
+    });
+    const { result } = renderHook(() =>
+      useTimelineGame({ canSpeedrun: false, hardcoreUnlocked: false, playerId: "player" }),
+    );
+    await waitFor(() => expect(result.current.positions).toEqual(["old", "a", "b", "new"]));
+    await waitFor(() => expect(result.current.assistance).not.toBeNull());
+    expect(result.current.placements).toEqual([1, null, null, 1]);
   });
 
   it("formats revealed hints like the matching board cell", async () => {

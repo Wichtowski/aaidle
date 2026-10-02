@@ -869,7 +869,7 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
       <GameIntro
         description="Place events in chronological order. Dates stay hidden until every position is correct."
         difficulty={difficultyControls}
-        expiresAt={game?.challenge.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
         eyebrow={
           <GameEyebrow
             date={

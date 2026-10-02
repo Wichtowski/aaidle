@@ -31,9 +31,18 @@ function hydrateGame(game: TimelineGamePayload) {
     saved !== null &&
     saved.acceptedAttempts >= (serverAttempt?.attemptNumber ?? 0);
 
+  const positions = useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game));
+  // Feedback belongs to the submitted order. A card the player has moved since then,
+  // in a restored draft, has not been judged on its new slot
+  const placements: TimelinePlacement[] | null = serverAttempt
+    ? serverAttempt.placements.map((placement, position) =>
+        positions[position] === serverAttempt.modelOrder[position] ? placement : null,
+      )
+    : null;
+
   return {
-    positions: useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game)),
-    placements: serverAttempt?.placements ?? null,
+    positions,
+    placements,
     acceptedAttempts: serverAttempt?.attemptNumber ?? 0,
     attemptsRemaining: game.progress.attemptsRemaining,
     solved: game.progress.solved,

@@ -491,7 +491,8 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &runner_user_id,
             2_i64,
             10_000_i64,
-            1_i64,
+            // Runs are ranked only when they were played on their challenge's own day
+            1_788_004_800_001_i64,
         ),
         (
             second_challenge.id,
@@ -499,7 +500,7 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &runner_user_id,
             4,
             20_000,
-            2,
+            1_788_091_200_002,
         ),
         (
             first_challenge.id,
@@ -507,7 +508,7 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &rival_user_id,
             3,
             9_000,
-            3,
+            1_788_004_800_003,
         ),
     ] {
         sqlx::query(

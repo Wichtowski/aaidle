@@ -78,9 +78,15 @@ The following invariants are security and correctness boundaries:
 
 ## API surface
 
-Authenticated historical games append `YYYYMMDD` to existing game routes and always select by the requested server-validated date (`2026-08-11` through canonical UTC today). Shared challenge-ID authorization guards gameplay reads, images, assistance and writes against historical guest access and future/pre-launch games. Date changes key/remount browser game state; server progress restores completion independently of draft caches. Existing public leaderboard browsing is not a historical gameplay entitlement.
+Authenticated historical games append `YYYYMMDD` to existing game routes and always select by the requested server-validated date (`2026-08-11` through canonical UTC today).
+Shared challenge-ID authorization guards gameplay reads, images, assistance and writes against historical guest access and future/pre-launch games.
+Date changes key/remount browser game state; server progress restores completion independently of draft caches.
+Existing public leaderboard browsing is not a historical gameplay entitlement.
 
 Previously stored historical Timeline puzzles retain their original card/anchor configuration and challenge identity; current configuration changes must not regenerate them or cascade-delete their attempts.
+A stored Classic, Emoji or Logo day whose answer has left the catalog is served as unavailable; it is never rewritten.
+Speedrun leaderboard views (`0026`) and the daily leaderboard query only rank runs started on the challenge's own UTC day.
+The challenge-ID guard is derived from the path prefix alone, so a route added below a challenge ID is covered without changing the guard.
 
 Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history.
 The rule lives in Rust: `domain::streak::completion_qualifies` decides, and every completion path calls `repository::streaks::record_completion` inside the transaction that stores the winning event.
