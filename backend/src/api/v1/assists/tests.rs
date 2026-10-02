@@ -10,6 +10,10 @@ use axum::{
 };
 use tower::ServiceExt;
 
+fn peer() -> ConnectInfo<SocketAddr> {
+    ConnectInfo("127.0.0.1:1234".parse().unwrap())
+}
+
 #[tokio::test]
 async fn routes_validate_identifiers_payloads_origins_modes_and_missing_resources() {
     let (pool, classic, _) = fixture().await;
@@ -87,10 +91,24 @@ async fn routes_validate_identifiers_payloads_origins_modes_and_missing_resource
                 request = request.header(header::ORIGIN, origin);
             }
             let response = router(state.clone())
-                .oneshot(request.body(Body::from(body)).unwrap())
+                .oneshot(request.extension(peer()).body(Body::from(body)).unwrap())
                 .await
                 .unwrap();
             assert_eq!(response.status(), expected);
+            if expected == StatusCode::CONFLICT {
+                let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+                    .await
+                    .unwrap();
+                let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
+                assert_eq!(
+                    value["error"]["code"],
+                    if path.contains("classic") {
+                        "HINT_NOT_AVAILABLE"
+                    } else {
+                        "AUTO_PLACE_NOT_AVAILABLE"
+                    }
+                );
+            }
         }
         for (id, expected) in [
             ("invalid".to_owned(), StatusCode::BAD_REQUEST),
@@ -118,6 +136,7 @@ async fn routes_validate_identifiers_payloads_origins_modes_and_missing_resource
                 .uri(path)
                 .header(header::ORIGIN, "http://localhost:3000")
                 .header(header::CONTENT_TYPE, "application/json")
+                .extension(peer())
                 .body(Body::from("x".repeat(17000)))
                 .unwrap(),
         )
@@ -154,6 +173,7 @@ async fn authenticated_assists_use_canonical_player_and_require_csrf() {
         timeline_auto_place(
             State(state.clone()),
             Extension(AnonymousPlayerId(anonymous)),
+            peer(),
             headers.clone(),
             Path(timeline.to_string()),
             Ok(Json(TimelineAutoPlaceRequest {
@@ -167,6 +187,7 @@ async fn authenticated_assists_use_canonical_player_and_require_csrf() {
     let response = timeline_auto_place(
         State(state.clone()),
         Extension(AnonymousPlayerId(anonymous)),
+        peer(),
         headers.clone(),
         Path(timeline.to_string()),
         Ok(Json(TimelineAutoPlaceRequest {
@@ -195,6 +216,7 @@ async fn authenticated_assists_use_canonical_player_and_require_csrf() {
         classic_hint(
             State(state.clone()),
             Extension(AnonymousPlayerId(anonymous)),
+            peer(),
             headers.clone(),
             Path(classic.to_string()),
             Ok(Json(ClassicHintRequest {
@@ -221,6 +243,7 @@ async fn authenticated_assists_use_canonical_player_and_require_csrf() {
     let hint = classic_hint(
         State(state.clone()),
         Extension(AnonymousPlayerId(anonymous)),
+        peer(),
         headers.clone(),
         Path(classic.to_string()),
         Ok(Json(ClassicHintRequest {

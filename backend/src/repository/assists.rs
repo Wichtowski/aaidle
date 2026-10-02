@@ -2,11 +2,14 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use sqlx::{SqliteConnection, SqlitePool};
+use sqlx::{Sqlite, SqliteConnection, SqlitePool, Transaction};
 use uuid::Uuid;
 
 use crate::{
-    domain::{comparison::ComparisonResult, timeline::TimelineDifficulty},
+    domain::{
+        comparison::{ComparisonResult, category_detail_value},
+        timeline::TimelineDifficulty,
+    },
     error::{AppError, AppResult},
 };
 
@@ -25,19 +28,48 @@ pub struct ClassicAssistState {
     pub remaining_hints: i64,
 }
 
+// Reading assist state must not take the single SQLite writer lock, so only a reveal
+// or a placement opens an immediate transaction
+async fn begin(pool: &SqlitePool, writes: bool) -> AppResult<Transaction<'_, Sqlite>> {
+    Ok(if writes {
+        pool.begin_with("BEGIN IMMEDIATE").await?
+    } else {
+        pool.begin().await?
+    })
+}
+
 pub async fn classic_assists(
     pool: &SqlitePool,
     challenge_id: Uuid,
     player_id: Uuid,
     selected_column: Option<&str>,
 ) -> AppResult<ClassicAssistState> {
-    let mut transaction = pool.begin_with("BEGIN IMMEDIATE").await?;
+    for attempt in 0..12 {
+        match classic_assists_once(pool, challenge_id, player_id, selected_column).await {
+            Err(error) if super::is_sqlite_busy(&error) && attempt < 11 => {
+                tokio::time::sleep(std::time::Duration::from_millis(10_u64 << attempt)).await;
+            }
+            result => return result,
+        }
+    }
+    unreachable!("the retry loop always returns")
+}
+
+async fn classic_assists_once(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+    selected_column: Option<&str>,
+) -> AppResult<ClassicAssistState> {
+    let mut transaction = begin(pool, selected_column.is_some()).await?;
     let challenge = super::find_challenge(&mut *transaction, challenge_id)
         .await?
         .ok_or_else(|| AppError::NotFound("Classic challenge not found.".to_owned()))?;
     let (category, difficulty) = super::parse_classic_mode(&challenge.mode)
         .ok_or_else(|| AppError::NotFound("Classic challenge not found.".to_owned()))?;
-    if difficulty != super::ClassicDifficulty::Normal {
+    if difficulty != super::ClassicDifficulty::Normal
+        || category == super::ClassicCategory::Hardcore
+    {
         return Err(AppError::Forbidden(
             "Hints are available only in Classic Normal.".to_owned(),
         ));
@@ -79,17 +111,13 @@ pub async fn classic_assists(
                 .ok_or_else(|| {
                     AppError::Unavailable("Challenge data is unavailable.".to_owned())
                 })?;
-            let public = serde_json::to_value(answer.public)?;
-            let value = if column == "release" {
-                public["releaseYear"].clone()
-            } else if let Some(value) = public.get(column) {
-                value.clone()
-            } else {
-                public["categoryDetails"]
-                    .get(category.catalog_slug().unwrap_or_default())
-                    .and_then(|details| details.get(column))
+            let value = match category_detail_value(&answer.comparable.category_details, column) {
+                Some(value) => value,
+                None if column == "release" => Value::from(answer.public.release_year),
+                None => serde_json::to_value(answer.public)?
+                    .get(column)
                     .cloned()
-                    .unwrap_or(Value::Null)
+                    .unwrap_or(Value::Null),
             };
             sqlx::query("INSERT INTO player_challenge_hints (player_id, challenge_id, hint_index, hint_type, target_column, value_json, created_at) VALUES (?, ?, ?, 'column', ?, ?, ?)")
                 .bind(player_id.to_string()).bind(challenge_id.to_string())
@@ -154,7 +182,24 @@ pub async fn timeline_assists(
     player_id: Uuid,
     selected_card: Option<&str>,
 ) -> AppResult<TimelineAssistState> {
-    let mut transaction = pool.begin_with("BEGIN IMMEDIATE").await?;
+    for attempt in 0..12 {
+        match timeline_assists_once(pool, challenge_id, player_id, selected_card).await {
+            Err(error) if super::is_sqlite_busy(&error) && attempt < 11 => {
+                tokio::time::sleep(std::time::Duration::from_millis(10_u64 << attempt)).await;
+            }
+            result => return result,
+        }
+    }
+    unreachable!("the retry loop always returns")
+}
+
+async fn timeline_assists_once(
+    pool: &SqlitePool,
+    challenge_id: Uuid,
+    player_id: Uuid,
+    selected_card: Option<&str>,
+) -> AppResult<TimelineAssistState> {
+    let mut transaction = begin(pool, selected_card.is_some()).await?;
     let row = super::timeline::find_timeline_challenge(&mut transaction, challenge_id)
         .await?
         .ok_or_else(|| AppError::NotFound("Timeline challenge not found.".to_owned()))?;

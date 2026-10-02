@@ -5555,6 +5555,9 @@ body.hell-mode .completed--timeline {
 .timeline-card--correct {
   cursor: default;
 }
+.timeline-card--auto-placed {
+  border-style: dashed;
+}
 .timeline-card--submitted.timeline-card--anchor:not(.timeline-card--winning) {
   animation: none;
 }

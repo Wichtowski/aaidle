@@ -1,14 +1,17 @@
+use std::net::SocketAddr;
+
 use axum::{
     Json,
-    extract::{Extension, Path, State, rejection::JsonRejection},
+    extract::{ConnectInfo, Extension, Path, State, rejection::JsonRejection},
     http::HeaderMap,
 };
 use serde::Deserialize;
 use uuid::Uuid;
 
 use super::{
-    AnonymousPlayerId, assert_csrf_or_bearer, assert_same_origin_or_bearer, now_millis,
-    optional_authenticated_user, parse_json_payload, parse_uuid,
+    AnonymousPlayerId, assert_csrf_or_bearer, assert_same_origin_or_bearer,
+    consume_guess_rate_limits, now_millis, optional_authenticated_user, parse_json_payload,
+    parse_uuid,
 };
 use crate::{
     error::{AppError, AppResult},
@@ -70,6 +73,7 @@ pub(super) async fn classic_state(
 pub(super) async fn classic_hint(
     State(state): State<AppState>,
     Extension(AnonymousPlayerId(anonymous)): Extension<AnonymousPlayerId>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     headers: HeaderMap,
     Path(id): Path<String>,
     payload: Result<Json<ClassicHintRequest>, JsonRejection>,
@@ -77,6 +81,7 @@ pub(super) async fn classic_hint(
     let id = parse_uuid(&id, "challengeId must be a UUID")?;
     let payload = parse_json_payload(payload)?;
     let player = player(&state, &headers, anonymous, true).await?;
+    consume_guess_rate_limits(&state, &headers, Some(peer), player, id).await?;
     Ok(Json(
         assists::classic_assists(&state.db, id, player, Some(&payload.column)).await?,
     ))
@@ -98,6 +103,7 @@ pub(super) async fn timeline_state(
 pub(super) async fn timeline_auto_place(
     State(state): State<AppState>,
     Extension(AnonymousPlayerId(anonymous)): Extension<AnonymousPlayerId>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     headers: HeaderMap,
     Path(id): Path<String>,
     payload: Result<Json<TimelineAutoPlaceRequest>, JsonRejection>,
@@ -105,6 +111,7 @@ pub(super) async fn timeline_auto_place(
     let id = parse_uuid(&id, "challengeId must be a UUID")?;
     let payload = parse_json_payload(payload)?;
     let player = player(&state, &headers, anonymous, true).await?;
+    consume_guess_rate_limits(&state, &headers, Some(peer), player, id).await?;
     Ok(Json(
         assists::timeline_assists(&state.db, id, player, Some(&payload.card_id)).await?,
     ))
