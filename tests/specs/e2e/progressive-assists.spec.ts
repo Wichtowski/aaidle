@@ -8,6 +8,9 @@ async function dismissDialogs(page: Page) {
 }
 
 test("Classic selects one hint and restores it after a reload", async ({ page }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("aaidle:how-to-play:v1", JSON.stringify({ "classic:llm:normal": true })),
+  );
   const id = "2c8d3858-8e24-4ad0-b1d3-7d231af19a58";
   let guessed = false;
   let revealed = false;

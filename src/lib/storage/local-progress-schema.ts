@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { classicColumns } from "../domain/guesses/comparison-types";
 import { gameStreaksSchema } from "../validation/streaks";
+import { dailyMilestoneSchema } from "../validation/daily-completion";
 const comparison = z.object(
   Object.fromEntries(
     classicColumns.map((column) => [
@@ -15,6 +16,15 @@ export const localProgressSchema = z
     playerId: z.uuid(),
     activeMode: z.literal("classic"),
     streaks: gameStreaksSchema.optional(),
+    // Only which milestones were already celebrated is remembered; the summary itself
+    // always comes from the server. A malformed value is dropped instead of resetting
+    // the whole stored progress
+    dailyCompletion: z
+      .object({
+        milestones: z.record(z.string(), dailyMilestoneSchema),
+      })
+      .optional()
+      .catch(undefined),
     games: z.record(
       z.string(),
       z.object({

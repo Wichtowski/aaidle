@@ -4,6 +4,7 @@ import { PageEyebrow } from "../../../ui/PageEyebrow";
 import { GameStreak } from "./GameStreak";
 import type { GameFamily } from "@lib/validation/streaks";
 import { GameDateNavigation } from "./GameDateNavigation";
+import { DailySummaryButton } from "../completion/DailySummaryButton";
 
 export function GameEyebrow({
   game,
@@ -30,6 +31,7 @@ export function GameEyebrow({
         · {variant}
       </FadeSwap>
       <GameStreak family={family} />
+      <DailySummaryButton date={typeof date === "string" ? date : undefined} />
     </PageEyebrow>
   );
 }

@@ -98,6 +98,15 @@ Deleting a winning Classic guess through administration revokes the day unless a
 Account reconciliation merges qualifying dates before deduplicating attempts.
 Signing out issues a new guest player cookie, so a signed-out browser neither reads nor extends the account's streak.
 
+All-games daily completion is a separate aggregate over confirmed guess/attempt events.
+The server owns dated requirement versions and immutable per-date snapshots; presentation milestones are separate user/date/version rows (migration `0027`).
+The normalized summary exposes only spoiler-free metrics.
+Guests remember only which milestones were celebrated, in the version 1 progress store, and that state merges monotonically after sign-in without granting completion.
+A global native dialog queues behind per-game celebration events, acknowledges only after rendering, and remains manually reopenable.
+It opens by itself on game pages only, for today and for past days.
+Registry version 1 excludes Logo, treats Emoji as non-tiered, and respects Classic's six Normal/Challenge categories plus its single combined Hardcore game.
+A harder completion satisfies an easier requirement, a solved Hardcore game is always listed, and GOAT needs every game at the difficulty its requirement names as `highestTier`.
+
 Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance.
 Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them.
 Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions.

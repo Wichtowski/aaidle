@@ -13,6 +13,7 @@ import { SeoMetadata } from "@components/ui/SeoMetadata";
 import { InstallPrompt } from "@components/ui/InstallPrompt";
 import { EmojiPage } from "@app/pages/game/EmojiPage";
 import { HistoricalGameGuard } from "@components/game/common/HistoricalGameGuard";
+import { DailyCompletionProvider } from "@components/game/common/completion/DailyCompletionProvider";
 
 const ProfilePage = lazy(() =>
   import("@app/pages/profile/ProfilePage").then(({ ProfilePage }) => ({ default: ProfilePage })),
@@ -186,7 +187,9 @@ function ProgressSyncLoader() {
 export function App() {
   return (
     <AuthProvider>
-      <Content />
+      <DailyCompletionProvider>
+        <Content />
+      </DailyCompletionProvider>
     </AuthProvider>
   );
 }

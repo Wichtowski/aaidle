@@ -44,6 +44,7 @@ mod admin;
 mod assists;
 mod auth;
 mod classic;
+mod daily_completion;
 mod emoji;
 mod history;
 mod issues;
@@ -98,6 +99,11 @@ pub fn router(state: AppState) -> Router {
         .route("/auth/oauth/{provider}/callback", get(auth::oauth_callback))
         .route("/auth/me", get(auth::me))
         .route("/me/streaks", get(streaks::get))
+        .route("/games/daily-completion/{date}", get(daily_completion::get))
+        .route(
+            "/games/daily-completion/{date}/seen",
+            post(daily_completion::seen),
+        )
         .route("/auth/hardcore-status", get(auth::hardcore_status))
         .route("/auth/logout", post(auth::logout))
         .route("/issues", post(issues::create))

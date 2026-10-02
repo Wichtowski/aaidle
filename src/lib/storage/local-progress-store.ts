@@ -318,6 +318,7 @@ export function prepareCloudProgress(userId: string) {
   const cached = readAuthenticatedProgress(userId);
   const hasAnonymousState =
     Object.keys(snapshot.games).length > 0 ||
+    Object.keys(snapshot.dailyCompletion?.milestones ?? {}).length > 0 ||
     snapshot.preferences.hasSeenClassicHowToPlay === true ||
     snapshot.preferences.innerCircleActive ||
     snapshot.preferences.hellMode ||

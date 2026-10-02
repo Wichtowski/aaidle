@@ -165,6 +165,50 @@ Direct dated URLs for today canonicalize after the server day is available.
 Date changes remount game state before fetching, keeping previous solutions out of the loading view.
 Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
 
+## All-games daily completion
+
+`GET /api/v1/games/daily-completion/today` resolves the canonical UTC day for guests and signed-in players.
+`GET /api/v1/games/daily-completion/{YYYYMMDD}` uses the same authentication, real-date, launch and future bounds as historical game retrieval.
+The signed player cookie or authenticated account's canonical player selects confirmed records; a client-supplied completion claim or player UUID is never accepted.
+
+The response is `{ challengeDate, sequenceNumber: null, requirementVersion, groups, highestCompletedTier, allRequiredGamesComplete, hardcoreSweep, highestCelebratedTier, goatSeen }`.
+Tiers are `normal`, `challenge`, `hardcore`, or null.
+Each group has `{ id, label, completed, result, modifiers, results }`; each result has `{ id, label, completed, result, modifiers }`.
+Result strings contain only confirmed guess/submission counts (`-` when missing); no answers, catalog IDs, dates of answer releases, Logo identifiers, or unsubmitted Timeline ordering appear.
+
+The server-owned registry in `domain/daily_completion.rs` defines dated versions and snapshots the applicable requirements immutably in SQLite.
+Version 1 requires six Classic categories (LLM, CV, NLP, OD, Classical ML, Filters), Emoji once at any existing difficulty as a non-tiered requirement, and tier-aware Timeline Normal/Challenge/Hardcore.
+Speedrun does not substitute for a tiered Timeline requirement.
+Logo is excluded until a later explicit version.
+Classic has six Normal/Challenge games but one combined Hardcore: the Hardcore daily set retains all six Challenge categories and adds combined Classic Hardcore plus Timeline Hardcore and Emoji.
+It does not invent six unavailable category Hardcores or change the existing unlock ritual.
+A harder completion also satisfies an easier requirement, so a game played only on Challenge still counts toward the Normal set; an easier completion never satisfies a harder one.
+When a game was solved on several difficulties, the row shows the result closest to the difficulty the awarded tier needs.
+`hardcoreSweep` (the GOAT award, shown as 🐐) needs the complete Hardcore set and every game solved at its own highest difficulty: combined Classic Hardcore, Timeline Hardcore, and Emoji on Challenge or harder.
+Each requirement names that difficulty as `highestTier` in the stored snapshot.
+A Hardcore game the player actually solved is always listed, also while the Hardcore set is incomplete: combined Classic Hardcore as its own row, and Timeline Hardcore as an extra `timeline-hardcore` row when the Timeline row shows an easier result.
+A Hardcore game that was not played never appears as a missing row for a Normal or Challenge summary.
+Requirements disabled for invalid pools must be removed by a new dated version, not silently skipped.
+Earlier snapshots are never replaced.
+A date is snapshotted by its first read, including today's, so a new registry version must take effect from a later date; later reads of a snapshotted date perform no write.
+Stored snapshots tolerate added fields, and fields added later must have a default.
+
+`POST /api/v1/games/daily-completion/{today|YYYYMMDD}/seen` accepts `{ tier: "normal"|"challenge"|"hardcore"|null, goatSeen?: boolean }`.
+It validates the requested presentation milestone against the current confirmed summary (unearned tiers/GOAT return 400) and merges authenticated presentation state monotonically by user/date/version.
+It cannot create game completion.
+Exact Origin is required; signed-in requests also require CSRF (or the existing bearer policy).
+Guests keep only the equivalent presentation state in the version 1 local progress store; the summary itself always comes from the server, and a malformed stored value is dropped without resetting other progress.
+Sign-in merges only server-verified milestones and sends an acknowledgement only when the browser is ahead of the server.
+Invalid payloads return 400, disabled users 403, and normal historical availability errors retain their existing statuses.
+
+The global dialog waits until the individual game's celebration closes, acknowledges only after rendering, traps/restores focus, and can be reopened from game UI or Profile.
+It opens by itself only on game pages, for today's game and for a past day alike; other pages show the reopen button without interrupting.
+When a game's own celebration does not open within a few seconds of a win, the summary stops waiting for it.
+Only game pages poll for changes, and only while the tab is visible.
+Clipboard failure does not affect completion and reveals the text summary for manual copying.
+Copy text uses the challenge date, stable grouped results and 🏅/🏆/👑 with optional 🐐.
+The modifier vocabulary is deliberately empty until owning game rules define/persist earned IDs; the formatter supports explicit modifier metadata without deriving achievements from UI state.
+
 ## Game-family daily streaks
 
 `GET /api/v1/me/streaks` is available to guests and signed-in players and is served with `Cache-Control: no-store`.

@@ -10,6 +10,15 @@
   --sky: #3f7da8;
   --api-unavailable-border: #d8b06c;
 }
+.daily-summary-button { border: 0; background: transparent; color: var(--sky); cursor: pointer; font: inherit; text-decoration: underline; }
+.daily-completion-dialog { position: fixed; border: 1px solid var(--line); border-radius: 1rem; background: var(--panel); color: var(--ink); width: min(38rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 2rem; overflow: auto; }
+.daily-completion-dialog::backdrop { background: rgb(0 0 0 / 55%); }
+.daily-completion-dialog h2 { text-transform: capitalize; }
+.daily-completion-results { list-style: none; padding: 0; display: grid; gap: .75rem; }
+.daily-completion-results li { border-bottom: 1px solid var(--line); padding-bottom: .75rem; }
+.daily-completion-results h3, .daily-completion-results p { margin: .35rem 0; }
+.daily-completion-dialog textarea { width: 100%; margin-block: .75rem; color: inherit; background: var(--paper); }
+.daily-completion-dialog .completed__actions { flex-wrap: wrap; margin-top: 1rem; }
 .sr-only {
   position: absolute;
   width: 1px;
