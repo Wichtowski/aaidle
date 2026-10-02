@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { classicColumns } from "../domain/guesses/comparison-types";
+import { gameStreaksSchema } from "../validation/streaks";
 const comparison = z.object(
   Object.fromEntries(
     classicColumns.map((column) => [
@@ -13,6 +14,7 @@ export const localProgressSchema = z
     version: z.literal(1),
     playerId: z.uuid(),
     activeMode: z.literal("classic"),
+    streaks: gameStreaksSchema.optional(),
     games: z.record(
       z.string(),
       z.object({

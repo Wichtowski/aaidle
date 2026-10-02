@@ -1,7 +1,7 @@
 use super::*;
 use sqlx::sqlite::SqlitePoolOptions;
 
-async fn pool_and_catalog() -> (SqlitePool, LogoCatalog) {
+pub(crate) async fn pool_and_catalog() -> (SqlitePool, LogoCatalog) {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
         .connect("sqlite::memory:")

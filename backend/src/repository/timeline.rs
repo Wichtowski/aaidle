@@ -647,6 +647,17 @@ async fn process_timeline_attempt_once(
     .execute(&mut *connection)
     .await?;
 
+    if is_correct {
+        super::streaks::record_completion(
+            &mut *connection,
+            super::streaks::GameFamily::Timeline,
+            input.player_id,
+            &input.challenge_id.to_string(),
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
+    }
     if is_correct && let Some(user_id) = &input.user_id {
         sqlx::query(
             "INSERT OR IGNORE INTO timeline_user_completions (user_id, challenge_id, completed_at) \

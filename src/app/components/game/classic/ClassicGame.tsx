@@ -14,7 +14,6 @@ import {
   markClassicHowToPlaySeen,
 } from "@lib/storage/how-to-play-preferences";
 import { useAuth } from "../../auth/useAuth";
-import { applySolvedStreak } from "@lib/domain/players/streak-service";
 import { saveClassicPreference } from "@lib/storage/game-preferences";
 import {
   classicChallengeMode,
@@ -417,14 +416,6 @@ export function ClassicGame({
           stats: entry.isCorrect
             ? (() => {
                 const current = state.stats.classic;
-                const streak = applySolvedStreak(
-                  {
-                    currentStreak: current.currentStreak,
-                    bestStreak: current.bestStreak,
-                    lastSolvedDate: current.lastSolvedDate,
-                  },
-                  challenge.date,
-                );
                 const guessDistribution = { ...current.guessDistribution };
                 const bucket = entry.attemptNumber > 8 ? "8+" : String(entry.attemptNumber);
                 guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
@@ -432,7 +423,6 @@ export function ClassicGame({
                   ...state.stats,
                   classic: {
                     ...current,
-                    ...streak,
                     gamesPlayed: current.gamesPlayed + 1,
                     gamesWon: current.gamesWon + 1,
                     lastPlayedDate: challenge.date,
@@ -595,8 +585,8 @@ export function ClassicGame({
             }
             onClose={closeCompletion}
             stats={{
-              currentStreak: progress.stats.classic.currentStreak,
-              bestStreak: progress.stats.classic.bestStreak,
+              currentStreak: progress.streaks?.classic.currentStreak ?? 0,
+              bestStreak: progress.streaks?.classic.longestStreak ?? 0,
               gamesPlayed: progress.stats.classic.gamesPlayed,
             }}
           />

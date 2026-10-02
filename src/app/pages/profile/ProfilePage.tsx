@@ -22,7 +22,7 @@ import {
   hasCompletedChallengeRitual,
   solvedChallengeCategoriesForDate,
 } from "@lib/domain/games/classic/hardcore-unlock";
-import { calculateSolvedStreaks } from "@lib/domain/players/streak-service";
+import { GameStreak } from "@components/game/common/layout/GameStreak";
 import { updateProgress } from "@lib/storage/local-progress-store";
 import { apiClient, type ProgressHistory } from "@lib/api/client";
 import { readSavedTimelineGames } from "@lib/domain/games/timeline/timeline-progress-store";
@@ -171,12 +171,7 @@ export function ProfilePage() {
     const bucket = game.attemptCount > 8 ? "8+" : String(game.attemptCount);
     guessDistribution[bucket] = (guessDistribution[bucket] ?? 0) + 1;
   }
-  const { currentStreak, bestStreak } = calculateSolvedStreaks(
-    solved.map((game) => game.challengeDate),
-  );
   const localStats = {
-    currentStreak,
-    bestStreak,
     gamesPlayed: solved.length,
     gamesWon: solved.length,
     guessDistribution,
@@ -362,14 +357,15 @@ export function ProfilePage() {
                 </button>
               ))}
       </div>
+      <GameStreak family={statsGame} />
       <div className="stat-grid">
         <div>
-          <strong>{stats.currentStreak}</strong>
-          <span>Current streak</span>
+          <strong>{progress.streaks?.[statsGame].currentStreak ?? 0}</strong>
+          <span>Current game streak</span>
         </div>
         <div>
-          <strong>{stats.bestStreak}</strong>
-          <span>Best streak</span>
+          <strong>{progress.streaks?.[statsGame].longestStreak ?? 0}</strong>
+          <span>Longest game streak</span>
         </div>
         <div>
           <strong>{stats.gamesPlayed}</strong>

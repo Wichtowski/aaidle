@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 pub mod assists;
 pub mod emoji;
 pub mod logo;
+pub mod streaks;
 pub mod timeline;
 
 use sqlx::{FromRow, SqliteConnection, SqlitePool};
@@ -739,6 +740,15 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
     )
     .await?;
     let completion_count = if is_correct {
+        streaks::record_completion(
+            connection,
+            streaks::GameFamily::Classic,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_completion_count(connection, &challenge.id).await?
     } else {
         completion_count(connection, &challenge.id).await?

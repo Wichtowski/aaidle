@@ -92,6 +92,7 @@ export function ClassicGameControls({
       eyebrow={
         <GameEyebrow
           date={date ?? utcDate()}
+          family="classic"
           game="Classic"
           variant={resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
         />

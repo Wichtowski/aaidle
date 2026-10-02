@@ -261,6 +261,12 @@ pub async fn synchronize(
         .await?;
     let merged_player = player_id != primary_player_id;
     if merged_player {
+        crate::repository::streaks::merge_streak_days(
+            &mut transaction,
+            &player_id,
+            &primary_player_id,
+        )
+        .await?;
         crate::repository::assists::merge_player_assists(
             &mut transaction,
             &player_id,
