@@ -135,10 +135,6 @@ export function mergeCloudProgress(
     dailyCompletion:
       current.dailyCompletion || incoming.dailyCompletion
         ? {
-            summaries: {
-              ...current.dailyCompletion?.summaries,
-              ...incoming.dailyCompletion?.summaries,
-            },
             milestones: Object.fromEntries(
               [
                 ...new Set([

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DailyCompletionDialog } from "../../../src/app/components/game/common/completion/DailyCompletionDialog";
@@ -13,6 +13,7 @@ import {
   shareModifiers,
 } from "../../../src/lib/domain/games/daily-completion";
 import { mergeCloudProgress } from "../../../src/lib/domain/players/cloud-progress";
+import { localProgressSchema } from "../../../src/lib/storage/local-progress-schema";
 import {
   freshProgress,
   getSnapshot,
@@ -126,7 +127,6 @@ describe("daily completion domain", () => {
     const current = {
       ...freshProgress(),
       dailyCompletion: {
-        summaries: {},
         milestones: {
           "2026-09-30:1": { highestCelebratedTier: "challenge" as const, goatSeen: false },
         },
@@ -135,7 +135,6 @@ describe("daily completion domain", () => {
     const incoming = {
       ...freshProgress(),
       dailyCompletion: {
-        summaries: {},
         milestones: {
           "2026-09-30:1": { highestCelebratedTier: "normal" as const, goatSeen: true },
         },
@@ -201,7 +200,33 @@ describe("daily completion dialog", () => {
     expect(screen.getByRole("textbox")).toHaveValue(formatDailyShare(summary("hardcore", true)));
     fireEvent.click(screen.getByRole("button", { name: "Copy results" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Daily results copied");
-    expect(screen.getByText(/GOAT achievement/)).toBeVisible();
+    expect(screen.getByText(/GOAT achievement/)).toHaveTextContent(
+      "every game completed at its highest difficulty",
+    );
+  });
+  it("reveals the text summary when copying fails and stays open when its callback changes", async () => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
+    });
+    const first = vi.fn();
+    const second = vi.fn();
+    const view = render(
+      <DailyCompletionDialog summary={summary()} onClose={vi.fn()} onPresented={first} />,
+    );
+    const details = view.container.querySelector("details")!;
+    expect(details.open).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: "Copy results" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Could not copy");
+    expect(details.open).toBe(true);
+    const dialog = screen.getByRole("dialog");
+    view.rerender(
+      <DailyCompletionDialog summary={summary()} onClose={vi.fn()} onPresented={second} />,
+    );
+    expect(screen.getByRole("dialog")).toBe(dialog);
+    expect(dialog).toHaveAttribute("open");
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).not.toHaveBeenCalled();
   });
 });
 
@@ -212,7 +237,7 @@ describe("global milestone presentation", () => {
       .mockResolvedValueOnce(summary(null))
       .mockResolvedValue(summary());
     const view = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/classic/llm"]}>
         <DailyCompletionProvider>
           <DailySummaryButton />
         </DailyCompletionProvider>
@@ -228,7 +253,7 @@ describe("global milestone presentation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Close daily summary" }));
     view.unmount();
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/classic/llm"]}>
         <DailyCompletionProvider>
           <DailySummaryButton />
         </DailyCompletionProvider>
@@ -244,7 +269,6 @@ describe("global milestone presentation", () => {
     replaceProgress({
       ...freshProgress(),
       dailyCompletion: {
-        summaries: {},
         milestones: { "2026-09-30:1": { highestCelebratedTier: "normal", goatSeen: false } },
       },
     });
@@ -266,5 +290,74 @@ describe("global milestone presentation", () => {
       }),
     );
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+  it("celebrates on game pages only, including a past day completed today", async () => {
+    const request = vi.spyOn(apiClient, "dailyCompletion").mockResolvedValue(summary());
+    // A complete, unacknowledged day must not interrupt a page that is not a game
+    for (const path of ["/", "/profile", "/login", "/privacy"]) {
+      const view = render(
+        <MemoryRouter initialEntries={[path]}>
+          <DailyCompletionProvider>
+            <DailySummaryButton />
+          </DailyCompletionProvider>
+        </MemoryRouter>,
+      );
+      expect(await screen.findByRole("button", { name: "Daily summary" })).toBeVisible();
+      await new Promise((resolve) => setTimeout(resolve, 650));
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(getSnapshot().dailyCompletion).toBeUndefined();
+      view.unmount();
+    }
+    // A signed-in player finishing a past day gets the same celebration
+    auth.user = { id: "u", disabled: false };
+    vi.spyOn(apiClient, "seeDailyCompletion").mockResolvedValue(summary());
+    request.mockClear();
+    render(
+      <MemoryRouter initialEntries={["/timeline/20260930"]}>
+        <DailyCompletionProvider>
+          <DailySummaryButton date="2026-09-30" />
+        </DailyCompletionProvider>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole("dialog", { name: /normal daily set complete/i })).toBeVisible();
+    expect(request).toHaveBeenCalledWith("20260930");
+  });
+  it("does not wait forever for a game celebration that never opens", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      vi.spyOn(apiClient, "dailyCompletion").mockResolvedValue(summary());
+      render(
+        <MemoryRouter initialEntries={["/emoji"]}>
+          <DailyCompletionProvider>
+            <DailySummaryButton />
+          </DailyCompletionProvider>
+        </MemoryRouter>,
+      );
+      // A replayed winning request announces a celebration that will not be shown again
+      window.dispatchEvent(new Event("aaidle:game-celebration-start"));
+      await act(() => vi.advanceTimersByTimeAsync(2_000));
+      expect(screen.queryByRole("dialog")).toBeNull();
+      await act(() => vi.advanceTimersByTimeAsync(3_000));
+      expect(screen.getByRole("dialog", { name: /normal daily set complete/i })).toBeVisible();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("keeps stored progress when the remembered milestones are malformed", () => {
+    const stored = { ...freshProgress(), dailyCompletion: { summaries: {}, milestones: "broken" } };
+    const parsed = localProgressSchema.parse(stored);
+    expect(parsed.dailyCompletion).toBeUndefined();
+    expect(parsed.playerId).toBe(stored.playerId);
+    // An older stored shape that still carried cached summaries is read without them
+    const legacy = localProgressSchema.parse({
+      ...freshProgress(),
+      dailyCompletion: {
+        summaries: { "2026-09-30:1": { anything: true } },
+        milestones: { "2026-09-30:1": { highestCelebratedTier: "normal", goatSeen: false } },
+      },
+    });
+    expect(legacy.dailyCompletion).toEqual({
+      milestones: { "2026-09-30:1": { highestCelebratedTier: "normal", goatSeen: false } },
+    });
   });
 });

@@ -1,5 +1,6 @@
 use super::{
-    AnonymousPlayerId, assists, current_utc_date, optional_authenticated_user, parse_json_payload,
+    AnonymousPlayerId, current_utc_date, optional_authenticated_user, parse_json_payload,
+    request_player,
 };
 use crate::{
     domain::{daily_completion::DailyCompletionSummary, difficulty::Difficulty},
@@ -37,7 +38,7 @@ pub(super) async fn get(
     Path(requested): Path<String>,
 ) -> AppResult<Json<DailyCompletionSummary>> {
     let date = date(&state, &headers, &requested).await?;
-    let player = assists::player(&state, &headers, anonymous, false).await?;
+    let player = request_player(&state, &headers, anonymous, false).await?;
     let user = optional_authenticated_user(&state, &headers).await?;
     Ok(Json(
         daily_completion::summary(
@@ -59,7 +60,7 @@ pub(super) async fn seen(
 ) -> AppResult<Json<DailyCompletionSummary>> {
     let payload = parse_json_payload(payload)?;
     let date = date(&state, &headers, &requested).await?;
-    let player = assists::player(&state, &headers, anonymous, true).await?;
+    let player = request_player(&state, &headers, anonymous, true).await?;
     let user = optional_authenticated_user(&state, &headers).await?;
     let user = user.as_ref().map(|u| u.id.as_str());
     let summary = daily_completion::summary(&state.db, &date, player, user).await?;

@@ -287,6 +287,15 @@ async fn process_guess_once(
     )
     .await?;
     let completion_count = if is_correct {
+        super::streaks::record_completion(
+            &mut *connection,
+            super::streaks::GameFamily::Logo,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_completion_count(&mut *connection, &challenge.id).await?
     } else {
         completion_count(&mut *connection, &challenge.id).await?
@@ -313,6 +322,13 @@ async fn ensure_challenge(
     if let Some(challenge) = find_by_date(pool, date).await? {
         if catalog.entry(&challenge.answer_model_id).is_some() {
             return Ok(challenge);
+        }
+        // Only today's game may be repaired. A past day keeps the answer it was played
+        // with, so it becomes unavailable instead of silently changing
+        if date != super::format_date(time::OffsetDateTime::now_utc().date())? {
+            return Err(AppError::Unavailable(
+                "This daily Logo game is no longer available.".to_owned(),
+            ));
         }
         let entry = catalog
             .eligible(0)
@@ -489,4 +505,4 @@ pub async fn rebuild_player_stats(
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

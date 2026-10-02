@@ -296,9 +296,11 @@ pub async fn timeline_leaderboard(
                      ELSE u.email END), \
                 u.id, a.speedrun_time_ms, a.attempt_number \
          FROM timeline_attempts a \
+         JOIN timeline_challenges c ON c.id = a.challenge_id \
          JOIN users u ON u.id = a.user_id \
          WHERE a.challenge_id = ? AND a.is_correct = 1 AND a.speedrun_time_ms IS NOT NULL \
            AND u.disabled_at IS NULL \
+           AND c.challenge_date = strftime('%Y-%m-%d', (a.created_at - a.speedrun_time_ms) / 1000.0, 'unixepoch') \
          ORDER BY a.attempt_number ASC, a.speedrun_time_ms ASC, a.created_at ASC, a.user_id ASC \
          LIMIT 10",
     )
@@ -652,6 +654,17 @@ async fn process_timeline_attempt_once(
     .execute(&mut *connection)
     .await?;
 
+    if is_correct {
+        super::streaks::record_completion(
+            &mut *connection,
+            super::streaks::GameFamily::Timeline,
+            input.player_id,
+            &input.challenge_id.to_string(),
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
+    }
     if is_correct && let Some(user_id) = &input.user_id {
         sqlx::query(
             "INSERT OR IGNORE INTO timeline_user_completions (user_id, challenge_id, completed_at) \

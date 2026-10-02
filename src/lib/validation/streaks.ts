@@ -8,8 +8,8 @@ export const gameStreakSchema = z.object({
   longestStreak: z.number().int().nonnegative(),
   lastStreakDate: date.nullable(),
   securedToday: z.boolean(),
-  qualifyingDates: z.array(date),
 });
+export type GameStreak = z.infer<typeof gameStreakSchema>;
 export const gameStreaksSchema = z.object({
   currentGameDate: date,
   classic: gameStreakSchema,

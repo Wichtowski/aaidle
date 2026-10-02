@@ -126,7 +126,8 @@ Classic, Emoji, and Logo guess requests share persisted abuse limits: 400 reques
 
 ## Authenticated historical daily games
 
-Today's existing game routes remain unchanged and guest-accessible according to their existing mode restrictions. Authenticated players can append a real calendar `YYYYMMDD` date to these retrieval routes:
+Today's existing game routes remain unchanged and guest-accessible according to their existing mode restrictions.
+Authenticated players can append a real calendar `YYYYMMDD` date to these retrieval routes:
 
 - `GET /api/v1/games/classic/:category/:difficulty/:date`
 - `GET /api/v1/games/classic/hardcore/:date`
@@ -134,45 +135,139 @@ Today's existing game routes remain unchanged and guest-accessible according to 
 - `GET /api/v1/games/emoji/:difficulty/:date`
 - `GET /api/v1/games/logo/:difficulty/:date`
 
-Malformed dates return `400`; dates before `20260811` or after the server's canonical UTC day return `404`, without generating a challenge or revealing future selections. Valid dated requests require authentication (`401` for guests); disabled accounts are forbidden. A dated request for today selects the same challenge as the clean route. Existing difficulty/Hardcore access restrictions still apply. Stored challenges are reused; first-time historical generation uses the requested date and the existing server selection/version semantics.
+Malformed dates return `400`; dates before `20260811` or after the server's canonical UTC day return `404`, without generating a challenge or revealing future selections.
+Valid dated requests require authentication (`401` for guests); disabled accounts are forbidden.
+A dated request for today selects the same challenge as the clean route.
+Existing difficulty/Hardcore access restrictions still apply.
+Stored challenges are reused; first-time historical generation uses the requested date and the existing server selection/version semantics, with the Classic repeat cooldown measured against the days before the requested date.
+A day that nobody opened before is therefore selected from the catalog as it is when first requested, and stays fixed from then on.
+A stored day keeps its answer: when that answer has since left the catalog or the pool, the dated route returns `503` instead of rewriting the day or serving a game that cannot be won.
+Only today's Logo game is repaired when its answer leaves the catalog.
+`GET /api/v1/games/classic/hardcore/hardcore` remains an alias of today's Hardcore game.
 
-Historical authorization is also enforced on challenge-ID gameplay reads and writes, including guesses, retry requests, hints, auto-placement, trajectory and Logo images. Send challenge UUIDs directly, not percent-encoded spellings. Account history reads use the canonical player even when the anonymous cookie differs. Existing public Timeline leaderboard views remain unchanged.
+Historical authorization is also enforced on challenge-ID gameplay reads and writes, including guesses, retry requests, hints, auto-placement, trajectory and Logo images.
+Send challenge UUIDs directly, not percent-encoded spellings.
+Account history reads use the canonical player even when the anonymous cookie differs.
+The check applies to every path below `/games/{family}/challenges/{challengeId}`, whatever follows the ID, and an unknown game family returns `404`.
+Only `GET /games/timeline/challenges/{challengeId}/leaderboard` is public by design.
+Yesterday's challenge ID stays playable without an account for one hour after 00:00 UTC, so a game started before midnight can be finished; later it requires signing in like any past day.
 
-Historical completions retain their original challenge date and actual server completion timestamp, restore by challenge ID, and remain idempotent. They contribute to lifetime history and distributions, but never to qualifying daily streak days. Older mode-stat updates/rebuilds now distinguish actual on-day wins; authenticated progress/history streak fields return the family-wide verified streak instead of deriving one from historical challenge dates.
+Historical completions retain their original challenge date and actual server completion timestamp, restore by challenge ID, and remain idempotent.
+They contribute to lifetime history and distributions, but never to qualifying daily streak days.
+A historical Speedrun can be played, but daily and global Speedrun leaderboards only rank runs that were started on their challenge's own UTC day.
+Older mode-stat updates/rebuilds now distinguish actual on-day wins; authenticated progress/history streak fields return the family-wide verified streak instead of deriving one from historical challenge dates.
 
-Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoji/:date`, and `/logo/:date`. Guests enter the existing sign-in flow. Signed-in eyebrow arrows navigate one UTC calendar day, hide at launch/today, and return to the clean route when reaching today. Direct dated URLs for today canonicalize after the server day is available. Date changes remount game state before fetching, keeping previous solutions out of the loading view. Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
+Browser history routes are `/classic/:category/:date`, `/timeline/:date`, `/emoji/:date`, and `/logo/:date`.
+Guests enter the existing sign-in flow and return to the dated page after a password sign-in.
+A past day shows no next-game countdown.
+Signed-in eyebrow arrows navigate one UTC calendar day, hide at launch/today, and return to the clean route when reaching today.
+Direct dated URLs for today canonicalize after the server day is available.
+Date changes remount game state before fetching, keeping previous solutions out of the loading view.
+Timeline's cache may restore a draft arrangement, but accepted attempts, positional feedback and solved state come from the server.
 
 ## All-games daily completion
 
-`GET /api/v1/games/daily-completion/today` resolves the canonical UTC day for guests and signed-in players. `GET /api/v1/games/daily-completion/{YYYYMMDD}` uses the same authentication, real-date, launch and future bounds as historical game retrieval. The signed player cookie or authenticated account's canonical player selects confirmed records; a client-supplied completion claim or player UUID is never accepted.
+`GET /api/v1/games/daily-completion/today` resolves the canonical UTC day for guests and signed-in players.
+`GET /api/v1/games/daily-completion/{YYYYMMDD}` uses the same authentication, real-date, launch and future bounds as historical game retrieval.
+The signed player cookie or authenticated account's canonical player selects confirmed records; a client-supplied completion claim or player UUID is never accepted.
 
-The response is `{ challengeDate, sequenceNumber: null, requirementVersion, groups, highestCompletedTier, allRequiredGamesComplete, hardcoreSweep, highestCelebratedTier, goatSeen }`. Tiers are `normal`, `challenge`, `hardcore`, or null. Each group has `{ id, label, completed, result, modifiers, results }`; each result has `{ id, label, completed, result, modifiers }`. Result strings contain only confirmed guess/submission counts (`—` when missing); no answers, catalog IDs, dates of answer releases, Logo identifiers, or unsubmitted Timeline ordering appear.
+The response is `{ challengeDate, sequenceNumber: null, requirementVersion, groups, highestCompletedTier, allRequiredGamesComplete, hardcoreSweep, highestCelebratedTier, goatSeen }`.
+Tiers are `normal`, `challenge`, `hardcore`, or null.
+Each group has `{ id, label, completed, result, modifiers, results }`; each result has `{ id, label, completed, result, modifiers }`.
+Result strings contain only confirmed guess/submission counts (`-` when missing); no answers, catalog IDs, dates of answer releases, Logo identifiers, or unsubmitted Timeline ordering appear.
 
-The server-owned registry in `domain/daily_completion.rs` defines dated versions and snapshots the applicable requirements immutably in SQLite. Version 1 requires six Classic categories (LLM, CV, NLP, OD, Classical ML, Filters), Emoji once at any existing difficulty as a non-tiered requirement, and tier-aware Timeline Normal/Challenge/Hardcore. Speedrun does not substitute for a tiered Timeline requirement. Logo is excluded until a later explicit version. Classic has six Normal/Challenge games but one combined Hardcore: the Hardcore daily set retains all six Challenge categories and adds combined Classic Hardcore plus Timeline Hardcore and Emoji. It does not invent six unavailable category Hardcores or change the existing unlock ritual. GOAT accompanies only a completed Hardcore set. Requirements disabled for invalid pools must be removed by a new dated version, not silently skipped. Earlier snapshots are never replaced.
+The server-owned registry in `domain/daily_completion.rs` defines dated versions and snapshots the applicable requirements immutably in SQLite.
+Version 1 requires six Classic categories (LLM, CV, NLP, OD, Classical ML, Filters), Emoji once at any existing difficulty as a non-tiered requirement, and tier-aware Timeline Normal/Challenge/Hardcore.
+Speedrun does not substitute for a tiered Timeline requirement.
+Logo is excluded until a later explicit version.
+Classic has six Normal/Challenge games but one combined Hardcore: the Hardcore daily set retains all six Challenge categories and adds combined Classic Hardcore plus Timeline Hardcore and Emoji.
+It does not invent six unavailable category Hardcores or change the existing unlock ritual.
+A harder completion also satisfies an easier requirement, so a game played only on Challenge still counts toward the Normal set; an easier completion never satisfies a harder one.
+When a game was solved on several difficulties, the row shows the result closest to the difficulty the awarded tier needs.
+`hardcoreSweep` (the GOAT award, shown as 🐐) needs the complete Hardcore set and every game solved at its own highest difficulty: combined Classic Hardcore, Timeline Hardcore, and Emoji on Challenge or harder.
+Each requirement names that difficulty as `highestTier` in the stored snapshot.
+A Hardcore game the player actually solved is always listed, also while the Hardcore set is incomplete: combined Classic Hardcore as its own row, and Timeline Hardcore as an extra `timeline-hardcore` row when the Timeline row shows an easier result.
+A Hardcore game that was not played never appears as a missing row for a Normal or Challenge summary.
+Requirements disabled for invalid pools must be removed by a new dated version, not silently skipped.
+Earlier snapshots are never replaced.
+A date is snapshotted by its first read, including today's, so a new registry version must take effect from a later date; later reads of a snapshotted date perform no write.
+Stored snapshots tolerate added fields, and fields added later must have a default.
 
-`POST /api/v1/games/daily-completion/{today|YYYYMMDD}/seen` accepts `{ tier: "normal"|"challenge"|"hardcore"|null, goatSeen?: boolean }`. It validates the requested presentation milestone against the current confirmed summary (unearned tiers/GOAT return 400) and merges authenticated presentation state monotonically by user/date/version. It cannot create game completion. Exact Origin is required; signed-in requests also require CSRF (or the existing bearer policy). Guests keep equivalent presentation state and validated summaries in the version 1 local progress store; sign-in merges only server-verified milestones. Invalid payloads return 400, disabled users 403, and normal historical availability errors retain their existing statuses.
+`POST /api/v1/games/daily-completion/{today|YYYYMMDD}/seen` accepts `{ tier: "normal"|"challenge"|"hardcore"|null, goatSeen?: boolean }`.
+It validates the requested presentation milestone against the current confirmed summary (unearned tiers/GOAT return 400) and merges authenticated presentation state monotonically by user/date/version.
+It cannot create game completion.
+Exact Origin is required; signed-in requests also require CSRF (or the existing bearer policy).
+Guests keep only the equivalent presentation state in the version 1 local progress store; the summary itself always comes from the server, and a malformed stored value is dropped without resetting other progress.
+Sign-in merges only server-verified milestones and sends an acknowledgement only when the browser is ahead of the server.
+Invalid payloads return 400, disabled users 403, and normal historical availability errors retain their existing statuses.
 
-The global dialog waits until the individual game's celebration closes, acknowledges only after rendering, traps/restores focus, and can be reopened from game UI or Profile. Clipboard failure does not affect completion. Copy text uses the challenge date, stable grouped results and 🏅/🏆/👑 with optional 🐐. The modifier vocabulary is deliberately empty until owning game rules define/persist earned IDs; the formatter supports explicit modifier metadata without deriving achievements from UI state.
+The global dialog waits until the individual game's celebration closes, acknowledges only after rendering, traps/restores focus, and can be reopened from game UI or Profile.
+It opens by itself only on game pages, for today's game and for a past day alike; other pages show the reopen button without interrupting.
+When a game's own celebration does not open within a few seconds of a win, the summary stops waiting for it.
+Only game pages poll for changes, and only while the tab is visible.
+Clipboard failure does not affect completion and reveals the text summary for manual copying.
+Copy text uses the challenge date, stable grouped results and 🏅/🏆/👑 with optional 🐐.
+The modifier vocabulary is deliberately empty until owning game rules define/persist earned IDs; the formatter supports explicit modifier metadata without deriving achievements from UI state.
 
 ## Game-family daily streaks
 
-`GET /api/v1/me/streaks` is available to guests and signed-in players. Signed-in requests use the canonical account player; disabled accounts are rejected. There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
+`GET /api/v1/me/streaks` is available to guests and signed-in players and is served with `Cache-Control: no-store`.
+Signed-in requests use the canonical account player; disabled accounts are rejected.
+There is no streak increment/write endpoint and no accepted client streak counter or qualifying date.
 
-The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects. Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), `securedToday`, and sorted `qualifyingDates`. Modes and categories share one streak within each family. A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
+The response contains `currentGameDate` (server UTC `YYYY-MM-DD`) and `classic`, `timeline`, `emoji`, and `logo` objects.
+Each has `currentStreak`, `longestStreak`, `lastStreakDate` (nullable), and `securedToday`.
+The list of qualifying days is not exposed.
+Modes and categories share one streak within each family.
+A streak remains active until a complete day is missed: a last completion yesterday still retains the current length, but does not secure today; older streaks show zero while retaining the longest length and last date.
 
-SQLite records qualifying days transactionally from accepted successful game events only when the challenge date equals the UTC date of the server-recorded completion timestamp. Historical and future-day completions cannot qualify. Migration backfills only qualifying existing events. Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency. Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically across day rotation.
+A completion secures the challenge's own UTC day when the server accepts it on that day.
+A game the player already started on its own day may be finished up to one hour after 00:00 UTC and still counts for that day; it never secures the following day.
+Any other completion of a past challenge is stored but has no streak effect.
+
+The completion paths record qualifying days in Rust, inside the transaction that stores the accepted winning event; there are no database triggers.
+Migration `0025` backfills only existing on-day completions.
+Sign-in merges these date sets before deduplicating game events, then derives counters from the contiguous history, preserving gaps and idempotency.
+Browser state caches the validated response in the versioned progress store and refreshes after accepted game submissions, sign-in reconciliation, focus, and periodically while the tab is visible.
+A cached response from an earlier day is never presented as secured or still running until the server confirms it.
 
 ## Progressive assistance
 
-`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only. Each unsuccessful accepted guess earns one hint credit. `availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column. A solved board has no available columns or credits.
+`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only.
+Each unsuccessful accepted guess earns one hint credit.
+`availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column.
+A solved board has no available columns or credits.
 
-`POST` to the same route accepts only `{ "column": "provider" }`. The player explicitly selects a displayed column. Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year. Only requested and previously persisted hints are returned. Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`. An already revealed column replays its persisted hint without consuming another credit, including after completion. Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
+`POST` to the same route accepts only `{ "column": "provider" }`.
+The player explicitly selects a displayed column.
+Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year.
+A category-specific column such as `architecture` or `trainingDatasets` reveals exactly the value the guess comparison and the board read for that column, including the shared fallback order across category details.
+`toolUse` reveals `false` when the answer has no tool-calling metadata.
+Only requested and previously persisted hints are returned.
+Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`.
+An already revealed column replays its persisted hint without consuming another credit, including after completion.
+Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
 
-`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`). Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss. `autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously. Available card IDs use the public shuffled tray order, never solution order. Anchors and previously exact or auto-placed cards cannot be selected. A completed board offers no further assistance.
+`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`).
+Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss.
+`autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously.
+Available card IDs use the public shuffled tray order, never solution order.
+Anchors and previously exact or auto-placed cards cannot be selected.
+A completed board offers no further assistance.
 
-`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit. Repeated requests for that card replay without further consumption. Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`. Speedrun and Hardcore return `403`. Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
+`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit.
+Repeated requests for that card replay without further consumption.
+Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`.
+Speedrun and Hardcore return `403`.
+Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
 
-Both assistance families use the cookie-owned player or the signed-in account's canonical player. Browser mutations enforce exact Origin and authenticated CSRF. Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache. Neither route reveals future hint values, unresolved card positions, or hidden answer IDs. Emoji has no additional assistance routes.
+Both assistance families use the cookie-owned player or the signed-in account's canonical player.
+Browser mutations enforce exact Origin and authenticated CSRF.
+Both `POST` routes consume the same per-IP and per-player rate limits as guess submissions and return `429 RATE_LIMITED` when exhausted.
+Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache.
+The first authenticated request from a browser whose guest player is not linked to any account links and merges that player, so guest assistance and attempts follow the account even when the browser never uploads its local progress.
+Neither route reveals future hint values, unresolved card positions, or hidden answer IDs.
+Emoji has no additional assistance routes.
 
 ## Session routes
 
@@ -190,6 +285,7 @@ In non-production without `RESEND_API_KEY`, the response includes `activationUrl
 `POST /api/v1/auth/password` rotates any existing browser session and creates new `aaidle_session` and CSRF cookies after password verification. It does not return a bearer token.
 `GET /api/v1/auth/me` returns the session account or `null`.
 `POST /api/v1/auth/logout` deletes the session and clears both authentication cookies.
+It also replaces the `aaidle_player` cookie with a new guest player, so the signed-out browser stops acting as the account's player.
 
 External API clients can exchange password credentials at `POST /api/v1/auth/token`. This endpoint returns a short-lived, 15-minute bearer JWT and does not create a browser session or refresh token. Browser code does not call this endpoint or store JWTs.
 

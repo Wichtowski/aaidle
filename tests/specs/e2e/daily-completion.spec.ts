@@ -16,7 +16,7 @@ test("the last required daily game opens a spoiler-free summary, copies and neve
   });
   await page.route("**/api/v1/games/daily-completion/**", async (route) => {
     const solved = complete.size > 0;
-    const llm = { ...result("classic-llm", "LLM"), completed: solved, result: solved ? "1" : "—" };
+    const llm = { ...result("classic-llm", "LLM"), completed: solved, result: solved ? "1" : "-" };
     const summary: DailyCompletionSummary = {
       challengeDate: "2026-09-30",
       sequenceNumber: null,

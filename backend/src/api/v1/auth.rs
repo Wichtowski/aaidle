@@ -747,6 +747,10 @@ pub(super) async fn logout(
     response_headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
     response_headers.append(header::SET_COOKIE, cookie_header(&state, "", 0)?);
     response_headers.append(header::SET_COOKIE, csrf_cookie_header(&state, "", 0)?);
+    response_headers.append(
+        header::SET_COOKIE,
+        super::fresh_anonymous_player_cookie(&state)?,
+    );
     Ok((response_headers, StatusCode::NO_CONTENT))
 }
 

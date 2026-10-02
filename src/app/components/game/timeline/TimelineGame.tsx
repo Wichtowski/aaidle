@@ -49,6 +49,7 @@ import { SpeedrunGiveUpDialog } from "./SpeedrunGiveUpDialog";
 import { SpeedrunUsernameDialog } from "./SpeedrunUsernameDialog";
 import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
 import { useTimelineGame } from "./use-timeline-game";
+import type { TimelineAssistState } from "@lib/validation/api";
 
 const TimelineCompletedDialog = lazy(() =>
   import("./TimelineCompletedDialog").then(({ TimelineCompletedDialog }) => ({
@@ -117,6 +118,12 @@ function YearAnnotationTrigger({
       <FaCircleQuestion aria-hidden />
     </span>
   );
+}
+
+function autoPlaceProgress(assistance: TimelineAssistState) {
+  const progress = assistance.incorrectSubmissions % assistance.unlockEvery;
+  const missing = assistance.unlockEvery - progress;
+  return `${progress} / ${assistance.unlockEvery} incorrect submissions. ${missing} more ${missing === 1 ? "miss" : "misses"} to unlock ${assistance.remainingAutoPlacements > 0 ? "another Auto-place" : "Auto-place"}.`;
 }
 
 export function TimelineGame({ requestedDate }: { requestedDate?: string } = {}) {
@@ -190,6 +197,11 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
   } | null>(null);
   const [submissionCooldownRemaining, setSubmissionCooldownRemaining] = useState(0);
   const pendingRequestId = useRef<string | null>(null);
+  // A request ID identifies one arrangement, so any change, including an Auto-place,
+  // must not replay it with a different order
+  useEffect(() => {
+    pendingRequestId.current = null;
+  }, [positions]);
   const completionTimer = useRef<number | null>(null);
   const landingTimer = useRef<number | null>(null);
   const swapTimer = useRef<number | null>(null);
@@ -857,7 +869,7 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
       <GameIntro
         description="Place events in chronological order. Dates stay hidden until every position is correct."
         difficulty={difficultyControls}
-        expiresAt={game?.challenge.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
         eyebrow={
           <GameEyebrow
             date={
@@ -865,6 +877,7 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
               (requestedDate ? parseGameRouteDate(requestedDate) : null) ??
               utcDate()
             }
+            family="timeline"
             game="Timeline"
             variant={timelineDifficultyLabel(difficulty)}
           />
@@ -1038,9 +1051,9 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
                     </article>
                   ) : item ? (
                     <button
-                      aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
+                      aria-label={`Position ${position + 1}: ${item.name}${autoPlaced ? ", auto-placed and locked" : feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${swapAnimation?.modelId === item.id ? " timeline-card--swapping" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
+                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${swapAnimation?.modelId === item.id ? " timeline-card--swapping" : ""}${feedback ? ` timeline-card--${feedback}` : ""}${autoPlaced ? " timeline-card--auto-placed" : ""}`}
                       disabled={
                         difficulty === "speedrun" &&
                         (speedrunStartedAt === null || speedrunUnfinished)
@@ -1246,13 +1259,12 @@ export function TimelineGame({ requestedDate }: { requestedDate?: string } = {})
               >
                 {assistance && (
                   <>
-                    <p>
-                      {assistance.incorrectSubmissions % assistance.unlockEvery} /{" "}
-                      {assistance.unlockEvery} incorrect submissions toward the next Auto-place.
-                    </p>
+                    <p>{autoPlaceProgress(assistance)}</p>
                     {assistance.autoPlacements.length > 0 && (
                       <p>
-                        {assistance.autoPlacements.length} cards automatically placed and locked.
+                        {assistance.autoPlacements.length === 1
+                          ? "1 card automatically placed and locked."
+                          : `${assistance.autoPlacements.length} cards automatically placed and locked.`}
                       </p>
                     )}
                     {assistance.remainingAutoPlacements > 0 && (

@@ -21,17 +21,13 @@ pub async fn summary(
 ) -> AppResult<DailyCompletionSummary> {
     let registry = applicable_registry(date, &registries())
         .ok_or_else(|| AppError::NotFound("Daily completion requirements unavailable.".into()))?;
-    sqlx::query("INSERT OR IGNORE INTO daily_completion_requirement_snapshots (challenge_date,requirement_version,requirements_json) VALUES (?,?,?)")
-        .bind(date).bind(registry.version).bind(serde_json::to_string(&registry)?).execute(pool).await?;
-    let stored: String = sqlx::query_scalar("SELECT requirements_json FROM daily_completion_requirement_snapshots WHERE challenge_date=?")
-        .bind(date).fetch_one(pool).await?;
-    let registry: RequirementRegistry = serde_json::from_str(&stored)?;
+    let registry = snapshot(pool, date, registry).await?;
     let rows = sqlx::query_as::<_, ResultRow>(
         "SELECT 'classic' AS group_name, substr(c.mode,9,length(c.mode)-9-length(CASE WHEN c.mode LIKE '%:hardcore' THEN 'hardcore' WHEN c.mode LIKE '%:challenge' THEN 'challenge' ELSE 'normal' END)) AS category, \
          CASE WHEN c.mode LIKE '%:hardcore' THEN 'hardcore' WHEN c.mode LIKE '%:challenge' THEN 'challenge' ELSE 'normal' END AS difficulty, \
          MIN(g.attempt_number) AS metric FROM guess_events g JOIN daily_challenges c ON c.id=g.challenge_id \
          WHERE g.player_id=?1 AND c.challenge_date=?2 AND g.is_correct=1 AND c.mode LIKE 'classic:%' GROUP BY c.mode \
-         UNION ALL SELECT 'emoji',NULL,NULL,MIN(g.attempt_number) FROM visual_clue_guess_events g \
+         UNION ALL SELECT 'emoji',NULL,substr(c.mode,7),MIN(g.attempt_number) FROM visual_clue_guess_events g \
          JOIN visual_clue_challenges c ON c.id=g.challenge_id WHERE g.player_id=?1 AND c.challenge_date=?2 AND g.is_correct=1 GROUP BY c.mode \
          UNION ALL SELECT 'timeline',NULL,c.difficulty,MIN(g.attempt_number) FROM timeline_attempts g \
          JOIN timeline_challenges c ON c.id=g.challenge_id WHERE g.player_id=?1 AND c.challenge_date=?2 AND g.is_correct=1 GROUP BY c.difficulty"
@@ -55,6 +51,31 @@ pub async fn summary(
         }
     }
     Ok(summary)
+}
+
+/// The requirements a date was first served with. The first read of a date stores them;
+/// every later read uses the stored copy and performs no write
+async fn snapshot(
+    pool: &SqlitePool,
+    date: &str,
+    current: RequirementRegistry,
+) -> AppResult<RequirementRegistry> {
+    const STORED: &str = "SELECT requirements_json FROM daily_completion_requirement_snapshots WHERE challenge_date=?";
+    if let Some(stored) = sqlx::query_scalar::<_, String>(STORED)
+        .bind(date)
+        .fetch_optional(pool)
+        .await?
+    {
+        return Ok(serde_json::from_str(&stored)?);
+    }
+    sqlx::query("INSERT OR IGNORE INTO daily_completion_requirement_snapshots (challenge_date,requirement_version,requirements_json) VALUES (?,?,?)")
+        .bind(date).bind(current.version).bind(serde_json::to_string(&current)?).execute(pool).await?;
+    // Another request may have stored the date first; its copy is the one that counts
+    let stored: String = sqlx::query_scalar(STORED)
+        .bind(date)
+        .fetch_one(pool)
+        .await?;
+    Ok(serde_json::from_str(&stored)?)
 }
 
 pub async fn mark_seen(

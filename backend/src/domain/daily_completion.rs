@@ -11,8 +11,10 @@ pub fn tier_rank(tier: Option<Difficulty>) -> u8 {
     }
 }
 
+// Stored per challenge date as a snapshot, so the shape has to stay readable: a field
+// added later needs a default, and unknown fields are ignored instead of rejected
 #[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
 pub struct DailyGameRequirement {
     pub id: String,
     pub group: String,
@@ -21,6 +23,10 @@ pub struct DailyGameRequirement {
     pub tier_aware: bool,
     pub supported_tiers: Vec<Difficulty>,
     pub required_from_tier: Difficulty,
+    /// The difficulty that counts as this game's highest for the GOAT award. `None`
+    /// means the entry adds nothing beyond what the Hardcore set already requires
+    #[serde(default)]
+    pub highest_tier: Option<Difficulty>,
     pub active_from: String,
     pub active_until: Option<String>,
 }
@@ -52,6 +58,7 @@ pub fn registries() -> Vec<RequirementRegistry> {
         tier_aware: true,
         supported_tiers: vec![Difficulty::Normal, Difficulty::Challenge],
         required_from_tier: Difficulty::Normal,
+        highest_tier: None,
         active_from: "2026-08-11".into(),
         active_until: None,
     })
@@ -65,6 +72,7 @@ pub fn registries() -> Vec<RequirementRegistry> {
             tier_aware: true,
             supported_tiers: vec![Difficulty::Hardcore],
             required_from_tier: Difficulty::Hardcore,
+            highest_tier: Some(Difficulty::Hardcore),
             active_from: "2026-08-11".into(),
             active_until: None,
         },
@@ -76,6 +84,9 @@ pub fn registries() -> Vec<RequirementRegistry> {
             tier_aware: false,
             supported_tiers: vec![],
             required_from_tier: Difficulty::Normal,
+            // Emoji never decides the tier. Challenge is the highest Emoji difficulty
+            // the GOAT award asks for
+            highest_tier: Some(Difficulty::Challenge),
             active_from: "2026-08-11".into(),
             active_until: None,
         },
@@ -87,6 +98,7 @@ pub fn registries() -> Vec<RequirementRegistry> {
             tier_aware: true,
             supported_tiers: Difficulty::ALL.to_vec(),
             required_from_tier: Difficulty::Normal,
+            highest_tier: Some(Difficulty::Hardcore),
             active_from: "2026-08-11".into(),
             active_until: None,
         },
@@ -156,6 +168,9 @@ pub struct DailyCompletionSummary {
     pub goat_seen: bool,
 }
 
+/// The text shown for a required game that has no verified result yet
+pub const MISSING_RESULT: &str = "-";
+
 fn needed_tier(requirement: &DailyGameRequirement, target: Difficulty) -> Option<Difficulty> {
     requirement
         .supported_tiers
@@ -165,19 +180,90 @@ fn needed_tier(requirement: &DailyGameRequirement, target: Difficulty) -> Option
         .max_by_key(|tier| tier_rank(Some(*tier)))
 }
 
+fn belongs_to(result: &VerifiedResult, requirement: &DailyGameRequirement) -> bool {
+    result.group == requirement.group && result.category == requirement.category
+}
+
+/// The verified result that satisfies a requirement for a target tier.
+///
+/// A harder completion also satisfies an easier requirement, so a player who only played
+/// Challenge is not treated as having skipped Normal. The result closest to the needed
+/// difficulty is the one shown
 fn result_for<'a>(
-    r: &DailyGameRequirement,
+    requirement: &DailyGameRequirement,
+    tier: Difficulty,
+    results: &'a [VerifiedResult],
+) -> Option<&'a VerifiedResult> {
+    let needed = needed_tier(requirement, tier);
+    results
+        .iter()
+        .filter(|result| {
+            belongs_to(result, requirement)
+                && (!requirement.tier_aware
+                    || (needed.is_some()
+                        && result.tier.is_some()
+                        && tier_rank(result.tier) >= tier_rank(needed)))
+        })
+        // A game without tiers shows its best result; a tiered one the result closest
+        // to the needed difficulty
+        .min_by_key(|result| {
+            (
+                if requirement.tier_aware {
+                    tier_rank(result.tier)
+                } else {
+                    0
+                },
+                result.metric,
+            )
+        })
+}
+
+/// The best verified result at one exact difficulty
+fn result_at<'a>(
+    requirement: &DailyGameRequirement,
     tier: Difficulty,
     results: &'a [VerifiedResult],
 ) -> Option<&'a VerifiedResult> {
     results
         .iter()
-        .filter(|v| {
-            v.group == r.group
-                && v.category == r.category
-                && (!r.tier_aware || v.tier == needed_tier(r, tier))
-        })
-        .min_by_key(|v| v.metric)
+        .filter(|result| belongs_to(result, requirement) && result.tier == Some(tier))
+        .min_by_key(|result| result.metric)
+}
+
+fn reached(
+    requirement: &DailyGameRequirement,
+    tier: Difficulty,
+    results: &[VerifiedResult],
+) -> bool {
+    results.iter().any(|result| {
+        belongs_to(result, requirement) && tier_rank(result.tier) >= tier_rank(Some(tier))
+    })
+}
+
+fn group_label(requirement: &DailyGameRequirement) -> String {
+    match requirement.group.as_str() {
+        "classic" => "Classic",
+        "emoji" => "Emoji",
+        "timeline" => "Timeline",
+        "logo" => "Logo",
+        _ => &requirement.label,
+    }
+    .into()
+}
+
+fn push_row(groups: &mut Vec<DailyGroup>, requirement: &DailyGameRequirement, row: DailyResult) {
+    if let Some(group) = groups.iter_mut().find(|g| g.id == requirement.group) {
+        group.results.push(row);
+    } else {
+        groups.push(DailyGroup {
+            id: requirement.group.clone(),
+            label: group_label(requirement),
+            completed: false,
+            result: String::new(),
+            modifiers: vec![],
+            results: vec![row],
+        });
+    }
 }
 
 pub fn summarize(
@@ -201,45 +287,73 @@ pub fn summarize(
                     .all(|r| result_for(r, *tier, results).is_some())
         })
         .max_by_key(|tier| tier_rank(Some(*tier)));
-    let hardcore_entries = registry
+    // GOAT: the Hardcore set is complete and every game was also solved at its own
+    // highest difficulty
+    let highest_entries = registry
         .requirements
         .iter()
-        .filter(|r| r.supported_tiers.contains(&Difficulty::Hardcore))
+        .filter_map(|r| r.highest_tier.map(|tier| (r, tier)))
         .collect::<Vec<_>>();
     let hardcore_sweep = highest == Some(Difficulty::Hardcore)
-        && !hardcore_entries.is_empty()
-        && hardcore_entries
+        && !highest_entries.is_empty()
+        && highest_entries
             .iter()
-            .all(|r| result_for(r, Difficulty::Hardcore, results).is_some());
+            .all(|(requirement, tier)| reached(requirement, *tier, results));
     let display_tier = highest.unwrap_or(Difficulty::Normal);
     let mut groups: Vec<DailyGroup> = vec![];
     for requirement in required(display_tier) {
         let result = result_for(requirement, display_tier, results);
-        let row = DailyResult {
-            id: requirement.id.clone(),
-            label: requirement.label.clone(),
-            completed: result.is_some(),
-            result: result.map_or_else(|| "—".into(), |result| result.metric.to_string()),
-            modifiers: vec![],
-        };
-        if let Some(group) = groups.iter_mut().find(|g| g.id == requirement.group) {
-            group.results.push(row);
-        } else {
-            groups.push(DailyGroup {
-                id: requirement.group.clone(),
-                label: match requirement.group.as_str() {
-                    "classic" => "Classic",
-                    "emoji" => "Emoji",
-                    "timeline" => "Timeline",
-                    "logo" => "Logo",
-                    _ => &requirement.label,
-                }
-                .into(),
-                completed: false,
-                result: String::new(),
+        push_row(
+            &mut groups,
+            requirement,
+            DailyResult {
+                id: requirement.id.clone(),
+                label: requirement.label.clone(),
+                completed: result.is_some(),
+                result: result
+                    .map_or_else(|| MISSING_RESULT.into(), |result| result.metric.to_string()),
                 modifiers: vec![],
-                results: vec![row],
-            });
+            },
+        );
+    }
+    // A Hardcore game the player actually solved is always shown, also while the
+    // complete Hardcore set is not finished. It never appears as a missing requirement
+    if display_tier != Difficulty::Hardcore {
+        for requirement in &registry.requirements {
+            let Some(hardcore) = result_at(requirement, Difficulty::Hardcore, results) else {
+                continue;
+            };
+            if !requirement.tier_aware
+                || !requirement.supported_tiers.contains(&Difficulty::Hardcore)
+            {
+                continue;
+            }
+            let displayed = required(display_tier).any(|shown| shown.id == requirement.id);
+            let shown_result = displayed
+                .then(|| result_for(requirement, display_tier, results))
+                .flatten();
+            if shown_result.is_some_and(|shown| shown.tier == Some(Difficulty::Hardcore)) {
+                continue;
+            }
+            push_row(
+                &mut groups,
+                requirement,
+                DailyResult {
+                    id: if displayed {
+                        format!("{}-hardcore", requirement.id)
+                    } else {
+                        requirement.id.clone()
+                    },
+                    label: if displayed {
+                        format!("{} Hardcore", requirement.label)
+                    } else {
+                        requirement.label.clone()
+                    },
+                    completed: true,
+                    result: hardcore.metric.to_string(),
+                    modifiers: vec![],
+                },
+            );
         }
     }
     for group in &mut groups {

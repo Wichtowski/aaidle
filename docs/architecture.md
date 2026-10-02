@@ -78,15 +78,41 @@ The following invariants are security and correctness boundaries:
 
 ## API surface
 
-Authenticated historical games append `YYYYMMDD` to existing game routes and always select by the requested server-validated date (`2026-08-11` through canonical UTC today). Shared challenge-ID authorization guards gameplay reads, images, assistance and writes against historical guest access and future/pre-launch games. Date changes key/remount browser game state; server progress restores completion independently of draft caches. Existing public leaderboard browsing is not a historical gameplay entitlement.
+Authenticated historical games append `YYYYMMDD` to existing game routes and always select by the requested server-validated date (`2026-08-11` through canonical UTC today).
+Shared challenge-ID authorization guards gameplay reads, images, assistance and writes against historical guest access and future/pre-launch games.
+Date changes key/remount browser game state; server progress restores completion independently of draft caches.
+Existing public leaderboard browsing is not a historical gameplay entitlement.
 
 Previously stored historical Timeline puzzles retain their original card/anchor configuration and challenge identity; current configuration changes must not regenerate them or cascade-delete their attempts.
+A stored Classic, Emoji or Logo day whose answer has left the catalog is served as unavailable; it is never rewritten.
+Speedrun leaderboard views (`0026`) and the daily leaderboard query only rank runs started on the challenge's own UTC day.
+The challenge-ID guard is derived from the path prefix alone, so a route added below a challenge ID is covered without changing the guard.
 
-Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history. SQLite completion triggers admit only challenge dates matching the actual server completion's UTC day; one family/day counts once regardless of mode or category. Account reconciliation merges qualifying dates before deduplicating attempts. The `/me/streaks` response and versioned local cache expose all four supported families; historical completions never repair streak gaps.
+Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history.
+The rule lives in Rust: `domain::streak::completion_qualifies` decides, and every completion path calls `repository::streaks::record_completion` inside the transaction that stores the winning event.
+There are no SQLite triggers; migration `0025` only creates the table and backfills on-day completions.
+A completion counts when the server-recorded completion time falls on the challenge's own UTC day.
+A completion within one hour after 00:00 UTC also counts for the challenge's day, but only when the player already has a server-recorded event for that challenge on its own day.
+One family/day counts once regardless of mode or category, and a past game opened later never secures, extends, or repairs a streak.
+Deleting a winning Classic guess through administration revokes the day unless another completion earned it.
+Account reconciliation merges qualifying dates before deduplicating attempts.
+Signing out issues a new guest player cookie, so a signed-out browser neither reads nor extends the account's streak.
 
-All-games daily completion is a separate aggregate over confirmed guess/attempt events. The server owns dated requirement versions and immutable per-date snapshots; presentation milestones are separate user/date/version rows. The normalized summary exposes only spoiler-free metrics. Guest summary/presentation caches use the version 1 progress store and merge monotonically after sign-in without granting completion. A global native dialog queues behind per-game celebration events, acknowledges only after rendering, and remains manually reopenable. Registry version 1 excludes Logo, treats Emoji as non-tiered, and respects Classic's six Normal/Challenge categories plus its single combined Hardcore game.
+All-games daily completion is a separate aggregate over confirmed guess/attempt events.
+The server owns dated requirement versions and immutable per-date snapshots; presentation milestones are separate user/date/version rows (migration `0027`).
+The normalized summary exposes only spoiler-free metrics.
+Guests remember only which milestones were celebrated, in the version 1 progress store, and that state merges monotonically after sign-in without granting completion.
+A global native dialog queues behind per-game celebration events, acknowledges only after rendering, and remains manually reopenable.
+It opens by itself on game pages only, for today and for past days.
+Registry version 1 excludes Logo, treats Emoji as non-tiered, and respects Classic's six Normal/Challenge categories plus its single combined Hardcore game.
+A harder completion satisfies an easier requirement, a solved Hardcore game is always listed, and GOAT needs every game at the difficulty its requirement names as `highestTier`.
 
-Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance. Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them. Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions. Auto-placed cards remain locked in subsequent server-validated arrangements.
+Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance.
+Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them.
+Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions.
+Auto-placed cards remain locked in subsequent server-validated arrangements.
+A hint value is produced by the same column resolver as the guess comparison, so both always describe the same value.
+Reading assistance state never takes the SQLite writer lock; only a reveal or a placement opens an immediate transaction.
 
 The public contract is documented in [API v1](backend/api-v1.md). Major route groups are:
 

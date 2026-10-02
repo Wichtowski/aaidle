@@ -7,6 +7,10 @@ import {
   type ClassicColumn,
   type ClassicComparison,
 } from "@lib/domain/guesses/comparison-types";
+import {
+  formatContextWindow as contextWindow,
+  formatScalar as label,
+} from "@lib/domain/guesses/value-format";
 import type { ClassicDifficulty, ComparableModel } from "@lib/domain/models/model-types";
 
 const countryForProvider: Record<string, string> = {
@@ -55,20 +59,10 @@ function CountryValue({ country }: { country: string | null | undefined }) {
   );
 }
 
-const label = (value: string | number | boolean | null | undefined) =>
-  value == null ? "N/A" : typeof value === "boolean" ? (value ? "Yes" : "No") : value;
-
 const yq = (model: ComparableModel) => {
   if (model.releaseYear === null) return "N/A";
   const month = model.releaseDate ? Number(model.releaseDate.slice(5, 7)) : 0;
   return month ? `${model.releaseYear} · Q${Math.ceil(month / 3)}` : String(model.releaseYear);
-};
-
-const contextWindow = (tokens: number | null) => {
-  if (tokens === null) return "N/A";
-  if (tokens <= 10_000 || tokens % 100 !== 0) return String(tokens);
-
-  return `${tokens / 1_000}K`;
 };
 
 const tooltipFor = (items: string[] | null) => {

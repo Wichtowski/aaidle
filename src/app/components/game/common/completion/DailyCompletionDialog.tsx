@@ -17,21 +17,31 @@ export function DailyCompletionDialog({
   const [toast, setToast] = useState<{ message: string; variant: "success" | "error" } | null>(
     null,
   );
+  const [textShown, setTextShown] = useState(false);
+  // The dialog is presented once per mount. A new callback identity, for example after
+  // the account changes, must not close and reopen it
+  const presented = useRef(onPresented);
+  useEffect(() => {
+    presented.current = onPresented;
+  }, [onPresented]);
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    dialog.current?.showModal();
+    const element = dialog.current;
+    element?.showModal();
     close.current?.focus();
-    onPresented();
+    presented.current();
     return () => {
-      dialog.current?.close();
+      element?.close();
       previous?.focus();
     };
-  }, [onPresented]);
+  }, []);
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(formatDailyShare(summary));
       setToast({ message: "Daily results copied.", variant: "success" });
     } catch {
+      // Reveal the text so the instruction in the message can actually be followed
+      setTextShown(true);
       setToast({ message: "Could not copy. Select and copy the summary below.", variant: "error" });
     }
   };
@@ -74,7 +84,7 @@ export function DailyCompletionDialog({
         set complete
       </h2>
       {summary.hardcoreSweep && (
-        <p>GOAT achievement: every active Hardcore-capable game completed at Hardcore.</p>
+        <p>GOAT achievement: every game completed at its highest difficulty.</p>
       )}
       <ul className="daily-completion-results">
         {summary.groups.map((group) => (
@@ -107,7 +117,7 @@ export function DailyCompletionDialog({
           </li>
         ))}
       </ul>
-      <details>
+      <details open={textShown} onToggle={(event) => setTextShown(event.currentTarget.open)}>
         <summary>Text summary</summary>
         <textarea
           aria-label="Spoiler-free daily results"

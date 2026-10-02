@@ -215,3 +215,96 @@ async fn seen_cannot_grant_completion_and_merges_monotonically_across_retries_an
         .is_err()
     );
 }
+
+// Every stored mode has to map to the difficulty the summary reasons about
+#[tokio::test]
+async fn stored_completions_of_every_mode_map_to_their_tier_and_later_reads_do_not_write() {
+    use crate::{
+        domain::timeline::TimelineDifficulty, repository::assists::tests::timeline_fixture,
+    };
+    let (pool, _, player) = fixture().await;
+    sqlx::query("INSERT INTO anonymous_players(id,created_at,last_seen_at) VALUES(?,0,0)")
+        .bind(player.to_string())
+        .execute(&pool)
+        .await
+        .unwrap();
+    let win_classic = |mode: String| {
+        let pool = pool.clone();
+        async move {
+            sqlx::query("INSERT OR IGNORE INTO daily_challenges(id,challenge_date,mode,answer_model_id,selection_version,generated_at,generation_source) VALUES(?,'2026-09-30',?,'model-1',1,0,'test')")
+                .bind(Uuid::new_v4().to_string()).bind(&mode).execute(&pool).await.unwrap();
+            let id: String = sqlx::query_scalar(
+                "SELECT id FROM daily_challenges WHERE mode=? AND challenge_date='2026-09-30'",
+            )
+            .bind(&mode)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+            sqlx::query("INSERT INTO guess_events(id,request_id,challenge_id,player_id,guessed_model_id,attempt_number,is_correct,comparison_json,created_at) VALUES(?,?,?,?,'model-1',2,1,'{}',0)")
+                .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string()).bind(id).bind(player.to_string()).execute(&pool).await.unwrap();
+        }
+    };
+    for category in ["llm", "cv", "nlp", "od", "classical-ml", "filters"] {
+        win_classic(format!("classic:{category}:challenge")).await;
+    }
+    sqlx::query("INSERT INTO visual_clue_entities(id,name,aliases_json,entity_kind,categories_json,min_pool,entity_json,updated_at) VALUES('emoji','Emoji','[]','emoji','[]',0,'{}',0)").execute(&pool).await.unwrap();
+    let win_emoji = |difficulty: &'static str| {
+        let pool = pool.clone();
+        async move {
+            sqlx::query("INSERT INTO visual_clue_challenges(id,challenge_date,mode,answer_entity_id,variant_id,selection_version,generated_at) VALUES(?,'2026-09-30',?,'emoji','v',1,0)")
+                .bind(difficulty).bind(format!("emoji:{difficulty}")).execute(&pool).await.unwrap();
+            sqlx::query("INSERT INTO visual_clue_guess_events(id,request_id,challenge_id,player_id,guessed_entity_id,attempt_number,is_correct,created_at) VALUES(?,?,?,?,'emoji',4,1,0)")
+                .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string()).bind(difficulty).bind(player.to_string()).execute(&pool).await.unwrap();
+        }
+    };
+    let win_timeline = |difficulty: TimelineDifficulty, attempt: i64| {
+        let pool = pool.clone();
+        async move {
+            let challenge = timeline_fixture(&pool, difficulty).await;
+            sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,model_order_json,placements_json,attempt_number,is_correct,created_at) VALUES (?,?,?,?,'[]','[]',?,1,0)")
+                .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string()).bind(challenge.to_string()).bind(player.to_string()).bind(attempt).execute(&pool).await.unwrap();
+        }
+    };
+    win_emoji("normal").await;
+    // A Speedrun is not a tier and never completes the Timeline requirement
+    win_timeline(TimelineDifficulty::Speedrun, 1).await;
+    let without_timeline = summary(&pool, "2026-09-30", player, None).await.unwrap();
+    assert_eq!(without_timeline.highest_completed_tier, None);
+
+    win_timeline(TimelineDifficulty::Challenge, 3).await;
+    let challenge = summary(&pool, "2026-09-30", player, None).await.unwrap();
+    assert_eq!(
+        challenge.highest_completed_tier,
+        Some(Difficulty::Challenge)
+    );
+    assert_eq!(challenge.groups[0].result, "2 / 2 / 2 / 2 / 2 / 2");
+    assert_eq!(challenge.groups[2].result, "3");
+
+    // Classic Hardcore alone shows its row without changing the tier
+    win_classic("classic:hardcore:hardcore".to_owned()).await;
+    let partial = summary(&pool, "2026-09-30", player, None).await.unwrap();
+    assert_eq!(partial.highest_completed_tier, Some(Difficulty::Challenge));
+    assert_eq!(partial.groups[0].results.len(), 7);
+    assert_eq!(partial.groups[0].results[6].id, "classic-hardcore");
+
+    win_timeline(TimelineDifficulty::Hardcore, 5).await;
+    let crown = summary(&pool, "2026-09-30", player, None).await.unwrap();
+    assert_eq!(crown.highest_completed_tier, Some(Difficulty::Hardcore));
+    assert_eq!(crown.groups[2].result, "5");
+    // Emoji was only solved on Normal, so the goat is not earned yet
+    assert!(!crown.hardcore_sweep);
+    win_emoji("challenge").await;
+
+    // Reading an already snapshotted day performs no write at all
+    let mut connection = pool.acquire().await.unwrap();
+    sqlx::query("PRAGMA query_only = ON")
+        .execute(&mut *connection)
+        .await
+        .unwrap();
+    drop(connection);
+    let goat = summary(&pool, "2026-09-30", player, None).await.unwrap();
+    assert_eq!(goat.highest_completed_tier, Some(Difficulty::Hardcore));
+    assert!(goat.hardcore_sweep);
+    // A day that was never read still needs its first snapshot
+    assert!(summary(&pool, "2026-09-29", player, None).await.is_err());
+}

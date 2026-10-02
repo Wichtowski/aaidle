@@ -123,7 +123,7 @@ export function LogoGame({ requestedDate }: { requestedDate?: string } = {}) {
               ? "Start close, guess carefully, and watch the image zoom out after each miss."
               : "Study the image and identify the AI model, algorithm, or technology."
         }
-        expiresAt={game?.challenge.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
         eyebrow={
           <GameEyebrow
             date={
@@ -131,6 +131,7 @@ export function LogoGame({ requestedDate }: { requestedDate?: string } = {}) {
               (requestedDate ? parseGameRouteDate(requestedDate) : null) ??
               utcDate()
             }
+            family="logo"
             game="Logo"
             variant="Normal"
           />

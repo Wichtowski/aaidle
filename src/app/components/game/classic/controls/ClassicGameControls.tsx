@@ -95,8 +95,9 @@ export function ClassicGameControls({
       eyebrow={
         <GameEyebrow
           date={date ?? (requestedDate ? parseGameRouteDate(requestedDate) : null) ?? utcDate()}
+          family="classic"
           game="Classic"
-          historyPath={`/classic/${category}`}
+          historyPath={`/classic/${classicCategoryDetails[category].routeSegment}`}
           variant={resolveCategoryLabelToLongName(classicCategoryDetails[category].label)}
         />
       }

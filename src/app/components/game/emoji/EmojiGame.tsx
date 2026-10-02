@@ -77,8 +77,10 @@ export function EmojiGame({
       <GameIntro
         completionCount={solved ? (game?.globalCompletionCount ?? null) : null}
         description="Use the visual clues to identify the hidden AI system, architecture, algorithm, or operator. Wrong guesses can reveal more clues."
-        expiresAt={game?.challenge.expiresAt ?? null}
-        eyebrow={<GameEyebrow date={date} game="Emoji" variant={selectedPool.label} />}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
+        eyebrow={
+          <GameEyebrow date={date} family="emoji" game="Emoji" variant={selectedPool.label} />
+        }
         title={requestedDate ? "Guess this day’s hidden AI idea" : "Guess today’s hidden AI idea"}
         titleId="emoji-title"
         difficulty={

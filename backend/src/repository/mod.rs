@@ -484,9 +484,11 @@ pub async fn ensure_daily_challenge_for_models(
     }
     let recent_answers = sqlx::query_as::<_, RecentAnswerRow>(
         "SELECT answer_model_id AS model_id, challenge_date \
-         FROM daily_challenges WHERE mode = ? ORDER BY challenge_date DESC LIMIT ?",
+         FROM daily_challenges WHERE mode = ? AND challenge_date < ? \
+         ORDER BY challenge_date DESC LIMIT ?",
     )
     .bind(mode)
+    .bind(date)
     .bind(cooldown_days + 1)
     .fetch_all(pool)
     .await?
@@ -547,6 +549,13 @@ pub async fn classic_game(
     let challenge =
         ensure_daily_challenge_for_models(pool, date, &mode, &model_ids, secret, cooldown_days)
             .await?;
+    // A stored day whose answer has since left this pool cannot be won. Report it as
+    // unavailable instead of serving a game without a reachable answer
+    if !model_ids.contains(&challenge.answer_model_id) {
+        return Err(AppError::Unavailable(
+            "This daily Classic game is no longer available.".to_owned(),
+        ));
+    }
     let models = public_models_by_ids(pool, &model_ids).await?;
     Ok(ClassicGameData {
         completion_count: completion_count(pool, &challenge.id).await?,
@@ -742,6 +751,15 @@ async fn process_guess_once(pool: &SqlitePool, input: &GuessInput) -> AppResult<
     )
     .await?;
     let completion_count = if is_correct {
+        streaks::record_completion(
+            connection,
+            streaks::GameFamily::Classic,
+            input.player_id,
+            &challenge.id,
+            &challenge.challenge_date,
+            now,
+        )
+        .await?;
         increment_completion_count(connection, &challenge.id).await?
     } else {
         completion_count(connection, &challenge.id).await?
@@ -943,7 +961,7 @@ async fn find_challenge_by_date_and_mode(
     .await?)
 }
 
-pub(super) fn is_sqlite_busy(error: &AppError) -> bool {
+pub(crate) fn is_sqlite_busy(error: &AppError) -> bool {
     match error {
         AppError::Database(sqlx::Error::Database(database_error)) => {
             matches!(

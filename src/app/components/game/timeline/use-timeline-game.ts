@@ -3,7 +3,8 @@ import { apiClient } from "@lib/api/client";
 import {
   initialTimelinePositions,
   restoreTimelinePositions,
-  applyTimelineAutoPlacements,
+  applyTimelineAssistance,
+  type TimelinePlacement,
 } from "@lib/domain/games/timeline/timeline-arrangement";
 import {
   readSavedTimelineGame,
@@ -30,9 +31,18 @@ function hydrateGame(game: TimelineGamePayload) {
     saved !== null &&
     saved.acceptedAttempts >= (serverAttempt?.attemptNumber ?? 0);
 
+  const positions = useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game));
+  // Feedback belongs to the submitted order. A card the player has moved since then,
+  // in a restored draft, has not been judged on its new slot
+  const placements: TimelinePlacement[] | null = serverAttempt
+    ? serverAttempt.placements.map((placement, position) =>
+        positions[position] === serverAttempt.modelOrder[position] ? placement : null,
+      )
+    : null;
+
   return {
-    positions: useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game)),
-    placements: serverAttempt?.placements ?? null,
+    positions,
+    placements,
     acceptedAttempts: serverAttempt?.attemptNumber ?? 0,
     attemptsRemaining: game.progress.attemptsRemaining,
     solved: game.progress.solved,
@@ -62,7 +72,7 @@ export function useTimelineGame({
   );
   const [game, setGame] = useState<TimelineGamePayload | null>(null);
   const [positions, setPositions] = useState<Array<string | null>>([]);
-  const [placements, setPlacements] = useState<Array<0 | 1 | 2 | null> | null>(null);
+  const [placements, setPlacements] = useState<TimelinePlacement[] | null>(null);
   const [acceptedAttempts, setAcceptedAttempts] = useState(0);
   const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
   const [solved, setSolved] = useState(false);
@@ -82,21 +92,34 @@ export function useTimelineGame({
 
   useEffect(() => () => assistRequest.current?.abort(), [game?.challenge.id, playerId]);
 
+  const arrangement = useRef({ positions, placements });
+  useEffect(() => {
+    arrangement.current = { positions, placements };
+  }, [positions, placements]);
+
   const applyAssistance = useCallback((next: TimelineAssistState) => {
+    const applied = applyTimelineAssistance(
+      arrangement.current.positions,
+      arrangement.current.placements,
+      next.autoPlacements,
+    );
+    arrangement.current = applied;
     setAssistance(next);
-    setPositions((current) => applyTimelineAutoPlacements(current, next.autoPlacements));
-    setPlacements((current) => {
-      const nextPlacements = current ? [...current] : [];
-      for (const placement of next.autoPlacements) nextPlacements[placement.position] = 1;
-      return next.autoPlacements.length ? nextPlacements : current;
-    });
+    setPositions(applied.positions);
+    setPlacements(applied.placements);
   }, []);
 
+  // Assistance belongs to one player's game. It is kept while it is refreshed after an
+  // attempt, so the locked cards and the progress line do not flicker
   useEffect(() => {
     setAssistance(null);
     setAssistError(null);
+  }, [game?.challenge.id, difficulty, playerId]);
+
+  useEffect(() => {
     if (!game || loading || !["normal", "challenge"].includes(difficulty)) return;
     const controller = new AbortController();
+    setAssistError(null);
     void apiClient
       .timelineAssists(game.challenge.id, undefined, controller.signal)
       .then((next) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ApiError, apiClient } from "@lib/api/client";
+import { takeReturnPath } from "@lib/storage/return-path";
 import { CommonAuthForm } from "./CommonAuthForm";
 import { useAuth } from "./useAuth";
 import type { ToastVariant } from "../ui/Toast";
@@ -71,7 +72,9 @@ export function LoginForm() {
     try {
       const { user } = await apiClient.signInWithPassword(email, password);
       setAuthenticatedUser(user);
-      window.location.assign(user.disabled ? "/account-disabled" : "/profile");
+      window.location.assign(
+        user.disabled ? "/account-disabled" : (takeReturnPath() ?? "/profile"),
+      );
     } catch (error) {
       setSignInErrorCode(error instanceof ApiError ? (error.code ?? "UNKNOWN") : "UNKNOWN");
       setToast({
