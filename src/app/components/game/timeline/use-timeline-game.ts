@@ -31,12 +31,21 @@ function hydrateGame(game: TimelineGamePayload) {
     saved !== null &&
     saved.acceptedAttempts >= (serverAttempt?.attemptNumber ?? 0);
 
+  const positions = useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game));
+  // Feedback belongs to the submitted order. A card the player has moved since then,
+  // in a restored draft, has not been judged on its new slot
+  const placements: TimelinePlacement[] | null = serverAttempt
+    ? serverAttempt.placements.map((placement, position) =>
+        positions[position] === serverAttempt.modelOrder[position] ? placement : null,
+      )
+    : null;
+
   return {
-    positions: useSaved ? savedPositions : (serverPositions ?? initialTimelinePositions(game)),
-    placements: useSaved ? saved.placements : (serverAttempt?.placements ?? null),
-    acceptedAttempts: Math.max(saved?.acceptedAttempts ?? 0, serverAttempt?.attemptNumber ?? 0),
+    positions,
+    placements,
+    acceptedAttempts: serverAttempt?.attemptNumber ?? 0,
     attemptsRemaining: game.progress.attemptsRemaining,
-    solved: game.progress.solved || Boolean(useSaved && saved.solved),
+    solved: game.progress.solved,
     speedrunStartedAt: game.progress.speedrunStartedAt ?? undefined,
     speedrunGivenUpAt: game.progress.speedrunGivenUpAt ?? undefined,
     speedrunTimeMs:
@@ -51,10 +60,12 @@ export function useTimelineGame({
   canSpeedrun,
   hardcoreUnlocked,
   playerId,
+  requestedDate,
 }: {
   canSpeedrun: boolean;
   hardcoreUnlocked: boolean;
   playerId: string;
+  requestedDate?: string;
 }) {
   const [difficulty, setDifficulty] = useState<TimelineDifficulty>(
     () => readGamePreferences().timeline,
@@ -184,7 +195,7 @@ export function useTimelineGame({
     setLoading(true);
     setError(null);
     void apiClient
-      .timelineGame(difficulty, playerId, controller.signal)
+      .timelineGame(difficulty, playerId, controller.signal, requestedDate)
       .then((nextGame) => {
         if (controller.signal.aborted) return;
         const hydrated = hydrateGame(nextGame);
@@ -207,7 +218,7 @@ export function useTimelineGame({
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [canSpeedrun, difficulty, hardcoreUnlocked, loadAttempt, playerId]);
+  }, [canSpeedrun, difficulty, hardcoreUnlocked, loadAttempt, playerId, requestedDate]);
 
   useEffect(() => {
     if (!game || positions.length !== game.slots.length) return;

@@ -2,6 +2,7 @@ import { lazy, Suspense, useState, type CSSProperties } from "react";
 import { FaCircleQuestion, FaLock } from "react-icons/fa6";
 import { type EmojiDifficulty, type VisualClue } from "@lib/api/client";
 import { utcDate } from "@lib/utils/dates";
+import { parseGameRouteDate } from "@lib/domain/challenges/historical-dates";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { Button } from "../../ui/Button";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
@@ -41,9 +42,11 @@ function clueKey(clue: VisualClue | undefined) {
 export function EmojiGame({
   difficulty,
   onDifficultyChange,
+  requestedDate,
 }: {
   difficulty: EmojiDifficulty;
   onDifficultyChange: (difficulty: string) => void;
+  requestedDate?: string;
 }) {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const {
@@ -63,9 +66,10 @@ export function EmojiGame({
     showCompletion,
     solved,
     toast,
-  } = useEmojiGame(difficulty);
+  } = useEmojiGame(difficulty, requestedDate);
   const completed = hardcore?.completedCategories ?? [];
-  const date = game?.challenge.date ?? utcDate();
+  const date =
+    game?.challenge.date ?? (requestedDate ? parseGameRouteDate(requestedDate) : null) ?? utcDate();
   const selectedPool = emojiPools.find((pool) => pool.difficulty === difficulty)!;
   return (
     <main className="page game-page emoji-page">
@@ -73,11 +77,11 @@ export function EmojiGame({
       <GameIntro
         completionCount={solved ? (game?.globalCompletionCount ?? null) : null}
         description="Use the visual clues to identify the hidden AI system, architecture, algorithm, or operator. Wrong guesses can reveal more clues."
-        expiresAt={game?.challenge.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
         eyebrow={
           <GameEyebrow date={date} family="emoji" game="Emoji" variant={selectedPool.label} />
         }
-        title="Guess today’s hidden AI idea"
+        title={requestedDate ? "Guess this day’s hidden AI idea" : "Guess today’s hidden AI idea"}
         titleId="emoji-title"
         difficulty={
           <DifficultySwitch

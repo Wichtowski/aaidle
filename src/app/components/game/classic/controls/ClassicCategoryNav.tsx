@@ -7,7 +7,13 @@ import {
 import { useLocalProgress } from "@lib/storage/use-local-progress";
 import { useAuth } from "../../../auth/useAuth";
 
-export function ClassicCategoryNav({ category }: { category: ClassicCategory }) {
+export function ClassicCategoryNav({
+  category,
+  requestedDate,
+}: {
+  category: ClassicCategory;
+  requestedDate?: string;
+}) {
   const navigate = useNavigate();
   const { hardcoreUnlocked, user } = useAuth();
   const progress = useLocalProgress();
@@ -23,7 +29,7 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
         .map((item) => (
           <Link
             aria-current={item === category ? "page" : undefined}
-            to={`/classic/${classicCategoryDetails[item].routeSegment}`}
+            to={`/classic/${classicCategoryDetails[item].routeSegment}${requestedDate ? `/${requestedDate}` : ""}`}
             key={item}
             onClick={(event) => {
               if (
@@ -39,7 +45,7 @@ export function ClassicCategoryNav({ category }: { category: ClassicCategory }) 
 
               event.preventDefault();
               const isHardcoreTransition = category === "hardcore" || item === "hardcore";
-              const destination = `/classic/${classicCategoryDetails[item].routeSegment}${isHardcoreTransition ? "?transition=classic" : ""}`;
+              const destination = `/classic/${classicCategoryDetails[item].routeSegment}${requestedDate ? `/${requestedDate}` : ""}${isHardcoreTransition ? "?transition=classic" : ""}`;
               if (isHardcoreTransition) {
                 document.body.classList.add("classic-page-transitioning");
                 window.setTimeout(() => navigate(destination, { replace: true }), 450);

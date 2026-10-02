@@ -29,6 +29,8 @@ import {
 } from "../validation/api";
 
 const apiPath = (path: string) => `/api/v1${path}`;
+const gameDateSuffix = (date?: string) =>
+  date === undefined ? "" : `/${encodeURIComponent(date)}`;
 
 const progressSyncPayload = (progress: LocalProgress) => ({
   version: 1,
@@ -559,12 +561,20 @@ class ApiClient {
     });
   }
 
-  classicGame(category: ClassicCategory, difficulty: ClassicDifficulty, signal?: AbortSignal) {
+  classicGame(
+    category: ClassicCategory,
+    difficulty: ClassicDifficulty,
+    signal?: AbortSignal,
+    date?: string,
+  ) {
     const path =
       category === "hardcore"
         ? "/games/classic/hardcore"
         : `/games/classic/${category}/${difficulty}`;
-    return this.request<V2ClassicGame>(path, { signal }).then((payload) => ({
+    return this.request<V2ClassicGame>(path + gameDateSuffix(date), {
+      signal,
+      cache: "no-store",
+    }).then((payload) => ({
       challenge: {
         ...payload.challenge,
         mode: { category, difficulty },
@@ -661,12 +671,20 @@ class ApiClient {
     }>(`/games/classic/challenges/${challengeId}/stats`);
   }
 
-  timelineGame(difficulty: TimelineDifficulty, playerId: string, signal?: AbortSignal) {
+  timelineGame(
+    difficulty: TimelineDifficulty,
+    playerId: string,
+    signal?: AbortSignal,
+    date?: string,
+  ) {
     void playerId;
-    return this.request<TimelineGamePayload>(`/games/timeline/${difficulty}`, {
-      cache: "no-store",
-      signal,
-    });
+    return this.request<TimelineGamePayload>(
+      `/games/timeline/${difficulty}${gameDateSuffix(date)}`,
+      {
+        cache: "no-store",
+        signal,
+      },
+    );
   }
 
   startTimelineSpeedrun(challengeId: string, playerId: string) {
@@ -732,8 +750,11 @@ class ApiClient {
     );
   }
 
-  emojiGame(difficulty: EmojiDifficulty, signal?: AbortSignal) {
-    return this.request<EmojiGamePayload>(`/games/emoji/${difficulty}`, { signal });
+  emojiGame(difficulty: EmojiDifficulty, signal?: AbortSignal, date?: string) {
+    return this.request<EmojiGamePayload>(`/games/emoji/${difficulty}${gameDateSuffix(date)}`, {
+      signal,
+      cache: "no-store",
+    });
   }
 
   submitEmojiGuess(
@@ -771,11 +792,12 @@ class ApiClient {
     }>(`/games/emoji/challenges/${challengeId}/guesses`, { cache: "no-store" });
   }
 
-  logoGame(playerId: string, signal?: AbortSignal) {
+  logoGame(playerId: string, signal?: AbortSignal, date?: string) {
     void playerId;
-    return this.request<LogoGamePayload>(`/games/logo/normal`, { signal }).then(
-      (payload) => logoGameSchema.parse(payload) as LogoGamePayload,
-    );
+    return this.request<LogoGamePayload>(`/games/logo/normal${gameDateSuffix(date)}`, {
+      signal,
+      cache: "no-store",
+    }).then((payload) => logoGameSchema.parse(payload) as LogoGamePayload);
   }
 
   submitLogoGuess(

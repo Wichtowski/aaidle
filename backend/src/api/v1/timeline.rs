@@ -70,6 +70,17 @@ pub(super) async fn game(
     Path(difficulty): Path<String>,
     Query(query): Query<TimelineGameQuery>,
 ) -> AppResult<Json<TimelineGameResponse>> {
+    game_for_date(state, headers, difficulty, query.player_id, None).await
+}
+
+async fn game_for_date(
+    state: AppState,
+    headers: HeaderMap,
+    difficulty: String,
+    anonymous: Uuid,
+    requested: Option<&str>,
+) -> AppResult<Json<TimelineGameResponse>> {
+    let date = super::history::requested_date(&state, &headers, requested).await?;
     let difficulty = TimelineDifficulty::parse(&difficulty)
         .ok_or_else(|| AppError::validation("Unknown Timeline difficulty."))?;
     let user = optional_authenticated_user(&state, &headers).await?;
@@ -95,14 +106,13 @@ pub(super) async fn game(
     }
     let player_id = match &user {
         Some(user) => {
-            progress::canonical_player_id(&state.db, &user.id, query.player_id, now_millis())
-                .await?
+            progress::canonical_player_id(&state.db, &user.id, anonymous, now_millis()).await?
         }
-        None => query.player_id,
+        None => anonymous,
     };
     let game = timeline::timeline_game(
         &state.db,
-        &current_utc_date()?,
+        &date,
         difficulty,
         &state.config.daily_selection_secret,
         player_id,
@@ -182,6 +192,15 @@ pub(super) async fn game_route(
         Query(TimelineGameQuery { player_id }),
     )
     .await
+}
+
+pub(super) async fn dated_game_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path((difficulty, date)): Path<(String, String)>,
+) -> AppResult<Json<TimelineGameResponse>> {
+    game_for_date(state, headers, difficulty, player, Some(&date)).await
 }
 
 #[cfg(test)]

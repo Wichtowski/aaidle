@@ -12,6 +12,7 @@ import { useAuth } from "@components/auth/useAuth";
 import { SeoMetadata } from "@components/ui/SeoMetadata";
 import { InstallPrompt } from "@components/ui/InstallPrompt";
 import { EmojiPage } from "@app/pages/game/EmojiPage";
+import { HistoricalGameGuard } from "@components/game/common/HistoricalGameGuard";
 
 const ProfilePage = lazy(() =>
   import("@app/pages/profile/ProfilePage").then(({ ProfilePage }) => ({ default: ProfilePage })),
@@ -120,6 +121,38 @@ function Content() {
             <Route path="/account-disabled" element={<AccountDisabledPage />} />
           </Route>
           <Route element={<AuthenticatedRoute />}>
+            <Route
+              path="/classic/:category/:date"
+              element={
+                <HistoricalGameGuard>
+                  <ClassicPage />
+                </HistoricalGameGuard>
+              }
+            />
+            <Route
+              path="/timeline/:date"
+              element={
+                <HistoricalGameGuard>
+                  <TimelinePage />
+                </HistoricalGameGuard>
+              }
+            />
+            <Route
+              path="/emoji/:date"
+              element={
+                <HistoricalGameGuard>
+                  <EmojiPage />
+                </HistoricalGameGuard>
+              }
+            />
+            <Route
+              path="/logo/:date"
+              element={
+                <HistoricalGameGuard>
+                  <LogoPage />
+                </HistoricalGameGuard>
+              }
+            />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/delete-account" element={<DeleteAccountPage />} />
             <Route path="/report-issue" element={<DeferredIssuePage />} />

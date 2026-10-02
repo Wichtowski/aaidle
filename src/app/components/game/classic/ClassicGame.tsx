@@ -135,11 +135,13 @@ export function ClassicGame({
   difficulty,
   initialGame = null,
   hasHardcoreAccess,
+  requestedDate,
 }: {
   category: ClassicCategory;
   difficulty: ClassicDifficulty;
   initialGame?: GamePayload | null;
   hasHardcoreAccess: boolean;
+  requestedDate?: string;
 }) {
   const navigate = useNavigate();
   const { hardcoreUnlocked, user } = useAuth();
@@ -166,6 +168,7 @@ export function ClassicGame({
     hasHardcoreAccess,
     initialGame,
     onRetryNotice: showRetryNotice,
+    requestedDate,
   });
   const [busy, setBusy] = useState(false);
   const [pendingGuess, setPendingGuess] = useState<PendingGuess | null>(null);
@@ -481,9 +484,10 @@ export function ClassicGame({
       <SiteNavbar hardcore={category === "hardcore"} />
 
       <ClassicGameControls
+        requestedDate={requestedDate}
         category={category}
         date={challenge?.date ?? null}
-        expiresAt={challenge?.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (challenge?.expiresAt ?? null)}
         models={models}
         difficulty={selectedDifficulty}
         loading={isLoadingGame}

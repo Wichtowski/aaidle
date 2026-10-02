@@ -8,6 +8,7 @@ type Options = {
   hasHardcoreAccess: boolean;
   initialGame: ClassicGamePayload | null;
   onRetryNotice: (message: string) => void;
+  requestedDate?: string;
 };
 
 export function useClassicGameLoader({
@@ -16,6 +17,7 @@ export function useClassicGameLoader({
   hasHardcoreAccess,
   initialGame,
   onRetryNotice,
+  requestedDate,
 }: Options) {
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const [loadedDifficulty, setLoadedDifficulty] = useState(difficulty);
@@ -73,7 +75,7 @@ export function useClassicGameLoader({
     setIsLoadingGame(true);
     setError(null);
     void apiClient
-      .classicGame(category, selectedDifficulty, controller.signal)
+      .classicGame(category, selectedDifficulty, controller.signal, requestedDate)
       .then((game) => {
         if (controller.signal.aborted) return;
         loadFailureCount.current = 0;
@@ -105,7 +107,7 @@ export function useClassicGameLoader({
         if (!controller.signal.aborted && !retrying) setIsLoadingGame(false);
       });
     return () => controller.abort();
-  }, [category, hasHardcoreAccess, loadAttempt, onRetryNotice, selectedDifficulty]);
+  }, [category, hasHardcoreAccess, loadAttempt, onRetryNotice, selectedDifficulty, requestedDate]);
 
   return {
     challenge,

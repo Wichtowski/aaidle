@@ -21,6 +21,14 @@ async fn routes_validate_identifiers_payloads_origins_modes_and_missing_resource
     let (pool, classic, _) = fixture().await;
     let state = test_support::state_with_pool(pool);
     let timeline = timeline_fixture(&state.db, TimelineDifficulty::Normal).await;
+    // Guests may only play the current game day, whatever day the suite runs on
+    for table in ["daily_challenges", "timeline_challenges"] {
+        sqlx::query(&format!("UPDATE {table} SET challenge_date = ?"))
+            .bind(crate::api::v1::current_utc_date().unwrap())
+            .execute(&state.db)
+            .await
+            .unwrap();
+    }
     for path in [
         format!("/games/classic/challenges/{classic}/hints"),
         format!("/games/timeline/challenges/{timeline}/auto-place"),

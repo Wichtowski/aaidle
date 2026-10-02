@@ -94,7 +94,7 @@ describe("ClassicGame category cache", () => {
     );
 
     await waitFor(() =>
-      expect(classicGame).toHaveBeenCalledWith("cv", "normal", expect.any(AbortSignal)),
+      expect(classicGame).toHaveBeenCalledWith("cv", "normal", expect.any(AbortSignal), undefined),
     );
     expect(await screen.findByText("CV candidate")).toBeTruthy();
   });

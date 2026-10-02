@@ -296,9 +296,11 @@ pub async fn timeline_leaderboard(
                      ELSE u.email END), \
                 u.id, a.speedrun_time_ms, a.attempt_number \
          FROM timeline_attempts a \
+         JOIN timeline_challenges c ON c.id = a.challenge_id \
          JOIN users u ON u.id = a.user_id \
          WHERE a.challenge_id = ? AND a.is_correct = 1 AND a.speedrun_time_ms IS NOT NULL \
            AND u.disabled_at IS NULL \
+           AND c.challenge_date = strftime('%Y-%m-%d', (a.created_at - a.speedrun_time_ms) / 1000.0, 'unixepoch') \
          ORDER BY a.attempt_number ASC, a.speedrun_time_ms ASC, a.created_at ASC, a.user_id ASC \
          LIMIT 10",
     )
@@ -469,8 +471,13 @@ pub async fn ensure_timeline_challenge(
     if let Some(challenge) = find_timeline_challenge_by_date(pool, date, difficulty).await? {
         let parsed = parse_challenge(challenge)?;
         let config = difficulty.config();
-        if parsed.model_order.len() == config.total_model_count
-            && parsed.anchor_positions.len() == config.locked_anchor_count
+        let today = time::OffsetDateTime::now_utc()
+            .date()
+            .format(time::macros::format_description!("[year]-[month]-[day]"))
+            .map_err(|_| AppError::Unavailable("Current game date is invalid.".to_owned()))?;
+        if parsed.challenge_date < today
+            || (parsed.model_order.len() == config.total_model_count
+                && parsed.anchor_positions.len() == config.locked_anchor_count)
         {
             return Ok(parsed);
         }

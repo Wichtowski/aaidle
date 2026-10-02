@@ -18,8 +18,8 @@ use crate::{
 
 use super::{
     AnonymousPlayerId, CLASSIC_CHALLENGE_COMPLETION_CATEGORIES, assert_csrf_or_bearer,
-    assert_same_origin, assert_same_origin_or_bearer, authenticated_user, current_utc_date,
-    format_next_midnight, is_model_id, now_millis, parse_json_payload, parse_uuid, session_cookie,
+    assert_same_origin, assert_same_origin_or_bearer, authenticated_user, format_next_midnight,
+    is_model_id, now_millis, parse_json_payload, parse_uuid, session_cookie,
 };
 
 pub(super) async fn guess(
@@ -178,7 +178,37 @@ pub(super) async fn game(
         .ok_or_else(|| AppError::validation("Unknown Classic category."))?;
     let difficulty = repository::ClassicDifficulty::parse(&difficulty)
         .ok_or_else(|| AppError::validation("Unknown Classic difficulty."))?;
-    classic_game_response(&state, &headers, category, difficulty).await
+    classic_game_response(&state, &headers, category, difficulty, None).await
+}
+
+pub(super) async fn dated_game(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path((category, difficulty, date)): Path<(String, String, String)>,
+) -> AppResult<Json<ClassicGameResponse>> {
+    let category = repository::ClassicCategory::parse(&category)
+        .ok_or_else(|| AppError::validation("Unknown Classic category."))?;
+    let difficulty = repository::ClassicDifficulty::parse(&difficulty)
+        .ok_or_else(|| AppError::validation("Unknown Classic difficulty."))?;
+    classic_game_response(&state, &headers, category, difficulty, Some(&date)).await
+}
+
+pub(super) async fn dated_hardcore_game(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Path(date): Path<String>,
+) -> AppResult<Json<ClassicGameResponse>> {
+    // This route also captures the older `/games/classic/hardcore/hardcore` spelling of
+    // today's Hardcore game, which must keep working
+    let date = (date != repository::ClassicDifficulty::Hardcore.as_str()).then_some(date);
+    classic_game_response(
+        &state,
+        &headers,
+        repository::ClassicCategory::Hardcore,
+        repository::ClassicDifficulty::Hardcore,
+        date.as_deref(),
+    )
+    .await
 }
 
 pub(super) async fn hardcore_game(
@@ -190,6 +220,7 @@ pub(super) async fn hardcore_game(
         &headers,
         repository::ClassicCategory::Hardcore,
         repository::ClassicDifficulty::Hardcore,
+        None,
     )
     .await
 }
@@ -231,7 +262,9 @@ async fn classic_game_response(
     headers: &HeaderMap,
     category: repository::ClassicCategory,
     difficulty: repository::ClassicDifficulty,
+    requested_date: Option<&str>,
 ) -> AppResult<Json<ClassicGameResponse>> {
+    let date = super::history::requested_date(state, headers, requested_date).await?;
     if category == repository::ClassicCategory::Hardcore {
         let user = authenticated_user(state, headers).await?;
         if user.disabled || !crate::auth::has_hardcore_access(&state.db, &user.id).await? {
@@ -242,7 +275,7 @@ async fn classic_game_response(
     }
     let game = repository::classic_game(
         &state.db,
-        &current_utc_date()?,
+        &date,
         category,
         difficulty,
         &state.config.daily_selection_secret,

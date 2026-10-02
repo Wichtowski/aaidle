@@ -41,6 +41,7 @@ import { GameLoadingState } from "../../ui/GameLoadingState";
 import { SiteNavbar } from "../../ui/SiteNavbar";
 import { Toast } from "../../ui/Toast";
 import { GameEyebrow } from "../common/layout/GameEyebrow";
+import { parseGameRouteDate } from "@lib/domain/challenges/historical-dates";
 import { GameIntro } from "../common/layout/GameLayout";
 import { DifficultySwitch } from "../common/layout/DifficultySwitch";
 import { TimelineHTP } from "./TimelineHTP";
@@ -125,7 +126,7 @@ function autoPlaceProgress(assistance: TimelineAssistState) {
   return `${progress} / ${assistance.unlockEvery} incorrect submissions. ${missing} more ${missing === 1 ? "miss" : "misses"} to unlock ${assistance.remainingAutoPlacements > 0 ? "another Auto-place" : "Auto-place"}.`;
 }
 
-export function TimelineGame() {
+export function TimelineGame({ requestedDate }: { requestedDate?: string } = {}) {
   const progress = useLocalProgress();
   const { hardcoreUnlocked, setAuthenticatedUser, user } = useAuth();
   const {
@@ -162,6 +163,7 @@ export function TimelineGame() {
     speedrunGivenUpAt,
     speedrunStartedAt,
   } = useTimelineGame({
+    requestedDate,
     canSpeedrun: Boolean(user),
     hardcoreUnlocked,
     playerId: progress.playerId,
@@ -773,7 +775,7 @@ export function TimelineGame() {
       }
       if (didSolve) {
         void apiClient
-          .timelineGame(game.challenge.difficulty, progress.playerId)
+          .timelineGame(game.challenge.difficulty, progress.playerId, undefined, requestedDate)
           .then((revealedGame) => {
             gameCache.current[difficulty] = revealedGame;
             setGame(revealedGame);
@@ -867,10 +869,14 @@ export function TimelineGame() {
       <GameIntro
         description="Place events in chronological order. Dates stay hidden until every position is correct."
         difficulty={difficultyControls}
-        expiresAt={game?.challenge.expiresAt ?? null}
+        expiresAt={requestedDate ? null : (game?.challenge.expiresAt ?? null)}
         eyebrow={
           <GameEyebrow
-            date={game?.challenge.date ?? utcDate()}
+            date={
+              game?.challenge.date ??
+              (requestedDate ? parseGameRouteDate(requestedDate) : null) ??
+              utcDate()
+            }
             family="timeline"
             game="Timeline"
             variant={timelineDifficultyLabel(difficulty)}
@@ -883,7 +889,7 @@ export function TimelineGame() {
         reserveInputSlot={false}
         title={
           <>
-            Build today’s <em>timeline.</em>
+            Build {requestedDate ? "this day’s" : "today’s"} <em>timeline.</em>
           </>
         }
         titleId="timeline-title"

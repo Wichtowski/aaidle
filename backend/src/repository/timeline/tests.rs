@@ -61,6 +61,9 @@ fn hardcore_marks_same_year_positions_without_marking_normal() {
     assert_eq!(release_year("bad"), None);
 }
 
+// Noon on the fixture challenge's own UTC day (2026-08-25)
+const ON_DAY: i64 = 1_787_659_200_000;
+
 async fn test_pool() -> SqlitePool {
     let pool = sqlx::sqlite::SqlitePoolOptions::new()
         .max_connections(1)
@@ -386,7 +389,7 @@ async fn generates_reuses_and_replaces_timeline_challenges() {
     );
 
     let stale = insert_challenge(&pool, TimelineDifficulty::Challenge).await;
-    let replacement = ensure_timeline_challenge(
+    let historical = ensure_timeline_challenge(
         &pool,
         &stale.challenge_date,
         TimelineDifficulty::Challenge,
@@ -394,6 +397,21 @@ async fn generates_reuses_and_replaces_timeline_challenges() {
     )
     .await
     .unwrap();
+    assert_eq!(historical.id, stale.id);
+    let today = time::OffsetDateTime::now_utc()
+        .date()
+        .format(time::macros::format_description!("[year]-[month]-[day]"))
+        .unwrap();
+    sqlx::query("UPDATE timeline_challenges SET challenge_date=? WHERE id=?")
+        .bind(&today)
+        .bind(stale.id.to_string())
+        .execute(&pool)
+        .await
+        .unwrap();
+    let replacement =
+        ensure_timeline_challenge(&pool, &today, TimelineDifficulty::Challenge, "secret")
+            .await
+            .unwrap();
     assert_ne!(replacement.id, stale.id);
     assert_eq!(replacement.model_order.len(), 12);
     assert_eq!(replacement.anchor_positions.len(), 4);
@@ -463,9 +481,58 @@ async fn populated_daily_and_global_leaderboards_map_users_and_runs() {
         sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,user_id,model_order_json,placements_json,attempt_number,is_correct,attempts_remaining_after,speedrun_started_at,speedrun_time_ms,created_at) VALUES (?,?,?,?,?,'[]','[]',?,1,NULL,0,?,?)")
             .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string())
             .bind(challenge.id.to_string()).bind(player.to_string()).bind(&user)
-            .bind(index).bind(1_000_i64 * index).bind(index)
+            .bind(index).bind(1_000_i64 * index).bind(ON_DAY + index)
             .execute(&pool).await.unwrap();
     }
+    // A fourth player beats everyone, but plays this past day later through history
+    sqlx::query("INSERT INTO users (id,email,email_normalized,username,created_at,updated_at) VALUES ('late','late@example.test','late@example.test','latecomer',0,0)").execute(&pool).await.unwrap();
+    let late = Uuid::new_v4();
+    sqlx::query("INSERT INTO anonymous_players (id,created_at,last_seen_at) VALUES (?,0,0)")
+        .bind(late.to_string())
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,user_id,model_order_json,placements_json,attempt_number,is_correct,attempts_remaining_after,speedrun_started_at,speedrun_time_ms,created_at) VALUES (?,?,?,?,'late','[]','[]',1,1,NULL,0,1,?)")
+        .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string())
+        .bind(challenge.id.to_string()).bind(late.to_string())
+        .bind(ON_DAY + 3 * 86_400_000)
+        .execute(&pool).await.unwrap();
+    // A run started seconds before midnight and finished after it still belongs to its day
+    sqlx::query("INSERT INTO users (id,email,email_normalized,username,created_at,updated_at) VALUES ('midnight','midnight@example.test','midnight@example.test','midnight',0,0)").execute(&pool).await.unwrap();
+    let midnight = Uuid::new_v4();
+    sqlx::query("INSERT INTO anonymous_players (id,created_at,last_seen_at) VALUES (?,0,0)")
+        .bind(midnight.to_string())
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,user_id,model_order_json,placements_json,attempt_number,is_correct,attempts_remaining_after,speedrun_started_at,speedrun_time_ms,created_at) VALUES (?,?,?,?,'midnight','[]','[]',9,1,NULL,0,30000,?)")
+        .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string())
+        .bind(challenge.id.to_string()).bind(midnight.to_string())
+        .bind(ON_DAY + 12 * 3_600_000 + 20_000)
+        .execute(&pool).await.unwrap();
+    let daily = timeline_leaderboard(&pool, challenge.id, Some("user-2"))
+        .await
+        .unwrap();
+    assert_eq!(
+        daily
+            .iter()
+            .map(|entry| entry.display_name.as_str())
+            .collect::<Vec<_>>(),
+        ["runner", "email-2", "midnight"]
+    );
+    let global = timeline_global_leaderboard(&pool, Some("user-1"))
+        .await
+        .unwrap();
+    assert!(
+        global
+            .fastest
+            .iter()
+            .all(|entry| entry.display_name != "latecomer")
+    );
+    sqlx::query("DELETE FROM timeline_attempts WHERE user_id = 'midnight'")
+        .execute(&pool)
+        .await
+        .unwrap();
     let daily = timeline_leaderboard(&pool, challenge.id, Some("user-2"))
         .await
         .unwrap();
@@ -650,8 +717,8 @@ async fn leaderboard_and_give_up_reject_invalid_persisted_submissions() {
         .execute(&pool)
         .await
         .unwrap();
-    sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,user_id,model_order_json,placements_json,attempt_number,is_correct,speedrun_time_ms,created_at) VALUES (?,?,?,?,?,'[]','[]',70000,1,100,0)")
-        .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string()).bind(speedrun.id.to_string()).bind(player.to_string()).bind(user).execute(&pool).await.unwrap();
+    sqlx::query("INSERT INTO timeline_attempts (id,request_id,challenge_id,player_id,user_id,model_order_json,placements_json,attempt_number,is_correct,speedrun_time_ms,created_at) VALUES (?,?,?,?,?,'[]','[]',70000,1,100,?)")
+        .bind(Uuid::new_v4().to_string()).bind(Uuid::new_v4().to_string()).bind(speedrun.id.to_string()).bind(player.to_string()).bind(user).bind(ON_DAY).execute(&pool).await.unwrap();
     assert!(matches!(
         timeline_leaderboard(&pool, speedrun.id, None).await,
         Err(AppError::Unavailable(_))

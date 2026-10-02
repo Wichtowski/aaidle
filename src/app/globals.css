@@ -6180,6 +6180,21 @@ body.hell-mode .completed--timeline {
   }
 }
 /* Progressive assistance shares the existing compact game controls. */
+.game-date-navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.game-date-navigation a {
+  padding: 0.25rem;
+  text-decoration: none;
+  opacity: 0.7;
+}
+.game-date-navigation a:hover,
+.game-date-navigation a:focus-visible {
+  opacity: 1;
+}
+
 .game-streak {
   display: block;
   margin-top: 0.5rem;

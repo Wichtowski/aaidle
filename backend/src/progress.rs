@@ -115,13 +115,6 @@ struct HistoryRow {
     solved: i64,
 }
 
-#[derive(FromRow)]
-struct PlayerStatsSummaryRow {
-    current_streak: i64,
-    best_streak: i64,
-    games_won: i64,
-}
-
 struct PlayerStatsSummary {
     current_streak: i64,
     best_streak: i64,
@@ -600,13 +593,40 @@ pub async fn history(
     if !(1..=1_000_000).contains(&page) {
         return Err(AppError::validation("page must be between 1 and 1000000"));
     }
-    match game {
+    let mut response = match game {
         "classic" => classic_history(pool, user_id, category, page).await,
         "emoji" => emoji_history(pool, user_id, category, page).await,
         "logo" => logo_history(pool, user_id, category, page).await,
         "timeline" => timeline_history(pool, user_id, category, page).await,
         _ => Err(AppError::validation("Unknown progress game.")),
+    }?;
+    let player = sqlx::query_scalar::<_, String>(
+        "SELECT primary_player_id FROM user_progress_profiles WHERE user_id = ?",
+    )
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await?;
+    response.stats.current_streak = 0;
+    response.stats.best_streak = 0;
+    if let Some(player) = player {
+        let player = Uuid::parse_str(&player)
+            .map_err(|_| AppError::Unavailable("Stored player ID is invalid.".to_owned()))?;
+        let streaks = crate::repository::streaks::game_streaks(
+            pool,
+            player,
+            OffsetDateTime::now_utc().date(),
+        )
+        .await?;
+        let streak = match game {
+            "classic" => streaks.classic,
+            "emoji" => streaks.emoji,
+            "logo" => streaks.logo,
+            _ => streaks.timeline,
+        };
+        response.stats.current_streak = streak.current_streak;
+        response.stats.best_streak = streak.longest_streak;
     }
+    Ok(response)
 }
 
 async fn classic_history(
@@ -1119,17 +1139,23 @@ fn history_stats_from_rows(
 }
 
 async fn player_stats_summary(pool: &SqlitePool, player_id: &str) -> AppResult<PlayerStatsSummary> {
-    let rows = sqlx::query_as::<_, PlayerStatsSummaryRow>(
-        "SELECT current_streak, best_streak, games_won FROM player_mode_stats \
+    let games_played = sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE(SUM(games_won), 0) FROM player_mode_stats \
          WHERE player_id = ? AND mode LIKE 'classic:%'",
     )
     .bind(player_id)
-    .fetch_all(pool)
+    .fetch_one(pool)
     .await?;
+    // Streaks come from the qualifying game days, never from the per-mode statistics
+    let player = Uuid::parse_str(player_id)
+        .map_err(|_| AppError::Unavailable("Stored player ID is invalid.".to_owned()))?;
+    let streaks =
+        crate::repository::streaks::game_streaks(pool, player, OffsetDateTime::now_utc().date())
+            .await?;
     Ok(PlayerStatsSummary {
-        current_streak: rows.iter().map(|row| row.current_streak).max().unwrap_or(0),
-        best_streak: rows.iter().map(|row| row.best_streak).max().unwrap_or(0),
-        games_played: rows.iter().map(|row| row.games_won).sum(),
+        current_streak: streaks.classic.current_streak,
+        best_streak: streaks.classic.longest_streak,
+        games_played,
     })
 }
 

@@ -491,7 +491,8 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &runner_user_id,
             2_i64,
             10_000_i64,
-            1_i64,
+            // Runs are ranked only when they were played on their challenge's own day
+            1_788_004_800_001_i64,
         ),
         (
             second_challenge.id,
@@ -499,7 +500,7 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &runner_user_id,
             4,
             20_000,
-            2,
+            1_788_091_200_002,
         ),
         (
             first_challenge.id,
@@ -507,7 +508,7 @@ async fn timeline_global_and_dated_leaderboards_rank_completed_speedruns() {
             &rival_user_id,
             3,
             9_000,
-            3,
+            1_788_004_800_003,
         ),
     ] {
         sqlx::query(
@@ -2221,8 +2222,9 @@ async fn classic_attempts_are_sequential_and_bounded_by_the_eligible_pool() {
         .await
         .expect("second LLM metadata");
     let challenge_id = Uuid::new_v4();
-    sqlx::query("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, '2026-08-23', 'classic:llm:normal', 'model-3', 1, 0, 'test')")
+    sqlx::query("INSERT INTO daily_challenges (id, challenge_date, mode, answer_model_id, selection_version, generated_at, generation_source) VALUES (?, ?, 'classic:llm:normal', 'model-3', 1, 0, 'test')")
         .bind(challenge_id.to_string())
+        .bind(time::OffsetDateTime::now_utc().date().to_string())
         .execute(&pool)
         .await
         .expect("classic challenge");

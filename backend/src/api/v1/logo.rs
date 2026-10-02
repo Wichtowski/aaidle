@@ -20,10 +20,7 @@ use crate::{
     state::AppState,
 };
 
-use super::{
-    AnonymousPlayerId, current_utc_date, format_next_midnight, is_model_id, parse_json_payload,
-    parse_uuid,
-};
+use super::{AnonymousPlayerId, format_next_midnight, is_model_id, parse_json_payload, parse_uuid};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -43,11 +40,22 @@ pub(super) async fn game(
     Path(difficulty): Path<String>,
     Query(query): Query<LogoPlayerQuery>,
 ) -> AppResult<Json<LogoGameResponse>> {
-    let player_id = read_player_id(&state, &headers, query.player_id).await?;
+    game_for_date(state, headers, difficulty, query.player_id, None).await
+}
+
+async fn game_for_date(
+    state: AppState,
+    headers: HeaderMap,
+    difficulty: String,
+    anonymous: Uuid,
+    requested: Option<&str>,
+) -> AppResult<Json<LogoGameResponse>> {
+    let date = super::history::requested_date(&state, &headers, requested).await?;
+    let player_id = read_player_id(&state, &headers, anonymous).await?;
     let game = repository::logo::game(
         &state.db,
         &state.logo,
-        &current_utc_date()?,
+        &date,
         &difficulty,
         &state.config.daily_selection_secret,
         player_id,
@@ -101,19 +109,12 @@ pub(super) async fn image(
 ) -> AppResult<Response> {
     let challenge_id = parse_uuid(&challenge_id, "challengeId must be a UUID")?;
     let player_id = read_player_id(&state, &headers, query.player_id).await?;
-    let is_current = sqlx::query_scalar::<_, i64>(
-        "SELECT EXISTS(SELECT 1 FROM logo_challenges WHERE id = ? AND challenge_date = ?)",
+    super::history::authorize_challenge_request(
+        &state,
+        &headers,
+        &format!("/games/logo/challenges/{challenge_id}/image"),
     )
-    .bind(challenge_id.to_string())
-    .bind(current_utc_date()?)
-    .fetch_one(&state.db)
-    .await?
-        != 0;
-    if !is_current {
-        return Err(AppError::NotFound(
-            "Logo image challenge not found.".to_owned(),
-        ));
-    }
+    .await?;
     let history =
         repository::logo::history(&state.db, &state.logo, challenge_id, player_id).await?;
     let mut progress = history.progress;
@@ -282,6 +283,15 @@ pub(super) async fn game_route(
         Query(LogoPlayerQuery { player_id }),
     )
     .await
+}
+
+pub(super) async fn dated_game_route(
+    State(state): State<AppState>,
+    Extension(AnonymousPlayerId(player)): Extension<AnonymousPlayerId>,
+    headers: HeaderMap,
+    Path((difficulty, date)): Path<(String, String)>,
+) -> AppResult<Json<LogoGameResponse>> {
+    game_for_date(state, headers, difficulty, player, Some(&date)).await
 }
 
 pub(super) async fn guess_history_route(
