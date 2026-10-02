@@ -134,15 +134,41 @@ SQLite records qualifying days transactionally from accepted successful game eve
 
 ## Progressive assistance
 
-`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only. Each unsuccessful accepted guess earns one hint credit. `availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column. A solved board has no available columns or credits.
+`GET /api/v1/games/classic/challenges/{challengeId}/hints` returns `{ hints, availableColumns, remainingHints }` for Classic Normal only.
+Each unsuccessful accepted guess earns one hint credit.
+`availableColumns` contains only displayed properties that have never matched exactly and have not been revealed; it never includes the name/answer column.
+A solved board has no available columns or credits.
 
-`POST` to the same route accepts only `{ "column": "provider" }`. The player explicitly selects a displayed column. Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year. Only requested and previously persisted hints are returned. Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`. An already revealed column replays its persisted hint without consuming another credit, including after completion. Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
+`POST` to the same route accepts only `{ "column": "provider" }`.
+The player explicitly selects a displayed column.
+Each persisted hint contains only `{ column, value }`, where `value` is a string, number, boolean, string array, or null (N/A); `release` reveals the year.
+A category-specific column such as `architecture` or `trainingDatasets` reveals exactly the value the guess comparison and the board read for that column, including the shared fallback order across category details.
+`toolUse` reveals `false` when the answer has no tool-calling metadata.
+Only requested and previously persisted hints are returned.
+Invalid/name/undisplayed columns return `400`; unavailable credit returns `409 HINT_NOT_AVAILABLE`; an already matched column returns `409 COLUMN_ALREADY_SOLVED`.
+An already revealed column replays its persisted hint without consuming another credit, including after completion.
+Classic Challenge and Hardcore return `403`; unknown challenges return `404`.
 
-`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`). Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss. `autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously. Available card IDs use the public shuffled tray order, never solution order. Anchors and previously exact or auto-placed cards cannot be selected. A completed board offers no further assistance.
+`GET /api/v1/games/timeline/challenges/{challengeId}/auto-place` returns `{ autoPlacements, incorrectSubmissions, unlockEvery, remainingAutoPlacements, availableCardIds }` for Normal (`unlockEvery = 3`) and Challenge (`5`).
+Each incorrect server-accepted submission contributes cumulatively; retries and correct submissions do not add a miss.
+`autoPlacements` contains `{ cardId, position }` only for cards explicitly chosen previously.
+Available card IDs use the public shuffled tray order, never solution order.
+Anchors and previously exact or auto-placed cards cannot be selected.
+A completed board offers no further assistance.
 
-`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit. Repeated requests for that card replay without further consumption. Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`. Speedrun and Hardcore return `403`. Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
+`POST` to the same route accepts only `{ "cardId": "t-sne" }`, persists the selected correct position, and consumes one earned credit.
+Repeated requests for that card replay without further consumption.
+Invalid card IDs return `400`; unavailable credit returns `409 AUTO_PLACE_NOT_AVAILABLE`; already resolved cards return `409 CARD_ALREADY_RESOLVED`.
+Speedrun and Hardcore return `403`.
+Later attempt submissions must preserve all auto-placed positions; moving one returns `400`.
 
-Both assistance families use the cookie-owned player or the signed-in account's canonical player. Browser mutations enforce exact Origin and authenticated CSRF. Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache. Neither route reveals future hint values, unresolved card positions, or hidden answer IDs. Emoji has no additional assistance routes.
+Both assistance families use the cookie-owned player or the signed-in account's canonical player.
+Browser mutations enforce exact Origin and authenticated CSRF.
+Both `POST` routes consume the same per-IP and per-player rate limits as guess submissions and return `429 RATE_LIMITED` when exhausted.
+Progress reconciliation merges and deduplicates server-persisted assistance when linking a guest to an account; local assistance is only a versioned presentation cache.
+The first authenticated request from a browser whose guest player is not linked to any account links and merges that player, so guest assistance and attempts follow the account even when the browser never uploads its local progress.
+Neither route reveals future hint values, unresolved card positions, or hidden answer IDs.
+Emoji has no additional assistance routes.
 
 ## Session routes
 

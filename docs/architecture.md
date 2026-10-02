@@ -80,7 +80,12 @@ The following invariants are security and correctness boundaries:
 
 Game-family streaks are derived from persisted `player_game_streak_days`, not client counters or lifetime challenge history. SQLite completion triggers admit only challenge dates matching the actual server completion's UTC day; one family/day counts once regardless of mode or category. Account reconciliation merges qualifying dates before deduplicating attempts. The `/me/streaks` response and versioned local cache expose all four supported families; historical completions never repair streak gaps.
 
-Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance. Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them. Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions. Auto-placed cards remain locked in subsequent server-validated arrangements.
+Classic Normal column hints and Timeline Normal/Challenge auto-placement are server-earned, explicitly selected assistance.
+Reveals live in `player_challenge_hints` and `player_timeline_auto_placements`, follow the canonical player during account reconciliation, and are cached locally only after the server reveals them.
+Available Timeline card IDs preserve the public shuffled tray order; only already selected cards expose their positions.
+Auto-placed cards remain locked in subsequent server-validated arrangements.
+A hint value is produced by the same column resolver as the guess comparison, so both always describe the same value.
+Reading assistance state never takes the SQLite writer lock; only a reveal or a placement opens an immediate transaction.
 
 The public contract is documented in [API v1](backend/api-v1.md). Major route groups are:
 

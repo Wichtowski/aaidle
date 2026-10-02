@@ -204,12 +204,19 @@ test("Timeline unlocks a chosen Auto-place after three misses and locks it acros
       await expect(page.getByRole("button", { name: "Auto-place Model A" })).toHaveCount(0);
   }
   await page.getByRole("button", { name: "Auto-place Model A" }).click();
-  const fixed = page.getByRole("button", { name: "Position 2: Model A, correct", exact: true });
+  const fixed = page.getByRole("button", {
+    name: "Position 2: Model A, auto-placed and locked",
+    exact: true,
+  });
+  // The displaced card landed on a slot it has not been judged on yet
+  const displaced = page.getByRole("button", { name: "Position 3: Model B", exact: true });
   await expect(fixed).toBeVisible();
+  await expect(displaced).toBeVisible();
   await fixed.focus();
   await page.keyboard.press("ArrowRight");
   await expect(fixed).toBeVisible();
   await page.reload();
   await expect(fixed).toBeVisible();
-  await expect(page.getByText("1 cards automatically placed and locked.")).toBeVisible();
+  await expect(displaced).toBeVisible();
+  await expect(page.getByText("1 card automatically placed and locked.")).toBeVisible();
 });
