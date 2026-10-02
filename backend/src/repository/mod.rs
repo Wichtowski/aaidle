@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+pub mod assists;
 pub mod emoji;
 pub mod logo;
 pub mod timeline;
@@ -934,7 +935,7 @@ async fn find_challenge_by_date_and_mode(
     .await?)
 }
 
-pub(super) fn is_sqlite_busy(error: &AppError) -> bool {
+pub(crate) fn is_sqlite_busy(error: &AppError) -> bool {
     match error {
         AppError::Database(sqlx::Error::Database(database_error)) => {
             matches!(

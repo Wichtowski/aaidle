@@ -19,7 +19,13 @@ import type {
 } from "../domain/games/timeline/timeline-types";
 import type { Difficulty } from "../domain/difficulty";
 import type { LocalProgress } from "../storage/local-progress-schema";
-import { logoGameSchema, logoGuessResponseSchema, logoHistorySchema } from "../validation/api";
+import {
+  classicAssistSchema,
+  timelineAssistSchema,
+  logoGameSchema,
+  logoGuessResponseSchema,
+  logoHistorySchema,
+} from "../validation/api";
 
 const apiPath = (path: string) => `/api/v1${path}`;
 
@@ -553,6 +559,32 @@ class ApiClient {
       columns: payload.columns,
       globalCompletionCount: payload.globalCompletionCount,
     }));
+  }
+
+  classicAssists(challengeId: string, column?: string, signal?: AbortSignal) {
+    return this.request<unknown>(`/games/classic/challenges/${challengeId}/hints`, {
+      signal,
+      ...(column
+        ? {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ column }),
+          }
+        : {}),
+    }).then((payload) => classicAssistSchema.parse(payload));
+  }
+
+  timelineAssists(challengeId: string, cardId?: string, signal?: AbortSignal) {
+    return this.request<unknown>(`/games/timeline/challenges/${challengeId}/auto-place`, {
+      signal,
+      ...(cardId
+        ? {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cardId }),
+          }
+        : {}),
+    }).then((payload) => timelineAssistSchema.parse(payload));
   }
 
   submitClassicGuess(

@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "@lib/api/client";
 import {
   initialTimelinePositions,
   restoreTimelinePositions,
+  applyTimelineAssistance,
+  type TimelinePlacement,
 } from "@lib/domain/games/timeline/timeline-arrangement";
 import {
   readSavedTimelineGame,
@@ -14,6 +16,7 @@ import type {
 } from "@lib/domain/games/timeline/timeline-types";
 import { utcDate } from "@lib/utils/dates";
 import { readGamePreferences, saveTimelineDifficulty } from "@lib/storage/game-preferences";
+import type { TimelineAssistState } from "@lib/validation/api";
 
 function hydrateGame(game: TimelineGamePayload) {
   const serverAttempt = game.progress.latestAttempt;
@@ -58,7 +61,7 @@ export function useTimelineGame({
   );
   const [game, setGame] = useState<TimelineGamePayload | null>(null);
   const [positions, setPositions] = useState<Array<string | null>>([]);
-  const [placements, setPlacements] = useState<Array<0 | 1 | 2 | null> | null>(null);
+  const [placements, setPlacements] = useState<TimelinePlacement[] | null>(null);
   const [acceptedAttempts, setAcceptedAttempts] = useState(0);
   const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
   const [solved, setSolved] = useState(false);
@@ -69,7 +72,81 @@ export function useTimelineGame({
   const [error, setError] = useState<unknown>(null);
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [assistance, setAssistance] = useState<TimelineAssistState | null>(null);
+  const [assistError, setAssistError] = useState<string | null>(null);
+  const [assistBusy, setAssistBusy] = useState(false);
+  const [assistReload, setAssistReload] = useState(0);
   const gameCache = useRef<Partial<Record<TimelineDifficulty, TimelineGamePayload>>>({});
+  const assistRequest = useRef<AbortController | null>(null);
+
+  useEffect(() => () => assistRequest.current?.abort(), [game?.challenge.id, playerId]);
+
+  const arrangement = useRef({ positions, placements });
+  useEffect(() => {
+    arrangement.current = { positions, placements };
+  }, [positions, placements]);
+
+  const applyAssistance = useCallback((next: TimelineAssistState) => {
+    const applied = applyTimelineAssistance(
+      arrangement.current.positions,
+      arrangement.current.placements,
+      next.autoPlacements,
+    );
+    arrangement.current = applied;
+    setAssistance(next);
+    setPositions(applied.positions);
+    setPlacements(applied.placements);
+  }, []);
+
+  // Assistance belongs to one player's game. It is kept while it is refreshed after an
+  // attempt, so the locked cards and the progress line do not flicker
+  useEffect(() => {
+    setAssistance(null);
+    setAssistError(null);
+  }, [game?.challenge.id, difficulty, playerId]);
+
+  useEffect(() => {
+    if (!game || loading || !["normal", "challenge"].includes(difficulty)) return;
+    const controller = new AbortController();
+    setAssistError(null);
+    void apiClient
+      .timelineAssists(game.challenge.id, undefined, controller.signal)
+      .then((next) => {
+        if (!controller.signal.aborted) applyAssistance(next);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setAssistError("We could not load Auto-place progress.");
+      });
+    return () => controller.abort();
+  }, [
+    game?.challenge.id,
+    loading,
+    difficulty,
+    acceptedAttempts,
+    playerId,
+    assistReload,
+    applyAssistance,
+  ]);
+
+  async function autoPlace(cardId: string) {
+    if (!game || assistBusy) return;
+    setAssistBusy(true);
+    setAssistError(null);
+    const controller = new AbortController();
+    assistRequest.current = controller;
+    try {
+      const next = await apiClient.timelineAssists(game.challenge.id, cardId, controller.signal);
+      if (!controller.signal.aborted) applyAssistance(next);
+    } catch (failure) {
+      if (!controller.signal.aborted) {
+        setAssistError(
+          failure instanceof Error ? failure.message : "We could not place this card.",
+        );
+      }
+    } finally {
+      setAssistBusy(false);
+    }
+  }
 
   const selectDifficulty = (nextDifficulty: string) => {
     const value = nextDifficulty as TimelineDifficulty;
@@ -145,8 +222,18 @@ export function useTimelineGame({
       solved,
       updatedAt: new Date().toISOString(),
       speedrunStartedAt: speedrunStartedAt ?? undefined,
+      assistance: assistance ?? undefined,
     });
-  }, [acceptedAttempts, attemptsRemaining, game, placements, positions, solved, speedrunStartedAt]);
+  }, [
+    acceptedAttempts,
+    assistance,
+    attemptsRemaining,
+    game,
+    placements,
+    positions,
+    solved,
+    speedrunStartedAt,
+  ]);
 
   useEffect(() => {
     if (difficulty !== "speedrun" || solved || speedrunGivenUpAt || !speedrunStartedAt) return;
@@ -167,6 +254,11 @@ export function useTimelineGame({
   }, [difficulty, solved, speedrunGivenUpAt, speedrunStartedAt]);
 
   return {
+    assistance,
+    assistBusy,
+    assistError,
+    autoPlace,
+    retryAssistance: () => setAssistReload((value) => value + 1),
     acceptedAttempts,
     attemptsRemaining,
     difficulty,

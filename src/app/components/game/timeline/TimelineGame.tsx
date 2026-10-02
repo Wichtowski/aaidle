@@ -48,6 +48,7 @@ import { SpeedrunGiveUpDialog } from "./SpeedrunGiveUpDialog";
 import { SpeedrunUsernameDialog } from "./SpeedrunUsernameDialog";
 import { HowToPlayDialog } from "../common/dialogs/HowToPlayDialog";
 import { useTimelineGame } from "./use-timeline-game";
+import type { TimelineAssistState } from "@lib/validation/api";
 
 const TimelineCompletedDialog = lazy(() =>
   import("./TimelineCompletedDialog").then(({ TimelineCompletedDialog }) => ({
@@ -118,10 +119,21 @@ function YearAnnotationTrigger({
   );
 }
 
+function autoPlaceProgress(assistance: TimelineAssistState) {
+  const progress = assistance.incorrectSubmissions % assistance.unlockEvery;
+  const missing = assistance.unlockEvery - progress;
+  return `${progress} / ${assistance.unlockEvery} incorrect submissions. ${missing} more ${missing === 1 ? "miss" : "misses"} to unlock ${assistance.remainingAutoPlacements > 0 ? "another Auto-place" : "Auto-place"}.`;
+}
+
 export function TimelineGame() {
   const progress = useLocalProgress();
   const { hardcoreUnlocked, setAuthenticatedUser, user } = useAuth();
   const {
+    assistance,
+    assistBusy,
+    assistError,
+    autoPlace,
+    retryAssistance,
     acceptedAttempts,
     attemptsRemaining,
     difficulty,
@@ -183,6 +195,11 @@ export function TimelineGame() {
   } | null>(null);
   const [submissionCooldownRemaining, setSubmissionCooldownRemaining] = useState(0);
   const pendingRequestId = useRef<string | null>(null);
+  // A request ID identifies one arrangement, so any change, including an Auto-place,
+  // must not replay it with a different order
+  useEffect(() => {
+    pendingRequestId.current = null;
+  }, [positions]);
   const completionTimer = useRef<number | null>(null);
   const landingTimer = useRef<number | null>(null);
   const swapTimer = useRef<number | null>(null);
@@ -956,6 +973,10 @@ export function TimelineGame() {
               const modelId = positions[position];
               const item = modelId ? itemById.get(modelId) : null;
               const placement = placements?.[position];
+              const autoPlaced =
+                assistance?.autoPlacements.some(
+                  (assist) => assist.position === position && assist.cardId === modelId,
+                ) ?? false;
               const feedback =
                 placement === 1
                   ? "correct"
@@ -1023,9 +1044,9 @@ export function TimelineGame() {
                     </article>
                   ) : item ? (
                     <button
-                      aria-label={`Position ${position + 1}: ${item.name}${feedback ? `, ${feedback}` : ""}`}
+                      aria-label={`Position ${position + 1}: ${item.name}${autoPlaced ? ", auto-placed and locked" : feedback ? `, ${feedback}` : ""}`}
                       aria-pressed={selectedModelId === item.id}
-                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${swapAnimation?.modelId === item.id ? " timeline-card--swapping" : ""}${feedback ? ` timeline-card--${feedback}` : ""}`}
+                      className={`timeline-card timeline-card--movable${solved ? " timeline-card--solved timeline-card--winning" : ""}${placements ? " timeline-card--submitted" : ""}${speedrunCovered ? " timeline-card--covered" : ""}${isDragOrigin ? " timeline-card--dragging timeline-card--drag-origin" : ""}${landingModelId === item.id ? " timeline-card--landing" : ""}${landedModelIds.has(item.id) ? " timeline-card--landed" : ""}${swapAnimation?.modelId === item.id ? " timeline-card--swapping" : ""}${feedback ? ` timeline-card--${feedback}` : ""}${autoPlaced ? " timeline-card--auto-placed" : ""}`}
                       disabled={
                         difficulty === "speedrun" &&
                         (speedrunStartedAt === null || speedrunUnfinished)
@@ -1080,7 +1101,7 @@ export function TimelineGame() {
                                   {feedback === "correct" ? (
                                     <>
                                       <FaCheck aria-hidden="true" size={timelineFeedbackIconSize} />{" "}
-                                      Correct position
+                                      {autoPlaced ? "Auto-placed · Locked" : "Correct position"}
                                     </>
                                   ) : feedback === "same-year" ? (
                                     <>
@@ -1223,11 +1244,55 @@ export function TimelineGame() {
           )}
 
           <div className="timeline-submit">
+            {!solved && (difficulty === "normal" || difficulty === "challenge") && (
+              <section
+                className="game-assists"
+                aria-label="Timeline Auto-place"
+                aria-busy={assistBusy}
+              >
+                {assistance && (
+                  <>
+                    <p>{autoPlaceProgress(assistance)}</p>
+                    {assistance.autoPlacements.length > 0 && (
+                      <p>
+                        {assistance.autoPlacements.length === 1
+                          ? "1 card automatically placed and locked."
+                          : `${assistance.autoPlacements.length} cards automatically placed and locked.`}
+                      </p>
+                    )}
+                    {assistance.remainingAutoPlacements > 0 && (
+                      <>
+                        <p>Auto-place available. Select a card to place correctly.</p>
+                        <div className="game-assists__choices">
+                          {assistance.availableCardIds.map((id) => (
+                            <Button
+                              key={id}
+                              disabled={busy || assistBusy}
+                              onClick={() => void autoPlace(id)}
+                            >
+                              Auto-place{" "}
+                              {game.movableModels.find((model) => model.id === id)?.name ?? id}
+                            </Button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+                {assistError && (
+                  <p role="alert">
+                    {assistError} <Button onClick={retryAssistance}>Retry Auto-place</Button>
+                  </p>
+                )}
+              </section>
+            )}
             {!solved && !speedrunUnfinished && (
               <Button
                 variant="primary"
                 color="black"
-                disabled={!complete || busy || solved || exhausted || submissionCoolingDown}
+                disabled={
+                  !complete || busy || assistBusy || solved || exhausted || submissionCoolingDown
+                }
                 onClick={() => void submit()}
                 type="button"
               >

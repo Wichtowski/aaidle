@@ -91,6 +91,26 @@ impl IntoResponse for AppError {
             ),
             Self::Forbidden(message) => (StatusCode::FORBIDDEN, "FORBIDDEN", message.as_str()),
             Self::Conflict(message) => match message.as_str() {
+                "HINT_NOT_AVAILABLE" => (
+                    StatusCode::CONFLICT,
+                    "HINT_NOT_AVAILABLE",
+                    "Make another unsuccessful guess to unlock a hint.",
+                ),
+                "COLUMN_ALREADY_SOLVED" => (
+                    StatusCode::CONFLICT,
+                    "COLUMN_ALREADY_SOLVED",
+                    "This property has already been matched.",
+                ),
+                "AUTO_PLACE_NOT_AVAILABLE" => (
+                    StatusCode::CONFLICT,
+                    "AUTO_PLACE_NOT_AVAILABLE",
+                    "More incorrect submissions are needed to unlock Auto-place.",
+                ),
+                "CARD_ALREADY_RESOLVED" => (
+                    StatusCode::CONFLICT,
+                    "CARD_ALREADY_RESOLVED",
+                    "This card has already been resolved.",
+                ),
                 "DUPLICATE_GUESS" => (
                     StatusCode::CONFLICT,
                     "DUPLICATE_GUESS",

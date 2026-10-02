@@ -2,6 +2,39 @@ import type { TimelineGamePayload } from "./timeline-types";
 
 export const TIMELINE_DESKTOP_COLUMNS = 6;
 
+export function applyTimelineAutoPlacements(
+  positions: Array<string | null>,
+  autoPlacements: Array<{ cardId: string; position: number }>,
+) {
+  return autoPlacements.reduce(
+    (current, placement) =>
+      moveTimelineModel(current, new Set(), placement.cardId, placement.position),
+    positions,
+  );
+}
+
+export type TimelinePlacement = 0 | 1 | 2 | null;
+
+// An Auto-place moves the chosen card and can displace another one, so feedback from
+// the last submission no longer describes any slot whose card changed
+export function applyTimelineAssistance(
+  positions: Array<string | null>,
+  placements: TimelinePlacement[] | null,
+  autoPlacements: Array<{ cardId: string; position: number }>,
+): { positions: Array<string | null>; placements: TimelinePlacement[] | null } {
+  const nextPositions = applyTimelineAutoPlacements(positions, autoPlacements);
+  if (!placements && !autoPlacements.length) return { positions: nextPositions, placements };
+
+  const nextPlacements = nextPositions.map((modelId, position) =>
+    modelId === positions[position] ? (placements?.[position] ?? null) : null,
+  );
+  for (const placement of autoPlacements) nextPlacements[placement.position] = 1;
+  const unchanged =
+    placements?.length === nextPlacements.length &&
+    nextPlacements.every((placement, position) => placement === placements[position]);
+  return { positions: nextPositions, placements: unchanged ? placements : nextPlacements };
+}
+
 export function timelineVisualPosition(
   position: number,
   columns: number,

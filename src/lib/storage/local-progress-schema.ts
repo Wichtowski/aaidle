@@ -41,6 +41,12 @@ export const localProgressSchema = z
         ),
         startedAt: z.string(),
         completedAt: z.string().nullable(),
+        // Kept loose on purpose: a renamed column must never invalidate, and thereby
+        // reset, the whole stored progress
+        hints: z
+          .array(z.object({ column: z.string(), value: z.unknown() }))
+          .optional()
+          .catch(undefined),
       }),
     ),
     stats: z.object({

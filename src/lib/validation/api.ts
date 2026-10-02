@@ -1,5 +1,29 @@
 import { z } from "zod";
 import { readRequestText } from "./request-body";
+import { classicColumns } from "../domain/guesses/comparison-types";
+
+export const columnHintSchema = z.object({
+  column: z.enum(classicColumns),
+  value: z.union([z.string(), z.number(), z.boolean(), z.array(z.string()), z.null()]),
+});
+export const classicAssistSchema = z.object({
+  hints: z.array(columnHintSchema),
+  availableColumns: z.array(z.enum(classicColumns)),
+  remainingHints: z.number().int().nonnegative(),
+});
+export const autoPlacementSchema = z.object({
+  cardId: z.string().min(1),
+  position: z.number().int().nonnegative(),
+});
+export const timelineAssistSchema = z.object({
+  autoPlacements: z.array(autoPlacementSchema),
+  incorrectSubmissions: z.number().int().nonnegative(),
+  unlockEvery: z.number().int().positive(),
+  remainingAutoPlacements: z.number().int().nonnegative(),
+  availableCardIds: z.array(z.string().min(1)),
+});
+export type ClassicAssistState = z.infer<typeof classicAssistSchema>;
+export type TimelineAssistState = z.infer<typeof timelineAssistSchema>;
 export const modeSchema = z.literal("classic");
 export const guessRequestSchema = z.object({
   guessedModelId: z.string().min(1).max(120),

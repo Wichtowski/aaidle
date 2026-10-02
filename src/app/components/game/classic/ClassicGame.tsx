@@ -36,6 +36,7 @@ import {
   solvedChallengeCategoriesForDate,
 } from "@lib/domain/games/classic/hardcore-unlock";
 import { useClassicGameLoader } from "./use-classic-game-loader";
+import { ClassicHints } from "./ClassicHints";
 
 const GameCompletedDialog = lazy(() =>
   import("./completion/GameCompletedDialog").then(({ GameCompletedDialog }) => ({
@@ -504,6 +505,18 @@ export function ClassicGame({
         onPick={pick}
       />
       {!challenge && isLoadingGame && <GameLoadingState label="Loading today’s game…" />}
+      {challenge &&
+        loadedDifficulty === "normal" &&
+        selectedDifficulty === "normal" &&
+        !isLoadingGame && (
+          <ClassicHints
+            key={challenge.id}
+            challengeId={challenge.id}
+            gameKey={key}
+            attempts={guesses.length}
+            userId={user?.id}
+          />
+        )}
       {!challenge && error !== null && (
         <ApiUnavailableState onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
       )}

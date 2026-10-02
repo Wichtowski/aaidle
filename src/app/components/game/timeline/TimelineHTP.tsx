@@ -56,6 +56,11 @@ export function TimelineHTP({
           appear as just a year.
         </li>
         <li>Normal and Challenge use non-overlapping years.</li>
+        <li>
+          In Normal, every 3 incorrect submissions unlock an Auto-place credit; in Challenge, every
+          5. Choose an unresolved card to place and lock it. Speedrun and Hardcore do not offer
+          Auto-place.
+        </li>
         <li>Normal has 2 anchors out of 6 items. Challenge has 4 out of 12.</li>
         <li>
           Speedrun ranks fewer submissions first and adds a 5-second cooldown after each incorrect
